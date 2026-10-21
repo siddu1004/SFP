@@ -23,6 +23,7 @@ Run:  python3 mcp/sfp_mcp.py          (an MCP client starts it; it talks on stdi
 Env:  SFP_ROOT=/path/to/SFP           (only if the server is not inside the SFP checkout)
 """
 import json
+import math
 import os
 import re
 import subprocess
@@ -80,30 +81,80 @@ def resolve_name(name):
     return None
 
 
+STOP = frozenset('a an the and or of to in on at by for with from into onto up out my our your its it is are be do does how what '
+                 'which that this these those i me we you can could should would will please need want make'.split())
+
+
+def stem(w):
+    for suf in ('ing', 'ed', 'es', 's'):
+        if w.endswith(suf) and len(w) - len(suf) >= 3 and not w.endswith('ss'):
+            w = w[:-len(suf)]
+            break
+    if len(w) > 4 and w.endswith('e'):  # scrape, scraping and scraped all become scrap
+        w = w[:-1]
+    return w
+
+
+# Names whose symbols would otherwise be thrown away by the word splitter.
+ALIASES = (('c++', ' cpp '), ('c#', ' csharp '), ('f#', ' fsharp '), ('.net', ' dotnet '),
+           ('node.js', ' nodejs '), ('next.js', ' nextjs '), ('nuxt.js', ' nuxtjs '))
+
+
+def raw_words(text):
+    text = (text or '').lower()
+    for src, dst in ALIASES:
+        text = text.replace(src, dst)
+    return [t for t in re.split(r'[^a-z0-9]+', text) if len(t) > 1]
+
+
 def tokens(text):
-    return [t for t in re.split(r'[^a-z0-9]+', (text or '').lower()) if len(t) > 1]
+    """Search terms: lower-case words without filler, reduced to their stem."""
+    return [stem(t) for t in raw_words(text) if t not in STOP]
+
+
+def build_index():
+    docs, df = [], {}
+    for s in CATALOG['skills']:
+        name = set(tokens(s['name'].replace('-', ' ')))
+        desc = {}
+        for w in tokens(s['description']):
+            desc[w] = desc.get(w, 0) + 1
+        cat = set(tokens(s['category'].replace('-', ' ')))
+        docs.append((s, name, desc, cat))
+        for w in name | set(desc) | cat:
+            df[w] = df.get(w, 0) + 1
+    return docs, df
+
+
+INDEX, DF = build_index()
 
 
 def search(query, category=None, limit=10):
-    words = tokens(query)
+    words = list(dict.fromkeys(tokens(query)))
+    if not words:
+        return []
+    n = len(INDEX)
+    idf = {w: math.log(1 + n / (1 + DF.get(w, 0))) for w in words}
     hits = []
-    for s in CATALOG['skills']:
+    for s, name, desc, cat in INDEX:
         if category and s['category'] != category:
             continue
-        name, desc = s['name'].lower(), s['description'].lower()
-        score = 0
+        score, matched = 0.0, 0
         for w in words:
-            if w == name:
-                score += 12
-            elif w in name.split('-'):
-                score += 6
-            elif w in name:
-                score += 4
+            part = 0.0
+            if w in name:
+                part += 3.0 * idf[w]
             if w in desc:
-                score += 2 + desc.count(w) * 0.2
-            if w == s['category']:
-                score += 1
+                part += idf[w] * (1 + min(0.5, 0.1 * (desc[w] - 1)))
+            if w in cat:
+                part += 0.4 * idf[w]
+            if part:
+                matched += 1
+                score += part
         if score:
+            score *= 0.4 + 0.6 * matched / len(words)  # a skill that covers more of the task ranks higher
+            if set(words) == name:
+                score *= 1.5
             hits.append((score, s))
     hits.sort(key=lambda h: (-h[0], h[1]['name']))
     return [h[1] for h in hits[:max(1, min(limit, MAX_RESULTS))]]
@@ -212,7 +263,7 @@ def tool_find_api(a):
     for opt in ('category', 'auth', 'cors', 'https'):
         if a.get(opt):
             cmd += ['--' + opt, str(a[opt])]
-    cmd += tokens(a.get('query', ''))
+    cmd += raw_words(a.get('query', ''))
     done = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
     if done.returncode != 0:
         raise ValueError(done.stderr.strip() or 'find_api failed')

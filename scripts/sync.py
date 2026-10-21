@@ -243,6 +243,77 @@ def main():
             print(f'\n{cat} ({len(names)}): ' + ', '.join(names))
 
 
+def measure(cfg, cats, catalog):
+    """Figures quoted in the README, computed from the real catalog so they cannot drift."""
+    import importlib.util
+    import statistics
+    spec = importlib.util.spec_from_file_location('sfp_mcp_measure', os.path.join(ROOT, 'mcp', 'sfp_mcp.py'))
+    mod = importlib.util.module_from_spec(spec)
+    os.environ['SFP_ROOT'] = ROOT
+    spec.loader.exec_module(mod)
+
+    # Retrieval: does the right skill come back for a plain-language task?
+    n = 0
+    hits = {1: 0, 3: 0, 5: 0}
+    for name in ('search_eval.json', 'search_holdout.json', 'search_fresh.json'):
+        path = os.path.join(ROOT, 'tests', name)
+        if not os.path.isfile(path):
+            continue
+        for case in json.load(open(path, encoding='utf-8')):
+            want = {x for x in case['expect'] if x in mod.SKILLS}
+            got = [s['name'] for s in mod.search(case['task'], limit=5)]
+            n += 1
+            for k in hits:
+                if want & set(got[:k]):
+                    hits[k] += 1
+
+    # Context cost: what an agent carries per installed skill is its name and description (about 4 characters a token).
+    def tok(s):
+        return -(-(len(s['name']) + len(s['description']) + 12) // 4)
+
+    by_cat = {}
+    for s in catalog:
+        by_cat.setdefault(s['category'], []).append(s)
+
+    def cost(members):
+        skills = [s for c in members for s in by_cat.get(c, [])]
+        return len(skills), sum(tok(s) for s in skills)
+
+    window = 200000
+    rows = ['| What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |',
+            '|---|---:|---:|---:|']
+    sfp_n, sfp_t = cost(['sfp'])
+    rows.append('| `sfp` alone (the rest on demand) | %d + all %d through `sfp` | about %s tokens | %.1f%% |'
+                % (sfp_n, len(catalog) - sfp_n, format(sfp_t, ','), 100.0 * sfp_t / window))
+    for name, members in cfg['profiles'].items():
+        k, tk = cost(sorted(set(members) | {'sfp'}))
+        rows.append('| `%s` preset | %d | about %s tokens | %.1f%% |' % (name, k, format(tk, ','), 100.0 * tk / window))
+    all_cats = [c for c in by_cat]
+    k, tk = cost(all_cats)
+    rows.append('| `everything` | %d | about %s tokens | %.1f%% |' % (k, format(tk, ','), 100.0 * tk / window))
+
+    # What one skill costs when it is actually used.
+    sizes = []
+    for s in catalog:
+        f = os.path.join(ROOT, s['path'], 'SKILL.md')
+        if os.path.isfile(f):
+            sizes.append(os.path.getsize(f) // 4)
+    sizes.sort()
+    return {
+        'SEARCH_N': str(n),
+        'SEARCH_TOP1': '%d%%' % round(100.0 * hits[1] / n) if n else 'n/a',
+        'SEARCH_TOP3': '%d%%' % round(100.0 * hits[3] / n) if n else 'n/a',
+        'SEARCH_TOP5': '%d%%' % round(100.0 * hits[5] / n) if n else 'n/a',
+        'COST_TABLE': '\n'.join(rows),
+        'BODY_MEDIAN': format(int(statistics.median(sizes)), ',') if sizes else 'n/a',
+        'BODY_P90': format(sizes[int(len(sizes) * 0.9)], ',') if sizes else 'n/a',
+        'SFP_TOKENS': format(sfp_t, ','),
+        'RATIO': str(round(tk / sfp_t)) if sfp_t else 'n/a',
+        'ALL_TOKENS': format(tk, ','),
+        'ALL_PERCENT': '%d' % round(100.0 * tk / window),
+    }
+
+
 def render_readme(cfg, cats, catalog):
     """Fill templates/README.md.tpl from the catalog; write README.md and draw the banners."""
     tpl = os.path.join(ROOT, 'templates', 'README.md.tpl')
@@ -270,6 +341,7 @@ def render_readme(cfg, cats, catalog):
     text = open(tpl, encoding='utf-8').read()
     values = {'TOTAL': str(total), 'NCATS': str(len(per_cat)), 'SOURCES': str(repos),
               'CATEGORY_TABLE': '\n'.join(rows), 'PRESET_TABLE': '\n'.join(prows)}
+    values.update(measure(cfg, cats, catalog))
     for key, value in values.items():
         text = text.replace('@@' + key + '@@', value)
     open(os.path.join(ROOT, 'README.md'), 'w', encoding='utf-8').write(text)
