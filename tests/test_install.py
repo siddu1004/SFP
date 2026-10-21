@@ -95,5 +95,60 @@ class InstallerTest(unittest.TestCase):
         self.assertEqual(os.listdir(self.skills) if os.path.isdir(self.skills) else [], [])
 
 
+class VSCodeAndRulesTest(InstallerTest):
+    """VS Code reads Copilot's skills folders and has its own mcp.json; `rules` writes a removable standing instruction."""
+
+    def run_install(self, *args):
+        return subprocess.run([sys.executable, '-I', INSTALL] + list(args), capture_output=True, text=True, env=self.env, timeout=120)
+
+    def test_vscode_is_the_copilot_skills_folder(self):
+        project = os.path.join(self.tmp.name, 'proj')
+        os.makedirs(project)
+        done = self.run_install('install', '--tools', 'vscode', '--categories', 'sfp', '--project', project)
+        self.assertEqual(done.returncode, 0, done.stderr)
+        self.assertEqual(sorted(os.listdir(os.path.join(project, '.github', 'skills'))), ['sfp', 'sfp-hive'])
+
+    def test_vscode_mcp_uses_the_servers_key_and_keeps_other_servers(self):
+        project = os.path.join(self.tmp.name, 'proj')
+        os.makedirs(os.path.join(project, '.vscode'))
+        path = os.path.join(project, '.vscode', 'mcp.json')
+        with open(path, 'w') as f:
+            json.dump({'servers': {'other': {'command': 'x'}}, 'inputs': []}, f)
+        self.assertEqual(self.run_install('mcp', '--tools', 'vscode', '--project', project).returncode, 0)
+        with open(path) as f:
+            cfg = json.load(f)
+        self.assertEqual(cfg['servers']['sfp']['type'], 'stdio')
+        self.assertIn('other', cfg['servers'])
+        self.assertNotIn('mcpServers', cfg)
+        self.run_install('mcp', '--tools', 'vscode', '--project', project, '--remove')
+        with open(path) as f:
+            self.assertEqual(list(json.load(f)['servers']), ['other'])
+
+    def test_rules_keep_the_users_text_and_come_out_cleanly(self):
+        project = os.path.join(self.tmp.name, 'proj')
+        os.makedirs(project)
+        path = os.path.join(project, 'AGENTS.md')
+        with open(path, 'w') as f:
+            f.write('# Mine\n\nkeep this\n')
+        self.run_install('rules', '--tools', 'codex', '--project', project)
+        self.run_install('rules', '--tools', 'codex', '--project', project)   # twice: still one block
+        with open(path) as f:
+            text = f.read()
+        self.assertEqual(text.count('<!-- sfp:start -->'), 1)
+        self.assertTrue(text.startswith('# Mine\n\nkeep this\n'))
+        self.assertIn('select_skills', text)
+        self.run_install('rules', '--tools', 'codex', '--project', project, '--remove')
+        with open(path) as f:
+            self.assertEqual(f.read(), '# Mine\n\nkeep this\n')
+
+    def test_rules_in_a_file_that_held_only_our_block_remove_the_file(self):
+        project = os.path.join(self.tmp.name, 'proj')
+        os.makedirs(project)
+        self.run_install('rules', '--tools', 'claude', '--project', project)
+        self.assertTrue(os.path.isfile(os.path.join(project, 'CLAUDE.md')))
+        self.run_install('rules', '--tools', 'claude', '--project', project, '--remove')
+        self.assertFalse(os.path.exists(os.path.join(project, 'CLAUDE.md')))
+
+
 if __name__ == '__main__':
     unittest.main()

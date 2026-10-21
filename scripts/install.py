@@ -9,6 +9,7 @@
   python3 scripts/install.py install --project .                  # into this project's tool folders
   python3 scripts/install.py uninstall --tools cursor
   python3 scripts/install.py mcp --tools cursor,claude            # register the SFP MCP server
+  python3 scripts/install.py rules --project .                    # standing instruction: use the hive on every substantial task
   python3 scripts/install.py apps list                            # programs some skills guide (OmniRoute, Strix...)
   python3 scripts/install.py apps install omniroute [--yes]       # plan first; --yes runs it
 
@@ -43,6 +44,17 @@ def h(*parts):
     return os.path.join(HOME, *parts)
 
 
+def vscode_user_dir():
+    """VS Code's per-user settings folder (it holds settings.json and mcp.json)."""
+    if sys.platform == 'darwin':
+        base = h('Library', 'Application Support')
+    elif os.name == 'nt':
+        base = os.environ.get('APPDATA') or h('AppData', 'Roaming')
+    else:
+        base = os.environ.get('XDG_CONFIG_HOME') or h('.config')
+    return os.path.join(base, 'Code', 'User')
+
+
 # tool: (label, folders whose existence means the tool is installed, global skills dir, project config dir)
 TOOLS = {
     'claude':      ('Claude Code',        [h('.claude')],                                 h('.claude', 'skills'),             '.claude'),
@@ -51,7 +63,7 @@ TOOLS = {
     'gemini':      ('Gemini CLI',         [h('.gemini')],                                 h('.gemini', 'skills'),             '.gemini'),
     'antigravity': ('Google Antigravity', [h('.gemini', 'antigravity'), h('.gemini', 'antigravity-cli'),
                                            h('.gemini', 'antigravity-ide')],              h('.gemini', 'config', 'skills'),   '.agent'),
-    'copilot':     ('GitHub Copilot',     [h('.copilot')],                                h('.copilot', 'skills'),            '.github'),
+    'copilot':     ('GitHub Copilot and VS Code', [h('.copilot'), vscode_user_dir()],                                    h('.copilot', 'skills'),            '.github'),
     'windsurf':    ('Windsurf',           [h('.codeium', 'windsurf')],                    h('.codeium', 'windsurf', 'skills'), '.windsurf'),
     'kiro':        ('Kiro',               [h('.kiro')],                                   h('.kiro', 'skills'),               '.kiro'),
     'opencode':    ('OpenCode',           [opencode_dir(), h('.opencode')],               os.path.join(opencode_dir(), 'skills'), '.opencode'),
@@ -88,7 +100,10 @@ def check(picked, choices, what):
 def pick_tools(value):
     if value in (None, '', 'auto'):
         return detected_tools()
-    return list(TOOLS) if value == 'all' else check(split(value), TOOLS, 'tool')
+    if value == 'all':
+        return list(TOOLS)
+    picked = ['copilot' if t == 'vscode' else t for t in split(value)]  # VS Code reads Copilot's skills folders
+    return check(list(dict.fromkeys(picked)), TOOLS, 'tool')
 
 
 def pick_categories(cat, args):
@@ -310,6 +325,28 @@ def cmd_mcp(args):
                 subprocess.run(['claude', 'mcp', 'remove', '--scope', 'user', 'sfp'], check=False)
             else:
                 subprocess.run(['claude', 'mcp', 'add', '--scope', 'user', 'sfp', '--', sys.executable, MCP_SERVER], check=False)
+        elif tool == 'copilot':
+            path = os.path.join(os.path.abspath(args.project), '.vscode', 'mcp.json') if args.project else os.path.join(vscode_user_dir(), 'mcp.json')
+            cfg = {}
+            if os.path.isfile(path):
+                try:
+                    with open(path, encoding='utf-8') as f:
+                        cfg = json.load(f)
+                except ValueError:   # VS Code allows comments in mcp.json; leave a file we cannot parse alone
+                    print(f'  {label}: {path} has comments or is not plain JSON, so I left it alone. Add this under "servers":\n'
+                          + json.dumps({'sfp': dict(mcp_entry(), type='stdio')}, indent=2))
+                    continue
+                shutil.copy(path, path + '.sfp-backup')
+            servers = cfg.setdefault('servers', {})   # VS Code's key is "servers", not "mcpServers"
+            if args.remove:
+                servers.pop('sfp', None)
+            else:
+                servers['sfp'] = dict(mcp_entry(), type='stdio')
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'w', encoding='utf-8') as f:
+                json.dump(cfg, f, indent=2)
+                f.write('\n')
+            print(f'  {label}: {"removed from" if args.remove else "added to"} {path}')
         elif tool in MCP_JSON:
             path = MCP_JSON[tool]
             cfg = {}
@@ -351,6 +388,73 @@ def cmd_mcp(args):
         print('\n  Restart the IDE, then ask it to use the sfp tools (search_skills, get_skill, find_api).')
 
 
+RULES_START, RULES_END = '<!-- sfp:start -->', '<!-- sfp:end -->'
+RULES_TEXT = RULES_START + '''
+## SFP skills
+
+At the start of a substantial task (build, fix, test, review, secure, deploy), use the `sfp-hive` skill, or the SFP MCP tool `select_skills` if it is connected, to pick the few skills that fit the task and this project. Read only those skills and follow them in the order given. When the task ends, report how each one went with `give_feedback` (helped, unhelpful, ignored, missing). For a single question, use the `sfp` skill to find one skill.
+''' + RULES_END + '\n'
+
+# Where each tool reads standing instructions: (user-level file, project file).
+RULES_FILES = {
+    'claude': (h('.claude', 'CLAUDE.md'), 'CLAUDE.md'),
+    'codex':  (h('.codex', 'AGENTS.md'), 'AGENTS.md'),
+    'gemini': (h('.gemini', 'GEMINI.md'), 'GEMINI.md'),
+}
+
+
+def rules_files(tools, project):
+    """The instruction files to put the block in. Tools with no file of their own share AGENTS.md in a project."""
+    files = []
+    for tool in tools:
+        user, proj = RULES_FILES.get(tool, (None, 'AGENTS.md'))
+        path = os.path.join(os.path.abspath(project), proj) if project else user
+        if path is None:
+            print(f'  {TOOLS[tool][0]}: no user-level instructions file. Run again with --project <folder>.')
+        elif path not in files:
+            files.append(path)
+    return files
+
+
+def with_rules(text, remove):
+    """text with the SFP block replaced, added at the end, or (remove) taken out. The rest is untouched."""
+    a = text.find(RULES_START)
+    b = text.find(RULES_END, a) if a >= 0 else -1
+    if a < 0 or b < 0:
+        if remove:
+            return text
+        return text.rstrip('\n') + ('\n\n' if text.strip() else '') + RULES_TEXT
+    end = b + len(RULES_END)
+    if text[end:end + 1] == '\n':
+        end += 1
+    before, after = text[:a].rstrip('\n'), text[end:].lstrip('\n')
+    if remove:
+        return before + ('\n\n' if before and after else ('\n' if before else '')) + after
+    return before + ('\n\n' if before else '') + RULES_TEXT + ('\n' + after if after else '')
+
+
+def cmd_rules(args):
+    """Add (or --remove) a short standing instruction so the agent uses the hive without being told each time."""
+    tools = pick_tools(args.tools)
+    if not tools:
+        sys.exit('No supported tool found. Name one with --tools.')
+    for path in rules_files(tools, args.project):
+        text = open(path, encoding='utf-8').read() if os.path.isfile(path) else ''
+        new = with_rules(text, args.remove)
+        if new == text:
+            print(f'  {path}: nothing to change')
+            continue
+        if text:
+            shutil.copy(path, path + '.sfp-backup')
+        if not new.strip():
+            os.remove(path)   # the file held only our block
+        else:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'w', encoding='utf-8') as f:
+                f.write(new)
+        print(f'  {path}: {"removed the SFP block" if args.remove else "SFP block written"}')
+
+
 def cmd_apps(rest):
     """`install.py apps status|install|update|start|list [ID] [--yes]`: set up the programs some skills guide."""
     sys.path.insert(0, os.path.join(ROOT, 'apps'))
@@ -363,8 +467,8 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == 'apps':
         cmd_apps(sys.argv[2:])
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('command', choices=['list', 'install', 'uninstall', 'mcp'])
-    ap.add_argument('--remove', action='store_true', help='with `mcp`: remove the sfp server instead of adding it')
+    ap.add_argument('command', choices=['list', 'install', 'uninstall', 'mcp', 'rules'])
+    ap.add_argument('--remove', action='store_true', help='with `mcp` or `rules`: remove what was added')
     ap.add_argument('--tools', help='comma-separated tools, "all", or "auto" (default: tools found on this machine)')
     ap.add_argument('--categories', help='comma-separated categories or "all"')
     ap.add_argument('--profile', help='starter (default), frontend-dev, backend-dev, mobile-dev, agent-builder, everything')
@@ -381,6 +485,8 @@ def main():
         cmd_install(cat, args)
     elif args.command == 'mcp':
         cmd_mcp(args)
+    elif args.command == 'rules':
+        cmd_rules(args)
     else:
         cmd_uninstall(args)
 

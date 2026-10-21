@@ -55,13 +55,15 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.3.0'
+VERSION = '3.4.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
 # (a Package.swift, a go.mod) may use any framework of it.
 LANGS = {v1._one(t) for t in ('python javascript typescript nodejs golang rust java kotlin swift dart php ruby '
                               'csharp fsharp cpp perl solidity arkts').split()}
+# Tools that sit beside any language: a skill about only these does not conflict with the project's language.
+TOOLS = {v1._one(t) for t in 'docker kubernetes terraform'.split()}
 IMPLIES = {v1._one(k): {v1._one(x) for x in vs} for k, vs in v1.IMPLIES.items()}
 
 SIGNALS = ('words', 'project', 'role', 'category', 'history')
@@ -89,6 +91,8 @@ def relation(tech, ctx_tech):
         return 'unasked'
     if tech & ctx_tech:
         return 'fit'
+    if tech <= TOOLS:
+        return 'near'   # a Docker skill suits a Python project as well as a Node one
     # A framework skill in a project that only shows its language: plausible, not wrong.
     if not (ctx_tech - LANGS) and any(IMPLIES.get(t, set()) & ctx_tech for t in tech):
         return 'near'

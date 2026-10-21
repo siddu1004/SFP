@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.4.0
+
+- **VS Code.** `--tools vscode` installs into Copilot's skill folders (`~/.copilot/skills`, or `.github/skills` with `--project`), and `install.sh mcp --tools vscode` writes the SFP server into VS Code's `mcp.json` under its `servers` key (your user file, or `.vscode/mcp.json` with `--project`), keeping other servers. VS Code is detected by its settings folder.
+- **A standing instruction so the agent uses the hive.** `install.sh rules --project .` writes a short marked block to `AGENTS.md` (and `CLAUDE.md` or `GEMINI.md`); without `--project` it writes the user-level file for Claude Code, Codex or Gemini CLI. `rules --remove` takes only that block out.
+- **A before and after test with real agents** (`docs/EFFECT.md`): no difference in score on five common tasks, a large one (0 of 7 to 7 of 7) on a tool the model does not know.
+- **Fix: a skill about only Docker, Kubernetes or Terraform is no longer ruled out by a project's language.** FreeLLMAPI was dropped for a task that said "Python SDK". Accuracy on the evaluation sets is unchanged.
+
 ## 3.3.0
 
 - **Plugins for more IDEs.** Every category is now also a Codex plugin (`.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json`), a Cursor plugin (`.cursor-plugin/marketplace.json`), and a GitHub Copilot CLI plugin (a `plugin.json` at each plugin root, and Copilot reads the existing Claude marketplace). A root `gemini-extension.json` makes the repo a Gemini CLI extension that serves every skill through the MCP server. The installer still covers the 16 IDEs that read a skills folder. Only the Claude Code manifest is checked with its own validator; the others follow each tool's documented format and are checked by tests for shape only.

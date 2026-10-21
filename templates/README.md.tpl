@@ -133,6 +133,10 @@ With `sfp` and the MCP server you still reach every skill, and you pay for a ski
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost, choice and learning, not quality of results. Learning is measured on a simulated user, not on real long-run use. The tasks and their correct answers were written by one person. The hive's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the held-out set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
 
+## Does It Change the Agent?
+
+Measured on small tests, with the checklists written before any agent ran. On common engineering tasks (Django, Go, Flask, React, FastAPI) a plain agent and a skill-guided one scored the same, because a strong model already knows those practices; the skill-guided answers did follow the skill's structure, such as tests first and a service layer. On a tool the model cannot know from training, the difference was large: asked to run FreeLLMAPI and call it with the fastest routing, the plain agent met none of seven checks and gave placeholders, and the skill-guided agent met all seven. The tests also found a hive bug (a Docker-tagged skill ruled out by a mention of Python), now fixed, and a miss that feedback is meant to fix. These are single runs on one model, so treat them as evidence, not a benchmark. [docs/EFFECT.md](docs/EFFECT.md) has every task, score and caveat.
+
 ## Who It Is For
 
 | You are | Install | You get, for example | Try asking |
@@ -193,6 +197,24 @@ Run these inside Claude Code:
 ```
 
 Replace `frontend` with any category from the [presets and categories](#pick-a-preset). Plugins update with `/plugin update`.
+</details>
+
+<details>
+<summary><b>VS Code</b></summary>
+
+VS Code's agent mode reads Copilot's skill folders and has its own MCP file, so the installer handles both. It counts VS Code as found when its settings folder exists.
+
+```bash
+# Skills, into every project you open (~/.copilot/skills), or into one project (.github/skills)
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- --tools vscode --profile frontend-dev
+./install.sh --tools vscode --project .
+
+# The SFP MCP server, so agent mode can search and read all skills: your user mcp.json, or .vscode/mcp.json with --project
+./install.sh mcp --tools vscode
+./install.sh mcp --tools vscode --project .
+```
+
+The server is written under VS Code's `servers` key and your other servers are kept. Reload the window, then open the Chat view in Agent mode and the `sfp` tools appear in the tools list. `--tools vscode` and `--tools copilot` are the same folder. I did not write a VS Code extension: the skill-contribution point for extensions is not in VS Code's published reference, and the folders and MCP file above are.
 </details>
 
 <details>
@@ -257,8 +279,9 @@ It registers `sfp` in each IDE it finds and keeps your other MCP servers. See [M
 2. **For a whole task, use the hive.** Say "use sfp-hive for this task" at the start, and again when the work moves on, from building to testing or to shipping.
 3. **For one skill, ask `sfp`.** "Use sfp to find a skill for adding rate limiting."
 4. **Name the skill when you know it.** "Use the `impeccable` skill to critique this page."
-5. **Tell it what helped.** When a task ends, report which skills helped, which did not and which were missing. The agent does this itself if you ask, and it is how the hive stops repeating mistakes.
-6. **Grow your install from use.** When you ask `sfp` for the same category three times, install it.
+5. **Make it the default.** Installed skills only help if the agent reaches for them. `install.sh rules --project .` adds a short, removable block to the project's `AGENTS.md` (and `CLAUDE.md` or `GEMINI.md` for those tools) that tells the agent to use the hive at the start of each substantial task and to report how it went. Without `--project` it writes your user-level file for Claude Code, Codex or Gemini CLI. `rules --remove` takes it out and keeps the rest of the file.
+6. **Tell it what helped.** When a task ends, report which skills helped, which did not and which were missing. The agent does this itself if you ask, and it is how the hive stops repeating mistakes.
+7. **Grow your install from use.** When you ask `sfp` for the same category three times, install it.
 
 Prompts to try:
 
@@ -338,7 +361,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 
 ## Supported IDEs
 
-Claude Code, Codex, Cursor, Gemini CLI, Antigravity, GitHub Copilot, Windsurf, Kiro, OpenCode, Pi, Grok Build, Qoder, Trae, Rovo Dev, Mistral Vibe and Hermes. Name them with `--tools`:
+Claude Code, Codex, Cursor, Gemini CLI, Antigravity, GitHub Copilot and VS Code, Windsurf, Kiro, OpenCode, Pi, Grok Build, Qoder, Trae, Rovo Dev, Mistral Vibe and Hermes. Name them with `--tools`:
 
 ```text
 claude codex cursor gemini antigravity copilot windsurf kiro opencode pi grok qoder trae rovodev vibe hermes
@@ -354,7 +377,7 @@ claude codex cursor gemini antigravity copilot windsurf kiro opencode pi grok qo
 | Cursor | `~/.cursor/skills` | `.cursor/skills` |
 | Gemini CLI | `~/.gemini/skills` | `.gemini/skills` |
 | Antigravity | `~/.gemini/config/skills` | `.agent/skills` |
-| GitHub Copilot | `~/.copilot/skills` | `.github/skills` |
+| GitHub Copilot and VS Code | `~/.copilot/skills` | `.github/skills` |
 | Windsurf | `~/.codeium/windsurf/skills` | `.windsurf/skills` |
 | Kiro | `~/.kiro/skills` | `.kiro/skills` |
 | OpenCode | `~/.config/opencode/skills` | `.opencode/skills` |

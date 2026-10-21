@@ -59,6 +59,15 @@ class SelectionRulesTest(unittest.TestCase):
         # Only a language in sight: a framework of that language is plausible.
         self.assertEqual(sel.relation({'swiftui'}, {'swift'}), 'near')
         self.assertEqual(sel.relation({'swiftui'}, {'swift', 'react'}), 'mismatch')
+        # A tool that sits beside any language never conflicts with the project's language.
+        self.assertEqual(sel.relation({'docker'}, {'python'}), 'near')
+        self.assertEqual(sel.relation({'docker'}, {'python', 'react'}), 'near')
+        self.assertEqual(sel.relation({'docker', 'django'}, {'react'}), 'mismatch')
+
+    def test_a_task_that_names_a_skill_picks_it_in_a_project_of_another_language(self):
+        # FreeLLMAPI is tagged docker; the task mentions Python. This used to rule it out as a mismatch.
+        names = [c['name'] for c in self.select('Run FreeLLMAPI and call it from the OpenAI Python SDK with the fastest routing', 'ml')['stack']]
+        self.assertIn('freellmapi', names)
 
     def test_response_function(self):
         self.assertAlmostEqual(sel.respond(0.5, 0.5), 0.5)
