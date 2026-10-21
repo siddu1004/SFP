@@ -419,7 +419,7 @@ The README, banner, `plugins/`, `catalog.json` and `SKILLS.md` are generated. Ed
 
 ## Sources and Licenses
 
-Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md) lists every source, and each category folder holds copies of its licenses in `plugins/<category>/LICENSES/`. The full skill list is in [SKILLS.md](SKILLS.md).
+SFP's own code (the installer, sync script, MCP server, router skill, tests and README) is under the [MIT License](LICENSE). That covers only what SFP wrote. Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md) lists every source, and each category folder holds copies of its licenses in `plugins/<category>/LICENSES/`. The full skill list is in [SKILLS.md](SKILLS.md).
 
 <details>
 <summary>Where every source landed (23 sources)</summary>

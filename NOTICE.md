@@ -1,5 +1,7 @@
 # Third-party notices
 
+SFP's own code is under the MIT License in [LICENSE](LICENSE). That license does not cover the third-party skills below.
+
 SFP collects skills written by other people. Each skill keeps the license of the project it came from, and each category folder holds copies of those licenses in `plugins/<category>/LICENSES/`.
 
 | Source | License | Notes |
