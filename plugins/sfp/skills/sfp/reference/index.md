@@ -637,8 +637,7 @@ Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 
 AI job search: evaluate offers, tailor CVs, scan portals, track applications.
 
-Runs from its own checkout; the installer sets it up (see the SFP README).
-
+- `career-ops`: Open-source AI job search agent -- evaluate offers, generate CVs, scan portals, track applications. Use when the user pastes a job URL or JD, asks to scan po...
 
 ## memory
 

@@ -1,0 +1,23 @@
+From 8c93ec8fce56be548ccc81cb6e217b2d60bf61f3 Mon Sep 17 00:00:00 2001
+From: siddu1004 <siddardh.vanguri@gmail.com>
+Date: Tue, 20 Oct 2026 07:17:59 +0000
+Subject: [PATCH 3/4] docs(changelog): add fragment for cloud sync scheduler
+ fix
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_016J5NxeHyi54u5AwHmXe7KM
+---
+ changelog.d/fixes/1-cloud-sync-scheduler-auth.md | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 changelog.d/fixes/1-cloud-sync-scheduler-auth.md
+
+diff --git a/changelog.d/fixes/1-cloud-sync-scheduler-auth.md b/changelog.d/fixes/1-cloud-sync-scheduler-auth.md
+new file mode 100644
+index 000000000..cf9a26386
+--- /dev/null
++++ b/changelog.d/fixes/1-cloud-sync-scheduler-auth.md
+@@ -0,0 +1 @@
++- **fix(cloud-sync):** Scheduled cloud sync now runs in-process via `syncToCloud()` instead of an unauthenticated self-fetch of `POST /api/sync/cloud`, which returned 401 whenever a dashboard password was set, so automatic sync silently never ran; scheduled-sync failures are now logged ([#1](https://github.com/siddu1004/OmniRoute/pull/1))
+-- 
+2.43.0
+

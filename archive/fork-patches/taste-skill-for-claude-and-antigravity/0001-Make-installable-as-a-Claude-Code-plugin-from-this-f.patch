@@ -1,0 +1,33 @@
+From bc84fde543be648e26b6b04d275fc23a87491e1c Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 08:36:33 +0000
+Subject: [PATCH] Make installable as a Claude Code plugin from this fork
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Q163nntWKTcJXVLR5y449X
+---
+ README.md | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/README.md b/README.md
+index 342165b..9b18267 100644
+--- a/README.md
++++ b/README.md
+@@ -31,10 +31,12 @@ I'd love to hear your thoughts! If you have suggestions or find any bugs:
+ ### Claude Code Plugin (Recommended)
+ 
+ ```
+-/plugin marketplace add irfanfaraaz/taste-skill-plugin
+-/plugin install taste-skill
++/plugin marketplace add siddu1004/taste-skill-for-claude-and-antigravity
++/plugin install taste-skill@taste-skill-marketplace
+ ```
+ 
++On Claude Code 2.1.275 or later this is one step: `/plugin install taste-skill --marketplace siddu1004/taste-skill-for-claude-and-antigravity`.
++
+ ### Agent Skills CLI
+ 
+ Works via CLI for all major AI coding agents (Cursor, Antigravity, Codex, Windsurf, Copilot, etc.):
+-- 
+2.43.0
+

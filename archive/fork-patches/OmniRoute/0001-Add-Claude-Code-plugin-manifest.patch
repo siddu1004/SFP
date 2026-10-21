@@ -1,0 +1,51 @@
+From 930e314da7179200be0ba173ba3712f7ae6f48b3 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 17 Oct 2026 14:12:21 +0000
+Subject: [PATCH 1/4] Add Claude Code plugin manifest
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019WgddaYirrNrzZUPCodg3D
+---
+ .claude-plugin/marketplace.json | 14 ++++++++++++++
+ .claude-plugin/plugin.json      |  8 ++++++++
+ 2 files changed, 22 insertions(+)
+ create mode 100644 .claude-plugin/marketplace.json
+ create mode 100644 .claude-plugin/plugin.json
+
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+new file mode 100644
+index 000000000..917e809a3
+--- /dev/null
++++ b/.claude-plugin/marketplace.json
+@@ -0,0 +1,14 @@
++{
++  "name": "omniroute",
++  "description": "OmniRoute skills for Claude Code",
++  "owner": { "name": "siddu1004" },
++  "plugins": [
++    {
++      "name": "omniroute",
++      "description": "OmniRoute: 46 skills for routing every AI tool through one endpoint to 374 providers (CLI, routing, providers, auth, cache, MCP, A2A and more)",
++      "version": "1.0.0",
++      "source": "./",
++      "author": { "name": "OmniRoute" }
++    }
++  ]
++}
+diff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json
+new file mode 100644
+index 000000000..cfecebe32
+--- /dev/null
++++ b/.claude-plugin/plugin.json
+@@ -0,0 +1,8 @@
++{
++  "name": "omniroute",
++  "description": "OmniRoute: 46 skills for routing every AI tool through one endpoint to 374 providers (CLI, routing, providers, auth, cache, MCP, A2A and more)",
++  "version": "1.0.0",
++  "author": { "name": "OmniRoute" },
++  "repository": "https://github.com/siddu1004/OmniRoute",
++  "license": "MIT"
++}
+-- 
+2.43.0
+

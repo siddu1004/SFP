@@ -88,20 +88,13 @@
    "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
    "skills": 6
   },
+  "career": {
+   "description": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
+   "skills": 1
+  },
   "memory": {
    "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
    "skills": 30
-  },
-  "career": {
-   "description": "AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.",
-   "app": {
-    "repo": "siddu1004/career-ops-for-claude-skill",
-    "skill": ".agents/skills/career-ops",
-    "name": "career-ops",
-    "ref": "claude/claude-code-plugin",
-    "setup": "npm install"
-   },
-   "skills": 0
   },
   "session-memory": {
    "description": "Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker.",
@@ -5157,6 +5150,15 @@
    "source": "anthropics/skills",
    "license": "Apache-2.0",
    "path": "plugins/frontend/skills/web-artifacts-builder",
+   "variants": {}
+  },
+  {
+   "name": "career-ops",
+   "category": "career",
+   "description": "Open-source AI job search agent -- evaluate offers, generate CVs, scan portals, track applications. Use when the user pastes a job URL or JD, asks to scan portals, generate a CV/PDF, track applications, prepare for interviews, draft outreach/emails, or run any career-ops mode.",
+   "source": "career-ops-hq/career-ops",
+   "license": "MIT",
+   "path": "plugins/career/skills/career-ops",
    "variants": {}
   },
   {

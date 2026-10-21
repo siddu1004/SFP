@@ -177,6 +177,23 @@ def main():
             for src_file, dest_file in source.get('files', {}).items():
                 os.makedirs(os.path.dirname(os.path.join(staged, dest_file)), exist_ok=True)
                 shutil.copy(os.path.join(repo_dir, src_file), os.path.join(staged, dest_file))
+            if 'patch' in source:
+                # The template carries a patch for this repo: it must apply to the commit being integrated.
+                patch = os.path.join(ROOT, source['patch'])
+                check = subprocess.run(['git', '-C', repo_dir, 'apply', '--check', patch], capture_output=True, text=True)
+                if check.returncode != 0:
+                    sys.exit('%s: %s no longer applies to the upstream commit being integrated. Rebase the patch.\n%s'
+                             % (source['repo'], source['patch'], check.stderr.strip()))
+            sha = lock.get(source['repo'], '')
+            for d, _dirs, files in os.walk(staged):
+                for f in files:
+                    p = os.path.join(d, f)
+                    try:
+                        txt = open(p, encoding='utf-8').read()
+                    except (UnicodeDecodeError, OSError):
+                        continue
+                    if '@@COMMIT@@' in txt:
+                        open(p, 'w', encoding='utf-8').write(txt.replace('@@COMMIT@@', sha))
             add(staged, source, prefix)
         for pattern in source.get('skills', []):
             for skill_src in sorted(glob.glob(os.path.join(repo_dir, pattern))):

@@ -1,0 +1,102 @@
+From 02add73ede0864b33bdc7d8edbf3660a43e54206 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 08:36:33 +0000
+Subject: [PATCH] Make installable as a Claude Code plugin from this fork
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Q163nntWKTcJXVLR5y449X
+---
+ .claude-plugin/marketplace.json | 19 +++++++++++++++++++
+ .claude-plugin/plugin.json      | 13 +++++++++++++
+ .pl                             |  0
+ README.md                       | 11 +++++++++++
+ skills/emil-design-eng/SKILL.md |  2 +-
+ 5 files changed, 44 insertions(+), 1 deletion(-)
+ create mode 100644 .claude-plugin/marketplace.json
+ create mode 100644 .claude-plugin/plugin.json
+ delete mode 100644 .pl
+
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+new file mode 100644
+index 0000000..5f120da
+--- /dev/null
++++ b/.claude-plugin/marketplace.json
+@@ -0,0 +1,19 @@
++{
++  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
++  "name": "skills-claude-antigravity",
++  "owner": {
++    "name": "siddu1004"
++  },
++  "metadata": {
++    "description": "Emil Kowalski's design engineering skills, packaged as a Claude Code plugin."
++  },
++  "plugins": [
++    {
++      "name": "emil-design-skills",
++      "source": "./",
++      "description": "Design engineering skills by Emil Kowalski: animation building, review and audit, animation performance, Apple-style design, mobile-native web fixes, UI stress-testing, prototyping, library picking, Sonner, and modern Swift.",
++      "category": "design",
++      "keywords": ["design", "animation", "motion", "ui", "frontend"]
++    }
++  ]
++}
+diff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json
+new file mode 100644
+index 0000000..6430a95
+--- /dev/null
++++ b/.claude-plugin/plugin.json
+@@ -0,0 +1,13 @@
++{
++  "name": "emil-design-skills",
++  "description": "Design engineering skills by Emil Kowalski: animation building, review and audit, animation performance, Apple-style design, mobile-native web fixes, UI stress-testing, prototyping, library picking, Sonner, and modern Swift.",
++  "author": {
++    "name": "Emil Kowalski",
++    "url": "https://emilkowal.ski"
++  },
++  "homepage": "https://aiforui.dev/skills",
++  "repository": "https://github.com/siddu1004/skills-claude-antigravity",
++  "license": "MIT",
++  "keywords": ["design", "animation", "motion", "ui", "frontend", "react", "expo", "swift"],
++  "skills": "./skills/"
++}
+diff --git a/.pl b/.pl
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/README.md b/README.md
+index 3cc865e..f7766a3 100644
+--- a/README.md
++++ b/README.md
+@@ -23,6 +23,17 @@ You can stay up to date with my skills here:
+ 
+ ## Install
+ 
++### Claude Code plugin
++
++```
++/plugin marketplace add siddu1004/skills-claude-antigravity
++/plugin install emil-design-skills@skills-claude-antigravity
++```
++
++On Claude Code 2.1.275 or later this is one step: `/plugin install emil-design-skills --marketplace siddu1004/skills-claude-antigravity`.
++
++### Agent Skills CLI
++
+ ```bash
+ npx skills@latest add emilkowalski/skills
+ ```
+diff --git a/skills/emil-design-eng/SKILL.md b/skills/emil-design-eng/SKILL.md
+index 62ce902..1cdec6a 100644
+--- a/skills/emil-design-eng/SKILL.md
++++ b/skills/emil-design-eng/SKILL.md
+@@ -1,6 +1,6 @@
+ ---
+ name: emil-design-eng
+-description: This skill encodes Emil Kowalski's philosophy on UI polish, component design, animation decisions, and the invisible details that make software feel great.
++description: Emil Kowalski's design engineering philosophy on UI polish, component design, animation decisions, and the invisible details that make software feel great. Use when building or reviewing UI components for craft and feel, deciding whether and how something should animate, choosing easing, shadows, borders and spacing, or polishing an interface so it feels right. For building a specific animation use animate; for a strict motion review use review-animations.
+ ---
+ 
+ # Design Engineering
+-- 
+2.43.0
+

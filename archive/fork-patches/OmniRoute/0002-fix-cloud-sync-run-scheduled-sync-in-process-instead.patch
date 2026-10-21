@@ -1,0 +1,170 @@
+From 3c5fd7ba8d652604dc096e2d678c140c6831a555 Mon Sep 17 00:00:00 2001
+From: siddu1004 <siddardh.vanguri@gmail.com>
+Date: Tue, 20 Oct 2026 07:17:10 +0000
+Subject: [PATCH 2/4] fix(cloud-sync): run scheduled sync in-process instead of
+ an unauthenticated self-fetch
+
+The 15-minute cloud sync scheduler called POST /api/sync/cloud on its own
+server without credentials. That route requires auth, so once a dashboard
+password was set every scheduled sync got a 401 that was swallowed by the
+scheduler's catch-all, and automatic sync silently never ran. Manual sync
+from the dashboard still worked because it carries a session cookie.
+
+The route's "sync" action only calls syncToCloud(machineId), so the
+scheduler now calls it directly. Scheduled-sync failures are logged
+instead of discarded. Adds a regression test that fails on the old code.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_016J5NxeHyi54u5AwHmXe7KM
+---
+ src/shared/services/cloudSyncScheduler.ts | 31 +++-------
+ tests/unit/cloud-sync-scheduler.test.ts   | 74 +++++++++++++++++++++++
+ 2 files changed, 83 insertions(+), 22 deletions(-)
+ create mode 100644 tests/unit/cloud-sync-scheduler.test.ts
+
+diff --git a/src/shared/services/cloudSyncScheduler.ts b/src/shared/services/cloudSyncScheduler.ts
+index ec2605d0f..2ec5e6edf 100644
+--- a/src/shared/services/cloudSyncScheduler.ts
++++ b/src/shared/services/cloudSyncScheduler.ts
+@@ -1,14 +1,6 @@
+ import { getConsistentMachineId } from "@/shared/utils/machineId";
+ import { isCloudEnabled } from "@/lib/db/settings";
+-import { getRuntimePorts } from "@/lib/runtime/ports";
+-
+-const { dashboardPort } = getRuntimePorts();
+-
+-const INTERNAL_BASE_URL =
+-  process.env.BASE_URL ||
+-  process.env.NEXT_PUBLIC_BASE_URL ||
+-  process.env.NEXT_PUBLIC_APP_URL ||
+-  `http://localhost:${dashboardPort}`;
++import { syncToCloud } from "@/lib/cloudSync";
+ 
+ /**
+  * Cloud sync scheduler
+@@ -79,6 +71,7 @@ export class CloudSyncScheduler {
+         return result;
+       } catch (error) {
+         if (attempt === maxRetries) {
++          console.warn("[CloudSync] Scheduled sync failed:", (error as Error)?.message ?? error);
+           return null;
+         }
+ 
+@@ -89,7 +82,10 @@ export class CloudSyncScheduler {
+   }
+ 
+   /**
+-   * Perform sync via internal API route (handles token update to db.json)
++   * Perform sync in-process (syncToCloud also applies token updates locally).
++   * This used to self-fetch POST /api/sync/cloud without credentials, which the
++   * route rejected with 401 whenever a dashboard password was set, so scheduled
++   * sync silently never ran.
+    */
+   async sync() {
+     // Check if cloud is enabled
+@@ -100,19 +96,10 @@ export class CloudSyncScheduler {
+ 
+     await this.initializeMachineId();
+ 
+-    // Call internal API route which handles both sync and token update
+-    const response = await fetch(`${INTERNAL_BASE_URL}/api/sync/cloud`, {
+-      method: "POST",
+-      headers: { "Content-Type": "application/json" },
+-      body: JSON.stringify({ machineId: this.machineId, action: "sync" }),
+-    });
+-
+-    if (!response.ok) {
+-      const errorData = await response.json().catch(() => ({}));
+-      throw new Error(errorData.error || "Sync failed");
++    const result: any = await syncToCloud(this.machineId as string);
++    if (result?.error) {
++      throw new Error(result.error);
+     }
+-
+-    const result = await response.json();
+     return result;
+   }
+ 
+diff --git a/tests/unit/cloud-sync-scheduler.test.ts b/tests/unit/cloud-sync-scheduler.test.ts
+new file mode 100644
+index 000000000..a68d9e33e
+--- /dev/null
++++ b/tests/unit/cloud-sync-scheduler.test.ts
+@@ -0,0 +1,74 @@
++import test from "node:test";
++import assert from "node:assert/strict";
++import fs from "node:fs";
++import os from "node:os";
++import path from "node:path";
++
++// The scheduler used to self-fetch POST /api/sync/cloud without credentials,
++// which the route answers with 401 once a dashboard password is set, so
++// scheduled sync silently never ran. It must now sync in-process and talk to
++// CLOUD_URL directly.
++
++const TEST_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "omniroute-cloud-sync-scheduler-"));
++const ORIGINAL_DATA_DIR = process.env.DATA_DIR;
++const ORIGINAL_CLOUD_URL = process.env.CLOUD_URL;
++const ORIGINAL_FETCH = globalThis.fetch;
++
++process.env.DATA_DIR = TEST_DATA_DIR;
++process.env.CLOUD_URL = "https://cloud.example";
++if (!process.env.API_KEY_SECRET) {
++  process.env.API_KEY_SECRET = "test-cloud-sync-scheduler-secret-" + Date.now();
++}
++
++const coreDb = await import("../../src/lib/db/core.ts");
++const apiKeysDb = await import("../../src/lib/db/apiKeys.ts");
++const settingsDb = await import("../../src/lib/db/settings.ts");
++const { CloudSyncScheduler } = await import("../../src/shared/services/cloudSyncScheduler.ts");
++
++test.after(() => {
++  apiKeysDb.resetApiKeyState();
++  coreDb.resetDbInstance();
++  fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
++  globalThis.fetch = ORIGINAL_FETCH;
++  if (ORIGINAL_DATA_DIR === undefined) delete process.env.DATA_DIR;
++  else process.env.DATA_DIR = ORIGINAL_DATA_DIR;
++  if (ORIGINAL_CLOUD_URL === undefined) delete process.env.CLOUD_URL;
++  else process.env.CLOUD_URL = ORIGINAL_CLOUD_URL;
++});
++
++test("scheduled sync uploads to CLOUD_URL in-process even when login is required", async () => {
++  await settingsDb.updateSettings({ cloudEnabled: true, requireLogin: true, password: "hashed" });
++
++  const calls: string[] = [];
++  globalThis.fetch = async (url) => {
++    calls.push(String(url));
++    return new Response(JSON.stringify({ changes: {} }), { status: 200 });
++  };
++
++  const scheduler = new CloudSyncScheduler("machine-1");
++  const result = (await scheduler.sync()) as { success?: boolean };
++
++  assert.deepEqual(calls, ["https://cloud.example/sync/machine-1"]);
++  assert.equal(result.success, true);
++});
++
++test("scheduled sync surfaces upstream failures instead of reporting success", async () => {
++  await settingsDb.updateSettings({ cloudEnabled: true });
++  globalThis.fetch = async () => new Response("boom", { status: 500 });
++
++  const scheduler = new CloudSyncScheduler("machine-1");
++  await assert.rejects(() => scheduler.sync(), /Cloud sync failed/);
++  assert.equal(await scheduler.syncWithRetry(), null);
++});
++
++test("scheduled sync is a no-op while cloud sync is disabled", async () => {
++  await settingsDb.updateSettings({ cloudEnabled: false });
++  let called = false;
++  globalThis.fetch = async () => {
++    called = true;
++    return new Response("{}");
++  };
++
++  assert.equal(await new CloudSyncScheduler("machine-1").sync(), null);
++  assert.equal(called, false);
++});
+-- 
+2.43.0
+

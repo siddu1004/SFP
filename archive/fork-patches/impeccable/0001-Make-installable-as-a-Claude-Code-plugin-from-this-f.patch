@@ -1,0 +1,32 @@
+From 68a16bb7c980da128d72fe89c263e9fd1dbe3290 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 08:36:33 +0000
+Subject: [PATCH] Make installable as a Claude Code plugin from this fork
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Q163nntWKTcJXVLR5y449X
+---
+ README.md | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/README.md b/README.md
+index 8011ddf2b..88f1ba9e6 100644
+--- a/README.md
++++ b/README.md
+@@ -152,10 +152,11 @@ Requires VS Code 1.109.3+, Copilot Chat access, and a trusted local workspace. O
+ 
+ **Claude Code:**
+ ```bash
+-/plugin marketplace add pbakaus/impeccable
++/plugin marketplace add siddu1004/impeccable
++/plugin install impeccable@impeccable
+ ```
+ 
+-> Claude Code only. After adding the marketplace, open `/plugin` and install Impeccable from the list.
++> Claude Code only. On Claude Code 2.1.275 or later this is one step: `/plugin install impeccable --marketplace siddu1004/impeccable`.
+ 
+ **Grok Build:**
+ ```bash
+-- 
+2.43.0
+

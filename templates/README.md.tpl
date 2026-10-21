@@ -234,7 +234,7 @@ I tested it with Claude Code, including a real session that found and read a ski
 
 ## Good to Know
 
-- **career** runs from its own checkout in `~/.sfp/apps/career-ops`. Run `npm install` there once. Your CV, tracker and reports live in `~/career-ops`, so updates never touch them.
+- **career** is a launcher. The first time you use it, it clones the original career-ops project at a pinned commit into `~/.sfp/apps/career-ops` and applies a small patch (`templates/career/patches/data-root.patch`). Then run `npm install` there once. Your CV, tracker and reports live in `~/career-ops`, so updates never touch them.
 - **session-memory** needs Claude Code's hooks and a background worker, so other IDEs skip it. The `memory` skills expect claude-mem, so most need it installed.
 - **ai-gateway** skills drive an OmniRoute server. **security** skills drive the Strix CLI. Each skill explains how to set up what it needs.
 - **Impeccable** (in `frontend`) downloads its engine on first use.
@@ -263,7 +263,7 @@ Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md)
 
 Every skill in these repos is in SFP, except test fixtures and translated example copies. Repos with no skill of their own got one written for them. Plugins with no public repo are kept as snapshots in `vendor/`.
 
-SFP reads the original repos directly, and `sources.lock.json` records the exact commit of each one that was integrated. It does not depend on anyone's fork, except that `career` installs from a fork branch.
+SFP reads the original repos directly, and `sources.lock.json` records the exact commit of each one that was integrated. It does not depend on any fork. The extra commits the forks held are saved as patches in [archive/fork-patches](archive/fork-patches).
 
 | Source | Where it is in SFP |
 |---|---|
@@ -288,7 +288,7 @@ SFP reads the original repos directly, and `sources.lock.json` records the exact
 | task-observer, headroom | `agent-dev` |
 | cowork-plugin-management | `agent-dev` |
 | gia-chief-of-staff | `business-ops` |
-| career-ops-hq/career-ops | `career`, installed from its own repo |
+| career-ops-hq/career-ops | `career`: a launcher that sets up the project at a pinned commit with SFP's patch |
 
 **Left out on purpose:** anything whose license does not allow republishing. That covers Greenhouse's customer-only plugin, Anthropic's docx, pdf, pptx, xlsx and browser skills (all rights reserved), and the noncommercial-only `claude-mem-cowork` plugin.
 </details>

@@ -6,12 +6,12 @@
 </h1>
 
 <p align="center">
-  <b>SFP gives your AI coding agent 557 skills, sorted by what you build.</b><br>
+  <b>SFP gives your AI coding agent 558 skills, sorted by what you build.</b><br>
   Install a handful. One skill, <code>sfp</code>, finds the rest.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/skills-557-0f766e?style=flat-square&labelColor=3b4350" alt="557 skills">
+  <img src="https://img.shields.io/badge/skills-558-0f766e?style=flat-square&labelColor=3b4350" alt="558 skills">
   <img src="https://img.shields.io/badge/works_in-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Works in 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/installer-Python_3_only-0f766e?style=flat-square&labelColor=3b4350" alt="Installer needs only Python 3">
   <img src="https://img.shields.io/badge/licenses-MIT_and_Apache--2.0-0f766e?style=flat-square&labelColor=3b4350" alt="MIT and Apache-2.0 licenses">
@@ -41,12 +41,12 @@ On Windows or in Claude Code? See [Windows](#windows) and [Claude Code](#claude-
 
 A skill is a folder with a `SKILL.md` that an agent loads when a task matches.
 
-Agents read the description of every installed skill when a session starts. 557 descriptions is too many to carry. So you install `sfp` plus the categories you use daily, and `sfp` handles the rest:
+Agents read the description of every installed skill when a session starts. 558 descriptions is too many to carry. So you install `sfp` plus the categories you use daily, and `sfp` handles the rest:
 
 ```mermaid
 flowchart LR
     task([Your task]) --> sfp[[sfp skill]]
-    sfp --> index[Searches the index of 557 skills]
+    sfp --> index[Searches the index of 558 skills]
     index --> installed{Installed?}
     installed -- yes --> use([Uses the skill])
     installed -- no --> read[Reads it from the SFP checkout]
@@ -59,7 +59,7 @@ In words: `sfp` searches an index of every skill. If the skill is installed, you
 
 What you get:
 
-- **Skills sorted by what you build.** 23 categories, from frontend and backend to security and agents.
+- **Skills sorted by what you build.** 24 categories, from frontend and backend to security and agents.
 - **One install line for 16 IDEs and CLIs.** Claude Code gets plugins. Every other tool gets plain skill folders.
 - **Presets.** Pick `frontend-dev`, `backend-dev`, `mobile-dev` or `agent-builder`, or take them all.
 - **Safe installs.** The installer only touches folders it created. Your own skills stay as they are.
@@ -149,7 +149,7 @@ To update, run the same install line again. The installer replaces only folders 
 | `everything` | Every category. Heavy: expect your agent to carry hundreds of descriptions. | all |
 
 <details>
-<summary>All 23 categories</summary>
+<summary>All 24 categories</summary>
 
 | Category | Skills | What is in it |
 |---|---:|---|
@@ -175,8 +175,8 @@ To update, run the same install line again. The installer replaces only folders 
 | `web3` | 9 | DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security. |
 | `engineering` | 15 | General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring. |
 | `science-hardware` | 6 | Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware. |
+| `career` | 1 | AI job search: evaluate offers, tailor CVs, scan portals, track applications. |
 | `memory` | 30 | claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory. |
-| `career` | plugin | AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout. |
 | `session-memory` | plugin | Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker. |
 </details>
 
@@ -226,7 +226,7 @@ Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--js
 
 ## MCP Server
 
-SFP also runs as an MCP server. Any MCP client can search and read all 557 skills on demand, with nothing copied into a skills folder. This helps IDEs and agents that support MCP but not skills.
+SFP also runs as an MCP server. Any MCP client can search and read all 558 skills on demand, with nothing copied into a skills folder. This helps IDEs and agents that support MCP but not skills.
 
 Register it in your IDEs with one command. It fetches SFP first if you do not have it:
 
@@ -267,7 +267,7 @@ I tested it with Claude Code, including a real session that found and read a ski
 
 ## Good to Know
 
-- **career** runs from its own checkout in `~/.sfp/apps/career-ops`. Run `npm install` there once. Your CV, tracker and reports live in `~/career-ops`, so updates never touch them.
+- **career** is a launcher. The first time you use it, it clones the original career-ops project at a pinned commit into `~/.sfp/apps/career-ops` and applies a small patch (`templates/career/patches/data-root.patch`). Then run `npm install` there once. Your CV, tracker and reports live in `~/career-ops`, so updates never touch them.
 - **session-memory** needs Claude Code's hooks and a background worker, so other IDEs skip it. The `memory` skills expect claude-mem, so most need it installed.
 - **ai-gateway** skills drive an OmniRoute server. **security** skills drive the Strix CLI. Each skill explains how to set up what it needs.
 - **Impeccable** (in `frontend`) downloads its engine on first use.
@@ -296,7 +296,7 @@ Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md)
 
 Every skill in these repos is in SFP, except test fixtures and translated example copies. Repos with no skill of their own got one written for them. Plugins with no public repo are kept as snapshots in `vendor/`.
 
-SFP reads the original repos directly, and `sources.lock.json` records the exact commit of each one that was integrated. It does not depend on anyone's fork, except that `career` installs from a fork branch.
+SFP reads the original repos directly, and `sources.lock.json` records the exact commit of each one that was integrated. It does not depend on any fork. The extra commits the forks held are saved as patches in [archive/fork-patches](archive/fork-patches).
 
 | Source | Where it is in SFP |
 |---|---|
@@ -321,7 +321,7 @@ SFP reads the original repos directly, and `sources.lock.json` records the exact
 | task-observer, headroom | `agent-dev` |
 | cowork-plugin-management | `agent-dev` |
 | gia-chief-of-staff | `business-ops` |
-| career-ops-hq/career-ops | `career`, installed from its own repo |
+| career-ops-hq/career-ops | `career`: a launcher that sets up the project at a pinned commit with SFP's patch |
 
 **Left out on purpose:** anything whose license does not allow republishing. That covers Greenhouse's customer-only plugin, Anthropic's docx, pdf, pptx, xlsx and browser skills (all rights reserved), and the noncommercial-only `claude-mem-cowork` plugin.
 </details>

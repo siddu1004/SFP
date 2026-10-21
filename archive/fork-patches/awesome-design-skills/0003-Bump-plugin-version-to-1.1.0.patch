@@ -1,0 +1,41 @@
+From c20d67b7914f8ae238ce77a90508ab6397606a65 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 17 Oct 2026 13:56:23 +0000
+Subject: [PATCH 3/3] Bump plugin version to 1.1.0
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019WgddaYirrNrzZUPCodg3D
+---
+ .claude-plugin/marketplace.json | 2 +-
+ .claude-plugin/plugin.json      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+index da3bcce..9d9effc 100644
+--- a/.claude-plugin/marketplace.json
++++ b/.claude-plugin/marketplace.json
+@@ -8,7 +8,7 @@
+     {
+       "name": "awesome-design-skills",
+       "description": "68 visual design-style skills (vintage, brutalist, shadcn, etc.) from bergside/awesome-design-skills",
+-      "version": "1.0.0",
++      "version": "1.1.0",
+       "source": "./",
+       "author": {
+         "name": "bergside"
+diff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json
+index 3dbc586..b52d806 100644
+--- a/.claude-plugin/plugin.json
++++ b/.claude-plugin/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "awesome-design-skills",
+   "description": "68 visual design-style skills from bergside/awesome-design-skills",
+-  "version": "1.0.0",
++  "version": "1.1.0",
+   "author": { "name": "bergside" },
+   "homepage": "https://github.com/bergside/awesome-design-skills",
+   "repository": "https://github.com/siddu1004/awesome-design-skills",
+-- 
+2.43.0
+

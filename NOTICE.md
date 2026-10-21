@@ -24,11 +24,13 @@ SFP collects skills written by other people. Each skill keeps the license of the
 | Anthropic example skills (algorithmic-art, brand-guidelines, canvas-design, internal-comms, mcp-builder, slack-gif-creator, theme-factory, web-artifacts-builder) | Apache-2.0 | Anthropic |
 | [affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code) | MIT | |
 | [diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute) | MIT | |
-| [career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops) | MIT | Installed from siddu1004's fork branch that keeps your data across plugin updates |
+| [career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops) | MIT | Cloned at a pinned commit by the `career` launcher, with a small patch (`templates/career/patches/data-root.patch`) |
 | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Apache-2.0 | |
 
-`career` and `session-memory` are installed from their own repos and are not copied into SFP.
+`session-memory` is installed from its own repo and is not copied into SFP. The `career` launcher clones career-ops when you first use it.
 
 Plugins with no public source repo (the rows from teach-me down to the Anthropic example skills) are kept as snapshots in `vendor/`, each with its license file. Not included, because their licenses do not allow republishing: Greenhouse's plugin (customer use only), Anthropic's docx, pdf, pptx, xlsx and browser skills (all rights reserved), and claude-mem-cowork (noncommercial only).
 
 The tooling in `scripts/`, the router skill in `templates/sfp/` and the `public-apis` skill wrapper in `templates/public-apis/` were written for SFP.
+
+Commits that the author's forks held and the original projects did not are saved as patch files in `archive/fork-patches/`.

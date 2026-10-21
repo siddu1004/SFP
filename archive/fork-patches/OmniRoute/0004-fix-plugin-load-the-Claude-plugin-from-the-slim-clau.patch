@@ -1,0 +1,44 @@
+From eb044c85b95782b8065d21afe029bbac5baa27ff Mon Sep 17 00:00:00 2001
+From: siddu1004 <siddardh.vanguri@gmail.com>
+Date: Tue, 20 Oct 2026 14:18:51 +0000
+Subject: [PATCH 4/4] fix(plugin): load the Claude plugin from the slim
+ claude-plugin branch
+
+The marketplace pointed the plugin at the repo root, so syncing it pulled the whole ~940 MB app and claude.ai plugin sync failed. Point it at the claude-plugin branch (~0.7 MB, only .claude-plugin/ and skills/) and drop the pinned 1.0.0 version so updates are picked up by commit.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_016J5NxeHyi54u5AwHmXe7KM
+---
+ .claude-plugin/marketplace.json | 3 +--
+ .claude-plugin/plugin.json      | 1 -
+ 2 files changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+index 917e809a3..615ad73e9 100644
+--- a/.claude-plugin/marketplace.json
++++ b/.claude-plugin/marketplace.json
+@@ -6,8 +6,7 @@
+     {
+       "name": "omniroute",
+       "description": "OmniRoute: 46 skills for routing every AI tool through one endpoint to 374 providers (CLI, routing, providers, auth, cache, MCP, A2A and more)",
+-      "version": "1.0.0",
+-      "source": "./",
++      "source": { "source": "github", "repo": "siddu1004/OmniRoute", "ref": "claude-plugin" },
+       "author": { "name": "OmniRoute" }
+     }
+   ]
+diff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json
+index cfecebe32..a5a5215f3 100644
+--- a/.claude-plugin/plugin.json
++++ b/.claude-plugin/plugin.json
+@@ -1,7 +1,6 @@
+ {
+   "name": "omniroute",
+   "description": "OmniRoute: 46 skills for routing every AI tool through one endpoint to 374 providers (CLI, routing, providers, auth, cache, MCP, A2A and more)",
+-  "version": "1.0.0",
+   "author": { "name": "OmniRoute" },
+   "repository": "https://github.com/siddu1004/OmniRoute",
+   "license": "MIT"
+-- 
+2.43.0
+

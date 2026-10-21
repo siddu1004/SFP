@@ -1,0 +1,73 @@
+From 55893d0a3c2044d6faee62cee9a4ce5e6086d8b9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 17 Oct 2026 13:44:40 +0000
+Subject: [PATCH 1/3] Add Claude Code plugin manifest
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019WgddaYirrNrzZUPCodg3D
+---
+ .claude-plugin/marketplace.json | 18 ++++++++++++++++++
+ .claude-plugin/plugin.json      | 10 ++++++++++
+ README.md                       |  7 +++++++
+ 3 files changed, 35 insertions(+)
+ create mode 100644 .claude-plugin/marketplace.json
+ create mode 100644 .claude-plugin/plugin.json
+
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+new file mode 100644
+index 0000000..da3bcce
+--- /dev/null
++++ b/.claude-plugin/marketplace.json
+@@ -0,0 +1,18 @@
++{
++  "name": "awesome-design-skills",
++  "description": "Claude Code plugin packaging of bergside/awesome-design-skills: 68 visual design-style skills",
++  "owner": {
++    "name": "siddu1004"
++  },
++  "plugins": [
++    {
++      "name": "awesome-design-skills",
++      "description": "68 visual design-style skills (vintage, brutalist, shadcn, etc.) from bergside/awesome-design-skills",
++      "version": "1.0.0",
++      "source": "./",
++      "author": {
++        "name": "bergside"
++      }
++    }
++  ]
++}
+diff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json
+new file mode 100644
+index 0000000..3dbc586
+--- /dev/null
++++ b/.claude-plugin/plugin.json
+@@ -0,0 +1,10 @@
++{
++  "name": "awesome-design-skills",
++  "description": "68 visual design-style skills from bergside/awesome-design-skills",
++  "version": "1.0.0",
++  "author": { "name": "bergside" },
++  "homepage": "https://github.com/bergside/awesome-design-skills",
++  "repository": "https://github.com/siddu1004/awesome-design-skills",
++  "license": "MIT",
++  "keywords": ["skills", "design", "ui", "frontend"]
++}
+diff --git a/README.md b/README.md
+index 9466ece..ff35326 100644
+--- a/README.md
++++ b/README.md
+@@ -551,3 +551,10 @@ A huge thank you to the companies supporting our open-source work.
+ </table>
+ 
+ Want to see your logo here? [Become a sponsor](https://www.typeui.sh/sponsor).
++
++## Install as a Claude Code plugin
++
++```
++/plugin marketplace add siddu1004/awesome-design-skills
++/plugin install awesome-design-skills@awesome-design-skills
++```
+-- 
+2.43.0
+

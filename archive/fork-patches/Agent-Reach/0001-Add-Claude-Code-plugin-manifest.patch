@@ -1,0 +1,1289 @@
+From b3f635e56fc12683985ec2b82aaeb39660bdb345 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 17 Oct 2026 14:12:01 +0000
+Subject: [PATCH] Add Claude Code plugin manifest
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_019WgddaYirrNrzZUPCodg3D
+---
+ .claude-plugin/marketplace.json          |  14 ++
+ .claude-plugin/plugin.json               |   8 +
+ skills/agent-reach/SKILL.md              | 165 +++++++++++++
+ skills/agent-reach/SKILL_en.md           | 174 +++++++++++++
+ skills/agent-reach/references/career.md  | 184 ++++++++++++++
+ skills/agent-reach/references/dev.md     |  62 +++++
+ skills/agent-reach/references/finance.md |  46 ++++
+ skills/agent-reach/references/search.md  |  36 +++
+ skills/agent-reach/references/social.md  | 301 +++++++++++++++++++++++
+ skills/agent-reach/references/video.md   | 148 +++++++++++
+ skills/agent-reach/references/web.md     |  50 ++++
+ 11 files changed, 1188 insertions(+)
+ create mode 100644 .claude-plugin/marketplace.json
+ create mode 100644 .claude-plugin/plugin.json
+ create mode 100644 skills/agent-reach/SKILL.md
+ create mode 100644 skills/agent-reach/SKILL_en.md
+ create mode 100644 skills/agent-reach/references/career.md
+ create mode 100644 skills/agent-reach/references/dev.md
+ create mode 100644 skills/agent-reach/references/finance.md
+ create mode 100644 skills/agent-reach/references/search.md
+ create mode 100644 skills/agent-reach/references/social.md
+ create mode 100644 skills/agent-reach/references/video.md
+ create mode 100644 skills/agent-reach/references/web.md
+
+diff --git a/.claude-plugin/marketplace.json b/.claude-plugin/marketplace.json
+new file mode 100644
+index 0000000..7cbcf03
+--- /dev/null
++++ b/.claude-plugin/marketplace.json
+@@ -0,0 +1,14 @@
++{
++  "name": "agent-reach",
++  "description": "Agent Reach skill for Claude Code",
++  "owner": { "name": "siddu1004" },
++  "plugins": [
++    {
++      "name": "agent-reach",
++      "description": "Agent Reach: reach people across web, social, video and career platforms from your agent (CLI-driven skill)",
++      "version": "1.0.0",
++      "source": "./",
++      "author": { "name": "agent-reach" }
++    }
++  ]
++}
+diff --git a/.claude-plugin/plugin.json b/.claude-plugin/plugin.json
+new file mode 100644
+index 0000000..293a088
+--- /dev/null
++++ b/.claude-plugin/plugin.json
+@@ -0,0 +1,8 @@
++{
++  "name": "agent-reach",
++  "description": "Agent Reach: reach people across web, social, video and career platforms from your agent (CLI-driven skill)",
++  "version": "1.0.0",
++  "author": { "name": "agent-reach" },
++  "repository": "https://github.com/siddu1004/agent-reach",
++  "license": "MIT"
++}
+diff --git a/skills/agent-reach/SKILL.md b/skills/agent-reach/SKILL.md
+new file mode 100644
+index 0000000..462f4c2
+--- /dev/null
++++ b/skills/agent-reach/SKILL.md
+@@ -0,0 +1,165 @@
++---
++name: agent-reach
++description: >
++  MUST USE when user wants to 调研/research/搜索/search/查/找/look up anything
++  on the internet — e.g. 全网调研 X / 帮我调研一下 X / 查一下 X / 搜搜 X /
++  看看大家怎么评价 X / X 上有什么讨论 / research this topic。
++
++  Also MUST USE when user mentions any platform or shares any URL/链接:
++  小红书/xiaohongshu/xhs, Twitter/推特/X, B站/bilibili, Reddit, Facebook,
++  Instagram, V2EX, LinkedIn/领英/Boss直聘/招聘/求职/jobs, YouTube, GitHub code search, 小宇宙播客,
++  雪球/股票行情, RSS feeds, or any web URL.
++
++  16 platforms, multi-backend routing (OpenCLI / per-platform CLIs / APIs).
++  Zero config for 6 channels. Run `agent-reach doctor --json` to see which
++  backend serves each platform right now.
++
++  NOT for: 写报告/数据分析/翻译等内容加工（本 skill 只负责从互联网获取内容）；
++  发帖/评论/点赞等写操作；已有专门 skill 的平台（先用专门 skill）。
++
++  【路由方式】SKILL.md 包含路由表和常用命令，复杂场景需按需阅读对应分类的 references/*.md。
++  分类：search / social (小红书/推特/B站/V2EX/Reddit/Facebook/Instagram) / career(LinkedIn/Boss直聘) / dev(github) / web(网页/文章/RSS) / video(YouTube/B站/播客) / finance(雪球/股票)。
++metadata:
++  homepage: https://github.com/Panniantong/Agent-Reach
++---
++
++# Agent Reach — 互联网能力路由器
++
++16 平台、多后端。**本 skill 存在时必须用它访问这些平台，不要自己发明方案。**
++
++## 常驻规则（全程适用）
++
++1. **动手前先体检**：多后端/登录态平台（小红书/Reddit/B站/Twitter/Facebook/Instagram/Boss直聘）先跑
++   `agent-reach doctor --json`。`active_backend` 有值时按它选命令组；`active_backend: null`
++   表示 Doctor 为避免触发浏览器 Cookie 读取或远端写入而没有做实时验证，不代表后端不存在。
++   Doctor 结果是「某一时刻的快照」，通道/登录态可能已变化；执行只读命令前若怀疑失效，
++   按对应 reference 的「体检与恢复」runbook 重新确认（如 career.md 的 Boss直聘 CDP 排查）。
++2. **声明你在用什么**：开始干活前说一句「使用 agent-reach 的 X 平台 / Y 后端」。
++3. **失败按 references 里的重试链处理**，不要瞎猜命令。
++4. **全网调研类任务**：组合多平台（Exa 搜索 + Twitter/Reddit 看讨论 + 小红书/B站看中文场景），并行收集再汇总。
++5. **替用户盯版本**：完成一次较大的调研/多平台任务后，顺手跑
++   `agent-reach check-update`（很快，一个 API 调用）。有新版就在收尾汇报里附一句：
++   「Agent Reach 有新版 vX.Y.Z，复制这句话给我即可更新：帮我更新 Agent Reach：
++   https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/update.md」。
++   不要中断当前任务去更新，也不要重复提醒同一个版本。
++
++## 路由表
++
++| 用户意图 | 分类 | 详细文档 |
++|---------|------|---------|
++| 网页搜索/代码搜索 | search | [references/search.md](references/search.md) |
++| 小红书/推特/B站/V2EX/Reddit/Facebook/Instagram | social | [references/social.md](references/social.md) |
++| 招聘/职位/LinkedIn/Boss直聘 | career | [references/career.md](references/career.md) |
++| GitHub/代码 | dev | [references/dev.md](references/dev.md) |
++| 网页/文章/RSS | web | [references/web.md](references/web.md) |
++| YouTube/B站/播客字幕 | video | [references/video.md](references/video.md) |
++| 雪球/股票行情 | finance | [references/finance.md](references/finance.md) |
++
++## 零配置快速命令
++
++```bash
++# Exa 网页搜索
++mcporter call exa.web_search_exa query="query" numResults=5
++
++# 通用网页阅读
++curl -s "https://r.jina.ai/URL"
++
++# GitHub 搜索
++gh search repos "query" --sort stars --limit 10
++
++# YouTube 字幕（注意：B站不要用 yt-dlp，失败重试链见 video.md）
++yt-dlp --write-sub --write-auto-sub --skip-download -o "/tmp/%(id)s" "URL"
++
++# V2EX 热门
++curl -s "https://www.v2ex.com/api/topics/hot.json" -H "User-Agent: agent-reach/1.0"
++
++# B站搜索（bili-cli，无需登录）
++bili search "query" --type video -n 5
++```
++
++## 需登录态的平台（按 doctor 的 active_backend 选命令）
++
++Twitter 注意：`agent-reach configure twitter-cookies` 保存的 Cookie 只供
++`doctor` 检查配置是否齐全；`doctor` 不执行 `twitter status`，也不会设置当前
++Shell。直接运行 `twitter` 前，必须在子进程环境中显式提供
++`TWITTER_AUTH_TOKEN` 和 `TWITTER_CT0`，不得在日志或命令回显中暴露值。
++
++小红书注意：Agent Reach 不替用户登录，也不读取浏览器 Cookie。OpenCLI 只用
++用户已有且明确控制的 Chrome 会话；没有现成会话时不要自动登录，改用
++Cookie-Editor 手工导出后配置 xiaohongshu-mcp / 存量工具。
++
++Boss直聘配置触发：当用户说“帮我配 Boss直聘”时，先读取 `references/career.md`
++的 Boss 章节，然后在获得安装授权后运行
++`agent-reach install --env=local --system --channels=boss`。Agent 负责按系统启动
++只绑定 `127.0.0.1:9222` 的专用 Chrome；**拉起后第一步是暂停并让用户肉眼确认**
++窗口内是已登录状态（右上角有头像），未登录则让用户登录/扫码，用户确认后再运行
++`boss --cdp-url http://localhost:9222 login --cdp` 和 `agent-reach doctor` 验收。
++不要让用户自己研究端口参数。
++专用 Chrome profile 必须长期复用，不要每次创建，也不要默认改用日常主 Chrome。
++
++判断 CDP 浏览器登录态**不要信 `boss status`**（它只校验本地 session.enc，与
++浏览器登录态互不代表），以 `agent-reach doctor` 的浏览器 cookie 探测（wt2）
++为准，并配合用户肉眼确认。绝不用当前页 URL 判断登录态：
++`security-check` / `zhipin-security` / `_security_check` 安全校验页是 Boss 反爬挑战，
++与登录无关——已登录也会出现（带 CDP 调试端口的 Chrome 几乎必现）。看到它不要
++当成“未登录”，先跑 `agent-reach doctor` 看浏览器 cookie，再决定是否需要用户登录。
++搜索报 `AUTH_EXPIRED` 即浏览器未登录的 ground truth：直接走登录流程 + `login --cdp`，
++不要往安全校验方向解释。
++
++执行搜索时必须使用
++`boss --browser-source existing-browser --cdp-url http://localhost:9222 search ...`；
++遇到 `ENVIRONMENT_RISK` 立即停止，不刷新、不重新登录、不自动重试。
++
++```bash
++# Twitter 搜索（twitter-cli 首选；失败重试链见 social.md）
++twitter search "query" -n 10
++
++# Reddit（无零配置路径：OpenCLI 或 rdt-cli，必须登录态）
++opencli reddit search "query" -f yaml   # 桌面
++rdt search "query" --limit 10            # 存量/服务器
++
++# 小红书（桌面首选 OpenCLI）
++opencli xiaohongshu search "query" -f yaml
++
++# Facebook / Instagram（桌面 OpenCLI，复用浏览器登录态）
++opencli facebook search "query" -f yaml
++opencli facebook groups -f yaml
++opencli instagram search "query" -f yaml       # 搜用户
++opencli instagram user USERNAME -f yaml        # 读指定用户最近帖子
++```
++
++## 环境检查
++
++```bash
++# 检查可用 channel 与每个平台当前激活的后端
++agent-reach doctor --json
++```
++
++## OpenCLI 适配器发现
++
++路由表没有覆盖用户需要的平台或命令时，先用 `opencli list` 查已有适配器，再用
++`opencli <平台> --help` 查看公开命令。发现适配器只证明命令存在，不证明登录态或
++目标内容可用；仅在用户任务明确需要该平台时执行只读命令，并以实际非空内容验收。
++
++## 工作区规则
++
++**不要在 agent workspace 创建文件。** 使用 `/tmp/` 存放临时输出，`~/.agent-reach/` 存放持久数据。
++
++## 详细文档
++
++根据用户需求，阅读对应的详细文档：
++
++- [搜索工具](references/search.md) — Exa AI 搜索
++- [社交媒体](references/social.md) — 小红书, Twitter, B站, V2EX, Reddit, Facebook, Instagram（多后端/登录态命令组）
++- [职场招聘](references/career.md) — LinkedIn, Boss直聘
++- [开发工具](references/dev.md) — GitHub CLI
++- [网页阅读](references/web.md) — Jina Reader, RSS
++- [视频播客](references/video.md) — YouTube, B站, 小宇宙
++- [金融行情](references/finance.md) — 雪球股票行情、搜索、热门内容
++
++## 配置渠道
++
++如果某个 channel 需要配置，获取安装指南：
++https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/install.md
++
++用户只需提供 cookies，其他配置由 agent 完成。
+diff --git a/skills/agent-reach/SKILL_en.md b/skills/agent-reach/SKILL_en.md
+new file mode 100644
+index 0000000..4d7466d
+--- /dev/null
++++ b/skills/agent-reach/SKILL_en.md
+@@ -0,0 +1,174 @@
++---
++name: agent-reach
++description: >
++  MUST USE when user wants to research/search/look up/find anything on the
++  internet — e.g. "research this topic", "do a deep dive on X", "search the
++  web for X", "see what people say about X", "look this up".
++
++  Also MUST USE when user mentions any platform or shares any URL/link:
++  Twitter/X, Reddit, Facebook, Instagram, YouTube, GitHub, Bilibili, XiaoHongShu,
++  Xiaoyuzhou Podcast, LinkedIn/Boss直聘/jobs/recruiting, V2EX, Xueqiu (stocks), RSS.
++
++  16 platforms, multi-backend routing (OpenCLI / per-platform CLIs / APIs).
++  Zero config for 6 channels. Run `agent-reach doctor --json` to see which
++  backend serves each platform right now.
++
++  NOT for: writing reports/analysis/translation (this skill only FETCHES
++  internet content); posting/commenting/liking (write operations); platforms
++  that already have a dedicated skill installed (prefer that skill).
++metadata:
++  homepage: https://github.com/Panniantong/Agent-Reach
++---
++
++# Agent Reach — internet capability router
++
++16 platforms, multiple backends each. **When this skill exists, use it for
++these platforms — do not invent your own approach.**
++
++## Standing rules (apply for the whole session)
++
++1. **Health-check before acting**: for multi-backend/login-backed platforms (XiaoHongShu /
++   Reddit / Bilibili / Twitter / Facebook / Instagram), run `agent-reach doctor --json` first.
++   Use a populated `active_backend`; `active_backend: null` means Doctor deliberately skipped a
++   live probe to avoid browser-cookie reads or remote writes, not that no backend exists. Only when
++   the user's task requires that platform, run the reference's read-only command to verify it.
++2. **Announce what you use**: say "using agent-reach, platform X via backend Y"
++   before starting.
++3. **On failure, follow the retry chains in references/** — never guess
++   commands.
++4. **For broad research tasks**: combine platforms (Exa for web search +
++   Twitter/Reddit for discussions + XiaoHongShu/Bilibili for Chinese
++   perspectives), collect in parallel, then synthesize.
++5. **Watch versions for the user**: after finishing a substantial
++   multi-platform task, run `agent-reach check-update` (fast, one API call).
++   If a new version exists, append one line to your wrap-up: "Agent Reach
++   vX.Y.Z is available — paste this to me to update: 帮我更新 Agent Reach：
++   https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/update.md".
++   Never interrupt the current task to update; never nag about the same version twice.
++
++## Routing table
++
++| User intent | Category | Details |
++|---------|------|---------|
++| Web / code search | search | [references/search.md](references/search.md) |
++| XiaoHongShu / Twitter / Bilibili / V2EX / Reddit / Facebook / Instagram | social | [references/social.md](references/social.md) |
++| Jobs / LinkedIn | career | [references/career.md](references/career.md) |
++| GitHub / code | dev | [references/dev.md](references/dev.md) |
++| Web pages / articles / RSS | web | [references/web.md](references/web.md) |
++| YouTube / Bilibili / podcast transcripts | video | [references/video.md](references/video.md) |
++| Xueqiu / stock quotes | finance | [references/finance.md](references/finance.md) |
++
++## Zero-config quick commands
++
++```bash
++# Exa web search
++mcporter call exa.web_search_exa query="query" numResults=5
++
++# Read any web page
++curl -s "https://r.jina.ai/URL"
++
++# GitHub search
++gh search repos "query" --sort stars --limit 10
++
++# YouTube subtitles (never use yt-dlp for Bilibili; retry chain in video.md)
++yt-dlp --write-sub --write-auto-sub --skip-download -o "/tmp/%(id)s" "URL"
++
++# V2EX hot topics
++curl -s "https://www.v2ex.com/api/topics/hot.json" -H "User-Agent: agent-reach/1.0"
++
++# Bilibili search (bili-cli, no login needed)
++bili search "query" --type video -n 5
++```
++
++## Login-backed platforms (pick by doctor's active_backend)
++
++Twitter boundary: cookies saved by `agent-reach configure twitter-cookies`
++are used only by `doctor` to check whether explicit credentials are present.
++`doctor` does not run `twitter status` or configure the current shell. Before
++calling `twitter` directly, explicitly provide `TWITTER_AUTH_TOKEN` and
++`TWITTER_CT0` in the child-process environment without logging their values.
++
++XiaoHongShu boundary: Agent Reach must not log the user in or read browser
++cookies. OpenCLI may use only an existing Chrome session explicitly controlled
++by the user. If none exists, do not automate login; use a manual Cookie-Editor
++export with xiaohongshu-mcp or a legacy tool instead.
++
++```bash
++# Twitter search (twitter-cli preferred; retry chain in social.md)
++twitter search "query" -n 10
++
++# Reddit (NO zero-config path — OpenCLI or rdt-cli, login required)
++opencli reddit search "query" -f yaml   # desktop
++rdt search "query" --limit 10            # legacy/server
++
++# XiaoHongShu (desktop prefers OpenCLI)
++opencli xiaohongshu search "query" -f yaml
++
++# Facebook / Instagram (desktop OpenCLI, browser session)
++opencli facebook search "query" -f yaml
++opencli facebook groups -f yaml
++opencli instagram search "query" -f yaml       # user search
++opencli instagram user USERNAME -f yaml        # recent posts from one user
++```
++
++## Environment check
++
++```bash
++# Channel availability + which backend serves each platform
++agent-reach doctor --json
++```
++
++When the user asks “help me configure Boss Zhipin” / “帮我配 Boss直聘”, read the
++Boss section in `references/career.md`. After explicit install approval, run
++`agent-reach install --env=local --system --channels=boss`, launch the dedicated
++loopback-only Chrome profile for their OS, then **pause and have the user visually
++confirm** the window is logged in (avatar in the top-right); if not, have them log
++in manually. Then verify with `boss --cdp-url http://localhost:9222 login --cdp`
++and `agent-reach doctor`. Do not make the user assemble CDP flags.
++Keep reusing the dedicated Chrome profile; do not recreate it for every run or
++switch to the user's daily profile by default. Search with
++`boss --browser-source existing-browser --cdp-url http://localhost:9222 search ...`.
++On `ENVIRONMENT_RISK`, stop without refreshing, relogging, or retrying.
++
++**Do not trust `boss status` for CDP browser login state** — it only validates the
++local `~/.boss-agent/auth/session.enc` store, which does not represent the
++dedicated Chrome profile's cookies that `existing-browser` searches actually use. Use
++the browser `wt2` cookie probe in `agent-reach doctor` plus the user's visual
++confirmation. Never judge login state from the page URL: `security-check` /
++`zhipin-security` / `_security_check` pages are anti-bot challenges that appear
++even when logged in. `AUTH_EXPIRED` from a search is the ground truth for a
++logged-out browser — go straight to the login flow + `login --cdp` instead of
++interpreting it as a security check.
++
++## Discovering OpenCLI adapters
++
++When the routing table lacks a needed platform or command, run `opencli list`,
++then inspect `opencli <platform> --help`. Discovery proves only that an adapter
++exists, not that authentication or target content works. Run read-only commands
++only when the user's task requires that platform, and require non-empty content.
++
++## Workspace rules
++
++**Never create files in the agent workspace.** Use `/tmp/` for temporary
++output and `~/.agent-reach/` for persistent data.
++
++## Detailed references
++
++Read the matching file when you need specifics (commands above cover the
++common cases; references hold per-backend command groups, caveats, retry
++chains — note: reference docs are written in Chinese, commands are universal):
++
++- [Search](references/search.md) — Exa AI search
++- [Social](references/social.md) — XiaoHongShu, Twitter, Bilibili, V2EX, Reddit, Facebook, Instagram (multi-backend/login-backed groups)
++- [Career](references/career.md) — LinkedIn
++- [Dev](references/dev.md) — GitHub CLI
++- [Web](references/web.md) — Jina Reader, RSS
++- [Video](references/video.md) — YouTube, Bilibili, Xiaoyuzhou
++- [Finance](references/finance.md) — Xueqiu quotes, search and market content
++
++## Configure a channel
++
++If a channel needs setup, fetch the install guide:
++https://raw.githubusercontent.com/Panniantong/agent-reach/main/docs/install.md
++
++The user only provides cookies / one extension click; the agent does the rest.
+diff --git a/skills/agent-reach/references/career.md b/skills/agent-reach/references/career.md
+new file mode 100644
+index 0000000..2a96576
+--- /dev/null
++++ b/skills/agent-reach/references/career.md
+@@ -0,0 +1,184 @@
++# 职场招聘
++
++LinkedIn、Boss直聘。
++
++## LinkedIn
++
++```bash
++# 获取个人资料
++mcporter call linkedin.get_person_profile linkedin_username="username" sections="experience,education"
++
++# 搜索人才
++mcporter call linkedin.search_people keywords="AI engineer" location="Shanghai"
++
++# 获取公司资料
++mcporter call linkedin.get_company_profile company_name="openai" sections="posts,jobs"
++
++# 搜索职位
++mcporter call linkedin.search_jobs keywords="software engineer" location="Remote" max_pages=2
++```
++
++> **需要登录**: 首次使用前运行 `uvx mcp-server-linkedin@latest --login`，保存有效登录态。
++
++### Fallback 方案
++
++如果 MCP 不可用，可以用 Jina Reader：
++
++```bash
++curl -s "https://r.jina.ai/https://linkedin.com/in/username"
++```
++
++## Boss直聘
++
++当用户说“帮我配 Boss直聘”时，按本节完成安装、启动专用 Chrome、等待用户手动
++登录和最终验证。不要把 9222 端口等实现细节先甩给用户，也不要替用户输入账号、
++扫码或处理滑块。
++
++> **关键区分：登录门槛 ≠ 反爬安全校验。** zhipin.com 落地后可能停在三种页面：
++> 已登录的 `web/geek/job`、未登录的 `web/user/`（扫码登录/手机号登录）、以及
++> 反爬的**安全校验页**（URL 含 `security-check` / `zhipin-security` /
++> `_security_check`）。安全校验页与登录无关：**已登录也会出现**（带 CDP 调试
++> 端口的 Chrome 几乎必现）。绝不用当前页 URL 判断登录态。
++
++> **双登录态存储（existing-browser 严格 CDP 模式下以浏览器为准）。** 存在两个凭据存储，
++> **都不能删**，但认证的是不同通道：
++>
++> | 存储 | 角色 |
++> |---|---|
++> | `~/.boss-agent/auth/session.enc` | ① 硬性门槛：`_get_browser()` 无条件 `get_token()`，读不到直接 `AuthRequired`，CDP 搜索会在连浏览器前就失败；② **不是**搜索的认证凭据：CDP 复用真 Chrome 的 `contexts[0]` 时，它的 cookies 只在「无 context」分支注入，实际从未生效；③ httpx 通道（低危 op：`status`/`detail`/`cities`/`job_card_httpx`）真用它的 cookies + stoken，code 37 的 `force_refresh()` 也回写它 |
++> | 专用 Chrome profile 内的浏览器 cookie | CDP 模式下 search/greet 等高危 op 实际携带的凭据 |
++>
++> **`boss status` / `status --live` 只校验 session.enc**——即使报
++> `logged_in: true`，也不代表 CDP 浏览器已登录。所以：
++> 1. 拉起专用 Chrome 后，第一步必须**暂停并让用户肉眼确认**窗口内是已登录
++>    状态（右上角有头像），确认后才允许执行搜索；
++> 2. doctor 的 boss 行会直接探测浏览器内有无 wt2 cookie，以它为准；
++> 3. **`AUTH_EXPIRED` 是 ground truth**：搜索报它就直接走登录 runbook
++>    （用户在专用窗口登录 → `login --cdp`），禁止再往「安全校验」方向解释；
++>    `_security_check` 页面只在 `AUTH_EXPIRED` 不存在时才按滑块处理。
++> 4. 不要为了「清理旧凭据」删除 session.enc；要刷新它就跑 `login --cdp`。
++
++> **依赖状态**：所需公开 strict-CDP API 来自 boss-agent-cli 后继拆分 PR #403–#407
++> （#402/#382 已按维护者意见拆分），已全部合并入上游 master。Agent Reach 的安装器锁定
++> 上游固定提交
++> `4c991b77086a203173bf08a4cb64a23af6514fe6`，而不是会移动的 branch；上游发布正式版后
++> 应把安装器切回版本约束。
++
++体检（无副作用，不搜索）：
++
++```bash
++agent-reach doctor          # boss 行：off = 未装或 CDP 不通；warn = 链路就绪，
++                            # message 会注明浏览器内有无 wt2 登录 cookie（以浏览器为准）
++```
++
++搜索 + JD 使用公开 API（`browser_source` / `job_card_browser` / `JobItem.lid`）。
++因为 pipx/uv tool 是隔离环境，普通 `python` 不一定能 import 已安装工具；
++用 `uv run --with` 保证脚本和锁定依赖处于同一解释器环境：
++
++```bash
++uv run --isolated --no-project \
++  --with 'git+https://github.com/can4hou6joeng4/boss-agent-cli.git@4c991b77086a203173bf08a4cb64a23af6514fe6' \
++  python - <<'PY'
++from pathlib import Path
++
++from boss_agent_cli.api.client import AccountRiskError, BossClient, EnvironmentRiskError
++from boss_agent_cli.auth.manager import AuthManager
++from boss_agent_cli.platforms.zhipin import BossPlatform
++
++auth = AuthManager(Path.home() / ".boss-agent")
++
++# 严格 CDP 模式：复用已登录浏览器、CDP 失败立即抛错、永不 headless
++with BossClient(
++    auth,
++    cdp_url="http://localhost:9222",
++    browser_source="existing-browser",
++) as boss:
++    raw = boss.search_jobs("大模型", city="深圳", page=1)
++    if raw.get("code") != 0:
++        code, message = BossPlatform(boss).parse_error(raw)
++        raise RuntimeError(f"{code}: {message}")
++    items = raw.get("zpData", {}).get("jobList", [])
++    for item in items:
++        card = boss.job_card_browser(item["securityId"], item["lid"])
++        post_desc = card.get("zpData", {}).get("jobCard", {}).get(
++            "postDescription", ""
++        )
++        print(item.get("jobName"), post_desc)
++
++# AccountRiskError / EnvironmentRiskError → 立即停止，不自动重试；
++# 明确 token/stoken 过期的 code 37 由 BossClient 最多刷新并重试一次。
++PY
++```
++
++### 环境体检与恢复（抓取前必查）
++
++搜索前若 `agent-reach doctor` 报 boss 为 `off` 或 `warn`，按下面 runbook 排查，不要读源码瞎猜：
++
++1. **CDP 端口通不通**：
++   ```bash
++   curl -s http://localhost:9222/json/version   # 有 Browser 字段 = 端口通
++   ```
++
++2. **调试 Chrome 没开 / 已关**：按系统启动专用 Chrome（登录态独立，不污染日常浏览器）：
++   ```bash
++   # macOS
++   open -na "Google Chrome" --args --remote-debugging-address=127.0.0.1 \
++     --remote-debugging-port=9222 --user-data-dir="$HOME/.boss-chrome-profile" \
++     "https://www.zhipin.com/web/geek/job"
++
++   # Linux
++   google-chrome --remote-debugging-address=127.0.0.1 \
++     --remote-debugging-port=9222 --user-data-dir="$HOME/.boss-chrome-profile" \
++     "https://www.zhipin.com/web/geek/job"
++   ```
++
++   Windows PowerShell：
++   ```powershell
++   Start-Process chrome.exe -ArgumentList '--remote-debugging-address=127.0.0.1','--remote-debugging-port=9222',"--user-data-dir=$env:USERPROFILE\.boss-chrome-profile",'https://www.zhipin.com/web/geek/job'
++   ```
++
++   只绑定回环地址。任何能访问 9222 的进程都能完全控制该 Chrome；不要监听公网。
++   这个专用 profile 要长期复用，以保留稳定登录态；不要每次运行时删除或新建，
++   也不要默认切换到日常主 Chrome。不使用时关闭这个专用窗口。
++
++   **拉起后第一步：暂停并让用户肉眼确认窗口内是已登录状态（右上角有头像）。**
++   不要用 `boss status` 代替这一步——它只校验本地 session.enc，不代表浏览器。
++
++3. **用户手动登录（浏览器未登录时）**：判定以 doctor 的浏览器 cookie 探测为准
++   （无 wt2 = 浏览器未登录），其次才是用户肉眼确认；`boss status` 只作参考。
++   让用户在这个专用窗口登录或扫码。用户确认完成后，保存 CDP 登录态：
++   ```bash
++   boss --cdp-url http://localhost:9222 login --cdp
++   ```
++
++   若窗口停在安全校验页（`security-check` / `zhipin-security`），这是反爬挑战、
++   不是登录页：等它自动放行或让用户手动过一下滑块即可，不要当成“未登录”去
++   重新扫码登录。
++
++4. **登录态是否有效**（浏览器 cookie 探测 + stoken 是否过期）：
++   ```bash
++   agent-reach doctor     # 看 boss 行 message 里的浏览器 wt2 cookie 探测结果
++   boss status            # 只反映本地 session.enc，仅作参考
++   ```
++
++5. **错误码处置**（搜索/取 JD 时）：
++   - `AUTH_EXPIRED`（用户未登录）→ **ground truth**：CDP 浏览器未登录（不管
++     `boss status` 说什么），直接走第 3 步登录流程 + `login --cdp`，禁止往
++     「安全校验」方向解释；
++   - code 36（ACCOUNT_RISK）→ 立即停，手动到 BOSS 页面处理，不可自动重试；
++   - code 9（RATE_LIMITED）→ 冷却后重试；
++   - code 37 + `环境存在异常` → `ENVIRONMENT_RISK`，立即停止，不刷新 Token、不重新登录、不自动重试；
++   - 只有文案明确表示 token/stoken 过期的 code 37 才是 `TOKEN_REFRESH_FAILED`；客户端最多自动刷新并重试一次，仍失败再重新登录。
++
++用户要求开始搜索时，Agent 必须指定严格 CDP 模式（全局选项放在子命令之前）：
++
++```bash
++boss --browser-source existing-browser --cdp-url http://localhost:9222 search "大模型" --city 广州 --page 1
++```
++
++不要无提示连续翻页。boss-agent-cli PR #383 为跨 CLI 进程的普通搜索增加持久
++5–10 秒列表预算；该 PR 合并发布前，Agent 仍应主动串行、降频调用。
++
++> **等待属预期，不是卡死**：连续搜索命中节流时，boss-agent-cli 会静默等待 5–10 秒
++> （TTY 下会显示「节流等待 Ns…」提示；Agent Reach 以 `--json` 调用，看不到该提示）。
++> 等待窗口内不要重试、不要拉起新浏览器、不要切换 profile。
+diff --git a/skills/agent-reach/references/dev.md b/skills/agent-reach/references/dev.md
+new file mode 100644
+index 0000000..ca24762
+--- /dev/null
++++ b/skills/agent-reach/references/dev.md
+@@ -0,0 +1,62 @@
++# 开发工具
++
++GitHub CLI 
++
++## GitHub (gh CLI)
++
++GitHub 官方命令行工具，用于仓库、Issue、PR、Actions、Release 以及 API 访问。
++
++```bash
++# 认证
++gh auth login
++gh auth status
++
++# 搜索
++gh search repos "query" --sort stars --limit 10
++gh search code "query" --language python
++
++# 仓库
++gh repo view owner/repo
++gh repo clone owner/repo
++gh repo create my-repo --private
++gh repo fork owner/repo
++gh repo fork owner/repo --clone
++gh repo sync owner/repo
++
++# Issues
++gh issue list -R owner/repo --state open
++gh issue view 123 -R owner/repo
++gh issue create -R owner/repo --title "Title" --body "Body"
++
++# Pull Requests
++gh pr list -R owner/repo --state open
++gh pr view 123 -R owner/repo
++gh pr create -R owner/repo --title "Title" --body "Body"
++gh pr checks 123 --repo owner/repo
++
++# Actions / CI
++gh run list --repo owner/repo --limit 10
++gh run view <run-id> --repo owner/repo
++gh run view <run-id> --repo owner/repo --log-failed
++gh workflow list --repo owner/repo
++
++# Releases
++gh release list -R owner/repo
++gh release create v1.0.0
++
++# API
++gh api /user
++gh api repos/owner/repo
++
++# JSON 输出
++gh issue list --repo owner/repo --json number,title --jq '.[] | "\(.number): \(.title)"'
++```
++
++
++## 选择指南
++
++| 工具 | 来源 | 用途 |
++|-----|------|------|
++| gh CLI | agent-reach | Git 操作 |
++| zread | my-mcp-tools | 读仓库内容 |
++| context7 | my-mcp-tools | 查技术文档 |
+diff --git a/skills/agent-reach/references/finance.md b/skills/agent-reach/references/finance.md
+new file mode 100644
+index 0000000..bebfce9
+--- /dev/null
++++ b/skills/agent-reach/references/finance.md
+@@ -0,0 +1,46 @@
++# 金融行情
++
++雪球股票行情、搜索与热门内容。行情可能延迟，不构成投资建议。
++
++## 先检查状态
++
++```bash
++agent-reach doctor --json
++```
++
++`xueqiu.active_backend` 有值时按该后端使用；值为 `null` 只表示 Doctor 没有完成
++实时内容验证。雪球需要已登录会话或最小 Cookie，不能把 HTTP 400 当成股票不存在。
++
++## OpenCLI（桌面已有 Chrome 登录态时优先）
++
++```bash
++# 验证当前登录态
++opencli xueqiu whoami -f yaml
++
++# 股票搜索与实时行情
++opencli xueqiu search "英伟达" -f yaml
++opencli xueqiu stock NVDA -f yaml
++
++# 热门内容与热门股票
++opencli xueqiu hot -f yaml
++opencli xueqiu hot-stock -f yaml
++
++# 查看全部只读命令
++opencli xueqiu --help
++```
++
++OpenCLI 只复用用户已经存在且明确控制的浏览器会话。不要自动执行
++`opencli xueqiu login`；没有现成登录态时，让用户先在 Chrome 登录，或显式导入
++雪球所需的最小 Cookie：
++
++```bash
++agent-reach configure --from-browser chrome --platform xueqiu
++```
++
++该配置只读取并保存 `xq_a_token`，不会顺带采集其他平台 Cookie。
++
++## 验收与失败处理
++
++- 以返回股票名称、代码、价格或非空内容列表为成功；退出码 0 但字段为空不算成功。
++- HTTP 400 通常是会话/Cookie 问题，不表示股票代码不存在。
++- `whoami` 成功而 `stock`/`hot` 失败时，按适配器解析或平台接口问题报告，不要误诊成未登录。
+diff --git a/skills/agent-reach/references/search.md b/skills/agent-reach/references/search.md
+new file mode 100644
+index 0000000..d571c2e
+--- /dev/null
++++ b/skills/agent-reach/references/search.md
+@@ -0,0 +1,36 @@
++# 搜索工具
++
++Exa AI 搜索引擎。
++
++## Exa AI 搜索
++
++高质量 AI 搜索引擎，适合查找技术文档、官方示例和相关网页。
++
++```bash
++mcporter call exa.web_search_exa query="query" numResults=5
++mcporter call exa.web_search_exa query="library API code example" numResults=5
++```
++
++### 使用场景
++
++| 场景 | 参数 |
++|-----|------|
++| 网页搜索 | `web_search_exa(query: "...", numResults: 5)` |
++| 技术/代码资料 | `web_search_exa(query: "框架名 API 示例", numResults: 5)` |
++
++> Exa MCP 的 `get_code_context_exa` 已弃用且默认不注册。代码问题也使用
++> `web_search_exa`；需要精确搜索仓库内容时，改用 `dev.md` 中的 GitHub 搜索。
++
++### 特点
++
++- 擅长英文内容和技术文档
++- 可通过查询词定位官方文档和代码示例
++- 结果质量高
++
++## 与其他搜索工具对比
++
++| 工具 | 来源 | 适用场景 |
++|-----|------|---------|
++| Exa | agent-reach | 英文/技术/代码搜索 |
++| 智谱搜索 | my-mcp-tools | 中文搜索 |
++| GitHub 搜索 | agent-reach (dev.md) | 仓库/代码搜索 |
+diff --git a/skills/agent-reach/references/social.md b/skills/agent-reach/references/social.md
+new file mode 100644
+index 0000000..a2b6f47
+--- /dev/null
++++ b/skills/agent-reach/references/social.md
+@@ -0,0 +1,301 @@
++# 社交媒体 & 社区
++
++小红书、Twitter/X、B站、V2EX、Reddit、Facebook、Instagram。
++
++## 小红书 / XiaoHongShu（多后端）
++
++小红书有三个后端，**先跑 `agent-reach doctor --json` 看 xiaohongshu 的 `active_backend` 是哪个**，再用对应命令组。
++
++### 后端 A：OpenCLI（桌面首选）
++
++```bash
++# 搜索笔记
++opencli xiaohongshu search "query" -f yaml
++
++# 读笔记正文+互动数据（用搜索结果里的完整 URL，含 xsec_token）
++opencli xiaohongshu note "NOTE_URL" -f yaml
++
++# 评论（支持楼中楼）
++opencli xiaohongshu comments NOTE_ID -f yaml
++
++# 首页推荐 feed
++opencli xiaohongshu feed -f yaml
++
++# 用户主页公开笔记
++opencli xiaohongshu user USER_ID -f yaml
++```
++
++> 要求 Chrome 打开且装了 OpenCLI 扩展。OpenCLI 只使用用户已经存在且明确控制
++> 的 Chrome 会话；Agent Reach 不替用户登录，也不读取浏览器 Cookie。
++> `agent-reach configure xhs-cookies` 不会把 Cookie 注入 OpenCLI。
++> 如果没有现成会话，不要自动登录；改走后端 B/C，并按对应的
++> Cookie-Editor 手工导出流程配置。
++
++### 后端 B：xiaohongshu-mcp（服务器场景）
++
++```bash
++# 认证前先让用户用 Cookie-Editor 手工导出，再显式导入
++agent-reach configure xhs-cookies
++
++# 只读检查当前状态
++mcporter call xiaohongshu.check_login_status --timeout 120000
++
++# 搜索
++mcporter call xiaohongshu.search_feeds keyword="query" --timeout 120000
++
++# 笔记详情+评论（feed_id 和 xsec_token 从搜索结果取）
++mcporter call xiaohongshu.get_feed_detail feed_id="..." xsec_token="..." --timeout 120000
++```
++
++> 首次调用会自动下载约 150MB 无头浏览器，务必带 `--timeout 120000`。
++> 认证只走 Cookie-Editor 手工导出；导入后先运行 `check_login_status`。
++> 该显式命令会保存/导入用户提供的 xiaohongshu.com 同域 Cookie 集，用户应
++> 确认范围；非 xiaohongshu.com 域 Cookie 会被忽略。
++
++### 后端 C：xhs-cli（存量备选，上游 2026-03 起停更）
++
++```bash
++xhs search "query"          # 搜索
++xhs read NOTE_ID_OR_URL     # 读笔记（必须用搜索结果中的 URL/ID，不能裸 note_id）
++xhs comments NOTE_ID_OR_URL # 评论
++xhs hot                     # 热门
++xhs feed                    # 推荐
++```
++
++> 已知不稳定：`xhs user` / `xhs user-posts` / `xhs favorites` 可能返回 API error（上游停更无人修）。新装用户建议直接走后端 A/B。
++
++### 通用注意事项
++
++> **认证边界**: Agent Reach 不得替用户执行小红书登录，也不得读取浏览器
++> Cookie。OpenCLI 只能使用用户已有且明确控制的 Chrome 会话；
++> xiaohongshu-mcp / 存量工具使用 Cookie-Editor 手工导出。
++>
++> **xsec_token 限制**: 小红书强制 xsec_token 机制，**不能直接用裸 note_id 去读**。正确流程：先搜索/feed 拿结果，再用结果中的完整 URL/ID 去读。三个后端都一样。
++>
++> **频率控制**: 高频请求（批量搜索、深翻评论）会触发验证码，平台限制无法绕过。每次操作间隔 2-3 秒。
++>
++> **写操作（发帖/评论/点赞）**: 建议只读。xhs-cli v0.6.x 写操作可能因签名问题返回 406。
++
++## Twitter/X (twitter-cli)
++
++### 认证前置条件
++
++`agent-reach configure twitter-cookies` 通过隐藏输入保存的 Cookie 只供
++`agent-reach doctor` 检查显式凭据是否齐全。`doctor` 不执行上游
++`twitter status`，也不会设置当前 Shell。运行下面任何 `twitter` 命令前，
++必须在同一个 Shell 或子进程环境中显式提供：
++
++```bash
++export TWITTER_AUTH_TOKEN="..."
++export TWITTER_CT0="..."
++```
++
++### 稳定命令
++
++```bash
++# 首页时间线（最稳定）
++twitter feed -n 20
++
++# 读取单条推文（含回复）
++twitter tweet URL_OR_ID
++
++# 读取长文 / X Article
++twitter article URL_OR_ID
++
++# 用户时间线
++twitter user-posts @username -n 20
++
++# 用户资料
++twitter user @username
++```
++
++### 可能不稳定的命令
++
++```bash
++# 搜索推文（Twitter 频繁改 GraphQL 端点，可能 404）
++twitter search "query" -n 10
++
++# likes（2024 年后只能看自己的，平台限制）
++twitter likes
++```
++
++### search 失败时的重试链（按序执行，成功即停）
++
++1. 直接重试一次（偶发失败常见）：`twitter search "query" -n 10`
++2. 升级后再试：`pipx upgrade twitter-cli && twitter search "query" -n 10`
++3. 换 OpenCLI 备选（桌面，复用浏览器登录态）：`opencli twitter search "query" -f yaml`
++4. 都不行就改用 `twitter feed` / `twitter user-posts @somebody` 等稳定命令绕路
++
++### 重要注意事项
++
++> **安装**: `pipx install twitter-cli`（确保 v0.8.5+）
++>
++> **认证**: 只用 Cookie-Editor 手工导出，再显式设置环境变量
++> `TWITTER_AUTH_TOKEN` + `TWITTER_CT0`；不要依赖自动浏览器读取。
++>
++> **IP 风控**: 不要在 VPS/数据中心 IP 上频繁调用，尤其是 followers/following，有封号风险。使用住宅代理或本地环境。
++>
++> **OpenCLI 备选**: 桌面装了 OpenCLI 的话，`opencli twitter search/article/user-posts -f yaml` 全套可用（浏览器登录态，无需 cookie 环境变量）。
++>
++> **输出格式**: 建议用 `--yaml` 或 `--json` 获得结构化输出，对 AI agent 更友好。
++
++## B站 / Bilibili
++
++> ⚠️ **不要用 yt-dlp 读 B站**（风控已全面 412 拦截，实测无解）。用 bili-cli / OpenCLI。
++
++```bash
++# 搜索 / 热门 / 视频详情（bili-cli，只读无需登录）
++bili search "query" --type video -n 5
++bili hot -n 10
++bili video BVxxx
++
++# 字幕（OpenCLI，需桌面 Chrome）
++opencli bilibili subtitle BVxxx
++```
++
++> 详细命令（音频转写、API 直连兜底）见 [references/video.md](video.md)。
++
++## V2EX (公开 API)
++
++无需认证，直接调用公开 API。
++
++### 热门主题
++
++```bash
++curl -s "https://www.v2ex.com/api/topics/hot.json" -H "User-Agent: agent-reach/1.0"
++```
++
++### 节点主题
++
++```bash
++# node_name 如: python, tech, jobs, qna, programmers
++curl -s "https://www.v2ex.com/api/topics/show.json?node_name=python&page=1" -H "User-Agent: agent-reach/1.0"
++```
++
++### 主题详情
++
++```bash
++# topic_id 从 URL 获取，如 https://www.v2ex.com/t/1234567
++curl -s "https://www.v2ex.com/api/topics/show.json?id=TOPIC_ID" -H "User-Agent: agent-reach/1.0"
++```
++
++### 主题回复
++
++```bash
++curl -s "https://www.v2ex.com/api/replies/show.json?topic_id=TOPIC_ID&page=1" -H "User-Agent: agent-reach/1.0"
++```
++
++### 用户信息
++
++```bash
++curl -s "https://www.v2ex.com/api/members/show.json?username=USERNAME" -H "User-Agent: agent-reach/1.0"
++```
++
++### Python 调用示例
++
++```python
++from agent_reach.channels.v2ex import V2EXChannel
++
++ch = V2EXChannel()
++
++# 获取热门帖子
++topics = ch.get_hot_topics(limit=10)
++for t in topics:
++    print(f"[{t['node_title']}] {t['title']} ({t['replies']} 回复)")
++
++# 获取节点帖子
++node_topics = ch.get_node_topics("python", limit=5)
++
++# 获取帖子详情 + 回复
++topic = ch.get_topic(1234567)
++print(topic["title"], "—", topic["author"])
++
++# 获取用户信息
++user = ch.get_user("Livid")
++```
++
++> **节点列表**: https://www.v2ex.com/planes
++
++## Reddit（多后端，必须登录态）
++
++**Reddit 没有零配置路径**：匿名 `.json` 端点已被封（403），官方 API 自 2025-11 起人工审批基本不批。两个后端都靠登录态，先跑 `agent-reach doctor --json` 看 reddit 的 `active_backend`。中国大陆访问需代理。
++
++### 后端 A：OpenCLI（桌面首选，复用浏览器登录态）
++
++```bash
++# 搜索帖子
++opencli reddit search "query" -f yaml
++
++# 读帖子全文 + 评论
++opencli reddit read POST_ID -f yaml
++
++# 浏览 subreddit / 热门 / Popular
++opencli reddit subreddit LocalLLaMA -f yaml
++opencli reddit hot -f yaml
++opencli reddit popular -f yaml
++
++# subreddit 元信息（订阅数、简介）
++opencli reddit subreddit-info LocalLLaMA -f yaml
++```
++
++> 要求 Chrome 打开且浏览器里登录过 reddit.com。
++
++### 后端 B：rdt-cli（存量/服务器备选，上游 2026-03 起停更）
++
++```bash
++rdt search "query" --limit 10   # 搜索帖子
++rdt read POST_ID                # 读帖子全文 + 评论
++rdt sub python --limit 20       # 浏览 subreddit
++rdt popular --limit 10          # 浏览热门
++rdt all --limit 10              # 浏览 /r/all
++```
++
++> **安装**: `pipx install 'git+https://github.com/public-clis/rdt-cli.git'`（PyPI 版本落后，需从 GitHub 装 v0.4.2+）。先 `rdt login` 才能搜索和阅读（服务器无浏览器时手动写 Cookie，见 doctor 提示）。
++> 建议使用 `--yaml` 输出，对 AI agent 更友好。
++
++### 高级选项：官方 API + PRAW（仅限已有凭证的用户）
++
++2025-11 前注册过 Reddit script app（持有 client_id/client_secret）的用户可以用 PRAW 走官方 API（100 QPM 免费）。新申请需人工审批且个人项目基本不批，**不要推荐新用户走这条路**。
++
++## Facebook（OpenCLI，必须登录态）
++
++Facebook 走 OpenCLI，复用用户 Chrome 里的 facebook.com 登录态。先跑 `agent-reach doctor --json` 看 facebook 的 `active_backend`，正常应为 `OpenCLI`。不要推荐 Jina/Exa/Graph API 作为默认路径。
++
++```bash
++# 搜索用户 / 主页 / 帖子
++opencli facebook search "query" -f yaml
++
++# 用户或主页信息
++opencli facebook profile zuck -f yaml
++
++# 当前账号 News Feed
++opencli facebook feed --limit 10 -f yaml
++
++# 当前账号可见的群组列表/最近动态
++opencli facebook groups --limit 20 -f yaml
++```
++
++> 要求 Chrome 打开且装了 OpenCLI 扩展，并已登录 facebook.com。Facebook Groups 当前只承诺读取当前账号可见的群组列表/最近动态，不承诺任意群帖子和评论 API。
++
++## Instagram（OpenCLI，必须登录态）
++
++Instagram 走 OpenCLI，复用用户 Chrome 里的 instagram.com 登录态。先跑 `agent-reach doctor --json` 看 instagram 的 `active_backend`，正常应为 `OpenCLI`。不要默认恢复 instaloader；历史上 cookies/401/429 不稳定。
++
++```bash
++# 搜索用户（不是全站帖子关键词搜索）
++opencli instagram search "query" -f yaml
++
++# 用户 Profile
++opencli instagram profile nasa -f yaml
++
++# 用户最近帖子
++opencli instagram user nasa --limit 12 -f yaml
++
++# Explore / Discover
++opencli instagram explore --limit 20 -f yaml
++
++# 当前账号收藏
++opencli instagram saved --limit 20 -f yaml
++```
++
++> 要求 Chrome 打开且装了 OpenCLI 扩展，并已登录 instagram.com。`instagram search` 是用户搜索；读帖子需要先确定 username，再用 `instagram user USERNAME`。若出现 429 / login required，先让用户在 Chrome 里重新登录并降低频率。
+diff --git a/skills/agent-reach/references/video.md b/skills/agent-reach/references/video.md
+new file mode 100644
+index 0000000..54d4494
+--- /dev/null
++++ b/skills/agent-reach/references/video.md
+@@ -0,0 +1,148 @@
++# 视频/播客
++
++YouTube、B站、小宇宙播客的字幕和转录。
++
++## YouTube (yt-dlp)
++
++### 获取视频元数据
++
++```bash
++yt-dlp --dump-json "URL"
++```
++
++### 下载字幕
++
++```bash
++# 下载字幕 (不下载视频)
++yt-dlp --write-sub --write-auto-sub --sub-lang "zh-Hans,zh,en" --skip-download -o "/tmp/%(id)s" "URL"
++
++# 然后读取 .vtt 文件
++cat /tmp/VIDEO_ID.*.vtt
++```
++
++### 获取评论
++
++```bash
++# 提取评论（best-effort，不保证完整）
++yt-dlp --write-comments --skip-download --write-info-json \
++  --extractor-args "youtube:max_comments=20" \
++  -o "/tmp/%(id)s" "URL"
++# 评论在 .info.json 的 comments 字段中
++```
++
++### 搜索视频
++
++```bash
++yt-dlp --dump-json "ytsearch5:query"
++```
++
++> **字幕注意**: 手动上传的字幕提取可靠；自动生成字幕可能存在行间重复，需后处理。
++> **评论注意**: `--write-comments` 基于网页抓取（非 YouTube Data API），部分评论可能丢失。
++
++### 字幕失败时的重试链（按序执行，拿到实质内容即停）
++
++`doctor` 只确认 yt-dlp 本体与 JS runtime 能执行，不会请求具体视频；因此
++`active_backend: yt-dlp` 不等于目标视频的字幕已经通过实时验证。
++
++1. 先用上面的 `yt-dlp --write-sub --write-auto-sub` 命令。
++2. 若出现 bot 校验、字幕响应为空或没有生成字幕文件，且 OpenCLI 已连接：
++   `opencli youtube transcript "URL" -f yaml`。
++3. OpenCLI 若返回 `Caption URL returned empty response`，最多重试 3 次；这是带
++   过期时间的字幕 URL 偶发失效，不能把空响应当成“视频没有字幕”。
++4. 仍失败或视频本来就没有字幕：`agent-reach transcribe "URL"` 下载音频转写。
++
++成功标准是实际得到非空字幕/转录内容，不是命令退出码或 `doctor` 的版本探测结果。
++
++### 无字幕兜底：Whisper 音频转写
++
++```bash
++# 视频没有字幕时的兜底：下载音频并用 Whisper 转写（Groq 免费 key 即可）
++agent-reach transcribe "https://www.youtube.com/watch?v=VIDEO_ID"
++agent-reach transcribe ./local_audio.mp3 -o /tmp/transcript.txt
++```
++
++> `agent-reach transcribe` 只接收公开 http(s) URL 或本地音频文件。用 `ytsearch5:` 搜索时，先从 yt-dlp 结果里选出具体视频 URL，再转写。
++> 需要先配置 key：`agent-reach configure groq-key`（隐藏输入；免费，console.groq.com）
++> 或 `agent-reach configure openai-key`。默认 auto 模式只使用第一个已配置服务商
++>（优先 Groq，否则 OpenAI），失败即停止，不会把音频自动发给另一家。
++> `--allow-provider-fallback` 会显式授权跨服务商降级；同一音频内容可能被 Groq 和
++> OpenAI 分别处理，并可能产生 OpenAI 费用，只应在确认内容可分享给两家后使用。
++
++## B站 / Bilibili（bili-cli 为主，OpenCLI 补字幕）
++
++> ⚠️ **不要用 yt-dlp 读 B站**：B站风控已全面 412 拦截 yt-dlp（实测最新版、直连/代理/带 Cookie 全部无效）。yt-dlp 只用于 YouTube。
++
++### 视频详情/搜索/热门/排行 (bili-cli，只读无需登录)
++
++```bash
++# 视频详情（标题/UP主/时长/播放互动数据/字幕可用性）
++bili video BVxxx
++
++# 搜索视频
++bili search "query" --type video -n 5
++
++# 热门视频 / 排行榜
++bili hot -n 10
++bili rank -n 10
++
++# 下载音频并切分为 ASR-ready WAV（无字幕时配合 agent-reach transcribe 转写）
++bili audio BVxxx
++```
++
++### 字幕 (OpenCLI，需要桌面 Chrome)
++
++```bash
++# 字幕逐句带时间轴
++opencli bilibili subtitle BVxxx
++
++# OpenCLI 也能搜索/读视频元数据（备选）
++opencli bilibili search "query" -f yaml
++opencli bilibili video BVxxx -f yaml
++```
++
++### 零配置兜底：搜索 API 直连
++
++```bash
++UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
++curl -s -c /tmp/bili_ck.txt -o /dev/null -A "$UA" "https://www.bilibili.com/"
++curl -s -b /tmp/bili_ck.txt -A "$UA" -e "https://www.bilibili.com/" \
++  "https://api.bilibili.com/x/web-interface/search/all/v2?keyword=QUERY&page=1"
++```
++
++> **安装 bili-cli**: `pipx install bilibili-cli`（上游 2026-03 起停更但实测健康；只读场景无需登录，`bili login` 扫码可解锁动态/收藏等个人功能）。
++
++## 小宇宙播客 / Xiaoyuzhou Podcast
++
++### 转录单集播客（可选 --polish 增强标点）
++
++```bash
++# 输出 Markdown 文件到 /tmp/。--polish 让 Llama 3.3 70B 给文稿补中文标点+合理分段
++~/.agent-reach/tools/xiaoyuzhou/transcribe.sh --polish "https://www.xiaoyuzhoufm.com/episode/EPISODE_ID"
++```
++
++> 转写 prompt 已要求 Whisper 输出中文标点；若标点效果仍不理想，可加 `--polish` 用 Groq 上免费的 Llama 3.3 70B 补标点+合理分段（9 分钟播客约多 ~7 秒）。每次转写多一轮 LLM 调用，按需使用。
++
++### 前置要求
++
++1. **ffmpeg**: `brew install ffmpeg`
++2. **Groq API Key** (免费): https://console.groq.com/keys
++3. **配置 Key**: `agent-reach configure groq-key`（隐藏输入）
++4. **首次运行**: `agent-reach install --env=auto --system --channels=xiaoyuzhou`（需用户明确授权）
++
++### 检查状态
++
++```bash
++agent-reach doctor
++```
++
++> 输出 Markdown 文件默认保存到 `/tmp/`。
++
++## 选择指南
++
++| 场景 | 推荐工具 |
++|-----|---------|
++| YouTube 字幕 | yt-dlp；失败时 OpenCLI（最多 3 次）→ agent-reach transcribe |
++| B站视频详情/搜索 | bili-cli |
++| B站字幕 | opencli bilibili subtitle |
++| 播客转录 | 小宇宙 transcribe.sh |
++| 无字幕音视频 | agent-reach transcribe（B站音频先 `bili audio`） |
+diff --git a/skills/agent-reach/references/web.md b/skills/agent-reach/references/web.md
+new file mode 100644
+index 0000000..bbfa3c0
+--- /dev/null
++++ b/skills/agent-reach/references/web.md
+@@ -0,0 +1,50 @@
++# 网页阅读
++
++通用网页、RSS。
++
++## 通用网页 (Jina Reader)
++
++```bash
++# 读取任意网页内容
++curl -s "https://r.jina.ai/URL"
++
++# 示例
++curl -s "https://r.jina.ai/https://example.com/article"
++```
++
++**适用场景**: 大多数网页可以直接用 Jina Reader 读取。
++
++## Web Reader (MCP)
++
++```bash
++# 读取网页内容 (Markdown 格式)
++mcporter call web-reader.webReader url="https://example.com"
++
++# 保留图片
++mcporter call web-reader.webReader url="https://example.com" retain_images=true
++
++# 纯文本格式
++mcporter call web-reader.webReader url="https://example.com" return_format="text"
++```
++
++**适用场景**: 需要更精确控制输出格式时使用。
++
++## RSS (feedparser)
++
++```python
++python3 -c "
++import feedparser
++for e in feedparser.parse('FEED_URL').entries[:5]:
++    print(f'{e.title} — {e.link}')
++"
++```
++
++**适用场景**: 订阅博客、新闻源、播客等 RSS feed。
++
++## 选择指南
++
++| 场景 | 推荐工具 |
++|-----|---------|
++| 通用网页 | Jina Reader (`curl r.jina.ai`) |
++| 需要图片/格式控制 | web-reader MCP |
++| RSS 订阅 | feedparser |
+-- 
+2.43.0
+

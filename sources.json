@@ -248,24 +248,17 @@
       "skills": [
         "skills/*"
       ]
+    },
+    {
+      "repo": "career-ops-hq/career-ops",
+      "license": "MIT",
+      "default": "career",
+      "fixed": true,
+      "template": "templates/career",
+      "patch": "templates/career/patches/data-root.patch"
     }
   ],
   "externals": {
-    "career": {
-      "description": "AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.",
-      "claude": {
-        "source": "github",
-        "repo": "siddu1004/career-ops-for-claude-skill",
-        "ref": "claude/claude-code-plugin"
-      },
-      "app": {
-        "repo": "siddu1004/career-ops-for-claude-skill",
-        "skill": ".agents/skills/career-ops",
-        "name": "career-ops",
-        "ref": "claude/claude-code-plugin",
-        "setup": "npm install"
-      }
-    },
     "session-memory": {
       "description": "Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker.",
       "claude": {

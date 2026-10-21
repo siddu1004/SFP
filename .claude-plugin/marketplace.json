@@ -141,20 +141,16 @@
       "source": "./plugins/science-hardware"
     },
     {
+      "name": "career",
+      "description": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
+      "category": "skills",
+      "source": "./plugins/career"
+    },
+    {
       "name": "memory",
       "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
       "category": "skills",
       "source": "./plugins/memory"
-    },
-    {
-      "name": "career",
-      "description": "AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.",
-      "category": "skills",
-      "source": {
-        "source": "github",
-        "repo": "siddu1004/career-ops-for-claude-skill",
-        "ref": "claude/claude-code-plugin"
-      }
     },
     {
       "name": "session-memory",

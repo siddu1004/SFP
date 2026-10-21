@@ -683,6 +683,14 @@ Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 | `solo` | Work on one hard mathematics problem in this session yourself, with no sub-agents: reason in stages, record each settled step in a notes file so that nothing written is lost if a response is cut off, … |
 | `blender-motion-state-inspection` | Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model-vs-motion alignment where screenshots alone are not enough. |
 
+## career (1)
+
+AI job search: evaluate offers, tailor CVs, scan portals, track applications.
+
+| Skill | What it does |
+|---|---|
+| `career-ops` | Open-source AI job search agent -- evaluate offers, generate CVs, scan portals, track applications. Use when the user pastes a job URL or JD, asks to scan portals, generate a CV/PDF, track application… |
+
 ## memory (30)
 
 claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.
@@ -719,10 +727,6 @@ claude-mem's skills: search past work, timelines, handoffs and planning with per
 | `claude-mem-install` | Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference. |
 | `mem-host-observer` | Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose. |
 | `mem-openclaw` |  |
-
-## career (plugin)
-
-AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.
 
 ## session-memory (plugin)
 
