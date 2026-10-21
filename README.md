@@ -274,6 +274,24 @@ On Windows, use `.\install.ps1` in place of `./install.sh`.
 
 To update, run the same install line again. The installer replaces only folders it created. A skill you made with the same name stays unless you add `--force`.
 
+## Full Integration: SFP, ECC and OmniRoute
+
+SFP carries the **skills** of ECC and OmniRoute. The other parts of those projects need their own install: ECC's agents, hooks and rules, and the OmniRoute gateway that routes your IDE to many model providers. The short version, in order:
+
+```bash
+# 1. SFP skills and router
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
+# 2. SFP MCP server
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
+# 3. ECC: agents, hooks, commands (Claude Code; Node.js 18+)
+npx ecc-universal@2.2.3 setup
+# 4. OmniRoute gateway, then point your IDE at http://localhost:20128/v1
+npm install -g omniroute && omniroute
+omniroute setup-claude        # or setup-codex, setup-cursor, setup-opencode ...
+```
+
+Use one ECC install method per IDE, and install only `sfp` plus non-ECC categories from SFP if you add the ECC plugin, so you do not get skills twice. The [full integration guide](docs/INTEGRATION.md) has every command per IDE, the Codex and Cursor routes, MCP for OmniRoute, a verification table, updating and removal. I have not run ECC's or OmniRoute's installers myself: their commands come from each project's own documentation.
+
 ## Supported IDEs
 
 Claude Code, Codex, Cursor, Gemini CLI, Antigravity, GitHub Copilot, Windsurf, Kiro, OpenCode, Pi, Grok Build, Qoder, Trae, Rovo Dev, Mistral Vibe and Hermes.

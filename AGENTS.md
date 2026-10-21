@@ -9,6 +9,7 @@ SFP (Skills for Productivity) collects agent skills from other repos into catego
 - `scripts/install.py` installs into each tool's skills folder. Tool paths live in its `TOOLS` table. `install.py mcp` registers the MCP server in each IDE's settings.
 - `mcp/sfp_mcp.py` is the MCP server (stdio, Python standard library only, read-only). It reads `catalog.json` and the skill files, so run `python3 scripts/sync.py` first. Run `python3 -m unittest discover -s tests` after changing it; the tests drive it with real JSON-RPC.
 - `templates/career/` is the career-ops launcher (a skill plus `scripts/setup.py` and `patches/data-root.patch`). The sync fills in the pinned commit and fails if the patch no longer applies to the upstream commit it integrates; if that happens, rebase the patch.
+- `docs/INTEGRATION.md` is the hand-written guide to installing SFP together with ECC and OmniRoute. Its commands come from those projects' READMEs, so recheck them when `sources.lock.json` moves to a new ECC or OmniRoute release.
 - `archive/fork-patches/` holds patches for work that only the author's forks had. Nothing in SFP depends on them.
 - Category and plugin names must not start with `claude-` or `anthropic-`: Claude Code reserves them.
 - Keep each source's license: the sync copies it into `plugins/<category>/LICENSES/`.
