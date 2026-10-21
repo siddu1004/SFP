@@ -143,7 +143,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,599 tokens, and 90% are under 4,662. A selection averages 1.8 skills when there is no project.
 
-**How fast is it?** About 2 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
+**How fast is it?** About 3 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost, choice and learning, not quality of results. Learning is measured on a simulated user, not on real long-run use. The tasks and their correct answers were written by one person. The hive's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the held-out set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
 
@@ -297,7 +297,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 
 ## Questions
 
-**Does selection slow my agent down?** No. A decision takes about 2 ms and happens once per phase of work. It also loads fewer skills: 1.8 on average with no project.
+**Does selection slow my agent down?** No. A decision takes about 3 ms and happens once per phase of work. It also loads fewer skills: 1.8 on average with no project.
 
 **Does it always pick right?** No. The right skill was in the selection 86% of the time on held-out tasks, and the misses are listed in [docs/HIVE.md](docs/HIVE.md#where-it-fails). When it misses, tell it with feedback, name the skill, or ask for a category.
 

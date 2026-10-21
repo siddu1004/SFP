@@ -77,7 +77,7 @@ def render(theme, counts, names, total):
     a('    <path d="M340 172 V76 H386 A24 24 0 0 1 386 124 H340"/>')
     a('  </g>')
     a(f'  <text x="64" y="232" font-family="{FONT}" font-size="36" font-weight="600" fill="{t["text"]}">Skills for Productivity</text>')
-    a(f'  <text x="64" y="272" font-family="{FONT}" font-size="26" fill="{t["muted"]}">{total} skills. Your agent reads one.</text>')
+    a(f'  <text x="64" y="272" font-family="{FONT}" font-size="26" fill="{t["muted"]}">{total} skills. The hive picks the few you need, and learns.</text>')
     a('</svg>')
     return '\n'.join(out) + '\n'
 
