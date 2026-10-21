@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="t d">
+  <title id="t">SFP: Skills for Productivity</title>
+  <desc id="d">529 agent skills in 23 categories for 16 agent IDEs and CLIs</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="0.45" stop-color="#9333ea"/>
+      <stop offset="0.8" stop-color="#ec4899"/>
+      <stop offset="1" stop-color="#f97316"/>
+    </linearGradient>
+    <linearGradient id="chip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.12"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.1" r="0.7">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="320" rx="28" fill="url(#bg)"/>
+  <rect width="1280" height="320" rx="28" fill="url(#glow)"/>
+  <g fill="#ffffff" fill-opacity="0.10">
+    <circle cx="1120" cy="70" r="120"/>
+    <circle cx="1210" cy="250" r="80"/>
+    <circle cx="90" cy="290" r="70"/>
+  </g>
+  <text x="64" y="140" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="104" font-weight="800" fill="#ffffff" letter-spacing="-2">SFP</text>
+  <text x="68" y="190" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="34" font-weight="600" fill="#ffffff" fill-opacity="0.95">Skills for Productivity</text>
+  <text x="68" y="228" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="21" fill="#ffffff" fill-opacity="0.85">One library of agent skills for every IDE. Frontend, backend, agents, security, APIs and more.</text>
+  <g font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">
+    <rect x="68" y="252" width="190" height="44" rx="22" fill="url(#chip)" stroke="#ffffff" stroke-opacity="0.45"/>
+    <text x="163" y="281" text-anchor="middle">529 skills</text>
+    <rect x="274" y="252" width="230" height="44" rx="22" fill="url(#chip)" stroke="#ffffff" stroke-opacity="0.45"/>
+    <text x="389" y="281" text-anchor="middle">23 categories</text>
+    <rect x="520" y="252" width="190" height="44" rx="22" fill="url(#chip)" stroke="#ffffff" stroke-opacity="0.45"/>
+    <text x="615" y="281" text-anchor="middle">16 IDEs</text>
+    <rect x="726" y="252" width="250" height="44" rx="22" fill="url(#chip)" stroke="#ffffff" stroke-opacity="0.45"/>
+    <text x="851" y="281" text-anchor="middle">1-line install</text>
+  </g>
+</svg>

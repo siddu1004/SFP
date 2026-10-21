@@ -1,16 +1,63 @@
-# SFP: Skills for Productivity
+<p align="center">
+  <img src="assets/banner.svg" alt="SFP: Skills for Productivity. 529 skills, 23 categories, 16 IDEs, 1-line install" width="100%">
+</p>
 
-529 agent skills from 15 repos, sorted by what you build: frontend, backend, mobile, security, agent-driven work, AI, data APIs and more. One `sfp` router skill knows all of them and sends the agent to the right one.
+<p align="center">
+  <img src="https://img.shields.io/badge/skills-529-22c55e?style=for-the-badge" alt="529 skills">
+  <img src="https://img.shields.io/badge/categories-23-8b5cf6?style=for-the-badge" alt="23 categories">
+  <img src="https://img.shields.io/badge/IDEs-16-f97316?style=for-the-badge" alt="16 IDEs">
+  <img src="https://img.shields.io/badge/Claude_Code-plugin_marketplace-d97757?style=for-the-badge" alt="Claude Code plugin marketplace">
+  <img src="https://img.shields.io/badge/install-python3_only-3b82f6?style=for-the-badge" alt="Python 3 only">
+  <img src="https://img.shields.io/badge/licenses-MIT_%2B_Apache--2.0-ec4899?style=for-the-badge" alt="MIT and Apache-2.0">
+</p>
 
-It works in Claude Code and in every other agent IDE or CLI that reads skills (`SKILL.md` folders): Codex, Cursor, Gemini CLI, Antigravity, GitHub Copilot, Windsurf, Kiro, OpenCode, Pi, Grok Build, Qoder, Trae, Rovo Dev, Mistral Vibe and Hermes.
+<p align="center">
+  <b>529 agent skills from 15 repos, sorted by what you build.</b><br>
+  One <code>sfp</code> skill knows all of them and sends your agent to the right one.<br>
+  Works in Claude Code, Codex, Cursor, Gemini CLI, Antigravity, Copilot, Windsurf, Kiro, OpenCode and more.
+</p>
 
-The full list is in [SKILLS.md](SKILLS.md).
+---
 
-## Install codes
+## ✨ Features
 
-Pick the line for your setup. All of them need `git` and, outside Claude Code's plugin route, Python 3.
+| | |
+|---|---|
+| 🧭 **One router skill** | `sfp` holds an index of every skill, picks the right one for the task, and reads it straight from the checkout. No need to install all 529 |
+| 🗂️ **Sorted by what you build** | 23 categories: frontend, backend, mobile, security, agent-driven work, AI, data and more. Not by which repo a skill came from |
+| 🔌 **Works in 16 IDEs and CLIs** | Claude Code gets plugins; every other tool gets plain `SKILL.md` folders in the right place |
+| ⚡ **One-line install** | A `curl` or PowerShell line, a preset for your kind of work, and you're done. Needs only Python 3 |
+| 🎛️ **Presets** | `frontend-dev`, `backend-dev`, `mobile-dev`, `agent-builder`, `starter` or `everything` |
+| 🌐 **Free APIs on tap** | A searchable list of about 2,100 free APIs your agent can query directly, with auth, HTTPS and CORS for each |
+| 🔒 **Safe installs** | Only touches folders it created. Your own skills are never overwritten unless you say so |
+| 🔄 **Easy to keep fresh** | One command pulls the latest skills from every source repo and rebuilds the catalog |
 
-**Claude Code** (inside Claude Code):
+## 🧭 How the router works
+
+```mermaid
+flowchart LR
+    A([💬 You give the agent a task]) --> B{{🧭 sfp skill}}
+    B --> C[📚 Searches the index of 529 skills]
+    C --> D{Installed?}
+    D -- yes --> E([✅ Uses the skill])
+    D -- no --> F[📂 Reads it from the SFP checkout]
+    F --> E
+    style A fill:#6366f1,stroke:#4338ca,color:#fff
+    style B fill:#a855f7,stroke:#7e22ce,color:#fff
+    style C fill:#ec4899,stroke:#be185d,color:#fff
+    style D fill:#f97316,stroke:#c2410c,color:#fff
+    style E fill:#22c55e,stroke:#15803d,color:#fff
+    style F fill:#0ea5e9,stroke:#0369a1,color:#fff
+```
+
+Agents read the description of every installed skill at the start of a session, and 529 descriptions is too much to carry. So install `sfp` plus the categories you use every day, and let `sfp` reach the rest on demand. The installer records where the checkout is in `~/.sfp/root` so it can.
+
+## 🚀 Install
+
+Pick the line for your setup. Everything needs `git`; outside Claude Code's plugin route it also needs Python 3.
+
+<details open>
+<summary><b>🟠 Claude Code</b></summary>
 
 ```
 /plugin marketplace add siddu1004/SFP
@@ -19,41 +66,52 @@ Pick the line for your setup. All of them need `git` and, outside Claude Code's 
 /plugin install backend@sfp
 ```
 
-Swap `frontend` and `backend` for any category below. Install one at a time, or all of them.
+Swap `frontend` and `backend` for any category in the table below.
+</details>
 
-**macOS and Linux, any IDE** (installs the starter set into every tool it finds):
+<details open>
+<summary><b>🍎🐧 macOS and Linux, any IDE</b></summary>
+
+Installs the starter set into every tool it finds:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
 ```
 
-**Windows PowerShell, any IDE:**
-
-```powershell
-irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1 | iex
-```
-
-**Everything, into every IDE found:**
+Everything, into every IDE:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- --profile everything
 ```
 
-```powershell
-& ([scriptblock]::Create((irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1))) --profile everything
-```
-
-**One IDE, one preset** (`--tools` takes `claude`, `codex`, `cursor`, `gemini`, `antigravity`, `copilot`, `windsurf`, `kiro`, `opencode`, `pi`, `grok`, `qoder`, `trae`, `rovodev`, `vibe`, `hermes`):
+One IDE, one preset:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- --tools cursor --profile frontend-dev
 ```
+</details>
 
-**From a clone** (the same installer; you can read it first):
+<details open>
+<summary><b>🪟 Windows PowerShell, any IDE</b></summary>
+
+```powershell
+irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1 | iex
+```
+
+Everything, or one IDE and preset:
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1))) --profile everything
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1))) --tools cursor --profile frontend-dev
+```
+</details>
+
+<details>
+<summary><b>📦 From a clone (read the installer first)</b></summary>
 
 ```bash
 git clone https://github.com/siddu1004/SFP.git && cd SFP
-./install.sh list                                      # categories, profiles, which tools were found
+./install.sh list                                      # categories, presets, which tools were found
 ./install.sh --profile backend-dev                     # a preset
 ./install.sh --categories security,devops,memory       # exact categories
 ./install.sh --tools cursor,codex                      # only these tools
@@ -63,77 +121,68 @@ git clone https://github.com/siddu1004/SFP.git && cd SFP
 ```
 
 On Windows use `.\install.ps1` in place of `./install.sh`.
+</details>
 
-**Any agent, no script:** paste this to it.
+<details>
+<summary><b>🤖 Let your agent do it</b></summary>
+
+Paste this to any agent:
 
 > Clone https://github.com/siddu1004/SFP, run its `install.sh` (or `install.ps1` on Windows) with `--tools <this tool>`, then restart me so the skills load.
+</details>
 
-Profiles: `starter` (the default), `frontend-dev`, `backend-dev`, `mobile-dev`, `agent-builder`, `everything`. Edit them in `sources.json`. Re-run the same line any time to update.
+Re-run the same line any time to update. The installer only replaces or removes folders it created itself; a skill you made with the same name is left alone unless you pass `--force`.
 
-The installer only replaces or removes folders it created itself. A skill with the same name that you made yourself is left alone unless you pass `--force`.
+`--tools` takes: `claude` `codex` `cursor` `gemini` `antigravity` `copilot` `windsurf` `kiro` `opencode` `pi` `grok` `qoder` `trae` `rovodev` `vibe` `hermes`.
 
-## Is everything in here?
+## 🎛️ Presets
 
-Every skill in the repos below is in SFP, except the maintainers' own test fixtures and translated example copies. Repos that have no skill of their own got one written for them.
-
-| Repo | Where it is in SFP |
+| Preset | Gets you |
 |---|---|
-| impeccable | `frontend` (Impeccable, 24 design commands) |
-| taste-skill-for-claude-and-antigravity | `frontend` (8 taste skills) |
-| skills-claude-antigravity | `frontend` (Emil Kowalski's 15 skills) |
-| awesome-design-skills | `design-styles` (67 styles) |
-| strix | `security` (9 skills) |
-| claude-plugins-official | `agent-dev` and others (every skill it ships; its other ~290 entries are pointers to third-party repos) |
-| ECC | spread across `agents`, `agent-dev`, `backend`, `frontend`, `testing-quality` and more (313 skills) |
-| OmniRoute | `ai-gateway` (45) and `devops` (6 maintenance skills) |
-| claude-mem | `memory` (31 skills) and the optional `session-memory` plugin |
-| Agent-Reach | `data-apis` |
-| public-apis | `data-apis`, as a searchable skill over about 2,100 free APIs |
-| freellmapi | `data-apis`, a skill with the project's docs bundled |
-| MoneyPrinterTurbo | `content-media` |
-| siddardh-tools (private) | covered by the public repos above, plus the Vercel web interface guidelines below. Its `sitra-simulink` coursework skill is left out on purpose |
-| vercel-labs/web-interface-guidelines | `frontend` (a review checklist; pulled from the upstream repo) |
-| career-ops | `career` (installed from its own repo) |
+| 🌱 `starter` (default) | `sfp`, engineering, testing-quality, data-apis, agent-dev |
+| 🎨 `frontend-dev` | `sfp`, frontend, design-styles, testing-quality, engineering, data-apis |
+| ⚙️ `backend-dev` | `sfp`, backend, languages, testing-quality, devops, security, engineering, data-apis |
+| 📱 `mobile-dev` | `sfp`, mobile, languages, testing-quality, engineering |
+| 🤖 `agent-builder` | `sfp`, agents, agent-dev, ai-ml, ai-gateway, data-apis, memory |
+| 🌍 `everything` | every category (heavy) |
 
-## How it is organised
+Edit them in `sources.json`.
 
-Skills live in categories under `plugins/<category>/skills/<skill>/`. Each category is also a Claude Code plugin.
+## 🗂️ Categories
 
-| Category | Skills | What's in it |
-|---|---|---|
-| `sfp` | 1 | The router: finds the right skill for any task, installed or not |
-| `frontend` | 50 | UI design, components, motion, accessibility, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines |
-| `design-styles` | 67 | Named visual styles: brutalism, glassmorphism, editorial, retro, shadcn and more |
-| `backend` | 27 | Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, MySQL, Redis, Prisma, API design |
-| `mobile` | 13 | Android, iOS, Flutter, React Native, Kotlin Multiplatform, Swift |
-| `languages` | 8 | Go, Rust, Python, C++, Java, Kotlin, Perl idioms and standards |
-| `testing-quality` | 32 | TDD, end-to-end tests, verification loops, code review, regression, quality gates |
-| `devops` | 15 | Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation |
-| `security` | 21 | Strix autonomous pentesting, OWASP testing, secure coding per framework, agent hardening |
-| `agents` | 33 | Agent-driven work: autonomous loops, orchestration, councils, dev teams, feature pipelines |
-| `agent-dev` | 57 | Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets |
-| `memory` | 31 | claude-mem's skills: search past work, timelines, handoffs, planning with persistent memory |
-| `ai-ml` | 10 | LLM pipelines, prompts, evals, PyTorch, ML engineering, recommenders |
-| `ai-gateway` | 45 | Driving an OmniRoute AI gateway: routing, providers, budgets, caching, MCP, A2A |
-| `data-apis` | 7 | A searchable list of about 2,100 free APIs, FreeLLMAPI, internet reach across 16 platforms, search, scraping |
-| `content-media` | 17 | Writing, marketing, SEO, video, slides, social posting |
-| `business-ops` | 25 | Billing, finance, investors, market research, leads, contracts, email, tickets |
-| `industry` | 13 | Healthcare, logistics, customs, inventory, production, energy |
-| `networking` | 10 | Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, homelab |
-| `research-docs` | 17 | Deep research, scientific databases, literature review, docs, ADRs |
-| `web3` | 9 | DeFi, EVM, prediction markets, trading-agent security |
-| `engineering` | 15 | Architecture, standards, error handling, performance, benchmarks |
-| `science-hardware` | 6 | Math proofs, Blender, M5Stack and Cardputer |
-| `career` | plugin | AI job search: evaluate offers, tailor CVs, scan portals, track applications (career-ops) |
-| `session-memory` | plugin | claude-mem's full plugin with hooks and worker. Claude Code only |
+Each category is its own Claude Code plugin and lives in `plugins/<category>/skills/`. The full list of skills is in [SKILLS.md](SKILLS.md).
+
+| | Category | Skills | What's in it |
+|---|---|---:|---|
+| 🧭 | `sfp` | 1 | The router: finds the right skill for any task, installed or not |
+| 🎨 | `frontend` | 50 | UI design, components, motion, accessibility, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines |
+| 🖌️ | `design-styles` | 67 | Named visual styles: brutalism, glassmorphism, editorial, retro, shadcn and more |
+| ⚙️ | `backend` | 27 | Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, MySQL, Redis, Prisma, API design |
+| 📱 | `mobile` | 13 | Android, iOS, Flutter, React Native, Kotlin Multiplatform, Swift |
+| 🔤 | `languages` | 8 | Go, Rust, Python, C++, Java, Kotlin, Perl idioms and standards |
+| 🧪 | `testing-quality` | 32 | TDD, end-to-end tests, verification loops, code review, regression, quality gates |
+| 🚢 | `devops` | 15 | Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation |
+| 🛡️ | `security` | 21 | Strix autonomous pentesting, OWASP testing, secure coding per framework, agent hardening |
+| 🤖 | `agents` | 33 | Agent-driven work: autonomous loops, orchestration, councils, dev teams, feature pipelines |
+| 🧰 | `agent-dev` | 57 | Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets |
+| 🧠 | `memory` | 31 | claude-mem's skills: search past work, timelines, handoffs, planning with persistent memory |
+| 🔮 | `ai-ml` | 10 | LLM pipelines, prompts, evals, PyTorch, ML engineering, recommenders |
+| 🚪 | `ai-gateway` | 45 | Driving an OmniRoute AI gateway: routing, providers, budgets, caching, MCP, A2A |
+| 🌐 | `data-apis` | 7 | About 2,100 free APIs, FreeLLMAPI, internet reach across 16 platforms, search, scraping |
+| ✍️ | `content-media` | 17 | Writing, marketing, SEO, video, slides, social posting |
+| 💼 | `business-ops` | 25 | Billing, finance, investors, market research, leads, contracts, email, tickets |
+| 🏭 | `industry` | 13 | Healthcare, logistics, customs, inventory, production, energy |
+| 🛜 | `networking` | 10 | Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, homelab |
+| 🔬 | `research-docs` | 17 | Deep research, scientific databases, literature review, docs, ADRs |
+| ⛓️ | `web3` | 9 | DeFi, EVM, prediction markets, trading-agent security |
+| 📐 | `engineering` | 15 | Architecture, standards, error handling, performance, benchmarks |
+| 🔧 | `science-hardware` | 6 | Math proofs, Blender, M5Stack and Cardputer |
+| 💼 | `career` | plugin | AI job search: evaluate offers, tailor CVs, scan portals, track applications (career-ops) |
+| 🗃️ | `session-memory` | plugin | claude-mem's full plugin with hooks and worker. Claude Code only |
 
 `ecc-full` and `omniroute-full` are optional Claude Code plugins that add the hooks, agents and commands of Everything Claude Code and OmniRoute. Their skills are already spread across the categories above, so install either the full plugin or the categories.
 
-## The `sfp` skill
-
-Agents read the description of every installed skill at the start of each session, and 529 descriptions is too much to carry. So you do not have to install everything. Install the `sfp` skill plus the categories you use daily. For the rest, `sfp` has an index of every skill, finds the right one by task, and reads it straight from this checkout on demand. The installer records the checkout path in `~/.sfp/root` for that.
-
-## Free APIs for any need
+## 🌐 Free APIs for any need
 
 The `public-apis` skill (category `data-apis`) holds a bundled list of about 2,100 free APIs in 51 categories and a search script, so an agent can query it directly:
 
@@ -145,48 +194,67 @@ python3 plugins/data-apis/skills/public-apis/scripts/find_api.py --categories
 
 Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no`, `--json`. It needs only Python 3.
 
-## Claude Code notes
-
-If the `claude` command is on your PATH, the installer adds this repo as a marketplace and installs each category as a plugin. Plugins update with `/plugin update`. Pass `--copy` to the installer to copy plain skill folders into `~/.claude/skills` instead.
-
-### Where each tool's skills go
+## 🔌 Supported IDEs and CLIs
 
 | Tool | Your home folder | A project (`--project`) |
 |---|---|---|
-| Claude Code | `~/.claude/skills` | `.claude/skills` |
-| Codex | `~/.agents/skills` | `.agents/skills` |
-| Cursor | `~/.cursor/skills` | `.cursor/skills` |
-| Gemini CLI | `~/.gemini/skills` | `.gemini/skills` |
-| Antigravity | `~/.gemini/config/skills` | `.agent/skills` |
-| GitHub Copilot | `~/.copilot/skills` | `.github/skills` |
-| Windsurf | `~/.codeium/windsurf/skills` | `.windsurf/skills` |
-| Kiro | `~/.kiro/skills` | `.kiro/skills` |
-| OpenCode | `~/.config/opencode/skills` | `.opencode/skills` |
-| Pi | `~/.pi/agent/skills` | `.pi/skills` |
-| Grok Build, Qoder, Trae, Rovo Dev, Vibe, Hermes | `~/.<tool>/skills` | `.<tool>/skills` |
+| 🟠 Claude Code | `~/.claude/skills` (or plugins) | `.claude/skills` |
+| 🟢 Codex | `~/.agents/skills` | `.agents/skills` |
+| 🔵 Cursor | `~/.cursor/skills` | `.cursor/skills` |
+| 💎 Gemini CLI | `~/.gemini/skills` | `.gemini/skills` |
+| 🚀 Antigravity | `~/.gemini/config/skills` | `.agent/skills` |
+| ⚫ GitHub Copilot | `~/.copilot/skills` | `.github/skills` |
+| 🌊 Windsurf | `~/.codeium/windsurf/skills` | `.windsurf/skills` |
+| 🟣 Kiro | `~/.kiro/skills` | `.kiro/skills` |
+| 🟡 OpenCode | `~/.config/opencode/skills` | `.opencode/skills` |
+| 🥧 Pi | `~/.pi/agent/skills` | `.pi/skills` |
+| ➕ Grok Build, Qoder, Trae, Rovo Dev, Vibe, Hermes | `~/.<tool>/skills` | `.<tool>/skills` |
 
 A tool counts as found when its home folder exists (for example `~/.cursor`). Name tools with `--tools` to install into one that isn't found yet. The Windsurf and Copilot paths are my best reading of their docs; if one is wrong for your version, fix it in the `TOOLS` table in `scripts/install.py`.
 
 ### Skills with extra needs
 
-- **career** runs from its own checkout, cloned into `~/.sfp/apps/career-ops`. Set it up once there with `npm install`. Your CV, tracker and reports are kept separately in `~/career-ops`.
-- **session-memory** needs Claude Code's hooks and a background worker, so other tools skip it. The `memory` skills work without it but are written for claude-mem, so most want it installed.
-- **ai-gateway** skills drive an OmniRoute server, and **security** skills drive the Strix CLI. Each skill explains how to install what it needs.
-- **Impeccable** (in `frontend`) downloads its engine binary on first use.
+- 💼 **career** runs from its own checkout, cloned into `~/.sfp/apps/career-ops`. Set it up once there with `npm install`. Your CV, tracker and reports are kept separately in `~/career-ops`.
+- 🗃️ **session-memory** needs Claude Code's hooks and a background worker, so other tools skip it. The `memory` skills work without it but are written for claude-mem, so most want it installed.
+- 🚪 **ai-gateway** skills drive an OmniRoute server, and 🛡️ **security** skills drive the Strix CLI. Each skill explains how to install what it needs.
+- 🎨 **Impeccable** (in `frontend`) downloads its engine binary on first use.
 
-## Updating
+## 📦 Where everything came from
 
-Re-run your install line. To pull the latest versions from the source repos into SFP itself, run `python3 scripts/sync.py` and commit the result. It shallow-clones each repo in `sources.json` into `.cache/`. Use `--src-dir DIR` to read checkouts you already have, and `--report` to see what each category got.
+Every skill in these repos is in SFP, except the maintainers' own test fixtures and translated example copies. Repos with no skill of their own got one written for them.
 
-## Adding a repo or moving a skill
+| Repo | Where it is in SFP |
+|---|---|
+| impeccable | `frontend` (Impeccable, 24 design commands) |
+| taste-skill-for-claude-and-antigravity | `frontend` (8 taste skills) |
+| skills-claude-antigravity | `frontend` (Emil Kowalski's 15 skills) |
+| vercel-labs/web-interface-guidelines | `frontend` (a review checklist, pulled from the upstream repo) |
+| awesome-design-skills | `design-styles` (67 styles) |
+| strix | `security` (9 skills) |
+| claude-plugins-official | `agent-dev` and others (every skill it ships; its other ~290 entries are pointers to third-party repos) |
+| ECC | spread across `agents`, `agent-dev`, `backend`, `frontend`, `testing-quality` and more (313 skills) |
+| OmniRoute | `ai-gateway` (45) and `devops` (6 maintenance skills) |
+| claude-mem | `memory` (31 skills) and the optional `session-memory` plugin |
+| Agent-Reach | `data-apis` |
+| public-apis | `data-apis`, as a searchable skill over about 2,100 free APIs |
+| freellmapi | `data-apis`, a skill with the project's docs bundled |
+| MoneyPrinterTurbo | `content-media` |
+| career-ops | `career` (installed from its own repo) |
 
-- **New repo:** add an entry to `sources.json` (`repo`, `license`, `default` category, `skills` glob paths to folders that contain a `SKILL.md`), then run `python3 scripts/sync.py`.
-- **Wrong category:** add the skill's name to `names` in `categories.json`, or adjust a regex under `patterns`, then sync. Exact names win over patterns, and sources marked `"fixed": true` keep their `default` unless a name is listed.
-- **New category:** add it under `categories` in `categories.json`. Names must not start with `claude-` or `anthropic-`; Claude Code reserves them.
-- A skill whose name is already taken by a different skill gets a prefix (`collision_prefix` in its source). `name_prefix` prefixes every skill from a source.
+## 🛠️ Keep it fresh and extend it
+
+```bash
+python3 scripts/sync.py            # pull the latest skills from every source repo and rebuild
+python3 scripts/sync.py --report   # also show what each category got
+```
+
+- ➕ **New repo:** add an entry to `sources.json` (`repo`, `license`, `default` category, `skills` glob paths to folders that contain a `SKILL.md`), then sync.
+- 🔀 **Wrong category:** add the skill's name to `names` in `categories.json`, or adjust a regex under `patterns`, then sync. Exact names win over patterns, and sources marked `"fixed": true` keep their `default` unless a name is listed.
+- 🗂️ **New category:** add it under `categories` in `categories.json`. Names must not start with `claude-` or `anthropic-`; Claude Code reserves them.
+- 🏷️ A skill whose name is already taken by a different skill gets a prefix (`collision_prefix` in its source). `name_prefix` prefixes every skill from a source.
 
 Do not edit `plugins/`, `catalog.json`, `SKILLS.md` or `.claude-plugin/marketplace.json` by hand; the sync regenerates them.
 
-## Sources and licenses
+## 📜 Sources and licenses
 
 Each category keeps a copy of its source licenses in `plugins/<category>/LICENSES/`, and [NOTICE.md](NOTICE.md) lists every source. Each skill keeps its original license.
