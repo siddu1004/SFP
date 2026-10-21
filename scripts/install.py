@@ -24,7 +24,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOME = os.path.expanduser('~')
 MARKER = '.sfp'
-RENAMED = ('sfp-manager',)   # skills this installer used to create under another name; removed on install
+RENAMED = ('sfp-manager', 'sfp-select')   # skills this installer used to create under another name; removed on install
 MARKETPLACE = 'sfp'
 WARN_AT = 150
 
@@ -220,7 +220,7 @@ def cmd_install(cat, args):
                     os.remove(stale)
                 else:
                     shutil.rmtree(stale)
-                print(f'    removed {old} (renamed to sfp-select)')
+                print(f'    removed {old} (renamed to sfp-hive)')
         count = 0
         for name in names:
             spec = cat['categories'][name]

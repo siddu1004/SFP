@@ -1,6 +1,6 @@
 {
   "name": "agent-dev",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.",
   "author": {
     "name": "siddu1004"

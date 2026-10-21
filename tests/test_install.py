@@ -35,8 +35,8 @@ class InstallerTest(unittest.TestCase):
     def test_installs_the_router_and_the_selector(self):
         done = self.install('--categories', 'sfp')
         self.assertEqual(done.returncode, 0, done.stderr)
-        self.assertEqual(sorted(os.listdir(self.skills)), ['sfp', 'sfp-select'])
-        self.assertTrue(os.path.isfile(os.path.join(self.skills, 'sfp-select', 'scripts', 'select_skills.py')))
+        self.assertEqual(sorted(os.listdir(self.skills)), ['sfp', 'sfp-hive'])
+        self.assertTrue(os.path.isfile(os.path.join(self.skills, 'sfp-hive', 'scripts', 'select_skills.py')))
 
     def test_an_old_sfp_manager_folder_that_sfp_made_is_replaced(self):
         old = os.path.join(self.skills, 'sfp-manager')
@@ -48,8 +48,17 @@ class InstallerTest(unittest.TestCase):
         done = self.install('--categories', 'sfp')
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertFalse(os.path.exists(old))
-        self.assertIn('sfp-select', os.listdir(self.skills))
-        self.assertIn('renamed to sfp-select', done.stdout)
+        self.assertIn('sfp-hive', os.listdir(self.skills))
+        self.assertIn('renamed to sfp-hive', done.stdout)
+
+    def test_a_3_0_sfp_select_folder_that_sfp_made_is_replaced(self):
+        old = os.path.join(self.skills, 'sfp-select')
+        os.makedirs(old)
+        with open(os.path.join(old, '.sfp'), 'w') as f:
+            f.write('sfp\n')
+        self.assertEqual(self.install('--categories', 'sfp').returncode, 0)
+        self.assertFalse(os.path.exists(old))
+        self.assertEqual(sorted(os.listdir(self.skills)), ['sfp', 'sfp-hive'])
 
     def test_a_folder_with_that_name_that_the_user_made_is_left_alone(self):
         mine = os.path.join(self.skills, 'sfp-manager')
@@ -61,7 +70,7 @@ class InstallerTest(unittest.TestCase):
 
     def test_the_installed_selector_runs_from_where_it_was_installed(self):
         self.assertEqual(self.install('--categories', 'sfp').returncode, 0)
-        script = os.path.join(self.skills, 'sfp-select', 'scripts', 'select_skills.py')
+        script = os.path.join(self.skills, 'sfp-hive', 'scripts', 'select_skills.py')
         project = os.path.join(self.tmp.name, 'proj')
         os.makedirs(project)
         with open(os.path.join(project, 'go.mod'), 'w') as f:

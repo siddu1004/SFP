@@ -552,7 +552,7 @@ class Markov:
             group_score[key] = (1 - lam) * back if n else back
         scores = []
         for b in core.SKILLS:
-            if b == a or b in exclude or b == 'sfp' or b == 'sfp-select':
+            if b == a or b in exclude or b == 'sfp' or b == 'sfp-hive':
                 continue
             seen = row.get(b, 0)
             s = group_score[self._key[b]]
@@ -676,7 +676,7 @@ def recommend(task, project=None, goal=None, after=(), budget=12000, max_skills=
 
     scored = []
     for name in set(rel) | set(hist):
-        if name in after or name in ('sfp', 'sfp-select'):
+        if name in after or name in ('sfp', 'sfp-hive'):
             continue
         r = rel.get(name, 0) / top_rel
         tech = SKILL_TECH.get(name, set())

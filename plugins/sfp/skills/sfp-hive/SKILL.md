@@ -1,15 +1,15 @@
 ---
-name: sfp-select
+name: sfp-hive
 description: Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work moves to a new phase. It reads the task, the project's files and the skills used so far, returns a short ordered list of skills to load instead of many, and improves when you tell it what helped and what did not.
 ---
 
-# SFP skill selection
+# SFP hive
 
-SFP has hundreds of skills. Loading many at once costs context and blurs the instructions. This skill picks the few that fit this task in this project, and the order to use them in. It gets better when you report how each decision turned out.
+SFP has hundreds of skills. Loading many at once costs context and blurs the instructions. The hive works like a honeybee colony choosing a nest: five scouts (task words, project files, phase of work, category, history) each vote, a skill is chosen only when enough of them agree (quorum), similar skills are silenced once one is chosen (stop signals), and each job (plan, build, test, secure, ship) goes to the skill that suits it best. It returns the few skills that fit this task in this project, and the order to use them in. It learns: feedback on each decision strengthens skills that helped and weakens ones that did not, for the words of that kind of task.
 
 ## 1. Select
 
-Run the selector from this skill's folder with the user's own words and the project folder. It takes a few milliseconds and runs on this machine:
+Run the hive from this skill's folder with the user's own words and the project folder. It takes a few milliseconds and runs on this machine:
 
 ```bash
 python3 scripts/select_skills.py select "<the user's task>" --project <project folder>
@@ -40,7 +40,7 @@ Read each skill only when you reach its layer. Its file is at `<SFP>/<path from 
 
 ## 3. Give feedback when the task ends
 
-This is how the selector learns from its mistakes. When the task is done, report how the decision went. Ask the user one short question if you are not sure: "Were these skills useful? Was one missing?"
+This is how the hive learns from its mistakes. When the task is done, report how the decision went. Ask the user one short question if you are not sure: "Were these skills useful? Was one missing?"
 
 ```bash
 python3 scripts/select_skills.py feedback last --helped django-tdd --unhelpful django-celery --missing python-testing

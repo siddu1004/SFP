@@ -1,4 +1,4 @@
-"""The selector (mcp/sfp_select.py): agreement, overlap, role allocation, history, and quality floors.
+"""The hive (mcp/sfp_hive.py): agreement, overlap, role allocation, history, and quality floors.
 
 Run:  python3 -m unittest discover -s tests -v
 """
@@ -15,9 +15,9 @@ os.environ['SFP_ROOT'] = ROOT
 sys.path.insert(0, os.path.join(ROOT, 'mcp'))
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402
-import sfp_select as sel  # noqa: E402
+import sfp_hive as sel  # noqa: E402
 
-with open(os.path.join(ROOT, 'tests', 'select_heldout.json'), encoding='utf-8') as _f:
+with open(os.path.join(ROOT, 'tests', 'hive_heldout.json'), encoding='utf-8') as _f:
     HELDOUT = json.load(_f)
 
 
@@ -86,10 +86,10 @@ class SelectionRulesTest(unittest.TestCase):
         for p in ('ios', 'ml', 'quarkus'):
             self.assertNotIn('csharp-testing', names[p])
 
-    def test_never_offers_the_selector_or_router(self):
+    def test_never_offers_the_hive_or_router(self):
         for task in ('decide which skills to use', 'select skills for this task', 'sfp select'):
             names = {c['name'] for c in self.select(task)['stack']}
-            self.assertFalse(names & {'sfp', 'sfp-select'}, task)
+            self.assertFalse(names & {'sfp', 'sfp-hive'}, task)
 
     def test_empty_for_filler(self):
         self.assertEqual(self.select('for the of a')['stack'], [])
@@ -147,7 +147,7 @@ class HistoryTest(unittest.TestCase):
 
 
 class QualityTest(unittest.TestCase):
-    """The README quotes these figures; a change that makes the selector worse fails here."""
+    """The README quotes these figures; a change that makes the hive worse fails here."""
 
     @classmethod
     def setUpClass(cls):
@@ -175,16 +175,16 @@ class QualityTest(unittest.TestCase):
 
 class InterfaceTest(unittest.TestCase):
     def run_launcher(self, *args):
-        script = os.path.join(ROOT, 'templates', 'sfp-select', 'scripts', 'select_skills.py')
+        script = os.path.join(ROOT, 'templates', 'sfp-hive', 'scripts', 'select_skills.py')
         with tempfile.TemporaryDirectory() as data:
             env = dict(os.environ, SFP_ROOT=ROOT, SFP_USAGE_LOG=os.path.join(data, 'usage.jsonl'))
             return subprocess.run([sys.executable, '-I', script] + list(args), capture_output=True, text=True, env=env, timeout=60)
 
-    def test_the_skill_launcher_runs_the_selector(self):
+    def test_the_skill_launcher_runs_the_hive(self):
         done = self.run_launcher('select', 'write table driven tests in Go', '--json')
         self.assertEqual(done.returncode, 0, done.stderr)
         res = json.loads(done.stdout)
-        self.assertTrue(res['engine'].startswith('sfp-select'))
+        self.assertTrue(res['engine'].startswith('sfp-hive'))
         self.assertIn('golang-testing', [c['name'] for c in res['stack']])
         self.assertTrue(res['decision'])
 

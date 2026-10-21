@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.1.0
+
+- **The hive is back as the product's model.** The honeybee colony is again how SFP explains and names its choosing: five signals are scouts, agreement is quorum, overlap suppression is stop signals, roles are filled by response threshold, and history is a fading pheromone trail. The feedback loop and learning model from 3.0.0 stay, and the README maps them too: `helped` reinforces, `unhelpful` abandons, `missing` is a scout finding a new source, and the 120-day half-life is evaporation. The mapping is functional; the learner is still a regularised logistic regression.
+- **Renamed again.** The skill `sfp-select` is now `sfp-hive`, the engine `mcp/sfp_select.py` is `mcp/sfp_hive.py`, `docs/SELECTION.md` is `docs/HIVE.md`, and the tests are `tests/test_hive.py` and `tests/hive_heldout.json`. The MCP tools (`select_skills`, `give_feedback`, `learning_status`, `predict_next`) are unchanged. The installer removes leftover `sfp-select` and `sfp-manager` folders that it created.
+- Selection output is unchanged except for the skill's own description and the summary line of the command-line output.
+
 ## 3.0.0
 
 - **The selector learns from feedback.** After a task, report which chosen skills `helped`, were `unhelpful`, were `ignored` or were `missing` (`give_feedback`, or `sfp_select.py feedback`). A small model of which task words go with which skills adjusts later choices, can find a skill that keyword search missed, and fades old reports. A reported mistake is fixed on the same kind of task 94% of the time. On tasks it has not seen, accuracy moved from 86.8% to 87.7%, which is within noise. `status` shows what was learned and `forget` deletes it. See `docs/SELECTION.md`.

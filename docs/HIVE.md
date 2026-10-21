@@ -1,10 +1,10 @@
-# Skill Selection
+# The Hive
 
-`sfp-select` chooses which skills an agent loads for a task, and in what order, and it learns from feedback. Its code is `mcp/sfp_select.py` (the selection) and `mcp/sfp_learn.py` (the feedback loop and the learned model). This page covers the algorithm, the learning, how both were measured and built (including what failed), where they fail, and what to build next.
+`sfp-hive` chooses which skills an agent loads for a task, and in what order, and it learns from feedback. Its code is `mcp/sfp_hive.py` (the selection) and `mcp/sfp_learn.py` (the feedback loop and the learned model). The model is a honeybee colony: signals are scouts, agreement is quorum, overlap suppression is stop signals, roles follow response thresholds, history is a fading trail, and feedback reinforces or abandons a skill for the words of a task. The README has the full mapping. This page covers the algorithm, the learning, how both were measured and built (including what failed), where they fail, and what to build next.
 
 ## What problem it solves
 
-An agent reads the name and description of every installed skill at the start of every session, so installing hundreds is expensive, and installing a few misses the good ones. Keyword search finds skills that share words with the task but ignores the project: "write tests" is a different skill in a Django app and a Rust crate. The selector decides which few skills this task needs in this project, and corrects itself when you tell it it was wrong.
+An agent reads the name and description of every installed skill at the start of every session, so installing hundreds is expensive, and installing a few misses the good ones. Keyword search finds skills that share words with the task but ignores the project: "write tests" is a different skill in a Django app and a Rust crate. The hive decides which few skills this task needs in this project, and corrects itself when you tell it it was wrong.
 
 ## Selection
 
@@ -68,10 +68,10 @@ Counts come from the 18 recipes in `mcp/stack_recipes.json` (each step counts tw
 
 ## Learning from feedback
 
-The selector makes a decision. The learner closes the loop, in four steps.
+The hive makes a decision. The learner closes the loop, in four steps.
 
 1. **Log the decision.** Every `select` records the skills chosen, the project's main technologies, the stems of the task's main words, and the strongest candidates' signal votes, in `~/.sfp/decisions.jsonl`, with an id.
-2. **Collect feedback.** After the task, the agent or the user reports, by decision id (or `last`), which chosen skills `helped`, were `unhelpful`, were `ignored` (chosen but never used) and which were `missing` (should have been chosen). `give_feedback` in MCP, `sfp_select.py feedback` on the command line.
+2. **Collect feedback.** After the task, the agent or the user reports, by decision id (or `last`), which chosen skills `helped`, were `unhelpful`, were `ignored` (chosen but never used) and which were `missing` (should have been chosen). `give_feedback` in MCP, `sfp_hive.py feedback` on the command line.
 3. **Fit the model.** A regularised logistic regression whose features are (task word, skill) pairs, valued higher for rarer words, predicts whether a skill helps for a task with those words.
 4. **Apply it.** The model's output z for a skill, bounded to +-1.2, scales the skill's quality by exp(z). A strong positive association also brings in a skill that the keyword search did not find, and can admit a skill that lacks agreement (z of 0.7 or more).
 
@@ -102,7 +102,7 @@ The first design looked sensible and was wrong, and the measurement caught it.
 
 ### Measured
 
-`python3 mcp/sfp_select.py learning-curve` reproduces this; `tests/test_learn.py` fails if it regresses. A simulated user reports feedback from the answer key on the training tasks of each fold: skills in the key helped, skills marked to avoid were unhelpful, other chosen skills were ignored, and an expected skill the selector missed is reported missing. The model is fitted once and scored on the held-out tasks.
+`python3 mcp/sfp_hive.py learning-curve` reproduces this; `tests/test_learn.py` fails if it regresses. A simulated user reports feedback from the answer key on the training tasks of each fold: skills in the key helped, skills marked to avoid were unhelpful, other chosen skills were ignored, and an expected skill the hive missed is reported missing. The model is fitted once and scored on the held-out tasks.
 
 | Measure | Result |
 |---|---:|
@@ -117,16 +117,16 @@ How far to trust it: the effect on unseen tasks is +0.9 points with a standard d
 
 ## Selection quality
 
-`python3 mcp/sfp_select.py evaluate` reproduces these, and the README's copy is regenerated on every sync. "Right" means the selection holds a skill that a person marked as correct for the task. Plain search gets about as many results as the selector's average selection.
+`python3 mcp/sfp_hive.py evaluate` reproduces these, and the README's copy is regenerated on every sync. "Right" means the selection holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average selection.
 
-| Task set | Selector | Earlier engine (v1) | Plain search |
+| Task set | Hive | Earlier engine (v1) | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects (written first, scored once) | 86% | 68% | 14% |
 | 24 tasks in 10 sample projects | 79% | 79% | 33% |
 | 91 tasks with no project | 89% | 89% | 86% |
 | Stacks with a skill for the wrong technology, all sets | 0 | 0 | 2 |
 
-The selector's constants were tuned on the 24-task and 91-task sets, so those rows are optimistic. The held-out set was written before the final design and opened once. The tasks and the answers were written by one person. Nothing here measures whether the finished work is better.
+The hive's constants were tuned on the 24-task and 91-task sets, so those rows are optimistic. The held-out set was written before the final design and opened once. The tasks and the answers were written by one person. Nothing here measures whether the finished work is better.
 
 ## Speed
 
@@ -138,7 +138,7 @@ A decision takes a few milliseconds inside the process that asks. Medians on one
 | Predict the next skill | 5 to 8 ms | 0.3 to 0.4 ms | Skills in the same category and job share one back-off value |
 | One decision, project already scanned | 7.5 ms | 2 to 3 ms | The two changes above |
 | Through the running MCP server, later calls | 15 to 27 ms | 3 to 5 ms | The same |
-| MCP server, first call after start-up | 47 to 55 ms | 5 to 9 ms | The selector is loaded in the background while the client starts |
+| MCP server, first call after start-up | 47 to 55 ms | 5 to 9 ms | The hive is loaded in the background while the client starts |
 | One-shot command line call on this repo | 167 to 180 ms | 125 to 129 ms | A saved search index, a faster start-up |
 | Scan a project of 1,495 files | 28 to 40 ms | 27 to 41 ms | Unchanged: it is mostly the cost of walking folders |
 
@@ -154,9 +154,9 @@ Every speed change was checked against a recorded copy of the output on all 137 
 
 ## What to build next
 
-1. **A task-outcome benchmark** with no skills, all skills, the selector without learning and with it, graded on finished work. Without it, every figure here is about choosing skills, not results.
+1. **A task-outcome benchmark** with no skills, all skills, the hive without learning and with it, graded on finished work. Without it, every figure here is about choosing skills, not results.
 2. **Embeddings for the words signal**, kept local, to close vocabulary gaps. It is one more independent signal, so the agreement rule already knows how to use it.
-3. **Exploration.** Occasionally offer the second-best skill, marked as a trial, so feedback can reach skills the selector never picks. Today a skill that is never chosen can never be judged except by a "missing" report.
+3. **Exploration.** Occasionally offer the second-best skill, marked as a trial, so feedback can reach skills the hive never picks. Today a skill that is never chosen can never be judged except by a "missing" report.
 4. **Implicit feedback** from the agent: which chosen skills it opened, and whether tests passed after. Weak, but plentiful.
 5. **Team learning**: share the model, not the logs, across a team, with opt-in and the same bounds.
 6. **Hashed word pairs** if the log grows large enough that the feature count matters.
@@ -164,17 +164,17 @@ Every speed change was checked against a recorded copy of the output on all 137 
 ## Using it
 
 ```bash
-python3 mcp/sfp_select.py select "add an endpoint to list orders" --project .
-python3 mcp/sfp_select.py select "harden the API" --project . --goal "ship to production" --after api-design --json
-python3 mcp/sfp_select.py feedback last --helped rails-patterns --unhelpful test-collaboration --missing api-design
-python3 mcp/sfp_select.py status
-python3 mcp/sfp_select.py forget
-python3 mcp/sfp_select.py select "write tests" --project . --engine v1     # the earlier engine
-python3 mcp/sfp_select.py select "write tests" --project . --no-learning   # ignore what was learned
-python3 mcp/sfp_select.py evaluate
-python3 mcp/sfp_select.py learning-curve
+python3 mcp/sfp_hive.py select "add an endpoint to list orders" --project .
+python3 mcp/sfp_hive.py select "harden the API" --project . --goal "ship to production" --after api-design --json
+python3 mcp/sfp_hive.py feedback last --helped rails-patterns --unhelpful test-collaboration --missing api-design
+python3 mcp/sfp_hive.py status
+python3 mcp/sfp_hive.py forget
+python3 mcp/sfp_hive.py select "write tests" --project . --engine v1     # the earlier engine
+python3 mcp/sfp_hive.py select "write tests" --project . --no-learning   # ignore what was learned
+python3 mcp/sfp_hive.py evaluate
+python3 mcp/sfp_hive.py learning-curve
 ```
 
-From an installed skill, use `scripts/select_skills.py` inside the `sfp-select` folder with the same arguments. Over MCP, `select_skills`, `give_feedback`, `learning_status` and `predict_next`. Data lives in `~/.sfp` (or the folder of `$SFP_USAGE_LOG`): `decisions.jsonl` and `feedback.jsonl`.
+From an installed skill, use `scripts/select_skills.py` inside the `sfp-hive` folder with the same arguments. Over MCP, `select_skills`, `give_feedback`, `learning_status` and `predict_next`. Data lives in `~/.sfp` (or the folder of `$SFP_USAGE_LOG`): `decisions.jsonl` and `feedback.jsonl`.
 
 The product thinking (who would pay, and for what) is in [PRODUCT.md](PRODUCT.md).

@@ -1,6 +1,6 @@
 # Product Thinking
 
-This is the case for turning SFP's selection and learning into something people pay for, and what would have to be true. It is analysis, not a plan that is under way. The engineering is in [SELECTION.md](SELECTION.md).
+This is the case for turning SFP's selection and learning into something people pay for, and what would have to be true. It is analysis, not a plan that is under way. The engineering is in [HIVE.md](HIVE.md).
 
 ## What is worth paying for
 
@@ -18,7 +18,7 @@ The skills themselves are free and open, and most are other people's work under 
 
 ## Product shape
 
-1. **Open core (today).** The selector, the feedback loop, the recipes, the router, the MCP server and local learning. Free, MIT. This is the distribution channel.
+1. **Open core (today).** The hive, the feedback loop, the recipes, the router, the MCP server and local learning. Free, MIT. This is the distribution channel.
 2. **Team.** A shared registry of selections and a shared learned model, synced to every IDE; team recipes; policies (always include, never include); private skill sources; aggregated outcomes. Priced per seat.
 3. **Marketplace.** Creators publish selections ("Stripe payments", "Next.js SEO"), ranked by outcome data, not stars.
 4. **Enterprise.** Self-hosted registry, single sign-on, audit logs, compliance selections, support.
@@ -26,7 +26,7 @@ The skills themselves are free and open, and most are other people's work under 
 ## What could make it defensible
 
 - **Outcome data.** Which selections helped, for which kinds of project, is data nobody else has. It improves the ranking, which brings more use, which brings more data. The feedback loop is how that data starts to exist.
-- **One selector across IDEs.** Teams use several agents. A selector that behaves the same in Claude Code, Cursor, Codex and the rest is more useful than any one vendor's.
+- **One hive across IDEs.** Teams use several agents. A hive that behaves the same in Claude Code, Cursor, Codex and the rest is more useful than any one vendor's.
 - **Proof.** The evaluation harness publishes its own numbers, including its failures. Extending it to task outcomes would make the claims checkable, which most tools in this space cannot offer.
 
 ## Risks, stated plainly

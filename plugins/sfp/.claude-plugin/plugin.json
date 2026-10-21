@@ -1,7 +1,7 @@
 {
   "name": "sfp",
-  "version": "3.0.0",
-  "description": "The router and the selector: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback.",
+  "version": "3.1.0",
+  "description": "The router and the hive: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback.",
   "author": {
     "name": "siddu1004"
   },

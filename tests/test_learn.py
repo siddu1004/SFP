@@ -15,7 +15,7 @@ os.environ['SFP_ROOT'] = ROOT
 sys.path.insert(0, os.path.join(ROOT, 'mcp'))
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402
-import sfp_select as sel  # noqa: E402
+import sfp_hive as sel  # noqa: E402
 import sfp_learn as learn  # noqa: E402
 
 
@@ -380,10 +380,10 @@ class McpRoundTripTest(IsolatedData):
 class CommandLineTest(IsolatedData):
     def run_cli(self, *args):
         env = dict(os.environ, SFP_ROOT=ROOT)
-        return subprocess.run([sys.executable, '-I', os.path.join(ROOT, 'mcp', 'sfp_select.py')] + list(args),
+        return subprocess.run([sys.executable, '-I', os.path.join(ROOT, 'mcp', 'sfp_hive.py')] + list(args),
                               capture_output=True, text=True, env=env, timeout=60)
 
-    def test_select_feedback_status_forget(self):
+    def test_hive_feedback_status_forget(self):
         done = self.run_cli('select', 'write tests for the order view', '--project', self.project, '--json')
         self.assertEqual(done.returncode, 0, done.stderr)
         did = json.loads(done.stdout)['decision']

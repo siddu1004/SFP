@@ -56,12 +56,12 @@ class ReadmeTest(unittest.TestCase):
         proof = section('The Proof')
         cost = proof.split('**What does it cost your agent?**')[1].split('**How fast is it?**')[0]
         self.assertIn('Skill descriptions it carries each session', cost)
-        self.assertIn('`sfp` and `sfp-select` only', cost)
+        self.assertIn('`sfp` and `sfp-hive` only', cost)
         self.assertIn('`everything`', cost)
-        self.assertNotIn('The selector chooses', cost)  # the five-project table lives in "See It Choose"
+        self.assertNotIn('The hive chooses', cost)  # the five-project table lives in "See It Choose"
 
     def test_each_table_appears_once(self):
-        self.assertEqual(README.count('| Your project | The selector chooses |'), 1)
+        self.assertEqual(README.count('| Your project | The hive chooses |'), 1)
         self.assertEqual(README.count('Skill descriptions it carries each session'), 1)
         self.assertEqual(README.count('| Task set |'), 1)
 

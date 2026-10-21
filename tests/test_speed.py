@@ -16,7 +16,7 @@ os.environ['SFP_ROOT'] = ROOT
 sys.path.insert(0, os.path.join(ROOT, 'mcp'))
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402
-import sfp_select as sel  # noqa: E402
+import sfp_hive as sel  # noqa: E402
 
 
 def tasks():
@@ -115,7 +115,7 @@ class StackEquivalenceTest(unittest.TestCase):
             for a in ('api-design', 'golang-testing', 'career-ops', 'swiftui-patterns'):
                 for exclude in ((), {'database-migrations', 'canary-watch'}):
                     want = sorted(((col.prob(a, b), b) for b in core.SKILLS
-                                   if b != a and b not in exclude and b not in ('sfp', 'sfp-select')),
+                                   if b != a and b not in exclude and b not in ('sfp', 'sfp-hive')),
                                   key=lambda x: (-x[0], x[1]))[:7]
                     got = col.next(a, 7, exclude)
                     self.assertEqual([b for _, b in got], [b for _, b in want], (a, exclude))

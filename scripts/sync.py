@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IGNORE = shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
-VERSION = '3.0.0'
+VERSION = '3.1.0'
 OUT = os.path.join(ROOT, 'plugins')
 
 
@@ -232,13 +232,13 @@ def main():
         'description': ' '.join(field(frontmatter(open(os.path.join(router, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
         'source': 'siddu1004/SFP', 'license': '', 'path': os.path.relpath(router, ROOT), 'variants': {},
     })
-    # The selection skill: chooses which skills a task needs, in what order, and learns from feedback (mcp/sfp_select.py).
-    selector = os.path.join(OUT, 'sfp', 'skills', 'sfp-select')
-    shutil.copytree(os.path.join(ROOT, 'templates', 'sfp-select'), selector)
+    # The selection skill: chooses which skills a task needs, in what order, and learns from feedback (mcp/sfp_hive.py).
+    hive = os.path.join(OUT, 'sfp', 'skills', 'sfp-hive')
+    shutil.copytree(os.path.join(ROOT, 'templates', 'sfp-hive'), hive)
     catalog.append({
-        'name': 'sfp-select', 'category': 'sfp',
-        'description': ' '.join(field(frontmatter(open(os.path.join(selector, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
-        'source': 'siddu1004/SFP', 'license': 'MIT', 'path': os.path.relpath(selector, ROOT), 'variants': {},
+        'name': 'sfp-hive', 'category': 'sfp',
+        'description': ' '.join(field(frontmatter(open(os.path.join(hive, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
+        'source': 'siddu1004/SFP', 'license': 'MIT', 'path': os.path.relpath(hive, ROOT), 'variants': {},
     })
 
     write_manifests(cfg, cats, catalog)
@@ -292,7 +292,7 @@ def measure(cfg, cats, catalog):
     rows = ['| What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |',
             '|---|---:|---:|---:|']
     sfp_n, sfp_t = cost(['sfp'])
-    rows.append('| `sfp` and `sfp-select` only (the rest on demand) | %d + all %d through them | about %s tokens | %.1f%% |'
+    rows.append('| `sfp` and `sfp-hive` only (the rest on demand) | %d + all %d through them | about %s tokens | %.1f%% |'
                 % (sfp_n, len(catalog) - sfp_n, format(sfp_t, ','), 100.0 * sfp_t / window))
     for name, members in cfg['profiles'].items():
         k, tk = cost(sorted(set(members) | {'sfp'}))
@@ -309,16 +309,16 @@ def measure(cfg, cats, catalog):
             sizes.append(os.path.getsize(f) // 4)
     sizes.sort()
 
-    # The selector, scored against the earlier engine and plain search on the same tasks, and whether it learns.
+    # The hive, scored against the earlier engine and plain search on the same tasks, and whether it learns.
     sys.modules['sfp_mcp'] = mod
     sys.path.insert(0, os.path.join(ROOT, 'mcp'))
-    for stale in ('sfp_stack', 'sfp_select', 'sfp_learn'):
+    for stale in ('sfp_stack', 'sfp_hive', 'sfp_learn'):
         sys.modules.pop(stale, None)
-    import sfp_select as eng
+    import sfp_hive as eng
     import sfp_learn as learn
     ev = eng.evaluate(os.path.join(ROOT, 'tests'))
     lc = learn.learning_curve(os.path.join(ROOT, 'tests'))
-    for gone in ('sfp_mcp', 'sfp_stack', 'sfp_select', 'sfp_learn'):
+    for gone in ('sfp_mcp', 'sfp_stack', 'sfp_hive', 'sfp_learn'):
         sys.modules.pop(gone, None)
 
     def pct(x):
@@ -346,10 +346,10 @@ def measure(cfg, cats, catalog):
     # The same words in five different projects, as real output, so the README cannot drift from the engine.
     import tempfile
     hist = eng.History(eng.v1.RECIPES, [])
-    same_rows = ['| Your project | The selector chooses |', '|---|---|']
+    same_rows = ['| Your project | The hive chooses |', '|---|---|']
     with tempfile.TemporaryDirectory() as tmp:
         homes = {}
-        for fname in ('stack_eval.json', 'select_heldout.json'):
+        for fname in ('stack_eval.json', 'hive_heldout.json'):
             with open(os.path.join(ROOT, 'tests', fname), encoding='utf-8') as f:
                 data = json.load(f)
             eng._projects(data, os.path.join(tmp, fname))
@@ -460,7 +460,7 @@ def write_manifests(cfg, cats, catalog):
         '$schema': 'https://anthropic.com/claude-code/marketplace.schema.json',
         'name': MARKETPLACE,
         'owner': {'name': 'siddu1004'},
-        'metadata': {'description': 'SFP, Skills for Productivity: %d agent skills sorted by what you build, plus a selector that picks the few each task needs for your project and learns from feedback. Installs into 16 IDEs and CLIs, and serves any MCP client.' % len(catalog)},
+        'metadata': {'description': 'SFP, Skills for Productivity: %d agent skills sorted by what you build, plus a hive that picks the few each task needs for your project and learns from feedback. Installs into 16 IDEs and CLIs, and serves any MCP client.' % len(catalog)},
         'plugins': plugins,
     }, open(os.path.join(ROOT, '.claude-plugin', 'marketplace.json'), 'w'), indent=2)
 

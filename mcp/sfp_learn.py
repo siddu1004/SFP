@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Feedback and learning for SFP skill selection.
 
-The selector (sfp_select.py) makes a decision: a few skills, in order. This module closes the loop.
+The hive (sfp_hive.py) makes a decision: a few skills, in order. This module closes the loop.
 
   1. Every decision is logged: the skills chosen, what each signal voted for the strongest candidates,
      the project's main technologies, and the stems of the task's main words (for example `test`,
@@ -18,7 +18,7 @@ is zero, so z is zero and the selection is exactly the unlearned one.
 
 Why words, not skills. Whether a skill helps depends on the task. An earlier design that learned a global
 weight per skill, per technology and per signal made held-out selection worse on the benchmark (see
-docs/SELECTION.md): a skill that helped on three tasks was wrongly favoured on a fourth. Word-conditional
+docs/HIVE.md): a skill that helped on three tasks was wrongly favoured on a fourth. Word-conditional
 memory fixes the reported mistake and the tasks that look like it, and leaves unrelated tasks alone.
 
 Mistakes teach the most. A skill reported unhelpful, or a skill reported missing, produces a large error
@@ -46,7 +46,7 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402
-import sfp_select as sel  # noqa: E402
+import sfp_hive as sel  # noqa: E402
 
 VERDICTS = ('helped', 'unhelpful', 'ignored', 'missing')
 WORDS_PER_DECISION = 12
@@ -333,7 +333,7 @@ def give_feedback(decision=None, helped=(), unhelpful=(), ignored=(), missing=()
     """Record what happened to a decision. Returns what was recorded and how the model's view of each skill moved.
 
     `task` is only needed when the decision did not keep the task's words (SFP_LEARN_WORDS=0), or for
-    feedback on a task the selector never decided; the words are then stored with the feedback.
+    feedback on a task the hive never decided; the words are then stored with the feedback.
     """
     if not enabled():
         return {'recorded': 0, 'reason': 'learning is turned off (SFP_NO_LEARNING or SFP_NO_USAGE_LOG)'}
@@ -372,7 +372,7 @@ def give_feedback(decision=None, helped=(), unhelpful=(), ignored=(), missing=()
            'moved': [{'skill': n, 'before': round(before.preference(n, words), 3), 'after': round(after.preference(n, words), 3)}
                      for v in groups.values() for n in v]}
     if not words:
-        out['note'] = ('No task words are stored for this decision, so this feedback cannot teach the selector which words '
+        out['note'] = ('No task words are stored for this decision, so this feedback cannot teach the hive which words '
                        'go with which skills. Pass the task text, or leave SFP_LEARN_WORDS on.')
     return out
 
@@ -406,7 +406,7 @@ def status():
     counts = {v: 0 for v in VERDICTS}
     for r in latest.values():
         counts[r['verdict']] += 1
-    # Of the skills the selector chose and someone judged, how many helped? Oldest half against newest half.
+    # Of the skills the hive chose and someone judged, how many helped? Oldest half against newest half.
     judged = []
     for (did, skill), r in latest.items():
         d = decisions.get(did)
@@ -460,11 +460,11 @@ def format_status(st):
 def learning_curve(tests_dir=None, folds=5, seeds=5, rng_seed=7):
     """Does learning from feedback help on tasks it has not seen? Cross-validated over every task set.
 
-    For each fold, the unlearned selector makes decisions on the training tasks, and a diligent user
+    For each fold, the unlearned hive makes decisions on the training tasks, and a diligent user
     gives feedback from the answer key: skills in the key helped, skills in `avoid` were unhelpful,
-    other chosen skills were ignored, and an expected skill the selector missed is reported missing.
+    other chosen skills were ignored, and an expected skill the hive missed is reported missing.
     The model is fitted once on that feedback and scored on the held-out tasks, against the same
-    selector without it. Also reports how many of the training mistakes are fixed when the same task
+    hive without it. Also reports how many of the training mistakes are fixed when the same task
     is asked again, and how many held-out tasks that were right became wrong.
     """
     import random

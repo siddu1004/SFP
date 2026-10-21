@@ -31,17 +31,17 @@ nest-site selection (Seeley et al., Science 2012). Role allocation is the respon
 division of labour in social insects (Bonabeau, Theraulaz and Deneubourg, 1996). The history signal
 is a Markov chain whose counts decay exponentially, in the way pheromone trails evaporate in ant
 colony optimisation (Dorigo, 1992). The constants below were set on the benchmark in tests/; see
-docs/SELECTION.md for how, and for where it fails.
+docs/HIVE.md for how, and for where it fails.
 
 Runs inside the caller's process (the MCP server or the skill's script) in a few milliseconds. Python
 standard library only; nothing leaves the machine.
 
 CLI
-  sfp_select.py select "write tests for the order view" --project .
-  sfp_select.py feedback <decision> --helped django-tdd --unhelpful django-celery --missing python-testing
-  sfp_select.py status
-  sfp_select.py next api-design
-  sfp_select.py evaluate
+  sfp_hive.py select "write tests for the order view" --project .
+  sfp_hive.py feedback <decision> --helped django-tdd --unhelpful django-celery --missing python-testing
+  sfp_hive.py status
+  sfp_hive.py next api-design
+  sfp_hive.py evaluate
 """
 import json
 import math
@@ -55,8 +55,8 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.0.0'
-INTERNAL_SKILLS = ('sfp', 'sfp-select')   # the router and the selector never recommend themselves
+VERSION = '3.1.0'
+INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
 # (a Package.swift, a go.mod) may use any framework of it.
@@ -383,7 +383,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
 
     ctx = sit['ctx']
     res = {
-        'engine': 'sfp-select ' + VERSION,
+        'engine': 'sfp-hive ' + VERSION,
         'task': task, 'goal': goal,
         'project': {'technologies': v1.show(sorted(sit['ctx_tech'], key=lambda t: (-ctx[t], t))[:8]),
                     'evidence': sc['signals'][:8], 'files_scanned': sc['files']},
@@ -429,7 +429,7 @@ def _projects(data, tmp):
                 fh.write(body)
 
 
-SETS = (('bench', None), ('proj', 'stack_eval.json'), ('fresh', 'select_heldout.json'))
+SETS = (('bench', None), ('proj', 'stack_eval.json'), ('fresh', 'hive_heldout.json'))
 
 
 def load_cases(tests_dir, tmp, only=None):
@@ -457,7 +457,7 @@ def load_cases(tests_dir, tmp, only=None):
 
 
 def evaluate(tests_dir=None, only=None):
-    """Score the selector, the v1 engine and plain search on the task sets. Used by the tests and the README."""
+    """Score the hive, the v1 engine and plain search on the task sets. Used by the tests and the README."""
     import tempfile
     tests_dir = tests_dir or os.path.join(os.path.dirname(HERE), 'tests')
     hist = History(v1.RECIPES, [])  # recipes only, so personal usage never changes the published figures
@@ -499,11 +499,11 @@ def format_stack(res):
     lines = v1.format_stack(res).split('\n')
     info = res.get('analysis') or {}
     if info:
-        lines.insert(-1, 'Analysis: %d candidates, %d agreed, %d chosen.' % (info['candidates'], info['agreed'], len(res['stack'])))
+        lines.insert(-1, 'Hive: %d scouted, %d reached quorum, %d took a job.' % (info['candidates'], info['agreed'], len(res['stack'])))
         if info.get('unmet'):
             lines.insert(-1, 'No skill took: %s' % ', '.join(info['unmet']))
     if res.get('decision'):
-        lines.insert(-1, 'Decision %s. Tell it what helped: sfp_select.py feedback %s --helped <skill> --unhelpful <skill>'
+        lines.insert(-1, 'Decision %s. Tell it what helped: sfp_hive.py feedback %s --helped <skill> --unhelpful <skill>'
                      % (res['decision'], res['decision']))
     return '\n'.join(lines)
 
@@ -523,23 +523,23 @@ def main(argv=None):
     r.add_argument('--engine', choices=['select', 'v1'], default='select', help='v1 is the earlier weighted-score engine')
     r.add_argument('--no-learning', action='store_true', help='ignore what feedback has taught the model')
     r.add_argument('--json', action='store_true')
-    f = sub.add_parser('feedback', help='tell the selector what helped, what did not, and what was missing')
+    f = sub.add_parser('feedback', help='tell the hive what helped, what did not, and what was missing')
     f.add_argument('decision', help='the decision id printed by select, or "last"')
     f.add_argument('--helped', default='', help='comma-separated skills that helped')
     f.add_argument('--unhelpful', default='', help='comma-separated skills that did not help')
     f.add_argument('--ignored', default='', help='comma-separated skills that were chosen but never used')
     f.add_argument('--missing', default='', help='comma-separated skills that should have been chosen')
-    f.add_argument('--task', help='the task words, only needed to teach a missing skill the selector could not reach')
-    st = sub.add_parser('status', help='what the selector has learned, and how well it is doing')
+    f.add_argument('--task', help='the task words, only needed to teach a missing skill the hive could not reach')
+    st = sub.add_parser('status', help='what the hive has learned, and how well it is doing')
     st.add_argument('--json', action='store_true')
-    sub.add_parser('forget', help='delete everything the selector has recorded and learned')
+    sub.add_parser('forget', help='delete everything the hive has recorded and learned')
     n = sub.add_parser('next', help='the skills that usually follow one')
     n.add_argument('skill')
     n.add_argument('--limit', type=int, default=5)
     p = sub.add_parser('profile', help='show what is detected in a project')
     p.add_argument('path', nargs='?', default='.')
     sub.add_parser('recipes', help='list the named stacks')
-    sub.add_parser('evaluate', help='score the selector against the earlier engine and plain search')
+    sub.add_parser('evaluate', help='score the hive against the earlier engine and plain search')
     sub.add_parser('learning-curve', help='measure whether learning from feedback improves held-out tasks')
     a = ap.parse_args(argv)
 

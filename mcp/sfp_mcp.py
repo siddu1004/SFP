@@ -5,7 +5,7 @@ Speaks the Model Context Protocol over stdio (newline-delimited JSON-RPC) using
 only the Python standard library. It searches the skill catalog, returns a skill's
 SKILL.md and bundled files on demand, runs the bundled free-API search, and chooses
 which skills a task needs. Its only writes are the decision and feedback logs of the
-selector, in ~/.sfp on this machine (see sfp_learn.py). An IDE or agent that has MCP
+hive, in ~/.sfp on this machine (see sfp_learn.py). An IDE or agent that has MCP
 but no skills folder can use every skill without installing it.
 
 Tools
@@ -15,9 +15,9 @@ Tools
   list_categories  categories, skill counts and install presets
   find_api         search about 2,100 free public APIs
   install_command  the command that installs categories or a preset
-  select_skills    the few skills a task needs, in order, for the project (sfp_select.py)
-  give_feedback    tell the selector what helped, what did not and what was missing, so it learns
-  learning_status  what the selector has learned and how it is doing
+  select_skills    the few skills a task needs, in order, for the project (sfp_hive.py)
+  give_feedback    tell the hive what helped, what did not and what was missing, so it learns
+  learning_status  what the hive has learned and how it is doing
   predict_next     the skills most likely to be needed after one
 Resources
   sfp://skill/{name}   a skill's SKILL.md      sfp://catalog   the category summary
@@ -37,7 +37,7 @@ import sys
 import threading
 
 SERVER_NAME = 'sfp'
-SERVER_VERSION = '3.0.0'
+SERVER_VERSION = '3.1.0'
 SUPPORTED_PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05']
 MAX_FILE_BYTES = 400000
 MAX_LISTED_FILES = 200
@@ -269,12 +269,12 @@ def tool_search_skills(a):
                        'next': 'Call get_skill with a name to read the full instructions.'}, indent=1)
 
 
-# Skills fetched in this session, most recent last. Kept in memory only; the selector
+# Skills fetched in this session, most recent last. Kept in memory only; the hive
 # uses it as the history signal.
 SESSION_HISTORY = []
 
 
-def selector():
+def hive():
     """The selection and learning modules, imported on first use (they import this module)."""
     sys.modules.setdefault('sfp_mcp', sys.modules[__name__])
     here = os.path.dirname(os.path.abspath(__file__))
@@ -286,7 +286,7 @@ def selector():
 
 def tool_get_skill(a):
     name = resolve_name(a.get('name'))
-    if name and name not in ('sfp', 'sfp-select') and (not SESSION_HISTORY or SESSION_HISTORY[-1] != name):
+    if name and name not in ('sfp', 'sfp-hive') and (not SESSION_HISTORY or SESSION_HISTORY[-1] != name):
         SESSION_HISTORY.append(name)
     if not name:
         near = [s['name'] for s in search(a.get('name', ''), limit=5)]
@@ -380,7 +380,7 @@ def tool_install_command(a):
 
 def _warm_up():
     try:
-        learn = selector()
+        learn = hive()
         learn.load_model()
         learn.load_history()
     except Exception as e:  # warming is only an optimisation: a real call will report any real problem
@@ -401,7 +401,7 @@ def tool_select_skills(a):
     if project and not os.path.isdir(os.path.expanduser(project)):
         raise ValueError('no such folder: %s' % project)
     after = _skills_arg(a.get('after')) or SESSION_HISTORY[-3:]
-    res = selector().decide(task, project and os.path.expanduser(project), a.get('goal'), after,
+    res = hive().decide(task, project and os.path.expanduser(project), a.get('goal'), after,
                             int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)))
     res['next_step'] = ('Call get_skill for each skill in the stack, in order: base layers do the work, '
                         'check layers verify it, finish layers ship it.')
@@ -409,14 +409,14 @@ def tool_select_skills(a):
 
 
 def tool_give_feedback(a):
-    learn = selector()
+    learn = hive()
     return json.dumps(learn.give_feedback(a.get('decision') or 'last', helped=_skills_arg(a.get('helped')),
                                           unhelpful=_skills_arg(a.get('unhelpful')), ignored=_skills_arg(a.get('ignored')),
                                           missing=_skills_arg(a.get('missing')), task=a.get('task')), indent=1)
 
 
 def tool_learning_status(a):
-    learn = selector()
+    learn = hive()
     return json.dumps(learn.status(), indent=1)
 
 
@@ -425,7 +425,7 @@ def tool_predict_next(a):
     if not name:
         raise ValueError('give a skill name, or fetch a skill with get_skill first')
     out = [{'name': b, 'category': SKILLS[b]['category'], 'probability': round(p, 4)}
-           for p, b in selector().load_history().next(name, max(1, min(int(a.get('limit', 5)), 20)))]
+           for p, b in hive().load_history().next(name, max(1, min(int(a.get('limit', 5)), 20)))]
     return json.dumps({'after': name, 'next': out}, indent=1)
 
 
@@ -479,7 +479,7 @@ TOOLS = [
          'max_skills': {'type': 'integer', 'description': 'Most skills in the stack (default 4, max 8).'}}, 'required': ['task']},
      'fn': tool_select_skills},
     {'name': 'give_feedback',
-     'description': 'Tell the selector how a decision turned out, so it learns from its mistakes. After finishing a task, report which chosen skills helped, which did not, which were chosen but never used (ignored), and which should have been chosen (missing). Stores the verdicts, and the decision\'s word stems, in ~/.sfp on this machine; nothing is sent anywhere. Returns how the model\'s view of each skill moved.',
+     'description': 'Tell the hive how a decision turned out, so it learns from its mistakes. After finishing a task, report which chosen skills helped, which did not, which were chosen but never used (ignored), and which should have been chosen (missing). Stores the verdicts, and the decision\'s word stems, in ~/.sfp on this machine; nothing is sent anywhere. Returns how the model\'s view of each skill moved.',
      'inputSchema': {'type': 'object', 'properties': {
          'decision': {'type': 'string', 'description': 'The decision id from select_skills. Defaults to the most recent decision.'},
          'helped': {'type': 'string', 'description': 'Comma-separated skills that helped.'},
@@ -489,7 +489,7 @@ TOOLS = [
          'task': {'type': 'string', 'description': 'The task text. Only needed if the decision did not keep its words.'}}},
      'fn': tool_give_feedback},
     {'name': 'learning_status',
-     'description': 'Show what the selector has recorded and learned: decisions, feedback counts, how often chosen skills helped (older against recent), and the word-to-skill associations it now favours or avoids.',
+     'description': 'Show what the hive has recorded and learned: decisions, feedback counts, how often chosen skills helped (older against recent), and the word-to-skill associations it now favours or avoids.',
      'inputSchema': {'type': 'object', 'properties': {}},
      'fn': tool_learning_status},
     {'name': 'predict_next',
@@ -501,7 +501,7 @@ TOOLS = [
 ]
 TOOL_INDEX = {t['name']: t for t in TOOLS}
 for _t in TOOLS:
-    # select_skills and give_feedback write to the selector's own logs in ~/.sfp, and nowhere else.
+    # select_skills and give_feedback write to the hive's own logs in ~/.sfp, and nowhere else.
     _t['annotations'] = {'readOnlyHint': _t['name'] not in ('select_skills', 'give_feedback'), 'openWorldHint': False}
 
 # ------------------------------------------------------------ resources/prompts
@@ -628,7 +628,7 @@ def main():
         sys.stdin.reconfigure(encoding='utf-8')
         sys.stdout.reconfigure(encoding='utf-8')
     log('ready: %d skills from %s' % (len(SKILLS), ROOT))
-    # Load the selector while the client is still starting up, so the first select_skills is as fast as the rest.
+    # Load the hive while the client is still starting up, so the first select_skills is as fast as the rest.
     threading.Thread(target=_warm_up, daemon=True).start()
     for line in sys.stdin:
         line = line.strip()
