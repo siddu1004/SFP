@@ -24,6 +24,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOME = os.path.expanduser('~')
 MARKER = '.sfp'
+RENAMED = ('sfp-manager',)   # skills this installer used to create under another name; removed on install
 MARKETPLACE = 'sfp'
 WARN_AT = 150
 
@@ -212,6 +213,14 @@ def cmd_install(cat, args):
         dest_root = skills_dir(tool, args.project)
         os.makedirs(dest_root, exist_ok=True)
         print(f'  {TOOLS[tool][0]}: {dest_root}')
+        for old in RENAMED:   # a skill renamed since the last install: remove the old copy, but only if SFP made it
+            stale = os.path.join(dest_root, old)
+            if os.path.lexists(stale) and owned(stale):
+                if os.path.islink(stale) or os.path.isfile(stale):
+                    os.remove(stale)
+                else:
+                    shutil.rmtree(stale)
+                print(f'    removed {old} (renamed to sfp-select)')
         count = 0
         for name in names:
             spec = cat['categories'][name]

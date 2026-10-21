@@ -4,7 +4,6 @@ Run:  python3 -m unittest discover -s tests -v
 """
 import json
 import os
-import subprocess
 import sys
 import tempfile
 import unittest
@@ -238,60 +237,6 @@ class QualityFloorTest(unittest.TestCase):
         self.assertGreaterEqual(self.ev['proj_hit'], 0.75)
         self.assertGreater(self.ev['proj_hit'], self.ev['proj_search_hit'])
         self.assertEqual(self.ev['proj_wrong'], 0)
-
-
-class InterfacesTest(unittest.TestCase):
-    def run_cli(self, *args, env=None):
-        script = os.path.join(ROOT, 'templates', 'sfp-manager', 'scripts', 'stack.py')
-        e = dict(os.environ, SFP_ROOT=ROOT, **(env or {}))
-        return subprocess.run([sys.executable, '-I', script] + list(args), capture_output=True, text=True, env=e, timeout=60)
-
-    def test_skill_launcher_runs_the_engine(self):
-        done = self.run_cli('recommend', 'write table driven tests', '--json')
-        self.assertEqual(done.returncode, 0, done.stderr)
-        res = json.loads(done.stdout)
-        self.assertIn('golang-testing', [c['name'] for c in res['stack']])
-        done = self.run_cli('recipes')
-        self.assertIn('ship-a-service', done.stdout)
-
-    def test_mcp_tools(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            proj = make_project(tmp, 'django')
-            log = os.path.join(tmp, 'usage.jsonl')
-            env = dict(os.environ, SFP_ROOT=ROOT, SFP_USAGE_LOG=log)
-            p = subprocess.Popen([sys.executable, '-I', os.path.join(ROOT, 'mcp', 'sfp_mcp.py')], stdin=subprocess.PIPE,
-                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, env=env)
-
-            def call(i, tool, **args):
-                p.stdin.write(json.dumps({'jsonrpc': '2.0', 'id': i, 'method': 'tools/call',
-                                          'params': {'name': tool, 'arguments': args}}) + '\n')
-                p.stdin.flush()
-                r = json.loads(p.stdout.readline())['result']
-                return r['isError'], r['content'][0]['text']
-
-            try:
-                err, text = call(1, 'recommend_stack', task='write tests for the order view', project_path=proj)
-                self.assertFalse(err, text)
-                res = json.loads(text)
-                self.assertIn('django', res['project']['technologies'])
-                self.assertIn('postgres', res['project']['technologies'])
-                self.assertTrue({'django-tdd', 'python-testing'} & {c['name'] for c in res['stack']})
-                err, _ = call(2, 'get_skill', name='api-design')
-                self.assertFalse(err)
-                err, text = call(3, 'predict_next')  # defaults to the last skill fetched in this session
-                self.assertFalse(err, text)
-                self.assertEqual(json.loads(text)['after'], 'api-design')
-                self.assertEqual(json.loads(text)['next'][0]['name'], 'database-migrations')
-                err, text = call(4, 'record_usage', skill='api-design', outcome='helped')
-                self.assertFalse(err, text)
-                self.assertTrue(os.path.isfile(log))
-                err, text = call(5, 'recommend_stack', task='x', project_path='/no/such/folder')
-                self.assertTrue(err)
-            finally:
-                p.stdin.close()
-                p.wait(timeout=10)
-                p.stdout.close()
-                p.stderr.close()
 
 
 if __name__ == '__main__':

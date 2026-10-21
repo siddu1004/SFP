@@ -1,7 +1,7 @@
 {
   "_note": "Rules decide which category a skill lands in. Order matters: an exact name in `names` wins, then the first matching regex in `patterns`, then the source's default category in sources.json.",
   "categories": {
-    "sfp": "The router and the manager: find the right skill for any task, installed or not, and decide which few skills to use, in what order, for the task and the project.",
+    "sfp": "The router and the selector: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback.",
     "frontend": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.",
     "design-styles": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more.",
     "backend": "Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, Redis, Prisma).",

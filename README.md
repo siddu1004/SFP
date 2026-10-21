@@ -7,11 +7,11 @@
 
 <p align="center">
   <b>Give your AI coding agent the right skills for the job, not all of them.</b><br>
-  559 skills, sorted by what you build. Two small skills pick the few each task needs, for the project in front of them.
+  559 skills, sorted by what you build. A selector picks the few each task needs, for the project in front of it, and learns from your feedback.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.1-0f766e?style=flat-square&labelColor=3b4350" alt="Version 2.0.1">
+  <img src="https://img.shields.io/badge/version-3.0.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.0.0">
   <img src="https://img.shields.io/badge/skills-559-0f766e?style=flat-square&labelColor=3b4350" alt="559 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
@@ -27,9 +27,9 @@ curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
 
 That installs the starter set into every IDE it finds (macOS and Linux). On Windows or in Claude Code, see [Install](#install). Restart your IDE, then ask your agent:
 
-> Use sfp-manager for this task: add tests for the checkout form.
+> Use sfp-select for this task: add tests for the checkout form.
 
-It should name the few skills that fit your project, say why, and follow them in order.
+It should name the few skills that fit your project, say why, and follow them in order. When the task is done, tell it what helped and what did not, and it chooses better next time.
 
 **Not for you?** Undo it with one line: `~/.sfp/SFP/install.sh uninstall`. It removes only what it installed.
 
@@ -37,7 +37,7 @@ It should name the few skills that fit your project, say why, and follow them in
 
 Good agent skills exist, but they are scattered across dozens of repos, each with its own install steps and folder layout. And installing many of them costs more than it looks.
 
-- **Agents typically read every installed skill's description at the start of every session.** For this library that is about 44,249 tokens, or 22% of a 200k window, before you type a word.
+- **Agents typically read every installed skill's description at the start of every session.** For this library that is about 44,261 tokens, or 22% of a 200k window, before you type a word.
 - **So you choose between two bad options.** Install a few skills and miss the good ones, or install many and pay for a catalog you rarely use.
 - **Picking by hand is guesswork.** The skill for "write tests" is a different skill in a Next.js app, a Django app and a Rust crate.
 
@@ -46,16 +46,17 @@ Good agent skills exist, but they are scattered across dozens of repos, each wit
 | Move | How | What it gives you |
 |---|---|---|
 | **Sort** | 23 sources merged into 24 categories, grouped by what you build; presets group categories by role | A backend developer finds Postgres, migrations, API design and Docker together |
-| **Route** | `sfp` finds a skill; `sfp-manager` runs a hive that picks the few a task needs, in order | About 255 tokens of descriptions instead of 44,249: 174 times less |
+| **Select** | `sfp` finds a skill; `sfp-select` picks the few a task needs, in order, from the task, the project's files and the work so far | About 267 tokens of descriptions instead of 44,261: 166 times less |
+| **Learn** | You report which chosen skills helped, which did not and which were missing; a small model adjusts future choices | A mistake you report is not repeated on the same kind of task |
 | **Install once** | One command writes each of 16 IDEs' skills folders; the MCP server serves the same library to tools with no skills folder | No hunting for formats and paths |
 
 Every skill keeps its original license and author. SFP reads the original projects, and `sources.lock.json` pins the exact commit of each.
 
 ## See It Choose
 
-The same words, "write tests for the orders", in five different projects. This is real output from the hive, regenerated each time this page is built:
+The same words, "write tests for the orders", in five different projects. This is real output from the selector, regenerated each time this page is built:
 
-| Your project | The hive stacks |
+| Your project | The selector chooses |
 |---|---|
 | Next.js | `react-testing`, `application-security-testing` |
 | Rust | `rust-testing` |
@@ -63,19 +64,67 @@ The same words, "write tests for the orders", in five different projects. This i
 | Flutter | `dart-flutter-patterns`, `flutter-dart-code-review` |
 | Django | `django-celery`, `django-tdd` |
 
-Plain search gives the same answer in all five. The hive reads each project's files (`package.json`, `Cargo.toml`, `pubspec.yaml`, `requirements.txt` and so on), so a Django skill is not offered for a React app. Across all three task sets below, 0 stacks held a skill for the wrong technology.
+Plain search gives the same answer in all five. The selector reads each project's files (`package.json`, `Cargo.toml`, `pubspec.yaml`, `requirements.txt` and so on), so a Django skill is not offered for a React app. Across all three task sets below, 0 stacks held a skill for the wrong technology.
 
-It is not perfect, and the examples show it: `django-celery` joins the Django stack because the project uses Celery and its description mentions tests. A strong general skill such as `application-security-testing` sometimes joins as filler. The [proof](#the-proof) below says how often it is right and where it is not.
+It is not perfect, and the examples show it: `django-celery` joins the Django stack because the project uses Celery and its description mentions tests. A strong general skill such as `application-security-testing` sometimes joins as filler. The next section shows how you correct a miss like that, and [the proof](#the-proof) says how often it is right and where it is not.
+
+## It Learns From Feedback
+
+A selector that cannot learn repeats its mistakes. This one has a feedback loop:
+
+```mermaid
+flowchart LR
+  A[select skills for a task] --> B[do the work]
+  B --> C[report: helped, unhelpful, ignored, missing]
+  C --> D[update the model]
+  D --> A
+```
+
+The two skills in the example above show it. In a Django project that uses Celery, `django-celery` is chosen for "write tests" because its description mentions tests. You tell it so once:
+
+```bash
+python3 ~/.sfp/SFP/mcp/sfp_select.py select "write tests for the order view" --project .
+#   1. django-celery   2. django-tdd          Decision d_73ac4d9d
+python3 ~/.sfp/SFP/mcp/sfp_select.py feedback last --helped django-tdd --unhelpful django-celery
+python3 ~/.sfp/SFP/mcp/sfp_select.py select "write tests for the order view" --project .
+#   1. django-tdd      (why: preferred from feedback)
+```
+
+A task that really needs Celery, such as "set up background jobs with celery", still gets `django-celery`: what it learns belongs to the words of the task, not to the skill everywhere. Your agent does this itself: `sfp-select` tells it to report feedback when a task ends, through the `give_feedback` tool. `python3 mcp/sfp_select.py status` shows what has been learned.
+
+| You report | It means | What the model learns |
+|---|---|---|
+| `helped` | A chosen skill made the work better | Favour it for tasks with these words |
+| `unhelpful` | It misled you or added nothing | Avoid it for tasks with these words |
+| `ignored` | It was chosen but never used | A weak signal against it |
+| `missing` | You needed a skill that was not chosen | Favour it for these words, even if search would not have found it |
+
+**How it learns.** A regularised logistic regression over (task word, skill) pairs, valued higher for rarer words, predicts whether a skill helps for a task. Its output scales the skill's quality, bounded to about three times either way. With no feedback it changes nothing. One report is damped, so no single report can ban a skill, and feedback fades with a 120-day half-life. [docs/SELECTION.md](docs/SELECTION.md#learning-from-feedback) has the details.
+
+**Measured.** 5-fold cross-validation over all 137 tasks, repeated with five shuffles (25 folds). A simulated user reports feedback on the training tasks from the answer key, the model is fitted, and then scored on tasks it never saw:
+
+| | Result |
+|---|---:|
+| Mistakes on training tasks fixed when the same task is asked again | **94%** |
+| Unseen tasks answered correctly, without learning | 86.8% |
+| Unseen tasks answered correctly, with learning | 87.7% (+0.9 points) |
+| Folds that improved, against folds that got worse | 11 against 5 |
+| Unseen tasks that were right and became wrong | 8 |
+| Stacks with a skill for the wrong technology | 0 |
+
+Read this honestly. The reliable effect is that a mistake you report gets fixed. The effect on unseen tasks is small and in the right direction, but within the noise of the benchmark. The first design learned a weight per skill, per technology and per signal, and it made unseen tasks worse, so it was dropped; the history is in [docs/SELECTION.md](docs/SELECTION.md#how-the-learning-was-built-including-what-failed). Real feedback is noisier than an answer key, and I have not measured long-run use.
+
+**What is stored, and where.** On your machine only, in `~/.sfp`: for each decision, the skills chosen, the project's main technologies, the stems of the task's main words (for example `test`, `order`, `view`) and the strongest candidates' signal votes; for each report, the skill, the verdict and the time. Never sentences, file contents or paths. `SFP_LEARN_WORDS=0` stops recording words (then feedback cannot teach it anything), `SFP_NO_LEARNING=1` stops recording and learning, and `python3 mcp/sfp_select.py forget` deletes it all.
 
 ## The Proof
 
-Everything here is computed from this repository when the README is rebuilt. Run `python3 mcp/sfp_hive.py evaluate` to reproduce it.
+Everything here is computed from this repository when the README is rebuilt. Run `python3 mcp/sfp_select.py evaluate` and `python3 mcp/sfp_select.py learning-curve` to reproduce it.
 
-**Does it pick the right skill?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
+**Does it pick the right skill, before any learning?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the selector's average stack.
 
-| Task set | Hive 2.0.1 | Previous engine | Plain search |
+| Task set | Selector 3.0.0 | Earlier engine | Plain search |
 |---|---:|---:|---:|
-| 22 new tasks in 8 new projects, written before the hive and scored once | **86%** | 68% | 14% |
+| 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 68% | 14% |
 | 24 tasks in 10 sample projects | 79% | 79% | 33% |
 | 91 tasks with no project | 89% | 89% | 86% |
 | Stacks with a skill for the wrong technology, all sets | 0 | 0 | 2 |
@@ -84,19 +133,19 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 | What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |
 |---|---:|---:|---:|
-| `sfp` and `sfp-manager` only (the rest on demand) | 2 + all 557 through them | about 255 tokens | 0.1% |
-| `starter` preset | 118 | about 10,292 tokens | 5.1% |
-| `frontend-dev` preset | 185 | about 13,120 tokens | 6.6% |
-| `backend-dev` preset | 127 | about 11,299 tokens | 5.6% |
-| `mobile-dev` preset | 70 | about 5,810 tokens | 2.9% |
-| `agent-builder` preset | 189 | about 14,347 tokens | 7.2% |
-| `everything` | 559 | about 44,249 tokens | 22.1% |
+| `sfp` and `sfp-select` only (the rest on demand) | 2 + all 557 through them | about 267 tokens | 0.1% |
+| `starter` preset | 118 | about 10,304 tokens | 5.2% |
+| `frontend-dev` preset | 185 | about 13,132 tokens | 6.6% |
+| `backend-dev` preset | 127 | about 11,311 tokens | 5.7% |
+| `mobile-dev` preset | 70 | about 5,822 tokens | 2.9% |
+| `agent-builder` preset | 189 | about 14,359 tokens | 7.2% |
+| `everything` | 559 | about 44,261 tokens | 22.1% |
 
-With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,582 tokens, and 90% are under 4,662. A hive stack averages 1.8 skills when there is no project.
+With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,582 tokens, and 90% are under 4,662. A selection averages 1.8 skills when there is no project.
 
-**How fast is it?** About 2 ms per decision, inside the process that asks, once per phase of work. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
+**How fast is it?** About 2 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/SELECTION.md](docs/SELECTION.md#speed) has the before and after.
 
-> **What has not been measured.** Whether stacks make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost and choice, not quality of results. The tasks and their correct answers were written by one person. The hive's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the new set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
+> **What has not been measured.** Whether the chosen skills make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost, choice and learning, not quality of results. Learning is measured on a simulated user, not on real long-run use. The tasks and their correct answers were written by one person. The selector's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the held-out set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
 
 ## Who It Is For
 
@@ -198,69 +247,70 @@ It registers `sfp` in each IDE it finds and keeps your other MCP servers. See [M
 ## Use It Well
 
 1. **Start with a preset, not everything.** Pick the one that matches your work and add a category later.
-2. **For a whole task, ask the hive.** Say "use sfp-manager for this task" at the start, and again when the work moves on, from building to testing or to shipping.
+2. **For a whole task, use the selector.** Say "use sfp-select for this task" at the start, and again when the work moves on, from building to testing or to shipping.
 3. **For one skill, ask `sfp`.** "Use sfp to find a skill for adding rate limiting."
 4. **Name the skill when you know it.** "Use the `impeccable` skill to critique this page."
-5. **Tell it what helped.** The hive learns from the outcomes you record (see the questions below).
+5. **Tell it what helped.** When a task ends, report which skills helped, which did not and which were missing. The agent does this itself if you ask, and it is how the selector stops repeating mistakes.
 6. **Grow your install from use.** When you ask `sfp` for the same category three times, install it.
 
 Prompts to try:
 
 ```text
-Use sfp-manager for this task: harden this API before we ship it.
+Use sfp-select for this task: harden this API before we ship it.
 Use sfp to find a skill for stress-testing this form with long names and empty values.
 Use sfp: I need a free API for currency exchange rates. Show auth and CORS for each.
 Use the skill-creator skill to turn this checklist into a skill.
 ```
 
-## How the Hive Works
+## How Selection Works
 
-A bee colony has no manager. The queen lays eggs; she does not hand out work. Yet thousands of bees split the jobs well, with rules that biologists have measured. The hive copies those rules to decide which skills your agent loads, and when.
+For each task the selector combines five independent signals, requires them to agree, removes overlap and gives every chosen skill a job.
 
-| In a colony | In the hive | What it prevents |
+| Step | What it does | What it prevents |
 |---|---|---|
-| **Scouts** judge each nest site on their own | Five scouts judge each skill: the task's words, the project's files, the phase of work, the category, and the trail from the last skill used | One signal deciding alone |
-| **Quorum**: the colony commits once enough scouts agree | A skill needs strong task words, or two scouts backing it | A rare word dragging in an unrelated skill |
-| **Stop signals** between scouts for rival sites | Each chosen skill suppresses rivals in proportion to how alike they are | Two skills that do the same thing |
-| **Response thresholds**: a bee takes a job when its need passes her threshold, and doing it lowers the need | Every job (plan, build, test, secure, ship) has a need; a skill takes the job it suits most, then that need drops | Five testing skills for one testing task |
-| **Specialisation**: bees that do a job well take it up sooner | A skill you mark as helpful is chosen sooner | The same unhelpful skill coming back |
-| **Pheromone trails** that evaporate | Recorded sequences of skills predict the next one, and fade over about a month | Stale habits steering forever |
+| **Signals** | Five signals vote on each candidate: the task's words, the project's files, the phase of work, the task's category, and what usually follows the skill used just before | One signal deciding alone |
+| **Agreement** | A skill needs strong task words, or two signals backing it, and must not be for another technology than the project's | A rare word dragging in an unrelated skill |
+| **Learned preference** | What feedback has taught the model for the words of this task scales a skill's quality | Repeating a mistake you reported |
+| **Overlap suppression** | Each chosen skill lowers the quality of similar ones | Two skills that do the same thing |
+| **Role allocation** | Every job (plan, build, test, secure, ship) has a level of need; a skill takes the job it suits most, and that need drops | Five testing skills for one testing task |
+| **History** | Recorded sequences of skills, fading over about a month, predict what comes next | Stale habits steering forever |
 
 ```mermaid
 flowchart LR
-  T[task words] --> Q{quorum}
-  P[project files] --> Q
-  J[phase of work] --> Q
-  C[category] --> Q
-  H[trail from last skill] --> Q
-  Q --> S[stop signals between rivals]
-  S --> R[each skill takes the job it responds to most]
-  R --> K[ordered stack: base, check, finish]
+  T[task words] --> A{agreement}
+  P[project files] --> A
+  J[phase of work] --> A
+  C[category] --> A
+  H[history] --> A
+  A --> L[learned preference]
+  L --> O[overlap suppression]
+  O --> R[role allocation]
+  R --> K[ordered list: base, check, finish]
 ```
 
-It runs inside the process that asks (the MCP server, or the skill's own script), so there is no middleman to wait on. Without Python, the skill gives the agent the same rules in plain words to apply itself. [docs/HIVE.md](docs/HIVE.md) has the algorithm, the biology, how it was built (the first versions were worse than the engine they replaced), and where it fails.
+The design draws on models of collective decision making and division of labour in social insects: agreement and overlap suppression follow honeybee nest-site selection (Seeley et al., 2012), role allocation is the response-threshold model (Bonabeau, Theraulaz and Deneubourg, 1996), and the history signal fades like pheromone in ant colony optimisation (Dorigo, 1992). It runs inside the process that asks, the MCP server or the skill's own script, so there is no service to wait on. Without Python, the skill gives the agent the same rules in plain words to apply itself. [docs/SELECTION.md](docs/SELECTION.md) has the algorithm, how it was built (the first versions were worse than the engine they replaced), and where it fails.
 
 ## Questions
 
-**Does the hive slow my agent down?** No. A decision takes about 2 ms and happens once per phase of work. It also loads fewer skills: 1.8 on average with no project.
+**Does selection slow my agent down?** No. A decision takes about 2 ms and happens once per phase of work. It also loads fewer skills: 1.8 on average with no project.
 
-**Does it always pick right?** No. The right skill was in the stack 86% of the time on new tasks, and the misses are listed in [docs/HIVE.md](docs/HIVE.md#where-it-fails). When it misses, name the skill, or ask for a category.
+**Does it always pick right?** No. The right skill was in the selection 86% of the time on held-out tasks, and the misses are listed in [docs/SELECTION.md](docs/SELECTION.md#where-it-fails). When it misses, tell it with feedback, name the skill, or ask for a category.
 
-**What does it record about me?** Only if you or your agent record usage: a skill name, a time and an outcome, in `~/.sfp/usage.jsonl` on your machine. Never prompts or code, and nothing is sent anywhere. Set `SFP_NO_USAGE_LOG=1` to turn it off, or delete the file to forget everything.
+**What does it record about me?** Decisions and feedback, on your machine only, in `~/.sfp`: skill names, verdicts, times, the project's main technologies and the stems of the task's main words. Never sentences, file contents or paths. `SFP_LEARN_WORDS=0` stops recording words, `SFP_NO_LEARNING=1` stops recording and learning, and `python3 mcp/sfp_select.py forget` deletes it all.
+
+**Can a wrong report do harm?** Little. Reports are damped, bounded and tied to the words of one kind of task, they fade over months, and no single report can remove a skill. Only report what you observed.
+
+**Can I go back to the earlier engine?** Yes: `python3 mcp/sfp_select.py select "..." --engine v1`.
 
 **Is it safe?** A skill is third-party instruction text that your agent will follow, so read a skill before you trust it, as you would a script. The installer writes only into skills folders and `~/.sfp`, and backs up an MCP config before changing it. The MCP server makes no network calls. Some skills do their own network work, such as Impeccable downloading its engine on first use.
 
-**Why not install everything?** It works, and `--profile everything` does it. It puts about 44,249 tokens of descriptions into every session and gives your agent 559 to choose between.
+**Why not install everything?** It works, and `--profile everything` does it. It puts about 44,261 tokens of descriptions into every session and gives your agent 559 to choose between.
 
 **Which IDEs have you tested?** Claude Code end to end: plugin install from GitHub, the MCP connection, and a real session using the tools. For the other IDEs the installer was tested on fake home folders, and the folder paths follow each tool's documentation. The Windsurf and Copilot paths are unconfirmed.
 
 **Can I keep my own skills?** Yes. A skill you made with the same name is left alone unless you pass `--force`.
 
 **Does it work offline?** After installing, yes, for skills that do not need the network. The first install needs GitHub.
-
-**Is a queen bee really in charge?** No, and that is the point. Work in a colony is divided by thresholds, recruitment, quorum and stop signals among equals. The hive copies those rules, not the myth.
-
-**Can I go back to the previous engine?** Yes: `python3 mcp/sfp_hive.py recommend "..." --engine v1`.
 
 **How do I remove it?** `./install.sh uninstall --tools cursor` for skills, `./install.sh mcp --remove` for the MCP server, and `/plugin uninstall <category>@sfp` in Claude Code.
 
@@ -280,7 +330,7 @@ It runs inside the process that asks (the MCP server, or the skill's own script)
 
 | Category | Skills | What is in it |
 |---|---:|---|
-| `sfp` | 2 | The router and the manager: find the right skill for any task, installed or not, and decide which few skills to use, in what order, for the task and the project. |
+| `sfp` | 2 | The router and the selector: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback. |
 | `frontend` | 62 | UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines. |
 | `design-styles` | 67 | 67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more. |
 | `backend` | 27 | Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, Redis, Prisma). |
@@ -361,11 +411,12 @@ To pick IDEs, add `--tools cursor,claude`. To undo it, add `--remove`. By hand i
 | `list_categories` | Lists categories, skill counts and install presets |
 | `find_api` | Searches the free API list by keyword, auth, CORS and HTTPS |
 | `install_command` | Gives the command that installs a category or preset for good |
-| `recommend_stack` | Runs the hive: the few skills a task needs, in order, for the project at `project_path` |
-| `predict_next` | The skills most likely needed after one, by following pheromone trails |
-| `record_usage` | Notes that a skill was used, and whether it helped, in `~/.sfp/usage.jsonl` |
+| `select_skills` | The few skills a task needs, in order, for the project at `project_path`; returns a decision id |
+| `give_feedback` | Reports which chosen skills helped, did not help, were ignored or were missing, so the selector learns |
+| `learning_status` | What the selector has recorded and learned |
+| `predict_next` | The skills most likely needed after one, from recipes and the stacks that helped you |
 
-Every skill is also a resource at `sfp://skill/{name}`, and two prompts, `use_skill` and `find_skill_for`, load a skill into a chat. The server needs only Python 3 and makes no network calls. It reads the project folder you pass to `recommend_stack`, and its one write is `record_usage`.
+Every skill is also a resource at `sfp://skill/{name}`, and two prompts, `use_skill` and `find_skill_for`, load a skill into a chat. The server needs only Python 3 and makes no network calls. It reads the project folder you pass to `select_skills`, and its only writes are the selector's decision and feedback logs in `~/.sfp`.
 
 I tested it with Claude Code, including a real session that found and read a skill through the tools. The Cursor, Gemini CLI, Windsurf, Kiro and Codex settings follow each tool's documented format but were not run against those tools.
 
@@ -418,7 +469,7 @@ python3 scripts/sync.py --report   # also show what each category got
 - **Add a source:** add an entry to `sources.json` with `repo`, `license`, a `default` category and `skills` paths, then sync.
 - **Move a skill:** add its name to `names` in `categories.json`, or adjust a pattern, then sync.
 - **Add a category:** add it under `categories` in `categories.json`. Names cannot start with `claude-` or `anthropic-`.
-- **Check your work:** `python3 -m unittest discover -s tests` runs the protocol, installer, search, hive and speed tests.
+- **Check your work:** `python3 -m unittest discover -s tests` runs the protocol, installer, search, selection, learning, speed and README tests.
 
 The README, banner, `plugins/`, `catalog.json`, `index.json` and `SKILLS.md` are generated. Edit `templates/README.md.tpl` and the JSON files, not the outputs.
 
@@ -426,20 +477,21 @@ The README, banner, `plugins/`, `catalog.json`, `index.json` and `SKILLS.md` are
 SFP/
   plugins/<category>/skills/<skill>/   the skills, one folder each (generated)
   mcp/sfp_mcp.py                       the MCP server
-  mcp/sfp_hive.py                      the hive: the manager's engine
-  mcp/sfp_stack.py, stack_recipes.json the v1 engine it builds on, and the recipes (permanent trails)
+  mcp/sfp_select.py                    the selector: signals, agreement, overlap, role allocation
+  mcp/sfp_learn.py                     feedback, the decision log and the learned model
+  mcp/sfp_stack.py, stack_recipes.json the earlier engine it builds on, and the recipes (named stacks)
   scripts/install.py, sync.py          the installer, and the script that rebuilds everything
-  templates/                           the sfp router, the manager skill, the career launcher, this README
-  docs/                                HIVE.md, MANAGER.md, INTEGRATION.md
+  templates/                           the sfp router, the sfp-select skill, the career launcher, this README
+  docs/                                SELECTION.md, PRODUCT.md, INTEGRATION.md
   vendor/                              snapshots of plugins that have no public repo
   archive/fork-patches/                commits the old forks held, kept as patches
-  tests/                               protocol, installer, search, hive and speed tests
+  tests/                               protocol, installer, search, selection, learning, speed and README tests
   sources.json, categories.json        where skills come from and how they are sorted
 ```
 
 ## Sources and Licenses
 
-SFP's own code (the installer, sync script, MCP server, hive, router and manager skills, tests and README) is under the [MIT License](LICENSE). That covers only what SFP wrote. Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md) lists every source, and each category folder holds copies of its licenses in `plugins/<category>/LICENSES/`. The full skill list is in [SKILLS.md](SKILLS.md).
+SFP's own code (the installer, sync script, MCP server, selector and learner, router and selection skills, tests and README) is under the [MIT License](LICENSE). That covers only what SFP wrote. Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md) lists every source, and each category folder holds copies of its licenses in `plugins/<category>/LICENSES/`. The full skill list is in [SKILLS.md](SKILLS.md).
 
 <details>
 <summary>Where every source landed (23 sources)</summary>

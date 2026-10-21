@@ -7,7 +7,7 @@ description: SFP (Skills for Productivity) is a library of about 520 agent skill
 
 Skills sit in categories. Find the one that fits, read it, and follow it.
 
-For a task with several steps (build, then test, then ship), use the `sfp-manager` skill first: it picks the few skills that fit the task and this project, in order. Use the steps below for a single skill.
+For a task with several steps (build, then test, then ship), use the `sfp-select` skill first: it picks the few skills that fit the task and this project, in order. Use the steps below for a single skill.
 
 ## 1. Find the skill
 

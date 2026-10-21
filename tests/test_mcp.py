@@ -71,13 +71,13 @@ class McpServerTest(unittest.TestCase):
         finally:
             c.close()
 
-    def test_tools_list_is_read_only_and_complete(self):
+    def test_tools_list_is_complete_and_only_the_selector_writes(self):
         tools = {t['name']: t for t in self.c.rpc('tools/list')['result']['tools']}
         self.assertEqual(set(tools), {'search_skills', 'get_skill', 'read_skill_file', 'list_categories', 'find_api',
-                                      'install_command', 'recommend_stack', 'predict_next', 'record_usage'})
+                                      'install_command', 'select_skills', 'give_feedback', 'learning_status', 'predict_next'})
         for name, t in tools.items():
-            # record_usage is the one tool that writes, and only to the local usage log.
-            self.assertEqual(t['annotations']['readOnlyHint'], name != 'record_usage')
+            # select_skills and give_feedback write the selector's own logs in ~/.sfp, and nothing else does.
+            self.assertEqual(t['annotations']['readOnlyHint'], name not in ('select_skills', 'give_feedback'))
             self.assertEqual(t['inputSchema']['type'], 'object')
             self.assertNotIn('fn', t)
 

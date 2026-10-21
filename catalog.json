@@ -1,7 +1,7 @@
 {
  "categories": {
   "sfp": {
-   "description": "The router and the manager: find the right skill for any task, installed or not, and decide which few skills to use, in what order, for the task and the project.",
+   "description": "The router and the selector: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback.",
    "skills": 2
   },
   "frontend": {
@@ -5171,12 +5171,12 @@
    "variants": {}
   },
   {
-   "name": "sfp-manager",
+   "name": "sfp-select",
    "category": "sfp",
-   "description": "Decides which SFP skills to use, when, and in what order, the way a bee colony divides work. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work moves to a new phase. It reads the task, the project files and the skills used so far, and returns a short ordered stack of skills to load instead of many.",
+   "description": "Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work moves to a new phase. It reads the task, the project's files and the skills used so far, returns a short ordered list of skills to load instead of many, and improves when you tell it what helped and what did not.",
    "source": "siddu1004/SFP",
    "license": "MIT",
-   "path": "plugins/sfp/skills/sfp-manager",
+   "path": "plugins/sfp/skills/sfp-select",
    "variants": {}
   }
  ]

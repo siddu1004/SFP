@@ -16,7 +16,7 @@ os.environ['SFP_ROOT'] = ROOT
 sys.path.insert(0, os.path.join(ROOT, 'mcp'))
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402
-import sfp_hive as hive  # noqa: E402
+import sfp_select as sel  # noqa: E402
 
 
 def tasks():
@@ -111,11 +111,11 @@ class StackEquivalenceTest(unittest.TestCase):
         now = time.time()
         events = [{'t': now, 'skill': 'golang-testing', 'session': 'a'}, {'t': now, 'skill': 'canary-watch', 'session': 'a'},
                   {'t': now, 'skill': 'golang-testing', 'session': 'b'}, {'t': now, 'skill': 'docker-patterns', 'session': 'b'}]
-        for col in (v1.Markov(v1.RECIPES, []), hive.Colony(v1.RECIPES, events, now=now)):
+        for col in (v1.Markov(v1.RECIPES, []), sel.History(v1.RECIPES, events, now=now)):
             for a in ('api-design', 'golang-testing', 'career-ops', 'swiftui-patterns'):
                 for exclude in ((), {'database-migrations', 'canary-watch'}):
                     want = sorted(((col.prob(a, b), b) for b in core.SKILLS
-                                   if b != a and b not in exclude and b not in ('sfp', 'sfp-manager')),
+                                   if b != a and b not in exclude and b not in ('sfp', 'sfp-select')),
                                   key=lambda x: (-x[0], x[1]))[:7]
                     got = col.next(a, 7, exclude)
                     self.assertEqual([b for _, b in got], [b for _, b in want], (a, exclude))
@@ -147,7 +147,7 @@ class SpeedBudgetTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.col = hive.Colony(v1.RECIPES, [])
+        cls.col = sel.History(v1.RECIPES, [])
         cls.scan = v1.scan_project(os.path.join(ROOT, 'tests'))
 
     def median_ms(self, fn, runs=15):
@@ -160,7 +160,7 @@ class SpeedBudgetTest(unittest.TestCase):
         return statistics.median(times)
 
     def test_a_decision_is_fast(self):
-        ms = self.median_ms(lambda: hive.recommend('write tests for the order view', chain=self.col, scan_result=self.scan))
+        ms = self.median_ms(lambda: sel.select('write tests for the order view', history=self.col, scan_result=self.scan))
         self.assertLess(ms, 40, 'median %.1f ms' % ms)
 
     def test_a_search_is_fast(self):

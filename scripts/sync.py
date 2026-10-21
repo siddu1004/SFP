@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IGNORE = shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
-VERSION = '2.0.1'
+VERSION = '3.0.0'
 OUT = os.path.join(ROOT, 'plugins')
 
 
@@ -232,13 +232,13 @@ def main():
         'description': ' '.join(field(frontmatter(open(os.path.join(router, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
         'source': 'siddu1004/SFP', 'license': '', 'path': os.path.relpath(router, ROOT), 'variants': {},
     })
-    # The manager skill: decides which skills a task needs and in what order (engine in mcp/sfp_stack.py).
-    manager = os.path.join(OUT, 'sfp', 'skills', 'sfp-manager')
-    shutil.copytree(os.path.join(ROOT, 'templates', 'sfp-manager'), manager)
+    # The selection skill: chooses which skills a task needs, in what order, and learns from feedback (mcp/sfp_select.py).
+    selector = os.path.join(OUT, 'sfp', 'skills', 'sfp-select')
+    shutil.copytree(os.path.join(ROOT, 'templates', 'sfp-select'), selector)
     catalog.append({
-        'name': 'sfp-manager', 'category': 'sfp',
-        'description': ' '.join(field(frontmatter(open(os.path.join(manager, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
-        'source': 'siddu1004/SFP', 'license': 'MIT', 'path': os.path.relpath(manager, ROOT), 'variants': {},
+        'name': 'sfp-select', 'category': 'sfp',
+        'description': ' '.join(field(frontmatter(open(os.path.join(selector, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
+        'source': 'siddu1004/SFP', 'license': 'MIT', 'path': os.path.relpath(selector, ROOT), 'variants': {},
     })
 
     write_manifests(cfg, cats, catalog)
@@ -292,7 +292,7 @@ def measure(cfg, cats, catalog):
     rows = ['| What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |',
             '|---|---:|---:|---:|']
     sfp_n, sfp_t = cost(['sfp'])
-    rows.append('| `sfp` and `sfp-manager` only (the rest on demand) | %d + all %d through them | about %s tokens | %.1f%% |'
+    rows.append('| `sfp` and `sfp-select` only (the rest on demand) | %d + all %d through them | about %s tokens | %.1f%% |'
                 % (sfp_n, len(catalog) - sfp_n, format(sfp_t, ','), 100.0 * sfp_t / window))
     for name, members in cfg['profiles'].items():
         k, tk = cost(sorted(set(members) | {'sfp'}))
@@ -309,50 +309,59 @@ def measure(cfg, cats, catalog):
             sizes.append(os.path.getsize(f) // 4)
     sizes.sort()
 
-    # The hive (the manager's engine), scored against v1 and plain search on the same tasks.
+    # The selector, scored against the earlier engine and plain search on the same tasks, and whether it learns.
     sys.modules['sfp_mcp'] = mod
     sys.path.insert(0, os.path.join(ROOT, 'mcp'))
-    spec = importlib.util.spec_from_file_location('sfp_hive_measure', os.path.join(ROOT, 'mcp', 'sfp_hive.py'))
-    eng = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(eng)
+    for stale in ('sfp_stack', 'sfp_select', 'sfp_learn'):
+        sys.modules.pop(stale, None)
+    import sfp_select as eng
+    import sfp_learn as learn
     ev = eng.evaluate(os.path.join(ROOT, 'tests'))
-    sys.modules.pop('sfp_mcp', None)
-    sys.modules.pop('sfp_stack', None)
+    lc = learn.learning_curve(os.path.join(ROOT, 'tests'))
+    for gone in ('sfp_mcp', 'sfp_stack', 'sfp_select', 'sfp_learn'):
+        sys.modules.pop(gone, None)
 
     def pct(x):
         return '%d%%' % round(100.0 * x)
 
-    stack = {'RECIPES': str(len(eng.v1.RECIPES)), 'HIVE_VERSION': eng.VERSION}
+    stack = {'RECIPES': str(len(eng.v1.RECIPES)), 'SEL_VERSION': eng.VERSION}
     for key in ('bench', 'proj', 'fresh'):
         k = key.upper()
-        h, o, s = ev[key + '_hive'], ev[key + '_v1'], ev[key + '_search']
+        h, o, s = ev[key + '_select'], ev[key + '_v1'], ev[key + '_search']
         stack.update({
-            k + '_N': str(h['n']), k + '_HIVE': pct(h['hit']), k + '_V1': pct(o['hit']), k + '_SEARCH': pct(s['hit']),
-            k + '_HIVE_FIRST': pct(h['first']), k + '_V1_FIRST': pct(o['first']),
-            k + '_HIVE_SIZE': '%.1f' % h['size'], k + '_V1_SIZE': '%.1f' % o['size'],
-            k + '_HIVE_WRONG': str(h['wrong']), k + '_SEARCH_WRONG': str(s['wrong']),
+            k + '_N': str(h['n']), k + '_SEL': pct(h['hit']), k + '_V1': pct(o['hit']), k + '_SEARCH': pct(s['hit']),
+            k + '_SEL_FIRST': pct(h['first']), k + '_V1_FIRST': pct(o['first']),
+            k + '_SEL_SIZE': '%.1f' % h['size'], k + '_V1_SIZE': '%.1f' % o['size'],
+            k + '_SEL_WRONG': str(h['wrong']), k + '_SEARCH_WRONG': str(s['wrong']),
         })
-    for eng_name in ('hive', 'v1', 'search'):
-        stack['WRONG_' + eng_name.upper()] = str(sum(ev[k + '_' + eng_name]['wrong'] for k in ('bench', 'proj', 'fresh')))
+    for eng_name, label in (('select', 'SEL'), ('v1', 'V1'), ('search', 'SEARCH')):
+        stack['WRONG_' + label] = str(sum(ev[k + '_' + eng_name]['wrong'] for k in ('bench', 'proj', 'fresh')))
+    stack.update({
+        'LC_TASKS': str(lc['tasks']), 'LC_FOLDS': str(lc['folds_total']),
+        'LC_BASE': '%.1f%%' % (100 * lc['heldout_without_learning']), 'LC_NEW': '%.1f%%' % (100 * lc['heldout_with_learning']),
+        'LC_GAIN': '%+.1f' % (100 * lc['gain']), 'LC_UP': str(lc['folds_improved']), 'LC_DOWN': str(lc['folds_worse']),
+        'LC_FIXED': pct(lc['training_mistakes_fixed_on_retry'] or 0), 'LC_WORSE': str(lc['heldout_tasks_that_got_worse']),
+        'LC_WRONG': str(lc['wrong_technology_stacks_heldout']),
+    })
     # The same words in five different projects, as real output, so the README cannot drift from the engine.
     import tempfile
-    col = eng.Colony(eng.v1.RECIPES, [])
-    same_rows = ['| Your project | The hive stacks |', '|---|---|']
+    hist = eng.History(eng.v1.RECIPES, [])
+    same_rows = ['| Your project | The selector chooses |', '|---|---|']
     with tempfile.TemporaryDirectory() as tmp:
         homes = {}
-        for fname in ('stack_eval.json', 'hive_fresh.json'):
+        for fname in ('stack_eval.json', 'select_heldout.json'):
             with open(os.path.join(ROOT, 'tests', fname), encoding='utf-8') as f:
                 data = json.load(f)
             eng._projects(data, os.path.join(tmp, fname))
             homes.update({k: os.path.join(tmp, fname, k) for k in data['projects']})
         for label, key in (('Next.js', 'nextjs'), ('Rust', 'rust'), ('.NET', 'dotnet'), ('Flutter', 'flutter'), ('Django', 'django')):
-            res = eng.recommend('write tests for the orders', homes[key], chain=col)
+            res = eng.select('write tests for the orders', homes[key], history=hist)
             same_rows.append('| %s | %s |' % (label, ', '.join('`%s`' % c['name'] for c in res['stack'])))
     stack['SAME_WORDS_TABLE'] = '\n'.join(same_rows)
-    every = [ev[k + '_hive'] for k in ('bench', 'proj', 'fresh')]
+    every = [ev[k + '_select'] for k in ('bench', 'proj', 'fresh')]
     n_all = sum(x['n'] for x in every)
-    stack['HIVE_TOKENS'] = format(int(round(sum(x['tokens'] * x['n'] for x in every) / n_all, -2)), ',')
-    stack['HIVE_MS'] = str(max(1, round(sum(x['ms'] * x['n'] for x in every) / n_all)))
+    stack['SEL_TOKENS'] = format(int(round(sum(x['tokens'] * x['n'] for x in every) / n_all, -2)), ',')
+    stack['SEL_MS'] = str(max(1, round(sum(x['ms'] * x['n'] for x in every) / n_all)))
     return dict(stack, **{
         'SEARCH_N': str(n),
         'SEARCH_TOP1': '%d%%' % round(100.0 * hits[1] / n) if n else 'n/a',
@@ -451,7 +460,7 @@ def write_manifests(cfg, cats, catalog):
         '$schema': 'https://anthropic.com/claude-code/marketplace.schema.json',
         'name': MARKETPLACE,
         'owner': {'name': 'siddu1004'},
-        'metadata': {'description': 'SFP, Skills for Productivity: %d agent skills sorted by what you build, plus a bee-colony-inspired manager that picks the few each task needs for your project. Installs into 16 IDEs and CLIs, and serves any MCP client.' % len(catalog)},
+        'metadata': {'description': 'SFP, Skills for Productivity: %d agent skills sorted by what you build, plus a selector that picks the few each task needs for your project and learns from feedback. Installs into 16 IDEs and CLIs, and serves any MCP client.' % len(catalog)},
         'plugins': plugins,
     }, open(os.path.join(ROOT, '.claude-plugin', 'marketplace.json'), 'w'), indent=2)
 

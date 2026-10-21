@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Run the SFP hive (the skill-choosing engine) from wherever this skill was installed.
+"""Run the SFP skill selector from wherever this skill was installed.
 
-Finds the SFP checkout, then hands every argument to mcp/sfp_hive.py:
-  python3 stack.py recommend "add tests for the checkout form" --project .
+Finds the SFP checkout, then hands every argument to mcp/sfp_select.py:
+  python3 select_skills.py select "add tests for the checkout form" --project .
+  python3 select_skills.py feedback last --helped django-tdd --unhelpful django-celery
+  python3 select_skills.py status
 """
 import os
 import runpy
@@ -18,11 +20,11 @@ def find_root():
             candidates.append(f.read().strip())
     candidates.append(os.path.join(os.path.expanduser('~'), '.claude', 'plugins', 'marketplaces', 'sfp'))
     d = here
-    for _ in range(6):  # inside a checkout: plugins/sfp/skills/sfp-manager/scripts
+    for _ in range(6):  # inside a checkout: plugins/sfp/skills/sfp-select/scripts
         d = os.path.dirname(d)
         candidates.append(d)
     for c in candidates:
-        if c and os.path.isfile(os.path.join(c, 'mcp', 'sfp_hive.py')) and os.path.isfile(os.path.join(c, 'catalog.json')):
+        if c and os.path.isfile(os.path.join(c, 'mcp', 'sfp_select.py')) and os.path.isfile(os.path.join(c, 'catalog.json')):
             return os.path.abspath(c)
     sys.exit('Cannot find the SFP checkout. Install SFP (its installer writes ~/.sfp/root) or set SFP_ROOT.')
 
@@ -30,7 +32,7 @@ def find_root():
 if __name__ == '__main__':
     root = find_root()
     os.environ['SFP_ROOT'] = root
-    engine = os.path.join(root, 'mcp', 'sfp_hive.py')
+    engine = os.path.join(root, 'mcp', 'sfp_select.py')
     sys.argv = [engine] + sys.argv[1:]
     sys.path.insert(0, os.path.dirname(engine))
     runpy.run_path(engine, run_name='__main__')

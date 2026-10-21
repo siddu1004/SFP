@@ -56,12 +56,12 @@ class ReadmeTest(unittest.TestCase):
         proof = section('The Proof')
         cost = proof.split('**What does it cost your agent?**')[1].split('**How fast is it?**')[0]
         self.assertIn('Skill descriptions it carries each session', cost)
-        self.assertIn('`sfp` and `sfp-manager` only', cost)
+        self.assertIn('`sfp` and `sfp-select` only', cost)
         self.assertIn('`everything`', cost)
-        self.assertNotIn('The hive stacks', cost)  # the five-project table lives in "See It Choose"
+        self.assertNotIn('The selector chooses', cost)  # the five-project table lives in "See It Choose"
 
     def test_each_table_appears_once(self):
-        self.assertEqual(README.count('| Your project | The hive stacks |'), 1)
+        self.assertEqual(README.count('| Your project | The selector chooses |'), 1)
         self.assertEqual(README.count('Skill descriptions it carries each session'), 1)
         self.assertEqual(README.count('| Task set |'), 1)
 
@@ -90,7 +90,8 @@ class ReadmeTest(unittest.TestCase):
 
     def test_the_limits_are_stated(self):
         self.assertIn('What has not been measured', README)
-        self.assertIn('Whether stacks make your agent', README)
+        self.assertIn('Learning is measured on a simulated user', README)
+        self.assertIn('Whether the chosen skills make your agent', README)
 
 
 if __name__ == '__main__':

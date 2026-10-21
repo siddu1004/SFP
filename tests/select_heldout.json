@@ -1,5 +1,5 @@
 {
-  "about": "Fresh project-aware tasks written before the hive engine existed, to be scored once. Same format as stack_eval.json. expect: any one in the stack counts as right. avoid: wrong-technology skills that must not be in the stack.",
+  "about": "Held-out project-aware tasks written before the selector's final design existed, to be scored once. Same format as stack_eval.json. expect: any one in the stack counts as right. avoid: wrong-technology skills that must not be in the stack.",
   "projects": {
     "nestjs": {"package.json": "{\"dependencies\": {\"@nestjs/core\": \"10.0.0\", \"@prisma/client\": \"5.0.0\"}, \"devDependencies\": {\"typescript\": \"5.4.0\", \"jest\": \"29.0.0\"}}", "src/app.module.ts": "", "src/orders/orders.service.ts": "", "prisma/schema.prisma": ""},
     "rails": {"Gemfile": "source 'https://rubygems.org'\ngem 'rails', '~> 7.1'\ngem 'pg'\n", "app/models/order.rb": "", "app/controllers/orders_controller.rb": ""},
