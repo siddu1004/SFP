@@ -32,7 +32,7 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `apple-design` | Apple's approach to interface design and fluid, physical motion, translated for the web. Use when building or reviewing gesture-driven UI, spring animations, drag/swipe/sheet interactions, momentum an… |
 | `ask-sonner` | Guide to Sonner, the React toast library — install and wire up the Toaster, pick the right toast() call, promise and loading toasts, updating, dismissing and persisting toasts, styling, theming and ic… |
 | `break-ui` | Try to break a piece of UI by feeding it worst-case data — long names, unbreakable emails, one-letter names, missing fields, huge counts, zero items, long labels, non-Latin text, emoji, extreme number… |
-| `emil-design-eng` | Emil Kowalski's design engineering philosophy on UI polish, component design, animation decisions, and the invisible details that make software feel great. Use when building or reviewing UI components… |
+| `emil-design-eng` | This skill encodes Emil Kowalski's philosophy on UI polish, component design, animation decisions, and the invisible details that make software feel great. |
 | `find-animation-opportunities` | Search a codebase or UI for places that don't animate but should, and reject everything that shouldn't. Read-only; it proposes motion with exact values, it does not implement it. Use when the user ask… |
 | `improve-animations` | Survey a codebase's animation and motion code as a senior motion advisor, then produce a prioritized audit and self-contained implementation plans for other agents (or cheaper models) to execute. Read… |
 | `mobile-native` | Make a web app feel native on a phone — the small CSS and meta-tag fixes that separate "a website in a browser" from something that feels installed. Covers sticky hover states, tap highlight flashes, … |
@@ -479,7 +479,7 @@ Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compressi
 | `omni-inference` | The core OpenAI-compatible inference endpoints: chat completions, embeddings, images, audio (TTS/STT), moderations, rerank, and the Responses API. The primary integration surface for AI agents. |
 | `omni-mcp` | Connect to the OmniRoute MCP server (110 tools, 3 transports: SSE/stdio/HTTP). Covers routing, cache, compression, memory, skills, providers, and audit tools across 33 permission scopes. |
 | `omni-models` | Query available AI models across all configured providers. List models, resolve model aliases, and browse the full model catalog including provider-specific variants. |
-| `omni-providers` | Manage provider connections, API keys, OAuth flows, and connection tests via the REST API. List, add, update, remove, and test AI provider integrations across OmniRoute's 374-provider catalog. |
+| `omni-providers` | Manage provider connections, API keys, OAuth flows, and connection tests via the REST API. List, add, update, remove, and test AI provider integrations across OmniRoute's 375-provider catalog. |
 | `omni-proxies` | Configure HTTP/HTTPS/SOCKS proxies for upstream provider requests. Set per-provider or global proxy rules, test connectivity, and manage proxy rotation. |
 | `omni-resilience` | Monitor provider health, circuit-breaker states, p50/p95/p99 latency metrics, and budget guard alerts. Inspect connection cooldowns and model lockouts in real time. |
 | `omni-settings` | Read and update global application settings: system prompts, thinking budget, IP filters, payload rules, combo defaults, and require-login configuration. |
@@ -703,7 +703,7 @@ claude-mem's skills: search past work, timelines, handoffs and planning with per
 | `mem-knowledge-agent` | Build and query AI-powered knowledge bases from claude-mem observations. Use when users want to create focused "brains" from their observation history, ask questions about past work patterns, or compi… |
 | `mem-learn-codebase` | Prime a codebase by reading every source file in full. Use when starting work on a new or unfamiliar project, or when the user asks to "learn the codebase", "read the codebase", "prime", or "get up to… |
 | `mem-make-plan` | Create a detailed, phased implementation plan with documentation discovery. Use when asked to plan a feature, task, or multi-step implementation — especially before executing with do. |
-| `mem-search` | Search claude-mem persistent cross-session memory through enforced progressive disclosure. Use for previous decisions, solutions, work history, and before saving your own durable notes. |
+| `mem-search` | Smart search (default). Search claude-mem's persistent cross-session memory database in three steps: search, timeline, then selected get_observations. Use when user asks "did we already solve this?", … |
 | `mem-mode-creator` | Interactively create, install, activate, and verify custom claude-mem modes, including domain-specific observation types, concept tags, optional Telegram alerts, bot setup, worker restart, and startup… |
 | `mem-oh-my-issues` | Cluster a GitHub issue backlog by root cause into a small set of plan-master issues, redirect children with a standardized comment, and bundle architectural-fix PRs that close clusters atomically. Use… |
 | `mem-pathfinder` | Map a codebase into feature-grouped flowcharts, identify duplicated concerns across features, and propose a unified architecture. Use when asked to "find the ideal path," unify duplicated systems, or … |
@@ -715,7 +715,7 @@ claude-mem's skills: search past work, timelines, handoffs and planning with per
 | `mem-version-bump` | Automated semantic versioning and release workflow for Claude Code plugins. Handles version increments across package.json, marketplace.json, plugin.json manifests, build verification, git tagging, Gi… |
 | `mem-weekly-digests` | Generate a serial week-by-week narrative digest of a project's full claude-mem timeline. Splits the timeline into per-ISO-week files, then runs one consecutive subagent per week — each receiving the p… |
 | `mem-what-the` | What the? Use when the user wants a plain-English breakdown of something technical — the who, what, where, why, and when. |
-| `mem-wowerpoint` | Turn one document into a kawaii NotebookLM slide deck. Use for "wowerpoint this", "make a deck about <file>", "turn this report into slides", or any request to render a single document as narrative sl… |
+| `mem-wowerpoint` | Turn one document into a kawaii NotebookLM slide deck. Use for "wowerpoint this", "make a deck about <file>", "turn this report into slides", or any request to render a single document as shareable na… |
 | `claude-mem-install` | Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference. |
 | `mem-host-observer` | Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose. |
 | `mem-openclaw` |  |

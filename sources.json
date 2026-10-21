@@ -1,9 +1,8 @@
 {
   "sources": [
     {
-      "repo": "siddu1004/impeccable",
+      "repo": "pbakaus/impeccable",
       "license": "Apache-2.0",
-      "upstream": "https://github.com/pbakaus/impeccable",
       "default": "frontend",
       "skills": [
         "plugin/skills/impeccable"
@@ -13,25 +12,23 @@
       }
     },
     {
-      "repo": "siddu1004/taste-skill-for-claude-and-antigravity",
+      "repo": "Imaidazo/taste-skill-plugin",
       "license": "MIT",
-      "upstream": "https://github.com/Imaidazo/taste-skill-plugin",
       "default": "frontend",
       "skills": [
         "skills/*"
       ]
     },
     {
-      "repo": "siddu1004/skills-claude-antigravity",
+      "repo": "emilkowalski/skills",
       "license": "MIT",
-      "upstream": "https://github.com/emilkowalski/skills",
       "default": "frontend",
       "skills": [
         "skills/*"
       ]
     },
     {
-      "repo": "siddu1004/awesome-design-skills",
+      "repo": "bergside/awesome-design-skills",
       "license": "MIT",
       "default": "design-styles",
       "fixed": true,
@@ -41,7 +38,7 @@
       "collision_prefix": "style-"
     },
     {
-      "repo": "siddu1004/strix",
+      "repo": "usestrix/strix",
       "license": "Apache-2.0",
       "default": "security",
       "fixed": true,
@@ -50,7 +47,7 @@
       ]
     },
     {
-      "repo": "siddu1004/claude-plugins-official",
+      "repo": "anthropics/claude-plugins-official",
       "license": "Apache-2.0",
       "default": "agent-dev",
       "skills": [
@@ -61,7 +58,7 @@
       ]
     },
     {
-      "repo": "siddu1004/Agent-Reach",
+      "repo": "Panniantong/Agent-Reach",
       "license": "MIT",
       "default": "data-apis",
       "fixed": true,
@@ -70,7 +67,7 @@
       ]
     },
     {
-      "repo": "siddu1004/MoneyPrinterTurbo-try-it-out-once",
+      "repo": "harry0703/MoneyPrinterTurbo",
       "license": "MIT",
       "default": "content-media",
       "fixed": true,
@@ -79,7 +76,7 @@
       ]
     },
     {
-      "repo": "siddu1004/public-apis",
+      "repo": "public-apis/public-apis",
       "license": "MIT",
       "default": "data-apis",
       "fixed": true,
@@ -89,7 +86,7 @@
       }
     },
     {
-      "repo": "siddu1004/ECC",
+      "repo": "affaan-m/everything-claude-code",
       "license": "MIT",
       "default": "engineering",
       "skills": [
@@ -100,7 +97,7 @@
       "collision_prefix": "ecc-"
     },
     {
-      "repo": "siddu1004/OmniRoute",
+      "repo": "diegosouzapw/OmniRoute",
       "license": "MIT",
       "default": "ai-gateway",
       "fixed": true,
@@ -110,7 +107,7 @@
       "collision_prefix": "omniroute-"
     },
     {
-      "repo": "siddu1004/freellmapi",
+      "repo": "tashfeenahmed/freellmapi",
       "license": "MIT",
       "default": "data-apis",
       "fixed": true,
@@ -123,7 +120,7 @@
       }
     },
     {
-      "repo": "siddu1004/claude-mem",
+      "repo": "thedotmack/claude-mem",
       "license": "Apache-2.0",
       "default": "memory",
       "fixed": true,
@@ -140,7 +137,7 @@
       ]
     },
     {
-      "repo": "siddu1004/OmniRoute",
+      "repo": "diegosouzapw/OmniRoute",
       "license": "MIT",
       "default": "devops",
       "fixed": true,
@@ -150,7 +147,7 @@
       ]
     },
     {
-      "repo": "siddu1004/claude-plugins-official",
+      "repo": "anthropics/claude-plugins-official",
       "license": "Apache-2.0",
       "default": "agent-dev",
       "fixed": true,
@@ -273,7 +270,7 @@
       "description": "Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker.",
       "claude": {
         "source": "git-subdir",
-        "url": "https://github.com/siddu1004/claude-mem.git",
+        "url": "https://github.com/thedotmack/claude-mem.git",
         "path": "plugin"
       },
       "claude_only": true

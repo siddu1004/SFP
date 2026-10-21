@@ -263,30 +263,32 @@ Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md)
 
 Every skill in these repos is in SFP, except test fixtures and translated example copies. Repos with no skill of their own got one written for them. Plugins with no public repo are kept as snapshots in `vendor/`.
 
+SFP reads the original repos directly, and `sources.lock.json` records the exact commit of each one that was integrated. It does not depend on anyone's fork, except that `career` installs from a fork branch.
+
 | Source | Where it is in SFP |
 |---|---|
-| impeccable | `frontend`: Impeccable, 24 design commands |
-| taste-skill-for-claude-and-antigravity | `frontend`: the Taste skills |
-| skills-claude-antigravity | `frontend`: Emil Kowalski's skills |
+| pbakaus/impeccable | `frontend`: Impeccable, 24 design commands |
+| Imaidazo/taste-skill-plugin | `frontend`: the Taste skills |
+| emilkowalski/skills | `frontend`: Emil Kowalski's skills |
 | vercel-labs/web-interface-guidelines | `frontend`: a UI review checklist |
 | design-skills | `frontend`: 10 UX design skills |
-| awesome-design-skills | `design-styles` |
-| strix | `security` |
-| claude-plugins-official | `agent-dev` and others: every skill it ships. Its other plugins point to third-party repos |
-| ECC | spread across `agents`, `agent-dev`, `backend`, `frontend`, `testing-quality` and more |
-| OmniRoute | `ai-gateway`, plus 6 maintenance skills in `devops` |
-| claude-mem | `memory`, and the optional `session-memory` plugin |
-| Agent-Reach | `data-apis` |
-| public-apis | `data-apis`: a searchable skill over about 2,100 free APIs |
-| freellmapi | `data-apis`: a skill with the project's docs |
-| MoneyPrinterTurbo | `content-media` |
+| bergside/awesome-design-skills | `design-styles` |
+| usestrix/strix | `security` |
+| anthropics/claude-plugins-official | `agent-dev` and others: every skill it ships. Its other plugins point to third-party repos |
+| affaan-m/everything-claude-code | spread across `agents`, `agent-dev`, `backend`, `frontend`, `testing-quality` and more |
+| diegosouzapw/OmniRoute | `ai-gateway`, plus 6 maintenance skills in `devops` |
+| thedotmack/claude-mem | `memory`, and the optional `session-memory` plugin |
+| Panniantong/Agent-Reach | `data-apis` |
+| public-apis/public-apis | `data-apis`: a searchable skill over about 2,100 free APIs |
+| tashfeenahmed/freellmapi | `data-apis`: a skill with the project's docs |
+| harry0703/MoneyPrinterTurbo | `content-media` |
 | marketing-psychology | `content-media`: 5 persuasion and behavior skills |
 | Anthropic example skills | 8 Apache-2.0 skills: algorithmic art, brand guidelines, canvas design, internal comms, MCP builder, Slack GIF creator, theme factory, web artifacts builder |
 | teach-me | `research-docs` |
 | task-observer, headroom | `agent-dev` |
 | cowork-plugin-management | `agent-dev` |
 | gia-chief-of-staff | `business-ops` |
-| career-ops | `career`, installed from its own repo |
+| career-ops-hq/career-ops | `career`, installed from its own repo |
 
 **Left out on purpose:** anything whose license does not allow republishing. That covers Greenhouse's customer-only plugin, Anthropic's docx, pdf, pptx, xlsx and browser skills (all rights reserved), and the noncommercial-only `claude-mem-cowork` plugin.
 </details>

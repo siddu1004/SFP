@@ -162,7 +162,7 @@
       "category": "skills",
       "source": {
         "source": "git-subdir",
-        "url": "https://github.com/siddu1004/claude-mem.git",
+        "url": "https://github.com/thedotmack/claude-mem.git",
         "path": "plugin"
       }
     }

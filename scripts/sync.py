@@ -158,11 +158,15 @@ def main():
         licenses.setdefault(cat, set()).add(source['repo'])
 
     lic_by_repo = {}
+    lock = {}
     for source in cfg['sources']:
         if 'local' in source:
             repo_dir = os.path.join(ROOT, source['local'])
         else:
             repo_dir = checkout(source['repo'], args.src_dir, cache)
+            sha = subprocess.run(['git', '-C', repo_dir, 'rev-parse', 'HEAD'], capture_output=True, text=True).stdout.strip()
+            if sha:
+                lock[source['repo']] = sha
         prefix = source.get('collision_prefix', source['default'] + '-')
         print(f"{source['repo']}")
         excludes = source.get('exclude', [])
@@ -187,6 +191,10 @@ def main():
         lic = next((f for f in sorted(os.listdir(repo_dir)) if f.upper().startswith(('LICENSE', 'LICENCE'))), None)
         if lic:
             lic_by_repo[source['repo']] = os.path.join(repo_dir, lic)
+
+    with open(os.path.join(ROOT, 'sources.lock.json'), 'w', encoding='utf-8') as f:
+        json.dump(lock, f, indent=2, sort_keys=True)
+        f.write('\n')
 
     # Copy each category's source licenses next to its skills.
     for cat, repos in licenses.items():
