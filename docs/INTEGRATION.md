@@ -6,7 +6,7 @@ This guide takes you from nothing to a fully set up IDE: SFP's skills and router
 
 | Piece | What it gives you | Where it comes from |
 |---|---|---|
-| SFP skills and router | 558 skills sorted into categories, plus `sfp`, which finds the right one | This repo |
+| SFP skills and router | 560 skills sorted into categories, plus `sfp`, which finds the right one | This repo |
 | SFP MCP server | Search and read every skill from any MCP client, with nothing copied | This repo (`mcp/sfp_mcp.py`) |
 | ECC (Everything Claude Code) | SFP carries ECC's **skills**. ECC itself also has 71 agents, hooks, commands and rules, which skills folders cannot carry | [affaan-m/ECC](https://github.com/affaan-m/ECC) |
 | OmniRoute | SFP carries the 45 `ai-gateway` **skills** that drive it. The gateway server is a separate program that routes your IDE to 375 providers through one endpoint | [diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute) |

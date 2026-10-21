@@ -16,6 +16,7 @@ SFP collects skills written by other people. Each skill keeps the license of the
 | [harry0703/MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo) | MIT | |
 | [public-apis/public-apis](https://github.com/public-apis/public-apis) | MIT | https://github.com/public-apis/public-apis |
 | [tashfeenahmed/freellmapi](https://github.com/tashfeenahmed/freellmapi) | MIT | https://github.com/tashfeenahmed/freellmapi |
+| [EricJujianZou/rederive](https://github.com/EricJujianZou/rederive) | MIT | Eric Zou |
 | [web-interface-guidelines](https://github.com/vercel-labs/web-interface-guidelines) | MIT | Vercel Labs |
 | teach-me | MIT | https://github.com/ahmed3bead/teach-me |
 | marketing-psychology | MIT | https://github.com/grayskripko/marketing-skills |

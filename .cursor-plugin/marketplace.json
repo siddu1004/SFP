@@ -97,7 +97,7 @@
     {
       "name": "research-docs",
       "source": "./plugins/research-docs",
-      "description": "Deep research, scientific databases, literature review, docs, ADRs and a teach-me tutor."
+      "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself."
     },
     {
       "name": "web3",

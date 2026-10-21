@@ -5,7 +5,7 @@
     "name": "siddu1004"
   },
   "metadata": {
-    "description": "SFP, Skills for Productivity: 559 agent skills sorted by what you build, plus a hive that picks the few each task needs for your project and learns from feedback. Installs into 16 IDEs and CLIs, and serves any MCP client."
+    "description": "SFP, Skills for Productivity: 560 agent skills sorted by what you build, plus a hive that picks the few each task needs for your project and learns from feedback. Installs into 16 IDEs and CLIs, and serves any MCP client."
   },
   "plugins": [
     {
@@ -118,7 +118,7 @@
     },
     {
       "name": "research-docs",
-      "description": "Deep research, scientific databases, literature review, docs, ADRs and a teach-me tutor.",
+      "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself.",
       "category": "skills",
       "source": "./plugins/research-docs"
     },

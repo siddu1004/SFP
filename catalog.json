@@ -73,8 +73,8 @@
    "skills": 10
   },
   "research-docs": {
-   "description": "Deep research, scientific databases, literature review, docs, ADRs and a teach-me tutor.",
-   "skills": 18
+   "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself.",
+   "skills": 19
   },
   "web3": {
    "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
@@ -4983,6 +4983,15 @@
    "source": "vercel-labs/web-interface-guidelines",
    "license": "MIT",
    "path": "plugins/frontend/skills/web-interface-guidelines",
+   "variants": {}
+  },
+  {
+   "name": "rederive",
+   "category": "research-docs",
+   "description": "Teaches a codebase by making the user re-derive its design decisions from first principles through Socratic questions, instead of explaining the code. Works on the user's own repo or any open source repo (local path or git URL). Use when the user runs /rederive, wants to explain a project they built with AI, is preparing to talk about a project in an interview, or wants to learn how a well-known project works.",
+   "source": "EricJujianZou/rederive",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/rederive",
    "variants": {}
   },
   {

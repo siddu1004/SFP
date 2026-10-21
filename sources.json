@@ -170,6 +170,15 @@
       }
     },
     {
+      "repo": "EricJujianZou/rederive",
+      "license": "MIT",
+      "default": "research-docs",
+      "fixed": true,
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
       "repo": "ahmed3bead/teach-me",
       "license": "MIT",
       "default": "research-docs",

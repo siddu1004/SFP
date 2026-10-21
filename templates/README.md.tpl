@@ -534,6 +534,7 @@ SFP reads the original repos directly, and `sources.lock.json` records the exact
 | harry0703/MoneyPrinterTurbo | `content-media` |
 | marketing-psychology | `content-media`: 5 persuasion and behavior skills |
 | Anthropic example skills | 8 Apache-2.0 skills: algorithmic art, brand guidelines, canvas design, internal comms, MCP builder, Slack GIF creator, theme factory, web artifacts builder |
+| EricJujianZou/rederive | `research-docs`: teaches a codebase by Socratic questions |
 | teach-me | `research-docs` |
 | task-observer, headroom | `agent-dev` |
 | cowork-plugin-management | `agent-dev` |

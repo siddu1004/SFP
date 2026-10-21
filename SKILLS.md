@@ -608,9 +608,9 @@ Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, conf
 | `network-config-validation` | Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, stale references, management-plane risk, and IOS-style security hygiene. … |
 | `network-interface-health` | Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, switches, and Linux hosts. Use when an interface shows errors, drops, CRCs… |
 
-## research-docs (18)
+## research-docs (19)
 
-Deep research, scientific databases, literature review, docs, ADRs and a teach-me tutor.
+Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself.
 
 | Skill | What it does |
 |---|---|
@@ -631,6 +631,7 @@ Deep research, scientific databases, literature review, docs, ADRs and a teach-m
 | `scientific-thinking-literature-review` | Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, source screening, synthesis, citation checks, and evidence logging. Use whe… |
 | `scientific-thinking-scholar-evaluation` | Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation support, and research-writing feedback. Use when evaluating academic or sci… |
 | `story-lifecycle` | Manage a file-based epic → story → sprint development loop without requiring an external project management tool. Creates and tracks epics, breaks them into user stories, assigns them to sprints, and … |
+| `rederive` | Teaches a codebase by making the user re-derive its design decisions from first principles through Socratic questions, instead of explaining the code. Works on the user's own repo or any open source r… |
 | `teach-me` | Teach adaptively from learner goals or authorized sources, or help educators prepare lessons, in English or simplified Modern Standard Arabic. Use for learning, practice, review, or getting unstuck. |
 
 ## web3 (9)

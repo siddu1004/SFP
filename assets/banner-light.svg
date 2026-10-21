@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="300" viewBox="0 0 1280 300" role="img" aria-labelledby="t d">
   <title id="t">SFP: Skills for Productivity</title>
-  <desc id="d">A shelf of 559 skills in 24 groups. One line from the sfp wordmark reaches the one skill the agent needs.</desc>
+  <desc id="d">A shelf of 560 skills in 24 groups. One line from the sfp wordmark reaches the one skill the agent needs.</desc>
   <rect width="1280" height="300" rx="16" fill="#f4f1ea"/>
   <rect x="600.0" y="184" width="2.6" height="78" fill="#cdc7b8"/>
   <rect x="614.9" y="147" width="2.6" height="115" fill="#b8b1a0"/>
@@ -133,5 +133,5 @@
     <path d="M340 172 V76 H386 A24 24 0 0 1 386 124 H340"/>
   </g>
   <text x="64" y="232" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="600" fill="#1a1d21">Skills for Productivity</text>
-  <text x="64" y="272" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#565c64">559 skills. The hive picks the few you need, and learns.</text>
+  <text x="64" y="272" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#565c64">560 skills. The hive picks the few you need, and learns.</text>
 </svg>
