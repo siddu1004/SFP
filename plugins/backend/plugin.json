@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "version": "3.3.0",
+  "description": "Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, Redis, Prisma).",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/"
+}

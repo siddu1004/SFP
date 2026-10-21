@@ -1,0 +1,24 @@
+{
+  "name": "ai-ml",
+  "version": "3.3.0",
+  "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP ai-ml",
+    "shortDescription": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
+    "longDescription": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

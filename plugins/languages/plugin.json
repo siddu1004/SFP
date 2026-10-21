@@ -1,0 +1,11 @@
+{
+  "name": "languages",
+  "version": "3.3.0",
+  "description": "Language idioms, standards and testing for Go, Rust, Python, C++, C#, F#, Java, Kotlin, Perl and .NET.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/"
+}

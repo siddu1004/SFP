@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.3.0
+
+- **Plugins for more IDEs.** Every category is now also a Codex plugin (`.codex-plugin/plugin.json` and `.agents/plugins/marketplace.json`), a Cursor plugin (`.cursor-plugin/marketplace.json`), and a GitHub Copilot CLI plugin (a `plugin.json` at each plugin root, and Copilot reads the existing Claude marketplace). A root `gemini-extension.json` makes the repo a Gemini CLI extension that serves every skill through the MCP server. The installer still covers the 16 IDEs that read a skills folder. Only the Claude Code manifest is checked with its own validator; the others follow each tool's documented format and are checked by tests for shape only.
+- The banner tagline names the hive.
+
 ## 3.2.0
 
 - **Skills that need a program install it themselves.** The 93 skills that only guide a separately installed program (OmniRoute, claude-mem, Strix, FreeLLMAPI, Agent Reach, AgentShield) now carry `scripts/sfp_app.py` and that program's entry (`scripts/app.json`), and start with a note telling the agent to use them. `status` checks the requirements (Node version, Docker running), whether it is installed and whether it answers; `install` shows a plan and changes nothing; `install --yes` runs it; `start` starts it and waits for it; `update` moves to the newest release. A downloaded installer script is saved and its checksum printed before it runs, only https is accepted, and provider keys are left to the user.

@@ -1,0 +1,24 @@
+{
+  "name": "devops",
+  "version": "3.3.0",
+  "description": "Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP devops",
+    "shortDescription": "Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation.",
+    "longDescription": "Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

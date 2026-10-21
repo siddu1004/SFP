@@ -1,0 +1,11 @@
+{
+  "name": "engineering",
+  "version": "3.3.0",
+  "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/"
+}

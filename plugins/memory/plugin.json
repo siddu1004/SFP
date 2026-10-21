@@ -1,0 +1,11 @@
+{
+  "name": "memory",
+  "version": "3.3.0",
+  "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/"
+}

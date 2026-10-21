@@ -1,0 +1,13 @@
+{
+  "name": "sfp",
+  "version": "3.3.0",
+  "description": "SFP: 559 agent skills, searchable and readable on demand, with a hive that picks the few each task needs.",
+  "mcpServers": {
+    "sfp": {
+      "command": "python3",
+      "args": [
+        "${extensionPath}/mcp/sfp_mcp.py"
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "memory",
+  "version": "3.3.0",
+  "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP memory",
+    "shortDescription": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
+    "longDescription": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

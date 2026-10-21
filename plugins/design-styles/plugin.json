@@ -1,0 +1,11 @@
+{
+  "name": "design-styles",
+  "version": "3.3.0",
+  "description": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/"
+}

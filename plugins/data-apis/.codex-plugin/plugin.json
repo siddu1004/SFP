@@ -1,0 +1,24 @@
+{
+  "name": "data-apis",
+  "version": "3.3.0",
+  "description": "About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platforms, search and scraping.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP data-apis",
+    "shortDescription": "About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platforms, search and scraping.",
+    "longDescription": "About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platforms, search and scraping.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

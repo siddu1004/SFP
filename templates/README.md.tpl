@@ -196,6 +196,27 @@ Replace `frontend` with any category from the [presets and categories](#pick-a-p
 </details>
 
 <details>
+<summary><b>Codex, Copilot CLI, Cursor and Gemini CLI, as plugins</b></summary>
+
+The repo carries each tool's plugin files, generated from the same categories, so each category is a plugin in all of them:
+
+```bash
+# OpenAI Codex
+codex plugin marketplace add siddu1004/SFP
+codex plugin add sfp@sfp
+
+# GitHub Copilot CLI (it reads the same marketplace as Claude Code)
+copilot plugin marketplace add siddu1004/SFP
+copilot plugin install sfp@sfp
+
+# Gemini CLI: one extension that serves every skill through the MCP server
+gemini extensions install https://github.com/siddu1004/SFP
+```
+
+Cursor reads `.cursor-plugin/marketplace.json` from the repo. Replace `sfp` with any category. These files follow each tool's documented format, and only the Claude Code manifest has been checked with that tool's own validator, so if one of these commands fails, use the installer below and open an issue. Every other IDE in the [list](#supported-ides) (Windsurf, Kiro, OpenCode and the rest) uses the installer, which puts the skills in its folder.
+</details>
+
+<details>
 <summary><b>From a clone, to read the installer first</b></summary>
 
 ```bash

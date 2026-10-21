@@ -1,0 +1,128 @@
+{
+  "name": "sfp",
+  "owner": {
+    "name": "siddu1004"
+  },
+  "plugins": [
+    {
+      "name": "sfp",
+      "source": "./plugins/sfp",
+      "description": "The router and the hive: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback."
+    },
+    {
+      "name": "frontend",
+      "source": "./plugins/frontend",
+      "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines."
+    },
+    {
+      "name": "design-styles",
+      "source": "./plugins/design-styles",
+      "description": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more."
+    },
+    {
+      "name": "backend",
+      "source": "./plugins/backend",
+      "description": "Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, Redis, Prisma)."
+    },
+    {
+      "name": "mobile",
+      "source": "./plugins/mobile",
+      "description": "Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift."
+    },
+    {
+      "name": "languages",
+      "source": "./plugins/languages",
+      "description": "Language idioms, standards and testing for Go, Rust, Python, C++, C#, F#, Java, Kotlin, Perl and .NET."
+    },
+    {
+      "name": "testing-quality",
+      "source": "./plugins/testing-quality",
+      "description": "TDD, end-to-end tests, verification loops, code review, regression and quality gates."
+    },
+    {
+      "name": "devops",
+      "source": "./plugins/devops",
+      "description": "Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation."
+    },
+    {
+      "name": "security",
+      "source": "./plugins/security",
+      "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening."
+    },
+    {
+      "name": "agents",
+      "source": "./plugins/agents",
+      "description": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines."
+    },
+    {
+      "name": "agent-dev",
+      "source": "./plugins/agent-dev",
+      "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools."
+    },
+    {
+      "name": "ai-ml",
+      "source": "./plugins/ai-ml",
+      "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media."
+    },
+    {
+      "name": "ai-gateway",
+      "source": "./plugins/ai-gateway",
+      "description": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A."
+    },
+    {
+      "name": "data-apis",
+      "source": "./plugins/data-apis",
+      "description": "About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platforms, search and scraping."
+    },
+    {
+      "name": "content-media",
+      "source": "./plugins/content-media",
+      "description": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art."
+    },
+    {
+      "name": "business-ops",
+      "source": "./plugins/business-ops",
+      "description": "Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check."
+    },
+    {
+      "name": "industry",
+      "source": "./plugins/industry",
+      "description": "Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy."
+    },
+    {
+      "name": "networking",
+      "source": "./plugins/networking",
+      "description": "Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, config validation."
+    },
+    {
+      "name": "research-docs",
+      "source": "./plugins/research-docs",
+      "description": "Deep research, scientific databases, literature review, docs, ADRs and a teach-me tutor."
+    },
+    {
+      "name": "web3",
+      "source": "./plugins/web3",
+      "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security."
+    },
+    {
+      "name": "engineering",
+      "source": "./plugins/engineering",
+      "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring."
+    },
+    {
+      "name": "science-hardware",
+      "source": "./plugins/science-hardware",
+      "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware."
+    },
+    {
+      "name": "career",
+      "source": "./plugins/career",
+      "description": "AI job search: evaluate offers, tailor CVs, scan portals, track applications."
+    },
+    {
+      "name": "memory",
+      "source": "./plugins/memory",
+      "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "content-media",
+  "version": "3.3.0",
+  "description": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP content-media",
+    "shortDescription": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative ar",
+    "longDescription": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

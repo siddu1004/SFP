@@ -1,10 +1,11 @@
 {
   "name": "testing-quality",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "TDD, end-to-end tests, verification loops, code review, regression and quality gates.",
   "author": {
     "name": "siddu1004"
   },
   "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
   "skills": "./skills/"
 }

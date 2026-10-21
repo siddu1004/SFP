@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IGNORE = shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
-VERSION = '3.2.0'
+VERSION = '3.3.0'
 OUT = os.path.join(ROOT, 'plugins')
 
 
@@ -488,9 +488,18 @@ def write_manifests(cfg, cats, catalog):
         meta[cat] = {'description': desc, 'skills': counts[cat]}
         d = os.path.join(OUT, cat, '.claude-plugin')
         os.makedirs(d, exist_ok=True)
-        json.dump({'name': cat, 'version': VERSION, 'description': desc, 'author': {'name': 'siddu1004'},
-                   'repository': 'https://github.com/siddu1004/SFP', 'skills': './skills/'},
-                  open(os.path.join(d, 'plugin.json'), 'w'), indent=2)
+        manifest = {'name': cat, 'version': VERSION, 'description': desc, 'author': {'name': 'siddu1004'},
+                    'repository': 'https://github.com/siddu1004/SFP', 'license': 'MIT', 'skills': './skills/'}
+        json.dump(manifest, open(os.path.join(d, 'plugin.json'), 'w'), indent=2)
+        # The same plugin for other IDEs. Cursor and GitHub Copilot CLI read plugin.json at the plugin root;
+        # Codex reads .codex-plugin/plugin.json.
+        json.dump(manifest, open(os.path.join(OUT, cat, 'plugin.json'), 'w'), indent=2)
+        os.makedirs(os.path.join(OUT, cat, '.codex-plugin'), exist_ok=True)
+        json.dump(dict(manifest, interface={
+            'displayName': 'SFP ' + cat, 'shortDescription': desc[:120], 'longDescription': desc,
+            'developerName': 'siddu1004', 'category': 'Coding', 'capabilities': ['Interactive', 'Read', 'Write'],
+            'websiteURL': 'https://github.com/siddu1004/SFP'}),
+                  open(os.path.join(OUT, cat, '.codex-plugin', 'plugin.json'), 'w'), indent=2)
     for name, ext in cfg['externals'].items():
         plugins.append({'name': name, 'description': ext['description'], 'category': 'skills', 'source': ext['claude']})
         meta[name] = {k: v for k, v in ext.items() if k != 'claude'}
@@ -504,6 +513,23 @@ def write_manifests(cfg, cats, catalog):
         'metadata': {'description': 'SFP, Skills for Productivity: %d agent skills sorted by what you build, plus a hive that picks the few each task needs for your project and learns from feedback. Installs into 16 IDEs and CLIs, and serves any MCP client.' % len(catalog)},
         'plugins': plugins,
     }, open(os.path.join(ROOT, '.claude-plugin', 'marketplace.json'), 'w'), indent=2)
+
+    # Marketplaces for the other IDEs that have them, listing the same plugins (not Claude-only externals).
+    local = [p for p in plugins if isinstance(p['source'], str)]
+    os.makedirs(os.path.join(ROOT, '.cursor-plugin'), exist_ok=True)
+    json.dump({'name': MARKETPLACE, 'owner': {'name': 'siddu1004'},
+               'plugins': [{'name': p['name'], 'source': p['source'], 'description': p['description']} for p in local]},
+              open(os.path.join(ROOT, '.cursor-plugin', 'marketplace.json'), 'w'), indent=2)
+    os.makedirs(os.path.join(ROOT, '.agents', 'plugins'), exist_ok=True)
+    json.dump({'name': MARKETPLACE, 'interface': {'displayName': 'SFP'},
+               'plugins': [{'name': p['name'], 'version': VERSION, 'source': {'source': 'local', 'path': p['source']},
+                            'policy': {'installation': 'AVAILABLE', 'authentication': 'ON_INSTALL'}, 'category': 'Productivity'} for p in local]},
+              open(os.path.join(ROOT, '.agents', 'plugins', 'marketplace.json'), 'w'), indent=2)
+    # Gemini CLI: one extension that serves every skill through the MCP server in this repo.
+    json.dump({'name': MARKETPLACE, 'version': VERSION,
+               'description': 'SFP: %d agent skills, searchable and readable on demand, with a hive that picks the few each task needs.' % len(catalog),
+               'mcpServers': {'sfp': {'command': 'python3', 'args': ['${extensionPath}/mcp/sfp_mcp.py']}}},
+              open(os.path.join(ROOT, 'gemini-extension.json'), 'w'), indent=2)
 
     json.dump({'categories': meta, 'profiles': cfg['profiles'], 'skills': catalog},
               open(os.path.join(ROOT, 'catalog.json'), 'w'), indent=1)

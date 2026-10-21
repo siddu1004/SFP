@@ -1,0 +1,24 @@
+{
+  "name": "mobile",
+  "version": "3.3.0",
+  "description": "Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP mobile",
+    "shortDescription": "Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift.",
+    "longDescription": "Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

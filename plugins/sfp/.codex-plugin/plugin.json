@@ -1,0 +1,24 @@
+{
+  "name": "sfp",
+  "version": "3.3.0",
+  "description": "The router and the hive: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP sfp",
+    "shortDescription": "The router and the hive: find the right skill for any task, installed or not, and choose which few skills to use, in wha",
+    "longDescription": "The router and the hive: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

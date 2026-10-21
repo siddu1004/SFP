@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.2.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.2.0">
+  <img src="https://img.shields.io/badge/version-3.3.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.3.0">
   <img src="https://img.shields.io/badge/skills-559-0f766e?style=flat-square&labelColor=3b4350" alt="559 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
@@ -122,7 +122,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 **Does it pick the right skill, before any learning?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive 3.2.0 | Earlier engine | Plain search |
+| Task set | Hive 3.3.0 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 68% | 14% |
 | 24 tasks in 10 sample projects | 79% | 79% | 33% |
@@ -143,7 +143,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,599 tokens, and 90% are under 4,662. A selection averages 1.8 skills when there is no project.
 
-**How fast is it?** About 3 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
+**How fast is it?** About 2 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost, choice and learning, not quality of results. Learning is measured on a simulated user, not on real long-run use. The tasks and their correct answers were written by one person. The hive's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the held-out set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
 
@@ -207,6 +207,27 @@ Run these inside Claude Code:
 ```
 
 Replace `frontend` with any category from the [presets and categories](#pick-a-preset). Plugins update with `/plugin update`.
+</details>
+
+<details>
+<summary><b>Codex, Copilot CLI, Cursor and Gemini CLI, as plugins</b></summary>
+
+The repo carries each tool's plugin files, generated from the same categories, so each category is a plugin in all of them:
+
+```bash
+# OpenAI Codex
+codex plugin marketplace add siddu1004/SFP
+codex plugin add sfp@sfp
+
+# GitHub Copilot CLI (it reads the same marketplace as Claude Code)
+copilot plugin marketplace add siddu1004/SFP
+copilot plugin install sfp@sfp
+
+# Gemini CLI: one extension that serves every skill through the MCP server
+gemini extensions install https://github.com/siddu1004/SFP
+```
+
+Cursor reads `.cursor-plugin/marketplace.json` from the repo. Replace `sfp` with any category. These files follow each tool's documented format, and only the Claude Code manifest has been checked with that tool's own validator, so if one of these commands fails, use the installer below and open an issue. Every other IDE in the [list](#supported-ides) (Windsurf, Kiro, OpenCode and the rest) uses the installer, which puts the skills in its folder.
 </details>
 
 <details>
@@ -297,7 +318,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 
 ## Questions
 
-**Does selection slow my agent down?** No. A decision takes about 3 ms and happens once per phase of work. It also loads fewer skills: 1.8 on average with no project.
+**Does selection slow my agent down?** No. A decision takes about 2 ms and happens once per phase of work. It also loads fewer skills: 1.8 on average with no project.
 
 **Does it always pick right?** No. The right skill was in the selection 86% of the time on held-out tasks, and the misses are listed in [docs/HIVE.md](docs/HIVE.md#where-it-fails). When it misses, tell it with feedback, name the skill, or ask for a category.
 

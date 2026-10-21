@@ -1,0 +1,320 @@
+{
+  "name": "sfp",
+  "interface": {
+    "displayName": "SFP"
+  },
+  "plugins": [
+    {
+      "name": "sfp",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/sfp"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "frontend",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/frontend"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "design-styles",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/design-styles"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "backend",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/backend"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "mobile",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/mobile"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "languages",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/languages"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "testing-quality",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/testing-quality"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "devops",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/devops"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "security",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/security"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "agents",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agents"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "agent-dev",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/agent-dev"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "ai-ml",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ai-ml"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "ai-gateway",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ai-gateway"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "data-apis",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/data-apis"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "content-media",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/content-media"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "business-ops",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/business-ops"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "industry",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/industry"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "networking",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/networking"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "research-docs",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/research-docs"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "web3",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/web3"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "engineering",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/engineering"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "science-hardware",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/science-hardware"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "career",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/career"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "memory",
+      "version": "3.3.0",
+      "source": {
+        "source": "local",
+        "path": "./plugins/memory"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

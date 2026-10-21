@@ -1,0 +1,24 @@
+{
+  "name": "ai-gateway",
+  "version": "3.3.0",
+  "description": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP ai-gateway",
+    "shortDescription": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
+    "longDescription": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

@@ -1,10 +1,11 @@
 {
   "name": "security",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
   "author": {
     "name": "siddu1004"
   },
   "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
   "skills": "./skills/"
 }

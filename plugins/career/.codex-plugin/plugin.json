@@ -1,0 +1,24 @@
+{
+  "name": "career",
+  "version": "3.3.0",
+  "description": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "SFP career",
+    "shortDescription": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
+    "longDescription": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
+    "developerName": "siddu1004",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/siddu1004/SFP"
+  }
+}

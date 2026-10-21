@@ -1,0 +1,11 @@
+{
+  "name": "mobile",
+  "version": "3.3.0",
+  "description": "Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "license": "MIT",
+  "skills": "./skills/"
+}
