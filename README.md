@@ -1,6 +1,6 @@
 # SFP: Skills for Productivity
 
-528 agent skills from 15 repos, sorted by what you build: frontend, backend, mobile, security, agent-driven work, AI, data APIs and more. One `sfp` router skill knows all of them and sends the agent to the right one.
+529 agent skills from 15 repos, sorted by what you build: frontend, backend, mobile, security, agent-driven work, AI, data APIs and more. One `sfp` router skill knows all of them and sends the agent to the right one.
 
 It works in Claude Code and in every other agent IDE or CLI that reads skills (`SKILL.md` folders): Codex, Cursor, Gemini CLI, Antigravity, GitHub Copilot, Windsurf, Kiro, OpenCode, Pi, Grok Build, Qoder, Trae, Rovo Dev, Mistral Vibe and Hermes.
 
@@ -91,8 +91,9 @@ Every skill in the repos below is in SFP, except the maintainers' own test fixtu
 | public-apis | `data-apis`, as a searchable skill over about 2,100 free APIs |
 | freellmapi | `data-apis`, a skill with the project's docs bundled |
 | MoneyPrinterTurbo | `content-media` |
+| siddardh-tools (private) | covered by the public repos above, plus the Vercel web interface guidelines below. Its `sitra-simulink` coursework skill is left out on purpose |
+| vercel-labs/web-interface-guidelines | `frontend` (a review checklist; pulled from the upstream repo) |
 | career-ops | `career` (installed from its own repo) |
-| sai_ai_my_own_jarvis | `sai` (installed from its private repo, so only accounts with access get it) |
 
 ## How it is organised
 
@@ -101,7 +102,7 @@ Skills live in categories under `plugins/<category>/skills/<skill>/`. Each categ
 | Category | Skills | What's in it |
 |---|---|---|
 | `sfp` | 1 | The router: finds the right skill for any task, installed or not |
-| `frontend` | 49 | UI design, components, motion, accessibility, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills and Emil Kowalski's animation skills |
+| `frontend` | 50 | UI design, components, motion, accessibility, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines |
 | `design-styles` | 67 | Named visual styles: brutalism, glassmorphism, editorial, retro, shadcn and more |
 | `backend` | 27 | Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, MySQL, Redis, Prisma, API design |
 | `mobile` | 13 | Android, iOS, Flutter, React Native, Kotlin Multiplatform, Swift |
@@ -124,14 +125,13 @@ Skills live in categories under `plugins/<category>/skills/<skill>/`. Each categ
 | `engineering` | 15 | Architecture, standards, error handling, performance, benchmarks |
 | `science-hardware` | 6 | Math proofs, Blender, M5Stack and Cardputer |
 | `career` | plugin | AI job search: evaluate offers, tailor CVs, scan portals, track applications (career-ops) |
-| `sai` | plugin | Sai, your own voice assistant (private repo) |
 | `session-memory` | plugin | claude-mem's full plugin with hooks and worker. Claude Code only |
 
 `ecc-full` and `omniroute-full` are optional Claude Code plugins that add the hooks, agents and commands of Everything Claude Code and OmniRoute. Their skills are already spread across the categories above, so install either the full plugin or the categories.
 
 ## The `sfp` skill
 
-Agents read the description of every installed skill at the start of each session, and 528 descriptions is too much to carry. So you do not have to install everything. Install the `sfp` skill plus the categories you use daily. For the rest, `sfp` has an index of every skill, finds the right one by task, and reads it straight from this checkout on demand. The installer records the checkout path in `~/.sfp/root` for that.
+Agents read the description of every installed skill at the start of each session, and 529 descriptions is too much to carry. So you do not have to install everything. Install the `sfp` skill plus the categories you use daily. For the rest, `sfp` has an index of every skill, finds the right one by task, and reads it straight from this checkout on demand. The installer records the checkout path in `~/.sfp/root` for that.
 
 ## Free APIs for any need
 
@@ -170,7 +170,6 @@ A tool counts as found when its home folder exists (for example `~/.cursor`). Na
 ### Skills with extra needs
 
 - **career** runs from its own checkout, cloned into `~/.sfp/apps/career-ops`. Set it up once there with `npm install`. Your CV, tracker and reports are kept separately in `~/career-ops`.
-- **sai** is cloned from the private repo into `~/.sfp/apps/sai`, using your git credentials. If the clone is refused, the installer skips it and carries on. Set it up once there with `pip install -r requirements.txt` inside a virtual environment.
 - **session-memory** needs Claude Code's hooks and a background worker, so other tools skip it. The `memory` skills work without it but are written for claude-mem, so most want it installed.
 - **ai-gateway** skills drive an OmniRoute server, and **security** skills drive the Strix CLI. Each skill explains how to install what it needs.
 - **Impeccable** (in `frontend`) downloads its engine binary on first use.

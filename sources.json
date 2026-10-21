@@ -162,6 +162,16 @@
       "name_prefix_skip": [
         "discord"
       ]
+    },
+    {
+      "repo": "vercel-labs/web-interface-guidelines",
+      "license": "MIT",
+      "default": "frontend",
+      "fixed": true,
+      "template": "templates/web-interface-guidelines",
+      "files": {
+        "command.md": "reference/rules.md"
+      }
     }
   ],
   "externals": {
@@ -207,22 +217,6 @@
       },
       "claude_only": true,
       "optional": true
-    },
-    "sai": {
-      "description": "Sai, a personal voice assistant (OpenRouter brain, Jev judgment, open-interpreter hands, Fish Audio voice). Private repo: installs only for accounts with access.",
-      "claude": {
-        "source": "github",
-        "repo": "siddu1004/sai_ai_my_own_jarvis",
-        "ref": "claude/sai-skill"
-      },
-      "app": {
-        "repo": "siddu1004/sai_ai_my_own_jarvis",
-        "skill": "skills/sai",
-        "name": "sai",
-        "ref": "claude/sai-skill",
-        "setup": "python -m venv .venv, activate it, then pip install -r requirements.txt"
-      },
-      "private": true
     }
   },
   "profiles": {

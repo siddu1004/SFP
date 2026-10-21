@@ -10,7 +10,7 @@ The router: one skill that knows every category and every skill, and sends the a
 |---|---|
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 
-## frontend (49)
+## frontend (50)
 
 UI design, components, motion, accessibility and frontend frameworks (React, Vue, Next.js, Angular, Vite).
 
@@ -65,6 +65,7 @@ UI design, components, motion, accessibility and frontend frameworks (React, Vue
 | `ui-to-vue` | Use when the user has UI screenshots or design exports that need batch conversion into Vue 3 components, especially with Vant, Element Plus, or Ant Design Vue. |
 | `vite-patterns` | Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, and build optimization. Activate when working with vite.config.ts, Vite… |
 | `vue-patterns` | Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns. Activates for Vue, Nuxt, Vite, or Pinia proj… |
+| `web-interface-guidelines` | Review UI code against the Vercel Web Interface Guidelines (accessibility, focus states, forms, animation, typography, content handling, images, performance, navigation and state, touch, safe areas, d… |
 
 ## design-styles (67)
 
@@ -712,7 +713,3 @@ Claude Code only: install it as a plugin from the marketplace.
 The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other.
 
 Claude Code only: install it as a plugin from the marketplace.
-
-## sai (plugin)
-
-Sai, a personal voice assistant (OpenRouter brain, Jev judgment, open-interpreter hands, Fish Audio voice). Private repo: installs only for accounts with access.

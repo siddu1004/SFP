@@ -55,6 +55,7 @@ UI design, components, motion, accessibility and frontend frameworks (React, Vue
 - `ui-to-vue`: Use when the user has UI screenshots or design exports that need batch conversion into Vue 3 components, especially with Vant, Element Plus, or Ant Design Vue.
 - `vite-patterns`: Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, and build optimization. Acti...
 - `vue-patterns`: Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns. A...
+- `web-interface-guidelines`: Review UI code against the Vercel Web Interface Guidelines (accessibility, focus states, forms, animation, typography, content handling, images, performance,...
 
 ## design-styles
 
@@ -645,10 +646,3 @@ claude-mem's skills: search past work, build timelines, hand off sessions, plan 
 - `claude-mem-install`: Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference.
 - `mem-host-observer`: Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose.
 - `mem-openclaw`: 
-
-## sai
-
-Sai, a personal voice assistant: set it up, run it, add abilities. Private repo, so it installs only for accounts with access.
-
-Runs from its own checkout; the installer sets it up (see the SFP README).
-

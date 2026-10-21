@@ -184,16 +184,6 @@
         "repo": "siddu1004/OmniRoute",
         "ref": "claude-plugin"
       }
-    },
-    {
-      "name": "sai",
-      "description": "Sai, a personal voice assistant (OpenRouter brain, Jev judgment, open-interpreter hands, Fish Audio voice). Private repo: installs only for accounts with access.",
-      "category": "skills",
-      "source": {
-        "source": "github",
-        "repo": "siddu1004/sai_ai_my_own_jarvis",
-        "ref": "claude/sai-skill"
-      }
     }
   ]
 }

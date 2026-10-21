@@ -6,7 +6,7 @@
   },
   "frontend": {
    "description": "UI design, components, motion, accessibility and frontend frameworks (React, Vue, Next.js, Angular, Vite).",
-   "skills": 49
+   "skills": 50
   },
   "design-styles": {
    "description": "67 named visual styles (brutalism, glassmorphism, editorial, retro, shadcn and more) to build in.",
@@ -118,18 +118,6 @@
    "description": "The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other.",
    "claude_only": true,
    "optional": true,
-   "skills": 0
-  },
-  "sai": {
-   "description": "Sai, a personal voice assistant (OpenRouter brain, Jev judgment, open-interpreter hands, Fish Audio voice). Private repo: installs only for accounts with access.",
-   "app": {
-    "repo": "siddu1004/sai_ai_my_own_jarvis",
-    "skill": "skills/sai",
-    "name": "sai",
-    "ref": "claude/sai-skill",
-    "setup": "python -m venv .venv, activate it, then pip install -r requirements.txt"
-   },
-   "private": true,
    "skills": 0
   }
  },
@@ -4920,6 +4908,15 @@
    "source": "siddu1004/claude-plugins-official",
    "license": "Apache-2.0",
    "path": "plugins/agent-dev/skills/discord-configure",
+   "variants": {}
+  },
+  {
+   "name": "web-interface-guidelines",
+   "category": "frontend",
+   "description": "Review UI code against the Vercel Web Interface Guidelines (accessibility, focus states, forms, animation, typography, content handling, images, performance, navigation and state, touch, safe areas, dark mode, i18n, hydration, copy) and report terse file:line findings. Use when the user asks to review, lint or audit UI code or a component against web interface guidelines or UI best practices, or wants a pre-merge UI check.",
+   "source": "vercel-labs/web-interface-guidelines",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/web-interface-guidelines",
    "variants": {}
   },
   {

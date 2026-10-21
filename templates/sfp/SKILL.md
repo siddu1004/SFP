@@ -38,7 +38,6 @@ Search `reference/index.md` in this skill's folder. It has one line per skill, g
 | math proofs, Blender, M5Stack hardware | `science-hardware` |
 | job search, CVs, applications | `career` |
 | claude-mem, session memory, handoffs, timelines | `memory` |
-| Sai, the user's own voice assistant (Jarvis) | `sai` |
 
 ## 2. Use it
 
