@@ -1,0 +1,10 @@
+{
+  "name": "content-media",
+  "version": "1.0.0",
+  "description": "Writing, marketing, SEO, video, slides, social posting and brand voice.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "skills": "./skills/"
+}

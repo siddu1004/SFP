@@ -1,0 +1,10 @@
+{
+  "name": "agent-dev",
+  "version": "1.0.0",
+  "description": "Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory, context and token budgets.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "skills": "./skills/"
+}

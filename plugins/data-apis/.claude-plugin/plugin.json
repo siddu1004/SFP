@@ -1,0 +1,10 @@
+{
+  "name": "data-apis",
+  "version": "1.0.0",
+  "description": "Direct access to data: a searchable list of about 2,100 free public APIs, internet reach across 16 platforms, search and scraping.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "skills": "./skills/"
+}

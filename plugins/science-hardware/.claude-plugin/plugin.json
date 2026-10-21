@@ -1,0 +1,10 @@
+{
+  "name": "science-hardware",
+  "version": "1.0.0",
+  "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "skills": "./skills/"
+}

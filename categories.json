@@ -1,0 +1,196 @@
+{
+  "_note": "Rules decide which category a skill lands in. Order matters: an exact name in `names` wins, then the first matching regex in `patterns`, then the source's default category in sources.json.",
+  "categories": {
+    "sfp": "The router: one skill that knows every category and every skill, and sends the agent to the right one.",
+    "frontend": "UI design, components, motion, accessibility and frontend frameworks (React, Vue, Next.js, Angular, Vite).",
+    "design-styles": "67 named visual styles (brutalism, glassmorphism, editorial, retro, shadcn and more) to build in.",
+    "backend": "Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, Redis, Prisma).",
+    "mobile": "Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift.",
+    "languages": "Language idioms, standards and testing for Go, Rust, Python, C++, C#, F#, Java, Kotlin, Perl and .NET.",
+    "testing-quality": "TDD, end-to-end tests, verification loops, code review, regression and quality gates.",
+    "devops": "Docker, Kubernetes, deployment, canary watching, git and GitHub workflows, terminals and environments.",
+    "security": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
+    "agents": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.",
+    "agent-dev": "Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory, context and token budgets.",
+    "ai-ml": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
+    "ai-gateway": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
+    "data-apis": "Direct access to data: a searchable list of about 2,100 free public APIs, internet reach across 16 platforms, search and scraping.",
+    "content-media": "Writing, marketing, SEO, video, slides, social posting and brand voice.",
+    "business-ops": "Billing, finance, investors, market research, sales leads, contracts, email, calendars, tickets and project flow.",
+    "industry": "Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy.",
+    "networking": "Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, config validation.",
+    "research-docs": "Deep research, scientific databases, literature review, documentation, ADRs and codebase onboarding.",
+    "web3": "DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security.",
+    "engineering": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
+    "science-hardware": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
+    "career": "AI job search: evaluate offers, tailor CVs, scan portals, track applications."
+  },
+  "names": {
+    "ponytail": "engineering",
+    "frontend-design": "frontend",
+    "claude-security": "security",
+    "claude-automation-recommender": "agent-dev",
+    "claude-md-improver": "agent-dev",
+    "writing-hookify-rules": "agent-dev",
+    "build-mcp-app": "agent-dev",
+    "build-mcp-server": "agent-dev",
+    "build-mcpb": "agent-dev",
+    "playground": "frontend",
+    "project-artifact": "content-media",
+    "receipts": "business-ops",
+    "session-report": "agent-dev",
+    "skill-creator": "agent-dev",
+    "math-olympiad": "science-hardware",
+    "siege": "science-hardware",
+    "solo": "science-hardware",
+    "cardputer-buddy": "science-hardware",
+    "m5-onboard": "science-hardware",
+    "blender-motion-state-inspection": "science-hardware",
+    "agent-reach": "data-apis",
+    "public-apis": "data-apis",
+    "moneyprinterturbo-video": "content-media",
+    "exa-search": "data-apis",
+    "data-scraper-agent": "data-apis",
+    "x-api": "data-apis",
+    "osint-investigation": "data-apis",
+    "api-connector-builder": "backend",
+    "ios-icon-gen": "mobile",
+    "windows-desktop-e2e": "testing-quality",
+    "browser-qa": "testing-quality",
+    "click-path-audit": "testing-quality",
+    "agent-payment-x402": "web3",
+    "agent-security-hardening": "security",
+    "design-system": "frontend",
+    "ui-demo": "content-media",
+    "frontend-slides": "content-media",
+    "cost-aware-llm-pipeline": "ai-ml",
+    "tasteforge-video": "content-media",
+    "taste": "frontend",
+    "taste-application": "frontend",
+    "taste-distillation": "frontend",
+    "brand-discovery": "content-media",
+    "fal-ai-media": "ai-ml",
+    "deepseek-harness-setup": "agent-dev",
+    "openclaw-persona-forge": "agents",
+    "nasiko-control-plane": "agent-dev",
+    "claude-devfleet": "agents",
+    "dmux-workflows": "agents",
+    "nanoclaw-repl": "agents",
+    "hermes-imports": "agent-dev",
+    "terminal-opener": "devops",
+    "terminal-ops": "devops",
+    "flox-environments": "devops",
+    "uncloud": "devops",
+    "visa-doc-translate": "business-ops",
+    "bengali-nlp": "ai-ml",
+    "generating-python-installer": "languages",
+    "regex-vs-llm-structured-text": "ai-ml",
+    "tinystruct-patterns": "backend",
+    "foundation-models-on-device": "mobile",
+    "i18n-sync": "frontend",
+    "seo": "content-media",
+    "jira-integration": "business-ops",
+    "token-card": "agent-dev",
+    "context-budget": "agent-dev",
+    "token-budget-advisor": "agent-dev",
+    "strategic-compact": "agent-dev",
+    "unified-memory": "agent-dev",
+    "ck": "agent-dev",
+    "dashboard-builder": "frontend",
+    "latency-critical-systems": "engineering",
+    "data-throughput-accelerator": "engineering",
+    "esign-field-placement": "business-ops",
+    "nutrient-document-processing": "research-docs",
+    "mailtrap-email-integration": "business-ops",
+    "wowerpoint": "content-media",
+    "write-swift": "mobile",
+    "laravel-plugin-discovery": "backend",
+    "search-first": "engineering",
+    "cost-tracking": "agent-dev",
+    "iterative-retrieval": "agent-dev",
+    "hexagonal-architecture": "engineering",
+    "content-hash-cache-pattern": "engineering"
+  },
+  "patterns": [
+    [
+      "career",
+      "^career-ops$"
+    ],
+    [
+      "ai-gateway",
+      "^(cli|omni)-|^config-codex-cli$"
+    ],
+    [
+      "design-styles",
+      "^style-"
+    ],
+    [
+      "security",
+      "(^|-)(security|pentest|owasp|vulnerabilit)|^security-|^(api|application)-security-testing$|-with-strix$|^find-security|^web-app-penetration|^defi-amm-security$"
+    ],
+    [
+      "web3",
+      "^(evm|ito|prediction-market|nodejs-keccak|defi|llm-trading)"
+    ],
+    [
+      "networking",
+      "^(cisco|netmiko|network-|homelab-)"
+    ],
+    [
+      "industry",
+      "^(healthcare|hipaa)|^(carrier-relationship|customs-trade|energy-procurement|inventory-demand|logistics-exception|production-scheduling|quality-nonconformance|returns-reverse)"
+    ],
+    [
+      "business-ops",
+      "^(customer-billing|finance-billing|investor-|market-research|lead-intelligence|master-agreement|google-workspace|email-ops|messages-ops|unified-notifications|connections-optimizer|social-graph|project-flow|competitive-|counterparty|growth-log|product-lens|product-capability)"
+    ],
+    [
+      "content-media",
+      "^(article-writing|content-engine|crosspost|social-publisher|brand-voice|marketing-|video-editing|videodb|manim|remotion)"
+    ],
+    [
+      "research-docs",
+      "^(deep-research|research-ops|scientific-|documentation-lookup|docs-governance|living-docs|knowledge-ops|architecture-decision|code-tour|codebase-onboarding|brownfield|story-lifecycle|competitive-report)"
+    ],
+    [
+      "mobile",
+      "^(android|compose-multiplatform|dart-flutter|flutter|react-native|swift|swiftui|kotlin-coroutines)"
+    ],
+    [
+      "frontend",
+      "^(frontend-|react-(patterns|performance|testing)$|vue-|nuxt|nextjs|vite-|angular|ui-to-vue|motion-|accessibility$|liquid-glass|make-interfaces|a11y)|^(animate|animation|apple-design|ask-sonner|break-ui|emil-design|find-animation|impeccable|improve-animations|mobile-native|pick-ui-library|prototype|review-animations|write-swift|design-taste|full-output|gpt-taste|high-end-visual|industrial-brutalist|minimalist-ui|redesign-existing|stitch-design|web-interface)"
+    ],
+    [
+      "backend",
+      "^(api-design|backend-patterns|django-(patterns|celery)|fastapi|springboot-patterns|jpa|mybatis|mysql|postgres|prisma|redis|nestjs|rails|laravel-patterns|quarkus-patterns|kotlin-(ktor|exposed)|clickhouse|database-migrations|contract-first|hexagonal|bun-runtime|dotnet-patterns|mcp-server-patterns)"
+    ],
+    [
+      "testing-quality",
+      "(^|-)(tdd|testing|verification|e2e|regression|code-review|conventional-commit|eval-harness|ai-regression|test-)|^(verification-loop|plankton|safety-guard|gateguard|delivery-gate|module-regression|test-collaboration|canary)"
+    ],
+    [
+      "languages",
+      "^(golang|rust|python|cpp|csharp|fsharp|java-coding|kotlin-(patterns|testing)|perl|dotnet)"
+    ],
+    [
+      "devops",
+      "^(docker|kubernetes|deployment|git-workflow|github-ops|canary-watch)"
+    ],
+    [
+      "ai-ml",
+      "^(pytorch|mle-|ml-|recsys|prompt-|rag-|llm-|iterative-retrieval|cost-tracking|content-hash)"
+    ],
+    [
+      "agent-dev",
+      "^(agent-(harness|introspection|runtime|eval|self|sort|architecture)|skill-|hook|plugin-|command-development|agent-development|mcp-|autonomous-agent-harness|configure-|ecc-|rules-distill|continuous-learning|workspace-surface|config-gc|harness|codehealth|automation-audit|living|inherit-legacy|recursive-decision|context-and-decisions|loop-design)"
+    ],
+    [
+      "agents",
+      "^(agentic|agent-|autonomous|continuous-agent|council|dev-team|team-|orch-|plan-|ralphinho|santa|parallel-execution|dynamic-workflow|operator-approval|enterprise-agent|ai-first|gan-|opensource-pipeline|intent-driven|blueprint|enterprise|iterative|workflow|search-first)"
+    ],
+    [
+      "engineering",
+      "^(architecture|coding-standards|error-handling|benchmark|change-impact|repo-scan|production-audit|product-|ralphinho|latency|data-throughput|performance|react-performance)"
+    ]
+  ]
+}

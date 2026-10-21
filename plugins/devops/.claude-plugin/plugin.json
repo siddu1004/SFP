@@ -1,0 +1,10 @@
+{
+  "name": "devops",
+  "version": "1.0.0",
+  "description": "Docker, Kubernetes, deployment, canary watching, git and GitHub workflows, terminals and environments.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "skills": "./skills/"
+}

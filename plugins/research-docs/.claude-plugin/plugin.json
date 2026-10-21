@@ -1,0 +1,10 @@
+{
+  "name": "research-docs",
+  "version": "1.0.0",
+  "description": "Deep research, scientific databases, literature review, documentation, ADRs and codebase onboarding.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "skills": "./skills/"
+}

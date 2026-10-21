@@ -1,0 +1,182 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "sfp",
+  "owner": {
+    "name": "siddu1004"
+  },
+  "metadata": {
+    "description": "SFP, Skills for Productivity: skills from many repos in one place, sorted by what you build, for Claude Code and every other agent IDE."
+  },
+  "plugins": [
+    {
+      "name": "sfp",
+      "description": "The router: one skill that knows every category and every skill, and sends the agent to the right one.",
+      "category": "skills",
+      "source": "./plugins/sfp"
+    },
+    {
+      "name": "frontend",
+      "description": "UI design, components, motion, accessibility and frontend frameworks (React, Vue, Next.js, Angular, Vite).",
+      "category": "skills",
+      "source": "./plugins/frontend"
+    },
+    {
+      "name": "design-styles",
+      "description": "67 named visual styles (brutalism, glassmorphism, editorial, retro, shadcn and more) to build in.",
+      "category": "skills",
+      "source": "./plugins/design-styles"
+    },
+    {
+      "name": "backend",
+      "description": "Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, Redis, Prisma).",
+      "category": "skills",
+      "source": "./plugins/backend"
+    },
+    {
+      "name": "mobile",
+      "description": "Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift.",
+      "category": "skills",
+      "source": "./plugins/mobile"
+    },
+    {
+      "name": "languages",
+      "description": "Language idioms, standards and testing for Go, Rust, Python, C++, C#, F#, Java, Kotlin, Perl and .NET.",
+      "category": "skills",
+      "source": "./plugins/languages"
+    },
+    {
+      "name": "testing-quality",
+      "description": "TDD, end-to-end tests, verification loops, code review, regression and quality gates.",
+      "category": "skills",
+      "source": "./plugins/testing-quality"
+    },
+    {
+      "name": "devops",
+      "description": "Docker, Kubernetes, deployment, canary watching, git and GitHub workflows, terminals and environments.",
+      "category": "skills",
+      "source": "./plugins/devops"
+    },
+    {
+      "name": "security",
+      "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
+      "category": "skills",
+      "source": "./plugins/security"
+    },
+    {
+      "name": "agents",
+      "description": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.",
+      "category": "skills",
+      "source": "./plugins/agents"
+    },
+    {
+      "name": "agent-dev",
+      "description": "Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory, context and token budgets.",
+      "category": "skills",
+      "source": "./plugins/agent-dev"
+    },
+    {
+      "name": "ai-ml",
+      "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
+      "category": "skills",
+      "source": "./plugins/ai-ml"
+    },
+    {
+      "name": "ai-gateway",
+      "description": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
+      "category": "skills",
+      "source": "./plugins/ai-gateway"
+    },
+    {
+      "name": "data-apis",
+      "description": "Direct access to data: a searchable list of about 2,100 free public APIs, internet reach across 16 platforms, search and scraping.",
+      "category": "skills",
+      "source": "./plugins/data-apis"
+    },
+    {
+      "name": "content-media",
+      "description": "Writing, marketing, SEO, video, slides, social posting and brand voice.",
+      "category": "skills",
+      "source": "./plugins/content-media"
+    },
+    {
+      "name": "business-ops",
+      "description": "Billing, finance, investors, market research, sales leads, contracts, email, calendars, tickets and project flow.",
+      "category": "skills",
+      "source": "./plugins/business-ops"
+    },
+    {
+      "name": "industry",
+      "description": "Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy.",
+      "category": "skills",
+      "source": "./plugins/industry"
+    },
+    {
+      "name": "networking",
+      "description": "Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, config validation.",
+      "category": "skills",
+      "source": "./plugins/networking"
+    },
+    {
+      "name": "research-docs",
+      "description": "Deep research, scientific databases, literature review, documentation, ADRs and codebase onboarding.",
+      "category": "skills",
+      "source": "./plugins/research-docs"
+    },
+    {
+      "name": "web3",
+      "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
+      "category": "skills",
+      "source": "./plugins/web3"
+    },
+    {
+      "name": "engineering",
+      "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
+      "category": "skills",
+      "source": "./plugins/engineering"
+    },
+    {
+      "name": "science-hardware",
+      "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
+      "category": "skills",
+      "source": "./plugins/science-hardware"
+    },
+    {
+      "name": "career",
+      "description": "AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.",
+      "category": "skills",
+      "source": {
+        "source": "github",
+        "repo": "siddu1004/career-ops-for-claude-skill"
+      }
+    },
+    {
+      "name": "session-memory",
+      "description": "Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker.",
+      "category": "skills",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/siddu1004/claude-mem.git",
+        "path": "plugin"
+      }
+    },
+    {
+      "name": "ecc-full",
+      "description": "The complete Everything Claude Code plugin: its hooks, agents and commands on top of its skills. Overlaps the ECC skills spread across the category plugins, so install one or the other.",
+      "category": "skills",
+      "source": {
+        "source": "github",
+        "repo": "siddu1004/ECC"
+      }
+    },
+    {
+      "name": "omniroute-full",
+      "description": "The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other.",
+      "category": "skills",
+      "source": {
+        "source": "github",
+        "repo": "siddu1004/OmniRoute",
+        "ref": "claude-plugin"
+      }
+    }
+  ]
+}
