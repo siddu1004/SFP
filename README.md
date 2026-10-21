@@ -27,6 +27,14 @@ curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
 
 Restart your IDE, then give your agent a task. `sfp` picks the skill.
 
+Want your IDE to reach every skill without installing it? Add the MCP server too:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
+```
+
+It registers `sfp` in each IDE it finds and keeps your other MCP servers. See [MCP Server](#mcp-server) for Windows and the tools it adds.
+
 On Windows or in Claude Code? See [Windows](#windows) and [Claude Code](#claude-code). For presets and single IDEs, see [all install options](#install).
 
 ## How It Works
@@ -224,13 +232,19 @@ Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--js
 
 SFP also runs as an MCP server. Any MCP client can search and read all 557 skills on demand, with nothing copied into a skills folder. This helps IDEs and agents that support MCP but not skills.
 
-Register it in your IDEs. The one-line installer keeps SFP in `~/.sfp/SFP`:
+Register it in your IDEs with one command. It fetches SFP first if you do not have it:
 
 ```bash
-~/.sfp/SFP/install.sh mcp --tools cursor,claude
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
 ```
 
-From a clone, run `./install.sh mcp`. On Windows, use `install.ps1`. Add `--remove` to undo it.
+On Windows, in PowerShell:
+
+```powershell
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1))) mcp
+```
+
+To pick IDEs, add `--tools cursor,claude`. To undo it, add `--remove`. SFP lives in `~/.sfp/SFP`, so later you can run `~/.sfp/SFP/install.sh mcp`, or `./install.sh mcp` from a clone.
 
 Claude Code by hand:
 
