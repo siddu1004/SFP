@@ -145,8 +145,6 @@ To update, run the same install line again. The installer replaces only folders 
 <summary>All @@NCATS@@ categories</summary>
 
 @@CATEGORY_TABLE@@
-
-`ecc-full` and `omniroute-full` add the hooks, agents and commands of Everything Claude Code and OmniRoute. Their skills are already in the categories above, so install the full plugin or the categories, not both.
 </details>
 
 ## Supported IDEs

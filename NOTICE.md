@@ -27,7 +27,7 @@ SFP collects skills written by other people. Each skill keeps the license of the
 | [career-ops](https://github.com/siddu1004/career-ops-for-claude-skill) | MIT | https://github.com/career-ops-hq/career-ops |
 | [claude-mem](https://github.com/siddu1004/claude-mem) | Apache-2.0 | |
 
-`career`, `session-memory`, `ecc-full` and `omniroute-full` are installed from their own repos and are not copied into SFP.
+`career` and `session-memory` are installed from their own repos and are not copied into SFP.
 
 Plugins with no public source repo (the rows from teach-me down to the Anthropic example skills) are kept as snapshots in `vendor/`, each with its license file. Not included, because their licenses do not allow republishing: Greenhouse's plugin (customer use only), Anthropic's docx, pdf, pptx, xlsx and browser skills (all rights reserved), and claude-mem-cowork (noncommercial only).
 

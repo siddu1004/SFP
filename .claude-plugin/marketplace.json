@@ -165,25 +165,6 @@
         "url": "https://github.com/siddu1004/claude-mem.git",
         "path": "plugin"
       }
-    },
-    {
-      "name": "ecc-full",
-      "description": "The complete Everything Claude Code plugin: its hooks, agents and commands on top of its skills. Overlaps the ECC skills spread across the category plugins, so install one or the other.",
-      "category": "skills",
-      "source": {
-        "source": "github",
-        "repo": "siddu1004/ECC"
-      }
-    },
-    {
-      "name": "omniroute-full",
-      "description": "The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other.",
-      "category": "skills",
-      "source": {
-        "source": "github",
-        "repo": "siddu1004/OmniRoute",
-        "ref": "claude-plugin"
-      }
     }
   ]
 }

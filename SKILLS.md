@@ -729,15 +729,3 @@ AI job search: evaluate offers, tailor CVs, scan job portals and track applicati
 Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker.
 
 Claude Code only: install it as a plugin from the marketplace.
-
-## ecc-full (plugin)
-
-The complete Everything Claude Code plugin: its hooks, agents and commands on top of its skills. Overlaps the ECC skills spread across the category plugins, so install one or the other.
-
-Claude Code only: install it as a plugin from the marketplace.
-
-## omniroute-full (plugin)
-
-The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other.
-
-Claude Code only: install it as a plugin from the marketplace.

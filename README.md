@@ -178,10 +178,6 @@ To update, run the same install line again. The installer replaces only folders 
 | `memory` | 30 | claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory. |
 | `career` | plugin | AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout. |
 | `session-memory` | plugin | Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker. |
-| `ecc-full` | plugin | The complete Everything Claude Code plugin: its hooks, agents and commands on top of its skills. Overlaps the ECC skills spread across the category plugins, so install one or the other. |
-| `omniroute-full` | plugin | The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other. |
-
-`ecc-full` and `omniroute-full` add the hooks, agents and commands of Everything Claude Code and OmniRoute. Their skills are already in the categories above, so install the full plugin or the categories, not both.
 </details>
 
 ## Supported IDEs
