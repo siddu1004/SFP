@@ -451,7 +451,7 @@ def write_manifests(cfg, cats, catalog):
         '$schema': 'https://anthropic.com/claude-code/marketplace.schema.json',
         'name': MARKETPLACE,
         'owner': {'name': 'siddu1004'},
-        'metadata': {'description': "SFP, Skills for Productivity: skills from many repos in one place, sorted by what you build, for Claude Code and every other agent IDE."},
+        'metadata': {'description': 'SFP, Skills for Productivity: %d agent skills sorted by what you build, plus a bee-colony-inspired manager that picks the few each task needs for your project. Installs into 16 IDEs and CLIs, and serves any MCP client.' % len(catalog)},
         'plugins': plugins,
     }, open(os.path.join(ROOT, '.claude-plugin', 'marketplace.json'), 'w'), indent=2)
 

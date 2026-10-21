@@ -5,7 +5,7 @@
     "name": "siddu1004"
   },
   "metadata": {
-    "description": "SFP, Skills for Productivity: skills from many repos in one place, sorted by what you build, for Claude Code and every other agent IDE."
+    "description": "SFP, Skills for Productivity: 559 agent skills sorted by what you build, plus a bee-colony-inspired manager that picks the few each task needs for your project. Installs into 16 IDEs and CLIs, and serves any MCP client."
   },
   "plugins": [
     {
