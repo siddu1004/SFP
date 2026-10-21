@@ -4,6 +4,8 @@ description: Prepare and merge an owner-selected PR batch with contributor credi
 allowed-tools: Bash, Read, Edit, Write, Grep, Glob, AskUserQuestion
 ---
 
+> **This skill needs OmniRoute, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Merge batch: shared preparation, exact admission
 
 Read `../_shared/base-green.md`, `../_shared/validation-gate.md` and

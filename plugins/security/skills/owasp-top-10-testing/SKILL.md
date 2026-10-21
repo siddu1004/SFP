@@ -7,6 +7,8 @@ metadata:
   homepage: https://docs.strix.ai
 ---
 
+> **This skill needs Strix, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Test against the OWASP Top 10
 
 The OWASP Top 10 is a taxonomy of risk categories, not a test suite — "OWASP Top 10 testing" means exercising each category against the real application and reporting what's actually exploitable. Strix's agents do the exploitation; this skill covers running it category-by-category and reporting coverage honestly.

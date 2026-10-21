@@ -3,6 +3,8 @@ name: mem-babysit
 description: Watch a pull request or review cycle until it is ready to merge. Use when asked to babysit, monitor, or keep checking PR comments, reviews, and CI until all actionable issues are resolved.
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Babysit PR
 
 Stay with the PR until it is actually clean. Do not stop after one check pass if comments or review threads are still unresolved.

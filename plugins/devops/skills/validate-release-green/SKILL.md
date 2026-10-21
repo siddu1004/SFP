@@ -3,6 +3,8 @@ name: validate-release-green
 description: Run or inspect the local Release-Green observer for an exact base or combined PR candidate, separating hard failures, advisory drift and incomplete evidence. Use for maintainer preflight; full CI acceptance remains a separate requirement.
 ---
 
+> **This skill needs OmniRoute, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Validate Release-Green
 
 Read `../_shared/base-green.md` before interpreting remote status or attributing

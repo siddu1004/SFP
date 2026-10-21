@@ -4,6 +4,8 @@ description: Interactively create, install, activate, and verify custom claude-m
 compatibility: Requires a local claude-mem worker installation, an interactive question tool, filesystem access, and Node.js 20+. Telegram setup requires network access and a Telegram account.
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Mode Creator
 
 Create a useful note-taking system, not merely a valid JSON file. Interview the user, propose a small taxonomy, obtain approval, install it durably, configure optional alerts, restart the worker, and prove the active mode appears in startup context.

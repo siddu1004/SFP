@@ -55,6 +55,19 @@ Search `reference/index.md` in this skill's folder. It has one line per skill, g
 
 For "is there an API for X", "I need data about Y" or "find me a free API", use the `public-apis` skill (category `data-apis`). It searches about 2,100 free APIs and returns links with auth, HTTPS and CORS details. Do not answer from memory when it is available.
 
+## 4. Skills that need a program installed
+
+Some skills guide a program that is installed separately: OmniRoute, FreeLLMAPI, Strix, Agent Reach, claude-mem, the ECC add-on. Each of them carries its own setup, so when the user wants one running, open that skill and follow the note at its top. To see all of them, or to set one up from here:
+
+```bash
+python3 scripts/sfp_app.py list
+python3 scripts/sfp_app.py status omniroute
+python3 scripts/sfp_app.py install omniroute      # shows the plan and changes nothing
+python3 scripts/sfp_app.py install omniroute --yes  # only after the user agrees
+```
+
+Never run an install without telling the user what it will do. Provider keys and logins are the user's to enter; do not ask for them in chat.
+
 ## Rules
 
 - Prefer one specific skill over several vague ones. Most tasks need one or two.

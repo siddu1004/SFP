@@ -1,0 +1,33 @@
+{
+  "name": "ECC AgentShield",
+  "homepage": "https://github.com/affaan-m/ECC",
+  "what": "A scanner for agent configuration and skills.",
+  "sources": [],
+  "names": [
+    "security-scan"
+  ],
+  "needs": [
+    {
+      "tool": "npm"
+    }
+  ],
+  "installed": {
+    "command": [
+      "ecc-agentshield",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "ecc-agentshield"
+      ],
+      "why": "installs the ecc-agentshield command globally"
+    }
+  ],
+  "id": "agentshield"
+}

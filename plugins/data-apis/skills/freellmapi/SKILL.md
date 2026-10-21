@@ -3,6 +3,8 @@ name: freellmapi
 description: Run and use FreeLLMAPI, one OpenAI-compatible /v1 endpoint that stacks the free tiers of 34 LLM providers with automatic routing and failover. Use when the user wants free LLM inference, to point an OpenAI SDK, coding agent or other client at a free multi-provider endpoint, to self-host FreeLLMAPI with Docker, to pick a routing strategy such as auto:fast or auto:smart, or to fix a FreeLLMAPI setup problem.
 ---
 
+> **This skill needs FreeLLMAPI, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # FreeLLMAPI
 
 [FreeLLMAPI](https://github.com/tashfeenahmed/freellmapi) aggregates the free tiers of many LLM providers behind one OpenAI-compatible `/v1` API. Provider keys are stored encrypted, and a router picks an available model and fails over when one is rate-limited.

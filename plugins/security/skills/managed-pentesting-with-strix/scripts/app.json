@@ -1,0 +1,60 @@
+{
+  "name": "Strix",
+  "homepage": "https://docs.strix.ai",
+  "what": "Autonomous AI penetration testing that proves vulnerabilities with working exploits.",
+  "sources": [
+    "usestrix/strix"
+  ],
+  "needs": [
+    {
+      "tool": "docker",
+      "label": "Docker, running (for the self-hosted CLI)",
+      "url": "https://docs.docker.com/get-docker/",
+      "probe": [
+        "docker",
+        "info"
+      ]
+    }
+  ],
+  "installed": {
+    "command": [
+      "strix",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "pipx",
+        "install",
+        "strix-agent"
+      ],
+      "requires": "pipx",
+      "why": "installs the strix command in its own environment"
+    },
+    {
+      "os": "posix",
+      "script": "https://strix.ai/install",
+      "shell": "bash",
+      "why": "the project's own installer, used when pipx is missing"
+    }
+  ],
+  "update": [
+    {
+      "os": "any",
+      "run": [
+        "pipx",
+        "upgrade",
+        "strix-agent"
+      ],
+      "requires": "pipx",
+      "why": "moves to the newest release"
+    }
+  ],
+  "after": [
+    "Set a model and key before a scan, for example: export STRIX_LLM=\"openai/gpt-5.4\" and export LLM_API_KEY=... . The managed cloud (`strix cloud ...`) needs neither Docker nor a local key."
+  ],
+  "provider_keys": true,
+  "id": "strix"
+}

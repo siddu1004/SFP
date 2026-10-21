@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IGNORE = shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
-VERSION = '3.1.0'
+VERSION = '3.2.0'
 OUT = os.path.join(ROOT, 'plugins')
 
 
@@ -90,6 +90,36 @@ def copy_skill(src, dest):
     shutil.copytree(src, dest, ignore=IGNORE, symlinks=False, ignore_dangling_symlinks=True)
 
 
+def load_apps():
+    with open(os.path.join(ROOT, 'apps', 'apps.json'), encoding='utf-8') as f:
+        return json.load(f)
+
+
+def app_for(apps, name, repo):
+    """The program (apps/apps.json) that a skill is a guide to, if there is one."""
+    return next((k for k, a in apps.items() if repo in a.get('sources', []) or name in a.get('names', [])), None)
+
+
+def attach_app(dest, key, app):
+    """Put the setup engine and this program's entry inside the skill, and tell the agent about it first thing."""
+    scripts = os.path.join(dest, 'scripts')
+    os.makedirs(scripts, exist_ok=True)
+    shutil.copy(os.path.join(ROOT, 'apps', 'sfp_app.py'), os.path.join(scripts, 'sfp_app.py'))
+    with open(os.path.join(scripts, 'app.json'), 'w', encoding='utf-8') as f:
+        json.dump(dict(app, id=key), f, indent=2, ensure_ascii=False)
+        f.write('\n')
+    p = os.path.join(dest, 'SKILL.md')
+    text = open(p, encoding='utf-8', errors='replace').read()
+    note = ('\n> **This skill needs %s, which is installed separately.** From this skill\'s folder, run '
+            '`python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run '
+            '`python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, '
+            'and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.\n'
+            % app['name'])
+    m = re.match(r'^---\s*\n.*?\n---[ \t]*\n', text, re.S)
+    text = (text[:m.end()] + note + text[m.end():]) if m else (note.lstrip() + '\n' + text)
+    open(p, 'w', encoding='utf-8').write(text)
+
+
 class Classifier:
     def __init__(self, cfg):
         self.names = cfg['names']
@@ -121,6 +151,7 @@ def main():
     shutil.rmtree(OUT, ignore_errors=True)
 
     catalog, taken, licenses = [], {}, {}
+    apps = load_apps()
 
     def add(skill_src, source, prefix, variants=None):
         text = open(os.path.join(skill_src, 'SKILL.md'), encoding='utf-8', errors='replace').read()
@@ -143,6 +174,9 @@ def main():
         copy_skill(skill_src, dest)
         if field(fm, 'name') != name:
             rename_skill(dest, name)
+        app_key = app_for(apps, name, source['repo'])
+        if app_key:
+            attach_app(dest, app_key, apps[app_key])
         entry = {
             'name': name, 'category': cat,
             'description': ' '.join(field(fm, 'description').split()),
@@ -154,6 +188,8 @@ def main():
             copy_skill(vsrc, vdest)
             rename_skill(vdest, name)
             entry['variants'][tool] = os.path.relpath(vdest, ROOT)
+        if app_key:
+            entry['app'] = app_key
         catalog.append(entry)
         licenses.setdefault(cat, set()).add(source['repo'])
 
@@ -225,6 +261,9 @@ def main():
     router = os.path.join(OUT, 'sfp', 'skills', 'sfp')
     os.makedirs(os.path.dirname(router), exist_ok=True)
     shutil.copytree(os.path.join(ROOT, 'templates', 'sfp'), router)
+    os.makedirs(os.path.join(router, 'scripts'), exist_ok=True)
+    shutil.copy(os.path.join(ROOT, 'apps', 'sfp_app.py'), os.path.join(router, 'scripts', 'sfp_app.py'))
+    shutil.copy(os.path.join(ROOT, 'apps', 'apps.json'), os.path.join(router, 'scripts', 'app.json'))
     os.makedirs(os.path.join(router, 'reference'), exist_ok=True)
     write_index(os.path.join(router, 'reference', 'index.md'), cats, cfg, catalog)
     catalog.append({
@@ -405,6 +444,8 @@ def render_readme(cfg, cats, catalog):
     values = {'TOTAL': str(total), 'NCATS': str(len(per_cat)), 'SOURCES': str(repos),
               'CATEGORY_TABLE': '\n'.join(rows), 'PRESET_TABLE': '\n'.join(prows)}
     values.update(measure(cfg, cats, catalog))
+    for key in ('omniroute', 'claude-mem', 'strix'):
+        values['APP_' + key.upper().replace('-', '_')] = str(sum(1 for c in catalog if c.get('app') == key))
     for key, value in values.items():
         text = text.replace('@@' + key + '@@', value)
     open(os.path.join(ROOT, 'README.md'), 'w', encoding='utf-8').write(text)

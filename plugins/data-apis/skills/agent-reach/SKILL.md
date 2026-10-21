@@ -23,6 +23,8 @@ metadata:
   homepage: https://github.com/Panniantong/Agent-Reach
 ---
 
+> **This skill needs Agent Reach, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Agent Reach — 互联网能力路由器
 
 16 平台、多后端。**本 skill 存在时必须用它访问这些平台，不要自己发明方案。**

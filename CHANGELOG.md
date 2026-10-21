@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.2.0
+
+- **Skills that need a program install it themselves.** The 93 skills that only guide a separately installed program (OmniRoute, claude-mem, Strix, FreeLLMAPI, Agent Reach, AgentShield) now carry `scripts/sfp_app.py` and that program's entry (`scripts/app.json`), and start with a note telling the agent to use them. `status` checks the requirements (Node version, Docker running), whether it is installed and whether it answers; `install` shows a plan and changes nothing; `install --yes` runs it; `start` starts it and waits for it; `update` moves to the newest release. A downloaded installer script is saved and its checksum printed before it runs, only https is accepted, and provider keys are left to the user.
+- The programs and their commands are in `apps/apps.json`, with the engine in `apps/sfp_app.py`. The router skill carries all of them (`sfp_app.py list`), and `scripts/install.py apps ...` runs the same from the checkout. The ECC add-on (agents and hooks beyond the skills) is in the list.
+- The catalog marks these skills with an `app` field. New tests: `tests/test_apps.py`.
+
 ## 3.1.0
 
 - **The hive is back as the product's model.** The honeybee colony is again how SFP explains and names its choosing: five signals are scouts, agreement is quorum, overlap suppression is stop signals, roles are filled by response threshold, and history is a fading pheromone trail. The feedback loop and learning model from 3.0.0 stay, and the README maps them too: `helped` reinforces, `unhelpful` abandons, `missing` is a scout finding a new source, and the 120-day half-life is evaporation. The mapping is functional; the learner is still a regularised logistic regression.

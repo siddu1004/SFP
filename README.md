@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.1.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.1.0">
+  <img src="https://img.shields.io/badge/version-3.2.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.2.0">
   <img src="https://img.shields.io/badge/skills-559-0f766e?style=flat-square&labelColor=3b4350" alt="559 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
@@ -122,7 +122,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 **Does it pick the right skill, before any learning?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive 3.1.0 | Earlier engine | Plain search |
+| Task set | Hive 3.2.0 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 68% | 14% |
 | 24 tasks in 10 sample projects | 79% | 79% | 33% |
@@ -141,7 +141,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 | `agent-builder` preset | 189 | about 14,358 tokens | 7.2% |
 | `everything` | 559 | about 44,260 tokens | 22.1% |
 
-With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,582 tokens, and 90% are under 4,662. A selection averages 1.8 skills when there is no project.
+With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,599 tokens, and 90% are under 4,662. A selection averages 1.8 skills when there is no project.
 
 **How fast is it?** About 2 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
 
@@ -436,6 +436,19 @@ python3 plugins/data-apis/skills/public-apis/scripts/find_api.py --categories
 ```
 
 Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--json`.
+
+## Skills That Need a Program
+
+A few skills only guide a program that is installed separately: OmniRoute (52 skills), claude-mem (30), Strix (9), FreeLLMAPI, Agent Reach and AgentShield. Each of these skills carries its own setup, so the skill that needs the program can install it. A note at the top of the skill tells the agent to run, from the skill's folder:
+
+```bash
+python3 scripts/sfp_app.py status            # installed? running? what is missing (Node version, Docker...)
+python3 scripts/sfp_app.py install           # shows the plan and changes nothing
+python3 scripts/sfp_app.py install --yes     # runs it, after you agree
+python3 scripts/sfp_app.py start             # starts it and waits until it answers
+```
+
+The same works from the SFP checkout, for every program at once: `python3 scripts/install.py apps list`, then `apps install omniroute`. Installs are never silent: the plan is shown first, a downloaded installer script is saved and its checksum printed before it runs, and provider keys and logins are yours to enter. The ECC add-on (agents and hooks, beyond the skills) is in the same list. Programs and their commands live in [apps/apps.json](apps/apps.json); the guide below covers how they fit together.
 
 ## Full Integration: SFP, ECC and OmniRoute
 

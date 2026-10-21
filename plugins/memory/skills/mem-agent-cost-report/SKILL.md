@@ -15,6 +15,8 @@ allowed-tools:
   - mcp__plugin_claude-mem_mcp-search__get_observations
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Agent Cost Report
 
 **Claude-Mem / Claude Code skill.** Runtime is the `scripts/` pipeline (transcripts → tokens → dollars → Timing-style report) plus a progressive Mem Search review pass that confirms the drafted labels. The Notion draft is SPEC history only — never the product, never the runtime, never the ship vehicle.

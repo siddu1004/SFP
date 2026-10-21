@@ -1,0 +1,49 @@
+{
+  "name": "Agent Reach",
+  "homepage": "https://github.com/Panniantong/Agent-Reach",
+  "what": "Gives an agent access to internet platforms (social sites, video, search) through one set of tools.",
+  "sources": [
+    "Panniantong/Agent-Reach"
+  ],
+  "needs": [
+    {
+      "tool": "python3",
+      "label": "Python 3",
+      "url": "https://www.python.org/downloads/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "agent-reach",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "pipx",
+        "install",
+        "https://github.com/Panniantong/agent-reach/archive/main.zip"
+      ],
+      "requires": "pipx",
+      "why": "installs the agent-reach command in its own environment"
+    }
+  ],
+  "update": [
+    {
+      "os": "any",
+      "run": [
+        "pipx",
+        "upgrade",
+        "agent-reach"
+      ],
+      "requires": "pipx",
+      "why": "moves to the newest release"
+    }
+  ],
+  "after": [
+    "Run `agent-reach install --env=auto` for a read-only check of what is missing, and `agent-reach doctor` to see which channels work. Add `--system` only if you agree to let it install system packages."
+  ],
+  "id": "agent-reach"
+}

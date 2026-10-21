@@ -7,6 +7,8 @@ allowed-tools:
   - AskUserQuestion
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Cloud Sync (cmem.ai Pro)
 
 The installed worker syncs through SyncHub. There is one client, one durable

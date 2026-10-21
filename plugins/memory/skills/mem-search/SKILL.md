@@ -3,6 +3,8 @@ name: mem-search
 description: Smart search (default). Search claude-mem's persistent cross-session memory database in three steps: search, timeline, then selected get_observations. Use when user asks "did we already solve this?", "how did we do X last time?", or needs work from previous sessions.
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Smart Search (Default)
 
 Search past work across all sessions. Use the original three-step mem-search workflow by default: search → timeline → selected get_observations. Reason about the index and context before choosing details. Do not use auto or guided modes.

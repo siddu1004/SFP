@@ -974,7 +974,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/api-security-testing",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "application-security-testing",
@@ -983,7 +984,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/application-security-testing",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "ci-security-scanning-with-strix",
@@ -992,7 +994,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/ci-security-scanning-with-strix",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "find-security-vulnerabilities-in-code",
@@ -1001,7 +1004,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/find-security-vulnerabilities-in-code",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "fix-security-vulnerabilities-with-strix",
@@ -1010,7 +1014,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/fix-security-vulnerabilities-with-strix",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "managed-pentesting-with-strix",
@@ -1019,7 +1024,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/managed-pentesting-with-strix",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "owasp-top-10-testing",
@@ -1028,7 +1034,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/owasp-top-10-testing",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "penetration-testing-with-strix",
@@ -1037,7 +1044,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/penetration-testing-with-strix",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "web-app-penetration-testing",
@@ -1046,7 +1054,8 @@
    "source": "usestrix/strix",
    "license": "Apache-2.0",
    "path": "plugins/security/skills/web-app-penetration-testing",
-   "variants": {}
+   "variants": {},
+   "app": "strix"
   },
   {
    "name": "claude-automation-recommender",
@@ -1280,7 +1289,8 @@
    "source": "Panniantong/Agent-Reach",
    "license": "MIT",
    "path": "plugins/data-apis/skills/agent-reach",
-   "variants": {}
+   "variants": {},
+   "app": "agent-reach"
   },
   {
    "name": "moneyprinterturbo-video",
@@ -3701,7 +3711,8 @@
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/security/skills/security-scan",
-   "variants": {}
+   "variants": {},
+   "app": "agentshield"
   },
   {
    "name": "seo",
@@ -4124,7 +4135,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-a2a",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-backup-sync",
@@ -4133,7 +4145,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-backup-sync",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-batches",
@@ -4142,7 +4155,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-batches",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-chat",
@@ -4151,7 +4165,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-chat",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-compression",
@@ -4160,7 +4175,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-compression",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-contexts",
@@ -4169,7 +4185,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-contexts",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-cost-usage",
@@ -4178,7 +4195,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-cost-usage",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-eval",
@@ -4187,7 +4205,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-eval",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-health",
@@ -4196,7 +4215,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-health",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-keys",
@@ -4205,7 +4225,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-keys",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-mcp",
@@ -4214,7 +4235,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-mcp",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-models",
@@ -4223,7 +4245,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-models",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-plugins-skills",
@@ -4232,7 +4255,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-plugins-skills",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-policy-audit",
@@ -4241,7 +4265,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-policy-audit",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-providers",
@@ -4250,7 +4275,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-providers",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-resilience",
@@ -4259,7 +4285,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-resilience",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-routing",
@@ -4268,7 +4295,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-routing",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-serve",
@@ -4277,7 +4305,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-serve",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-setup",
@@ -4286,7 +4315,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-setup",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-skill-collector",
@@ -4295,7 +4325,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-skill-collector",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "cli-tunnel",
@@ -4304,7 +4335,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/cli-tunnel",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "config-codex-cli",
@@ -4313,7 +4345,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/config-codex-cli",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-agents-a2a",
@@ -4322,7 +4355,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-agents-a2a",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-api-keys",
@@ -4331,7 +4365,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-api-keys",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-auth",
@@ -4340,7 +4375,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-auth",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-budget",
@@ -4349,7 +4385,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-budget",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-cache",
@@ -4358,7 +4395,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-cache",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-cli-tools",
@@ -4367,7 +4405,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-cli-tools",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-combos-routing",
@@ -4376,7 +4415,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-combos-routing",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-compression",
@@ -4385,7 +4425,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-compression",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-context-rtk",
@@ -4394,7 +4435,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-context-rtk",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-db-backups",
@@ -4403,7 +4445,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-db-backups",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-github-skills",
@@ -4412,7 +4455,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-github-skills",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-inference",
@@ -4421,7 +4465,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-inference",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-mcp",
@@ -4430,7 +4475,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-mcp",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-models",
@@ -4439,7 +4485,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-models",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-providers",
@@ -4448,7 +4495,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-providers",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-proxies",
@@ -4457,7 +4505,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-proxies",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-resilience",
@@ -4466,7 +4515,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-resilience",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-settings",
@@ -4475,7 +4525,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-settings",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-sync-cloud",
@@ -4484,7 +4535,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-sync-cloud",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-tunnels",
@@ -4493,7 +4545,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-tunnels",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-usage-logs",
@@ -4502,7 +4555,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-usage-logs",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-version-manager",
@@ -4511,7 +4565,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-version-manager",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "omni-webhooks",
@@ -4520,7 +4575,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/ai-gateway/skills/omni-webhooks",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "ponytail",
@@ -4529,7 +4585,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/engineering/skills/ponytail",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "freellmapi",
@@ -4538,7 +4595,8 @@
    "source": "tashfeenahmed/freellmapi",
    "license": "MIT",
    "path": "plugins/data-apis/skills/freellmapi",
-   "variants": {}
+   "variants": {},
+   "app": "freellmapi"
   },
   {
    "name": "mem-agent-cost-report",
@@ -4547,7 +4605,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-agent-cost-report",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-babysit",
@@ -4556,7 +4615,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-babysit",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-build",
@@ -4565,7 +4625,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-build",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-build-and-release",
@@ -4574,7 +4635,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-build-and-release",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-ccs-align",
@@ -4583,7 +4645,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-ccs-align",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-childhood",
@@ -4592,7 +4655,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-childhood",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-cloud-sync",
@@ -4601,7 +4665,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-cloud-sync",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-design-is",
@@ -4610,7 +4675,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-design-is",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-do",
@@ -4619,7 +4685,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-do",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-handoff",
@@ -4628,7 +4695,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-handoff",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-how-it-works",
@@ -4637,7 +4705,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-how-it-works",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-knowledge-agent",
@@ -4646,7 +4715,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-knowledge-agent",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-learn-codebase",
@@ -4655,7 +4725,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-learn-codebase",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-make-plan",
@@ -4664,7 +4735,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-make-plan",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-search",
@@ -4673,7 +4745,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-search",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-mode-creator",
@@ -4682,7 +4755,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-mode-creator",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-oh-my-issues",
@@ -4691,7 +4765,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-oh-my-issues",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-pathfinder",
@@ -4700,7 +4775,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-pathfinder",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-release",
@@ -4709,7 +4785,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-release",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-screenpipe",
@@ -4718,7 +4795,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-screenpipe",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-smart-explore",
@@ -4727,7 +4805,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-smart-explore",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-standup",
@@ -4736,7 +4815,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-standup",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-timeline-report",
@@ -4745,7 +4825,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-timeline-report",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-version-bump",
@@ -4754,7 +4835,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-version-bump",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-weekly-digests",
@@ -4763,7 +4845,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-weekly-digests",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-what-the",
@@ -4772,7 +4855,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-what-the",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-wowerpoint",
@@ -4781,7 +4865,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-wowerpoint",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "claude-mem-install",
@@ -4790,7 +4875,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/claude-mem-install",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-host-observer",
@@ -4799,7 +4885,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-host-observer",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "mem-openclaw",
@@ -4808,7 +4895,8 @@
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-openclaw",
-   "variants": {}
+   "variants": {},
+   "app": "claude-mem"
   },
   {
    "name": "green-prs",
@@ -4817,7 +4905,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/devops/skills/green-prs",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "merge-batch",
@@ -4826,7 +4915,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/devops/skills/merge-batch",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "merge-prs",
@@ -4835,7 +4925,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/devops/skills/merge-prs",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "quality-scan",
@@ -4844,7 +4935,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/devops/skills/quality-scan",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "sweep-reds",
@@ -4853,7 +4945,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/devops/skills/sweep-reds",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "validate-release-green",
@@ -4862,7 +4955,8 @@
    "source": "diegosouzapw/OmniRoute",
    "license": "MIT",
    "path": "plugins/devops/skills/validate-release-green",
-   "variants": {}
+   "variants": {},
+   "app": "omniroute"
   },
   {
    "name": "discord-access",

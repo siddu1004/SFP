@@ -390,6 +390,19 @@ python3 plugins/data-apis/skills/public-apis/scripts/find_api.py --categories
 
 Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--json`.
 
+## Skills That Need a Program
+
+A few skills only guide a program that is installed separately: OmniRoute (@@APP_OMNIROUTE@@ skills), claude-mem (@@APP_CLAUDE_MEM@@), Strix (@@APP_STRIX@@), FreeLLMAPI, Agent Reach and AgentShield. Each of these skills carries its own setup, so the skill that needs the program can install it. A note at the top of the skill tells the agent to run, from the skill's folder:
+
+```bash
+python3 scripts/sfp_app.py status            # installed? running? what is missing (Node version, Docker...)
+python3 scripts/sfp_app.py install           # shows the plan and changes nothing
+python3 scripts/sfp_app.py install --yes     # runs it, after you agree
+python3 scripts/sfp_app.py start             # starts it and waits until it answers
+```
+
+The same works from the SFP checkout, for every program at once: `python3 scripts/install.py apps list`, then `apps install omniroute`. Installs are never silent: the plan is shown first, a downloaded installer script is saved and its checksum printed before it runs, and provider keys and logins are yours to enter. The ECC add-on (agents and hooks, beyond the skills) is in the same list. Programs and their commands live in [apps/apps.json](apps/apps.json); the guide below covers how they fit together.
+
 ## Full Integration: SFP, ECC and OmniRoute
 
 SFP carries the **skills** of ECC and OmniRoute. ECC's agents, hooks and rules, and the OmniRoute gateway that routes your IDE to many model providers, need their own install. The short version, in order:

@@ -1,0 +1,84 @@
+{
+  "name": "OmniRoute",
+  "homepage": "https://github.com/diegosouzapw/OmniRoute",
+  "what": "A local gateway that routes your IDE or CLI to many providers through one OpenAI-compatible endpoint.",
+  "sources": [
+    "diegosouzapw/OmniRoute"
+  ],
+  "needs": [
+    {
+      "tool": "node",
+      "range": [
+        [
+          22,
+          22,
+          2
+        ],
+        [
+          23,
+          0,
+          0
+        ],
+        [
+          24,
+          0,
+          0
+        ],
+        [
+          27,
+          0,
+          0
+        ]
+      ],
+      "label": "Node.js 22.22.2 or newer (below 23, or 24 up to 26)",
+      "url": "https://nodejs.org/",
+      "soft": true
+    },
+    {
+      "tool": "npm"
+    }
+  ],
+  "installed": {
+    "command": [
+      "omniroute",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "omniroute"
+      ],
+      "why": "installs the omniroute command globally"
+    }
+  ],
+  "update": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "omniroute@latest"
+      ],
+      "why": "moves to the newest release"
+    }
+  ],
+  "start": {
+    "run": [
+      "omniroute"
+    ],
+    "detach": true
+  },
+  "health": "http://localhost:20128/v1/models",
+  "after": [
+    "Open http://localhost:20128, connect a provider with your own account or API key, then point your tool at http://localhost:20128/v1 with an OmniRoute API key.",
+    "Optional: `omniroute autostart enable` starts it at login."
+  ],
+  "provider_keys": true,
+  "id": "omniroute"
+}

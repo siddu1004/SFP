@@ -3,6 +3,8 @@ name: mem-childhood
 description: Babysit a shipped release after merge, publication, or deployment. Verify published packages, production behavior, installed plugins, and late CI or user reports until the observation window is clean; use babysit for PR readiness before release.
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Childhood
 
 Stay with a release after it ships. Verify what users receive and what production serves, then fix verified regressions within the user's authorized scope. A successful merge or publish command is the start of this work.

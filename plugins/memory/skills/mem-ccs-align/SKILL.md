@@ -3,6 +3,8 @@ name: mem-ccs-align
 description: Run the CCS Align seat's hourly breathing cycle — prove the local claude-mem worker is healthy, pull needle observations through search → timeline → get_observations, land them in a seat-owned middle cache via atomic grab → append → filter exclude-marks → replace, manage exclude marks, and walk house → project → seat rules to detect conflicts (SHADOW_HOUSE, DENY_ALLOW, DRIFT, CLOCK_HEADER) with an append-only rules-report.md. Use when asked to run CCS Align, breathe the alignment seat, refresh the middle cache, exclude or restore an observation, walk rules, check rules conflicts, or check the Worker Watch board.
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # CCS Align — Worker Watch seat (Phases 0–2 shipped; Phase 3 = verify / sign-off)
 
 CCS Align is a **standing seat**, not a bird's-eye planner. Its one job, once an hour: talk to the **local** claude-mem worker, pull recent needle observations through the existing three-layer disclosure ladder, and land them in a **seat-owned middle cache** using grab → append → replace.

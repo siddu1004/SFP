@@ -3,6 +3,8 @@ name: mem-screenpipe
 description: Search screen and audio history recorded by Screenpipe and optionally save selected context into claude-mem. Use when the user asks to recall desktop activity, a meeting, or something seen in another app through Screenpipe.
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Screenpipe
 
 Bring context from [Screenpipe](https://screenpipe.com) into the current task.

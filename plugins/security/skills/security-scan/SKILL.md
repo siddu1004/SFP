@@ -5,6 +5,8 @@ metadata:
   origin: ECC
 ---
 
+> **This skill needs ECC AgentShield, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Security Scan Skill
 
 Audit your Claude Code configuration for security issues using [AgentShield](https://github.com/affaan-m/agentshield).

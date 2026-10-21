@@ -3,6 +3,8 @@ name: merge-prs
 description: Consume analyzed PR plans, implement authorized fixes with contributor credit, validate exact candidates, and merge only owner-selected and explicitly authorized groups through the shared gates. Requires prior review evidence; unknown or failing required checks remain HOLD.
 ---
 
+> **This skill needs OmniRoute, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Execute analyzed PR plans
 
 Read `../_shared/base-green.md`, `../_shared/validation-gate.md`,

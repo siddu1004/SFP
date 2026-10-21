@@ -1,0 +1,360 @@
+{
+  "omniroute": {
+    "name": "OmniRoute",
+    "homepage": "https://github.com/diegosouzapw/OmniRoute",
+    "what": "A local gateway that routes your IDE or CLI to many providers through one OpenAI-compatible endpoint.",
+    "sources": [
+      "diegosouzapw/OmniRoute"
+    ],
+    "needs": [
+      {
+        "tool": "node",
+        "range": [
+          [
+            22,
+            22,
+            2
+          ],
+          [
+            23,
+            0,
+            0
+          ],
+          [
+            24,
+            0,
+            0
+          ],
+          [
+            27,
+            0,
+            0
+          ]
+        ],
+        "label": "Node.js 22.22.2 or newer (below 23, or 24 up to 26)",
+        "url": "https://nodejs.org/",
+        "soft": true
+      },
+      {
+        "tool": "npm"
+      }
+    ],
+    "installed": {
+      "command": [
+        "omniroute",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "omniroute"
+        ],
+        "why": "installs the omniroute command globally"
+      }
+    ],
+    "update": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "omniroute@latest"
+        ],
+        "why": "moves to the newest release"
+      }
+    ],
+    "start": {
+      "run": [
+        "omniroute"
+      ],
+      "detach": true
+    },
+    "health": "http://localhost:20128/v1/models",
+    "after": [
+      "Open http://localhost:20128, connect a provider with your own account or API key, then point your tool at http://localhost:20128/v1 with an OmniRoute API key.",
+      "Optional: `omniroute autostart enable` starts it at login."
+    ],
+    "provider_keys": true
+  },
+  "freellmapi": {
+    "name": "FreeLLMAPI",
+    "homepage": "https://github.com/tashfeenahmed/freellmapi",
+    "what": "One OpenAI-compatible /v1 endpoint that stacks the free tiers of many LLM providers and fails over between them.",
+    "sources": [
+      "tashfeenahmed/freellmapi"
+    ],
+    "needs": [
+      {
+        "tool": "docker",
+        "label": "Docker, running",
+        "url": "https://docs.docker.com/get-docker/",
+        "probe": [
+          "docker",
+          "info"
+        ]
+      }
+    ],
+    "installed": {
+      "path": "~/freellmapi/.env"
+    },
+    "install": [
+      {
+        "os": "posix",
+        "script": "https://freellmapi.co/install.sh",
+        "shell": "bash",
+        "why": "sets up ~/freellmapi, makes an encryption key, pulls the image and starts the container. Safe to re-run; it keeps your .env"
+      },
+      {
+        "os": "windows",
+        "manual": "Use the desktop installer on the project's GitHub Releases page: https://github.com/tashfeenahmed/freellmapi/releases"
+      }
+    ],
+    "update": [
+      {
+        "os": "posix",
+        "script": "https://freellmapi.co/install.sh",
+        "shell": "bash",
+        "why": "re-running updates the container and keeps your .env"
+      }
+    ],
+    "health": "http://localhost:3001",
+    "after": [
+      "If it is installed but not running, re-run the install step: it keeps your .env and starts the container. Open http://localhost:3001, add provider keys on the Keys page, then use the unified key with base URL http://localhost:3001/v1."
+    ],
+    "provider_keys": true
+  },
+  "strix": {
+    "name": "Strix",
+    "homepage": "https://docs.strix.ai",
+    "what": "Autonomous AI penetration testing that proves vulnerabilities with working exploits.",
+    "sources": [
+      "usestrix/strix"
+    ],
+    "needs": [
+      {
+        "tool": "docker",
+        "label": "Docker, running (for the self-hosted CLI)",
+        "url": "https://docs.docker.com/get-docker/",
+        "probe": [
+          "docker",
+          "info"
+        ]
+      }
+    ],
+    "installed": {
+      "command": [
+        "strix",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "pipx",
+          "install",
+          "strix-agent"
+        ],
+        "requires": "pipx",
+        "why": "installs the strix command in its own environment"
+      },
+      {
+        "os": "posix",
+        "script": "https://strix.ai/install",
+        "shell": "bash",
+        "why": "the project's own installer, used when pipx is missing"
+      }
+    ],
+    "update": [
+      {
+        "os": "any",
+        "run": [
+          "pipx",
+          "upgrade",
+          "strix-agent"
+        ],
+        "requires": "pipx",
+        "why": "moves to the newest release"
+      }
+    ],
+    "after": [
+      "Set a model and key before a scan, for example: export STRIX_LLM=\"openai/gpt-5.4\" and export LLM_API_KEY=... . The managed cloud (`strix cloud ...`) needs neither Docker nor a local key."
+    ],
+    "provider_keys": true
+  },
+  "agent-reach": {
+    "name": "Agent Reach",
+    "homepage": "https://github.com/Panniantong/Agent-Reach",
+    "what": "Gives an agent access to internet platforms (social sites, video, search) through one set of tools.",
+    "sources": [
+      "Panniantong/Agent-Reach"
+    ],
+    "needs": [
+      {
+        "tool": "python3",
+        "label": "Python 3",
+        "url": "https://www.python.org/downloads/"
+      }
+    ],
+    "installed": {
+      "command": [
+        "agent-reach",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "pipx",
+          "install",
+          "https://github.com/Panniantong/agent-reach/archive/main.zip"
+        ],
+        "requires": "pipx",
+        "why": "installs the agent-reach command in its own environment"
+      }
+    ],
+    "update": [
+      {
+        "os": "any",
+        "run": [
+          "pipx",
+          "upgrade",
+          "agent-reach"
+        ],
+        "requires": "pipx",
+        "why": "moves to the newest release"
+      }
+    ],
+    "after": [
+      "Run `agent-reach install --env=auto` for a read-only check of what is missing, and `agent-reach doctor` to see which channels work. Add `--system` only if you agree to let it install system packages."
+    ]
+  },
+  "claude-mem": {
+    "name": "claude-mem",
+    "homepage": "https://github.com/thedotmack/claude-mem",
+    "what": "Persistent memory across agent sessions: hooks, a background worker, search and timelines.",
+    "sources": [
+      "thedotmack/claude-mem"
+    ],
+    "needs": [
+      {
+        "tool": "node",
+        "range": [
+          [
+            18,
+            0,
+            0
+          ],
+          [
+            99,
+            0,
+            0
+          ]
+        ],
+        "label": "Node.js 18 or newer",
+        "url": "https://nodejs.org/"
+      },
+      {
+        "tool": "npx"
+      }
+    ],
+    "installed": {
+      "path": "~/.claude-mem"
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npx",
+          "claude-mem",
+          "install"
+        ],
+        "why": "registers the hooks and starts the worker; it may ask you to sign in. Pass --provider, or set CLAUDE_MEM_ONLINE_OPTIN=false, to skip sign-in. For another IDE add --ide <name>. Do not use `npm install -g claude-mem`: that installs only the library"
+      }
+    ],
+    "after": [
+      "Restart the agent so the hooks load."
+    ]
+  },
+  "ecc": {
+    "name": "ECC (Everything Claude Code) add-on",
+    "homepage": "https://github.com/affaan-m/ECC",
+    "what": "ECC's agents, hooks, commands and rules, which a skills folder cannot carry. SFP already includes ECC's skills.",
+    "sources": [],
+    "needs": [
+      {
+        "tool": "node",
+        "range": [
+          [
+            18,
+            0,
+            0
+          ],
+          [
+            99,
+            0,
+            0
+          ]
+        ],
+        "label": "Node.js 18 or newer",
+        "url": "https://nodejs.org/"
+      },
+      {
+        "tool": "npx"
+      }
+    ],
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npx",
+          "ecc-universal@2.2.3",
+          "setup"
+        ],
+        "why": "ECC's guided setup. Use one ECC install method per IDE; stacking methods duplicates skills and hooks"
+      }
+    ],
+    "after": [
+      "Start a new session and run `/plugin list` to confirm ecc@ecc is enabled. See docs/INTEGRATION.md for the other IDEs."
+    ]
+  },
+  "agentshield": {
+    "name": "ECC AgentShield",
+    "homepage": "https://github.com/affaan-m/ECC",
+    "what": "A scanner for agent configuration and skills.",
+    "sources": [],
+    "names": [
+      "security-scan"
+    ],
+    "needs": [
+      {
+        "tool": "npm"
+      }
+    ],
+    "installed": {
+      "command": [
+        "ecc-agentshield",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "ecc-agentshield"
+        ],
+        "why": "installs the ecc-agentshield command globally"
+      }
+    ]
+  }
+}

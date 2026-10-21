@@ -9,6 +9,8 @@
   python3 scripts/install.py install --project .                  # into this project's tool folders
   python3 scripts/install.py uninstall --tools cursor
   python3 scripts/install.py mcp --tools cursor,claude            # register the SFP MCP server
+  python3 scripts/install.py apps list                            # programs some skills guide (OmniRoute, Strix...)
+  python3 scripts/install.py apps install omniroute [--yes]       # plan first; --yes runs it
 
 Every install also adds the `sfp` router skill and records this checkout in
 ~/.sfp/root, so an agent can read any SFP skill on demand without installing it.
@@ -349,7 +351,17 @@ def cmd_mcp(args):
         print('\n  Restart the IDE, then ask it to use the sfp tools (search_skills, get_skill, find_api).')
 
 
+def cmd_apps(rest):
+    """`install.py apps status|install|update|start|list [ID] [--yes]`: set up the programs some skills guide."""
+    sys.path.insert(0, os.path.join(ROOT, 'apps'))
+    import sfp_app
+    os.environ.setdefault('SFP_APPS_FILE', os.path.join(ROOT, 'apps', 'apps.json'))
+    sys.exit(sfp_app.main(rest))
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == 'apps':
+        cmd_apps(sys.argv[2:])
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('command', choices=['list', 'install', 'uninstall', 'mcp'])
     ap.add_argument('--remove', action='store_true', help='with `mcp`: remove the sfp server instead of adding it')

@@ -1,0 +1,48 @@
+{
+  "name": "FreeLLMAPI",
+  "homepage": "https://github.com/tashfeenahmed/freellmapi",
+  "what": "One OpenAI-compatible /v1 endpoint that stacks the free tiers of many LLM providers and fails over between them.",
+  "sources": [
+    "tashfeenahmed/freellmapi"
+  ],
+  "needs": [
+    {
+      "tool": "docker",
+      "label": "Docker, running",
+      "url": "https://docs.docker.com/get-docker/",
+      "probe": [
+        "docker",
+        "info"
+      ]
+    }
+  ],
+  "installed": {
+    "path": "~/freellmapi/.env"
+  },
+  "install": [
+    {
+      "os": "posix",
+      "script": "https://freellmapi.co/install.sh",
+      "shell": "bash",
+      "why": "sets up ~/freellmapi, makes an encryption key, pulls the image and starts the container. Safe to re-run; it keeps your .env"
+    },
+    {
+      "os": "windows",
+      "manual": "Use the desktop installer on the project's GitHub Releases page: https://github.com/tashfeenahmed/freellmapi/releases"
+    }
+  ],
+  "update": [
+    {
+      "os": "posix",
+      "script": "https://freellmapi.co/install.sh",
+      "shell": "bash",
+      "why": "re-running updates the container and keeps your .env"
+    }
+  ],
+  "health": "http://localhost:3001",
+  "after": [
+    "If it is installed but not running, re-run the install step: it keeps your .env and starts the container. Open http://localhost:3001, add provider keys on the Keys page, then use the unified key with base URL http://localhost:3001/v1."
+  ],
+  "provider_keys": true,
+  "id": "freellmapi"
+}

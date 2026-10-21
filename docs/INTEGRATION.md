@@ -13,6 +13,8 @@ This guide takes you from nothing to a fully set up IDE: SFP's skills and router
 
 The point to keep in mind: SFP gives your agent the knowledge of ECC and OmniRoute. To get ECC's agents and hooks, or a running gateway, you install those projects too. The steps below do that without the installs fighting each other.
 
+**Shortcut for the programs:** each skill that guides OmniRoute, Strix, claude-mem, FreeLLMAPI or Agent Reach carries its own setup (`python3 scripts/sfp_app.py status`, `install`, `start`). From the SFP checkout, `python3 scripts/install.py apps list` shows them all and `apps install omniroute` shows the plan; add `--yes` to run it. The manual steps below are the same commands, with more choices.
+
 ## Step 0: Check your tools
 
 ```bash

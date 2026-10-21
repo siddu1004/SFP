@@ -1,0 +1,48 @@
+{
+  "name": "claude-mem",
+  "homepage": "https://github.com/thedotmack/claude-mem",
+  "what": "Persistent memory across agent sessions: hooks, a background worker, search and timelines.",
+  "sources": [
+    "thedotmack/claude-mem"
+  ],
+  "needs": [
+    {
+      "tool": "node",
+      "range": [
+        [
+          18,
+          0,
+          0
+        ],
+        [
+          99,
+          0,
+          0
+        ]
+      ],
+      "label": "Node.js 18 or newer",
+      "url": "https://nodejs.org/"
+    },
+    {
+      "tool": "npx"
+    }
+  ],
+  "installed": {
+    "path": "~/.claude-mem"
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npx",
+        "claude-mem",
+        "install"
+      ],
+      "why": "registers the hooks and starts the worker; it may ask you to sign in. Pass --provider, or set CLAUDE_MEM_ONLINE_OPTIN=false, to skip sign-in. For another IDE add --ide <name>. Do not use `npm install -g claude-mem`: that installs only the library"
+    }
+  ],
+  "after": [
+    "Restart the agent so the hooks load."
+  ],
+  "id": "claude-mem"
+}

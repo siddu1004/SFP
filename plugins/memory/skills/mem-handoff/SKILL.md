@@ -3,6 +3,8 @@ name: mem-handoff
 description: Generate a HANDOFF.md that captures goal, current state, files touched, failed attempts, and next steps — so a fresh Claude session can continue exactly where this one left off. Use when sessions are getting long, Claude keeps retrying the same broken solution, or the user wants to step away and resume later.
 ---
 
+> **This skill needs claude-mem, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Handoff
 
 Generate a structured `HANDOFF.md` file that gives a fresh Claude session everything it needs to continue this work without dragging the current degraded context forward.

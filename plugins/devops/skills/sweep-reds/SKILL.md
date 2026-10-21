@@ -3,6 +3,8 @@ name: sweep-reds
 description: Repair confirmed CI failures base-first, then prepare affected PRs one at a time with exact-candidate evidence. Use when asked to sweep reds or restore the queue. Never merges, closes PRs, weakens tests, or changes CI under ordinary sweep authority.
 ---
 
+> **This skill needs OmniRoute, which is installed separately.** From this skill's folder, run `python3 scripts/sfp_app.py status` to see whether it is installed and running. If it is not, run `python3 scripts/sfp_app.py install` to get the plan (it changes nothing), tell the user what it will do, and run it again with `--yes` only after they agree. `start` runs it when it is installed but stopped.
+
 # Sweep reds: base first, then affected PRs
 
 Read `../_shared/base-green.md` and `../_shared/validation-gate.md`.
