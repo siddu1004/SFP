@@ -6,200 +6,85 @@
 </h1>
 
 <p align="center">
-  <b>SFP gives your AI coding agent @@TOTAL@@ skills, sorted by what you build.</b><br>
-  Install a handful. <code>sfp</code> finds the rest. <code>sfp-manager</code> runs a hive that picks which few to use, and when.
+  <b>Give your AI coding agent the right skills for the job, not all of them.</b><br>
+  @@TOTAL@@ skills, sorted by what you build. Two small skills pick the few each task needs, for the project in front of them.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-@@HIVE_VERSION@@-0f766e?style=flat-square&labelColor=3b4350" alt="Version @@HIVE_VERSION@@">
   <img src="https://img.shields.io/badge/skills-@@TOTAL@@-0f766e?style=flat-square&labelColor=3b4350" alt="@@TOTAL@@ skills">
-  <img src="https://img.shields.io/badge/works_in-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Works in 16 IDEs and CLIs">
-  <img src="https://img.shields.io/badge/installer-Python_3_only-0f766e?style=flat-square&labelColor=3b4350" alt="Installer needs only Python 3">
-  <img src="https://img.shields.io/badge/licenses-MIT_and_Apache--2.0-0f766e?style=flat-square&labelColor=3b4350" alt="MIT and Apache-2.0 licenses">
+  <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
+  <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
+  <img src="https://img.shields.io/badge/needs-Python_3-0f766e?style=flat-square&labelColor=3b4350" alt="Needs Python 3">
+  <img src="https://img.shields.io/badge/license-MIT-0f766e?style=flat-square&labelColor=3b4350" alt="MIT license">
 </p>
 
-## Quick Start
-
-Install the starter set into every IDE it finds (macOS and Linux):
+## Try It in 60 Seconds
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
 ```
 
-Restart your IDE, then check it worked. Ask your agent: "Use sfp to find a skill for reviewing my UI for accessibility." It should name a skill, such as `accessibility-audit`, and follow it.
+That installs the starter set into every IDE it finds (macOS and Linux). On Windows or in Claude Code, see [Install](#install). Restart your IDE, then ask your agent:
 
-Want your IDE to reach every skill without installing it? Add the MCP server too:
+> Use sfp-manager for this task: add tests for the checkout form.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
-```
+It should name the few skills that fit your project, say why, and follow them in order.
 
-It registers `sfp` in each IDE it finds and keeps your other MCP servers. See [MCP Server](#mcp-server) for Windows and the tools it adds.
+**Not for you?** Undo it with one line: `~/.sfp/SFP/install.sh uninstall`. It removes only what it installed.
 
-On Windows or in Claude Code? See [Windows](#windows) and [Claude Code](#claude-code). For presets and single IDEs, see [all install options](#install).
+## The Problem
 
-## New in 2.0: the Hive
+Good agent skills exist, but they are scattered across dozens of repos, each with its own install steps and folder layout. And installing many of them costs more than it looks.
 
-`sfp-manager` now decides which skills to use with a colony algorithm modelled on how honeybees divide work. Scouts must reach a quorum, rival skills send stop signals, each skill takes the job it responds to most, and used paths leave pheromone trails that fade. On @@FRESH_N@@ new tasks it had never seen, it put the right skill in the stack @@FRESH_HIVE@@ of the time, against @@FRESH_V1@@ for the previous engine and @@FRESH_SEARCH@@ for plain search. See [The Hive](#the-hive).
+- **Agents typically read every installed skill's description at the start of every session.** For this library that is about @@ALL_TOKENS@@ tokens, or @@ALL_PERCENT@@% of a 200k window, before you type a word.
+- **So you choose between two bad options.** Install a few skills and miss the good ones, or install many and pay for a catalog you rarely use.
+- **Picking by hand is guesswork.** The skill for "write tests" is a different skill in a Next.js app, a Django app and a Rust crate.
 
-## Why SFP
+## What SFP Does
 
-Good agent skills exist, but they are scattered across dozens of repos. Each has its own install steps, its own folder layout and its own idea of which IDE you use.
-
-Installing many of them has a cost you do not see. An agent reads the name and description of every installed skill at the start of every session. Measured on this library, all @@TOTAL@@ descriptions come to about @@ALL_TOKENS@@ tokens. That is @@ALL_PERCENT@@% of a 200k-token window, spent before you type a word.
-
-So you pick between two bad options: install a few skills and miss the good ones, or install many and spend a fifth of your context on a catalog.
-
-SFP removes the choice in three moves:
-
-1. **Sort.** @@NCATS@@ categories group skills by what you build, and presets group categories by role.
-2. **Route.** Two small skills hold an index of everything and the judgement to use it: `sfp` finds a skill, and `sfp-manager` runs the hive, which picks the few a task needs, in order, for the project in front of it. Together they cost about @@SFP_TOKENS@@ tokens, which is @@RATIO@@ times less than loading every description.
-3. **Install once.** One command puts the right skills in the right folder for each of 16 IDEs and CLIs. Tools with no skills folder get the same library over MCP.
-
-## What Makes SFP Different
-
-- **A hive decides which skills to use, and when.** Modelled on how bee colonies divide work without a boss, it reads the task, the project's files and the skills used so far, and stacks one to three skills in the order to apply them. The same words get `react-testing` in a Next.js app, `django-tdd` in Django and `csharp-testing` in .NET. See [The Hive](#the-hive).
-- **It loads skills on demand, not all at once.** Most collections ask you to install everything or pick by hand. Here the router reads a skill only when your task calls for it. The cost table below shows the difference in tokens.
-- **Skills are sorted by what you build, not by who wrote them.** SFP merges @@SOURCES@@ sources into categories by job. A backend developer finds Postgres, migrations, API design and Docker together.
-- **One library for 16 IDEs.** You do not hunt for each tool's skills folder or format. The installer knows them, and Claude Code gets proper plugins.
-- **A bridge for tools with no skills folder.** The MCP server lets any MCP client search the library and read skills and their bundled files.
-- **Every source is traceable.** SFP reads the original projects, not copies of copies. `sources.lock.json` pins the exact commit of each. Every skill keeps its license, and this page lists what was left out and why.
-- **Apps, not just prompts.** Some skills need a program behind them. The `career` launcher sets one up at a pinned commit, and the free API finder ships its own search script.
-- **It measures itself.** The search and cost figures on this page are computed from the repo by the script that builds it, and tests keep search quality from quietly getting worse.
-
-## What Is What
-
-| Term | What it is |
-|---|---|
-| Skill | A folder with a `SKILL.md`, and sometimes scripts or reference files, that an agent loads when a task matches. Example: `database-migrations`. |
-| Category | A group of skills by job, such as `backend` or `security`. There are @@NCATS@@. Each is also a Claude Code plugin. |
-| Preset | A ready-made list of categories for a kind of work, such as `frontend-dev`. Install one name instead of choosing categories. |
-| `sfp` (the router) | The skill that knows all the others. It searches the index and reads the skill your task needs, installed or not. |
-| `sfp-manager` | The skill that decides which few skills a task needs, in what order. It runs the hive. |
-| Hive | The engine behind `sfp-manager` (`mcp/sfp_hive.py`): a colony algorithm of scouts, quorum, stop signals, response thresholds and pheromone trails. |
-| Stack | The hive's answer: one to four skills, ordered from the work itself (`base`) to its checks (`check`) and its release (`finish`). |
-| Recipe | A named stack that works well for one goal, such as `ship-a-service`. There are @@RECIPES@@ in `mcp/stack_recipes.json`. |
-| Installer | `install.sh` and `install.ps1`. They copy skills into each IDE's folder and never touch a skill they did not create. |
-| MCP server | `mcp/sfp_mcp.py`. It gives MCP clients nine tools to search the library, read skills and get a stack. |
-| Launcher | A skill that sets up an app before it works, such as `career-ops`. |
-| Catalog | `catalog.json` and `SKILLS.md`. A generated list of every skill, its category, source and license. |
-| Sync | `scripts/sync.py`. It pulls the latest skills from every source and rebuilds everything, including this page. |
-
-```text
-SFP/
-  plugins/<category>/skills/<skill>/   the skills, one folder each (generated)
-  mcp/sfp_mcp.py                       the MCP server
-  mcp/sfp_hive.py                      the hive: the manager's engine
-  mcp/sfp_stack.py, stack_recipes.json the v1 engine it builds on, and the recipes (permanent trails)
-  scripts/install.py, sync.py          the installer, and the script that rebuilds everything
-  templates/                           the sfp router, the career launcher, the API finder, this README
-  vendor/                              snapshots of plugins that have no public repo
-  archive/fork-patches/                commits the old forks held, kept as patches
-  tests/                               protocol, installer-facing and search-quality tests
-  sources.json, categories.json        where skills come from and how they are sorted
-```
-
-## The Hive
-
-A bee colony has no manager. The queen lays eggs; she does not hand out work. Yet the colony splits thousands of jobs well, with rules that biologists have measured and modelled. `sfp-manager` uses the same rules to decide which skills your agent loads, and when.
-
-| In a colony | In the hive | What it prevents |
+| Move | How | What it gives you |
 |---|---|---|
-| **Scouts** judge each possible nest site on their own | Five scouts judge each skill: the task's words, the project's files, the phase of work, the task's category, and the trail from the last skill used | One signal deciding alone |
-| **Quorum**: the colony commits once enough scouts agree | A skill needs strong task words, or the backing of two scouts | A rare word dragging in an unrelated skill |
-| **Stop signals**: scouts for rival sites head-butt each other | Each chosen skill suppresses rivals in proportion to how alike they are | Two skills that do the same thing |
-| **Response thresholds**: a bee takes a job when its need passes her threshold, and doing it lowers the need | Every job (plan, build, test, secure, ship, ...) has a level of need; a skill takes the job it responds to most, then that need drops | Five testing skills for one testing task |
-| **Specialisation**: bees that do a job well get quicker to take it again | A skill you mark as helpful gets a lower threshold and is chosen sooner | The same unhelpful skill coming back |
-| **Pheromone trails** that evaporate (ants) | Recorded sequences of skills leave trails with a 30-day half-life; they predict the next skill | Stale habits steering forever |
+| **Sort** | @@SOURCES@@ sources merged into @@NCATS@@ categories, grouped by what you build; presets group categories by role | A backend developer finds Postgres, migrations, API design and Docker together |
+| **Route** | `sfp` finds a skill; `sfp-manager` runs a hive that picks the few a task needs, in order | About @@SFP_TOKENS@@ tokens of descriptions instead of @@ALL_TOKENS@@: @@RATIO@@ times less |
+| **Install once** | One command writes each of 16 IDEs' skills folders; the MCP server serves the same library to tools with no skills folder | No hunting for formats and paths |
 
-```mermaid
-flowchart LR
-  T[task words] --> Q{quorum}
-  P[project files] --> Q
-  J[phase of work] --> Q
-  C[category] --> Q
-  H[trail from last skill] --> Q
-  Q --> S[stop signals between rivals]
-  S --> R[each skill takes the job it responds to most]
-  R --> K[ordered stack: base, check, finish]
-```
+Every skill keeps its original license and author. SFP reads the original projects, and `sources.lock.json` pins the exact commit of each.
 
-It runs inside the process that asks: the MCP server, or the skill's own script. A decision takes about @@HIVE_MS@@ ms, and the agent asks once per phase of work, not per message, so there is no middleman to wait on. Version 2.0.1 made it several times faster again: a search takes about 0.1 ms, a prediction under 1 ms, and a call through the running MCP server about 3 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after. If Python is not available, the skill tells the agent the same rules in plain words, so it can apply them itself.
+## See It Choose
 
-Ask your agent "use sfp-manager for this task", or run it yourself:
+The same words, "write tests for the orders", in five different projects. This is real output from the hive, regenerated each time this page is built:
 
-```bash
-python3 ~/.sfp/SFP/mcp/sfp_hive.py recommend "add an endpoint to list orders" --project .
-```
+@@SAME_WORDS_TABLE@@
 
-Real output for a sample Rails project:
+Plain search gives the same answer in all five. The hive reads each project's files (`package.json`, `Cargo.toml`, `pubspec.yaml`, `requirements.txt` and so on), so a Django skill is not offered for a React app. Across all three task sets below, @@WRONG_HIVE@@ stacks held a skill for the wrong technology.
 
-```text
-Stack for: add an endpoint to list orders
-Project: rails, ruby
-Phase of work: build 100%
+It is not perfect, and the examples show it: `django-celery` joins the Django stack because the project uses Celery and its description mentions tests. A strong general skill such as `application-security-testing` sometimes joins as filler. The [proof](#the-proof) below says how often it is right and where it is not.
 
-1. [base] rails-patterns  (backend, build, about 4,128 tokens)
-   why: fits project: rails; backed by: words, project, role
+## The Proof
 
-Likely next: gateguard, tdd-workflow, test-collaboration
-Colony: 37 skills scouted, 3 reached quorum, 1 took a job.
-```
+Everything here is computed from this repository when the README is rebuilt. Run `python3 mcp/sfp_hive.py evaluate` to reproduce it.
 
-**Measured** with `python3 mcp/sfp_hive.py evaluate`, regenerated on every rebuild. "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
+**Does it pick the right skill?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive @@HIVE_VERSION@@ | Previous engine (v1) | Plain search |
+| Task set | Hive @@HIVE_VERSION@@ | Previous engine | Plain search |
 |---|---:|---:|---:|
 | @@FRESH_N@@ new tasks in 8 new projects, written before the hive and scored once | **@@FRESH_HIVE@@** | @@FRESH_V1@@ | @@FRESH_SEARCH@@ |
 | @@PROJ_N@@ tasks in 10 sample projects | @@PROJ_HIVE@@ | @@PROJ_V1@@ | @@PROJ_SEARCH@@ |
 | @@BENCH_N@@ tasks with no project | @@BENCH_HIVE@@ | @@BENCH_V1@@ | @@BENCH_SEARCH@@ |
-| Top pick right, on the new tasks | @@FRESH_HIVE_FIRST@@ | @@FRESH_V1_FIRST@@ | |
-| Skills per stack, no project | @@BENCH_HIVE_SIZE@@ | @@BENCH_V1_SIZE@@ | |
 | Stacks with a skill for the wrong technology, all sets | @@WRONG_HIVE@@ | @@WRONG_V1@@ | @@WRONG_SEARCH@@ |
 
-How far to trust it: the hive's constants were tuned on the 10-project and no-project sets, where it matches v1 with fewer skills. The new set was written before the hive existed and opened once, after tuning. The tasks and answers were written by one person. Whether stacks make the finished work better is not measured. It still makes mistakes you can see: `application-security-testing` joins many "write tests" stacks, and a word like "version" can pull in an unrelated skill. [docs/HIVE.md](docs/HIVE.md) has the full algorithm, the biology it comes from, the tuning history and the misses.
-
-## What It Does for Your IDE
-
-### Measured
-
-**What each way of installing costs your agent.** Every installed skill puts its name and description into each session. These figures come from the real text of this library, at about 4 characters per token.
+**What does it cost your agent?** Every installed skill puts its name and description into each session, at about 4 characters per token.
 
 @@COST_TABLE@@
 
-Installing everything carries about @@RATIO@@ times the descriptions of `sfp` alone. With `sfp` and the MCP server you still reach every skill, and you pay for a skill only when it is used. A skill's full text then costs a median of about @@BODY_MEDIAN@@ tokens, and 90% are under @@BODY_P90@@.
+With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about @@BODY_MEDIAN@@ tokens, and 90% are under @@BODY_P90@@. A hive stack averages @@BENCH_HIVE_SIZE@@ skills when there is no project.
 
-**How often `sfp` finds the right skill.** I wrote @@SEARCH_N@@ plain-language tasks, such as "add a postgres migration without downtime", and marked which skills would be a correct answer. The search behind `sfp` and the MCP server returns:
+**How fast is it?** About @@HIVE_MS@@ ms per decision, inside the process that asks, once per phase of work. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
 
-| The right skill is | Share of the @@SEARCH_N@@ tasks |
-|---|---:|
-| The first result | @@SEARCH_TOP1@@ |
-| In the top 3 | @@SEARCH_TOP3@@ |
-| In the top 5 | @@SEARCH_TOP5@@ |
+> **What has not been measured.** Whether stacks make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost and choice, not quality of results. The tasks and their correct answers were written by one person. The hive's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the new set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
 
-Before the ranking fixes in this repo, the same tasks scored 65% first and 84% in the top 3. The figures are recomputed from `tests/search_*.json` every time the README is rebuilt, and `python3 -m unittest discover -s tests` fails if search quality drops below a set floor.
-
-### Not measured
-
-- **Whether skills make your agent's work better on real tasks.** I have not run a benchmark of finished work with and without SFP. The figures above show cost and findability, not quality of results.
-- **Time saved.** It depends on your work and your agent.
-- **Exact token counts.** The estimate is characters divided by 4. Your IDE's tokenizer and how it lists skills will differ.
-
-### Where search still misses
-
-Search is keyword-based, with no embeddings. It does best when your task shares words with the skill. It misses when they do not: "scrape product prices" does not surface `data-scraper-agent`, because "scraper" and "scrape" are different stems. When `sfp` misses, name the skill, or ask it to list a category. The tasks were written and marked by one person, and one of the three sets exposed a bug with `C++` that I fixed afterwards, so treat the figures as slightly optimistic.
-
-## Pick a Preset
-
-@@PRESET_TABLE@@
-
-<details>
-<summary>All @@NCATS@@ categories</summary>
-
-@@CATEGORY_TABLE@@
-</details>
-
-## Who Gets the Most From It
+## Who It Is For
 
 | You are | Install | You get, for example | Try asking |
 |---|---|---|---|
@@ -212,46 +97,27 @@ Search is keyword-based, with no embeddings. It does best when your task shares 
 | Job hunting | `career` | `career-ops` | "Evaluate this job posting against my CV." |
 | Using an IDE with no skills folder | the MCP server | every skill, through `search_skills` and `get_skill` | "Search SFP for a skill that fits this task." |
 
-## Use It Well
-
-1. **Start with a preset, not everything.** Pick the one that matches your work. You can add a category later.
-2. **For a whole task, let the hive pick.** Say "use sfp-manager for this task" at the start, and again when the work moves on (from building to testing, or to shipping). It returns the few skills that fit this project, in order.
-3. **For one skill, let `sfp` find it.** "Use sfp to find a skill for adding rate limiting."
-4. **Name the skill when you know it.** "Use the `impeccable` skill to critique this page" skips the search.
-5. **Chain skills for a whole job.**
-   - Ship a page: `design-taste-frontend`, then `accessibility-audit`, then `break-ui`.
-   - Ship a service: `api-design`, then `database-migrations`, then `tdd-workflow`, then `security-review`.
-   - Ship a plugin: `skill-creator`, then `hook-development`, then `mcp-builder`.
-6. **Grow your install from use.** As a rule of thumb, when you ask `sfp` for the same category three times, install it. Run `./install.sh list` to see what is available.
-7. **Use the MCP server where skills folders do not exist.** It gives the same skills to any MCP client.
-8. **Keep it current.** Run your install line again. It updates only the folders it created.
-
-Prompts to try:
-
-```text
-Use sfp to find a skill for stress-testing this form with long names and empty values.
-Use sfp: I need a free API for currency exchange rates. Show auth and CORS for each.
-Use the skill-creator skill to turn this checklist into a skill.
-Search SFP for a skill that helps me write an architecture decision record.
-```
-
 ## Install
 
-Everything needs `git`. Outside Claude Code's plugin route it also needs Python 3.
+You need `git`, and Python 3 outside Claude Code's plugin route.
 
-### macOS and Linux
-
-Choose what to install:
+<details open>
+<summary><b>macOS and Linux</b></summary>
 
 ```bash
-# Everything, into every IDE found
-curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- --profile everything
+# The starter set, into every IDE found
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
 
 # One IDE, one preset
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- --tools cursor --profile frontend-dev
-```
 
-### Windows
+# Everything (it costs about @@ALL_PERCENT@@% of your context in descriptions)
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- --profile everything
+```
+</details>
+
+<details>
+<summary><b>Windows</b></summary>
 
 In PowerShell:
 
@@ -264,8 +130,10 @@ To choose what to install:
 ```powershell
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1))) --tools cursor --profile frontend-dev
 ```
+</details>
 
-### Claude Code
+<details>
+<summary><b>Claude Code</b></summary>
 
 Run these inside Claude Code:
 
@@ -275,12 +143,11 @@ Run these inside Claude Code:
 /plugin install frontend@sfp
 ```
 
-Replace `frontend` with any category from the [category list](#pick-a-preset). Plugins update with `/plugin update`.
-
-### From a clone
+Replace `frontend` with any category from the [presets and categories](#pick-a-preset). Plugins update with `/plugin update`.
+</details>
 
 <details>
-<summary>Read the installer first, then run it</summary>
+<summary><b>From a clone, to read the installer first</b></summary>
 
 ```bash
 git clone https://github.com/siddu1004/SFP.git && cd SFP
@@ -296,39 +163,106 @@ git clone https://github.com/siddu1004/SFP.git && cd SFP
 On Windows, use `.\install.ps1` in place of `./install.sh`.
 </details>
 
-### Let your agent install it
-
 <details>
-<summary>Paste this prompt into any agent</summary>
+<summary><b>Let your agent install it</b></summary>
+
+Paste this into any agent:
 
 > Clone https://github.com/siddu1004/SFP, run its `install.sh` (or `install.ps1` on Windows) with `--tools <this tool>`, then restart me so the skills load.
 </details>
 
-To update, run the same install line again. The installer replaces only folders it created. A skill you made with the same name stays unless you add `--force`.
+To update, run the same install line again. The installer replaces only folders it created. A skill of yours with the same name stays unless you add `--force`.
 
-## Full Integration: SFP, ECC and OmniRoute
-
-SFP carries the **skills** of ECC and OmniRoute. The other parts of those projects need their own install: ECC's agents, hooks and rules, and the OmniRoute gateway that routes your IDE to many model providers. The short version, in order:
+**Want every skill without installing any?** Add the MCP server, which lets any MCP client search and read the whole library on demand:
 
 ```bash
-# 1. SFP skills and router
-curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
-# 2. SFP MCP server
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
-# 3. ECC: agents, hooks, commands (Claude Code; Node.js 18+)
-npx ecc-universal@2.2.3 setup
-# 4. OmniRoute gateway, then point your IDE at http://localhost:20128/v1
-npm install -g omniroute && omniroute
-omniroute setup-claude        # or setup-codex, setup-cursor, setup-opencode ...
 ```
 
-Use one ECC install method per IDE, and install only `sfp` plus non-ECC categories from SFP if you add the ECC plugin, so you do not get skills twice. The [full integration guide](docs/INTEGRATION.md) has every command per IDE, the Codex and Cursor routes, MCP for OmniRoute, a verification table, updating and removal. I have not run ECC's or OmniRoute's installers myself: their commands come from each project's own documentation.
+It registers `sfp` in each IDE it finds and keeps your other MCP servers. See [MCP Server](#mcp-server).
+
+## Use It Well
+
+1. **Start with a preset, not everything.** Pick the one that matches your work and add a category later.
+2. **For a whole task, ask the hive.** Say "use sfp-manager for this task" at the start, and again when the work moves on, from building to testing or to shipping.
+3. **For one skill, ask `sfp`.** "Use sfp to find a skill for adding rate limiting."
+4. **Name the skill when you know it.** "Use the `impeccable` skill to critique this page."
+5. **Tell it what helped.** The hive learns from the outcomes you record (see the questions below).
+6. **Grow your install from use.** When you ask `sfp` for the same category three times, install it.
+
+Prompts to try:
+
+```text
+Use sfp-manager for this task: harden this API before we ship it.
+Use sfp to find a skill for stress-testing this form with long names and empty values.
+Use sfp: I need a free API for currency exchange rates. Show auth and CORS for each.
+Use the skill-creator skill to turn this checklist into a skill.
+```
+
+## How the Hive Works
+
+A bee colony has no manager. The queen lays eggs; she does not hand out work. Yet thousands of bees split the jobs well, with rules that biologists have measured. The hive copies those rules to decide which skills your agent loads, and when.
+
+| In a colony | In the hive | What it prevents |
+|---|---|---|
+| **Scouts** judge each nest site on their own | Five scouts judge each skill: the task's words, the project's files, the phase of work, the category, and the trail from the last skill used | One signal deciding alone |
+| **Quorum**: the colony commits once enough scouts agree | A skill needs strong task words, or two scouts backing it | A rare word dragging in an unrelated skill |
+| **Stop signals** between scouts for rival sites | Each chosen skill suppresses rivals in proportion to how alike they are | Two skills that do the same thing |
+| **Response thresholds**: a bee takes a job when its need passes her threshold, and doing it lowers the need | Every job (plan, build, test, secure, ship) has a need; a skill takes the job it suits most, then that need drops | Five testing skills for one testing task |
+| **Specialisation**: bees that do a job well take it up sooner | A skill you mark as helpful is chosen sooner | The same unhelpful skill coming back |
+| **Pheromone trails** that evaporate | Recorded sequences of skills predict the next one, and fade over about a month | Stale habits steering forever |
+
+```mermaid
+flowchart LR
+  T[task words] --> Q{quorum}
+  P[project files] --> Q
+  J[phase of work] --> Q
+  C[category] --> Q
+  H[trail from last skill] --> Q
+  Q --> S[stop signals between rivals]
+  S --> R[each skill takes the job it responds to most]
+  R --> K[ordered stack: base, check, finish]
+```
+
+It runs inside the process that asks (the MCP server, or the skill's own script), so there is no middleman to wait on. Without Python, the skill gives the agent the same rules in plain words to apply itself. [docs/HIVE.md](docs/HIVE.md) has the algorithm, the biology, how it was built (the first versions were worse than the engine they replaced), and where it fails.
+
+## Questions
+
+**Does the hive slow my agent down?** No. A decision takes about @@HIVE_MS@@ ms and happens once per phase of work. It also loads fewer skills: @@BENCH_HIVE_SIZE@@ on average with no project.
+
+**Does it always pick right?** No. The right skill was in the stack @@FRESH_HIVE@@ of the time on new tasks, and the misses are listed in [docs/HIVE.md](docs/HIVE.md#where-it-fails). When it misses, name the skill, or ask for a category.
+
+**What does it record about me?** Only if you or your agent record usage: a skill name, a time and an outcome, in `~/.sfp/usage.jsonl` on your machine. Never prompts or code, and nothing is sent anywhere. Set `SFP_NO_USAGE_LOG=1` to turn it off, or delete the file to forget everything.
+
+**Is it safe?** A skill is third-party instruction text that your agent will follow, so read a skill before you trust it, as you would a script. The installer writes only into skills folders and `~/.sfp`, and backs up an MCP config before changing it. The MCP server makes no network calls. Some skills do their own network work, such as Impeccable downloading its engine on first use.
+
+**Why not install everything?** It works, and `--profile everything` does it. It puts about @@ALL_TOKENS@@ tokens of descriptions into every session and gives your agent @@TOTAL@@ to choose between.
+
+**Which IDEs have you tested?** Claude Code end to end: plugin install from GitHub, the MCP connection, and a real session using the tools. For the other IDEs the installer was tested on fake home folders, and the folder paths follow each tool's documentation. The Windsurf and Copilot paths are unconfirmed.
+
+**Can I keep my own skills?** Yes. A skill you made with the same name is left alone unless you pass `--force`.
+
+**Does it work offline?** After installing, yes, for skills that do not need the network. The first install needs GitHub.
+
+**Is a queen bee really in charge?** No, and that is the point. Work in a colony is divided by thresholds, recruitment, quorum and stop signals among equals. The hive copies those rules, not the myth.
+
+**Can I go back to the previous engine?** Yes: `python3 mcp/sfp_hive.py recommend "..." --engine v1`.
+
+**How do I remove it?** `./install.sh uninstall --tools cursor` for skills, `./install.sh mcp --remove` for the MCP server, and `/plugin uninstall <category>@sfp` in Claude Code.
+
+## Pick a Preset
+
+@@PRESET_TABLE@@
+
+<details>
+<summary>All @@NCATS@@ categories</summary>
+
+@@CATEGORY_TABLE@@
+</details>
 
 ## Supported IDEs
 
-Claude Code, Codex, Cursor, Gemini CLI, Antigravity, GitHub Copilot, Windsurf, Kiro, OpenCode, Pi, Grok Build, Qoder, Trae, Rovo Dev, Mistral Vibe and Hermes.
-
-Name them with `--tools`:
+Claude Code, Codex, Cursor, Gemini CLI, Antigravity, GitHub Copilot, Windsurf, Kiro, OpenCode, Pi, Grok Build, Qoder, Trae, Rovo Dev, Mistral Vibe and Hermes. Name them with `--tools`:
 
 ```text
 claude codex cursor gemini antigravity copilot windsurf kiro opencode pi grok qoder trae rovodev vibe hermes
@@ -358,9 +292,7 @@ I could not confirm the Windsurf and Copilot paths against their docs. If one is
 
 ## MCP Server
 
-SFP also runs as an MCP server. Any MCP client can search and read all @@TOTAL@@ skills on demand, with nothing copied into a skills folder. This helps IDEs and agents that support MCP but not skills.
-
-Register it in your IDEs with one command. It fetches SFP first if you do not have it:
+SFP also runs as an MCP server, so any MCP client can search and read all @@TOTAL@@ skills on demand, with nothing copied into a skills folder. It helps IDEs and agents that support MCP but not skills.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
@@ -372,15 +304,7 @@ On Windows, in PowerShell:
 & ([scriptblock]::Create((irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1))) mcp
 ```
 
-To pick IDEs, add `--tools cursor,claude`. To undo it, add `--remove`. SFP lives in `~/.sfp/SFP`, so later you can run `~/.sfp/SFP/install.sh mcp`, or `./install.sh mcp` from a clone.
-
-Claude Code by hand:
-
-```bash
-claude mcp add --scope user sfp -- python3 /path/to/SFP/mcp/sfp_mcp.py
-```
-
-Any other MCP client: add a stdio server that runs `python3 /path/to/SFP/mcp/sfp_mcp.py`.
+To pick IDEs, add `--tools cursor,claude`. To undo it, add `--remove`. By hand in Claude Code: `claude mcp add --scope user sfp -- python3 /path/to/SFP/mcp/sfp_mcp.py`. Any other MCP client: add a stdio server that runs `python3 /path/to/SFP/mcp/sfp_mcp.py`.
 
 | Tool | What it does |
 |---|---|
@@ -394,15 +318,13 @@ Any other MCP client: add a stdio server that runs `python3 /path/to/SFP/mcp/sfp
 | `predict_next` | The skills most likely needed after one, by following pheromone trails |
 | `record_usage` | Notes that a skill was used, and whether it helped, in `~/.sfp/usage.jsonl` |
 
-Every skill is also a resource at `sfp://skill/{name}`, and two prompts, `use_skill` and `find_skill_for`, load a skill into a chat.
-
-The server needs only Python 3 and makes no network calls. It reads the project folder you pass to `recommend_stack`. Its one write is `record_usage`, which appends a skill name and time to `~/.sfp/usage.jsonl`; set `SFP_NO_USAGE_LOG=1` to turn it off. A skill it returns is third-party instruction text that your agent will follow, so the same trust applies as when you install it.
+Every skill is also a resource at `sfp://skill/{name}`, and two prompts, `use_skill` and `find_skill_for`, load a skill into a chat. The server needs only Python 3 and makes no network calls. It reads the project folder you pass to `recommend_stack`, and its one write is `record_usage`.
 
 I tested it with Claude Code, including a real session that found and read a skill through the tools. The Cursor, Gemini CLI, Windsurf, Kiro and Codex settings follow each tool's documented format but were not run against those tools.
 
 ## Free APIs
 
-The `public-apis` skill bundles a list of about 2,100 free APIs in 51 categories, plus a search script. Your agent can run it directly:
+The `public-apis` skill bundles a list of about 2,100 free APIs in 51 categories, plus a search script your agent can run directly:
 
 ```bash
 python3 plugins/data-apis/skills/public-apis/scripts/find_api.py weather --auth none --cors yes
@@ -410,31 +332,25 @@ python3 plugins/data-apis/skills/public-apis/scripts/find_api.py --category Fina
 python3 plugins/data-apis/skills/public-apis/scripts/find_api.py --categories
 ```
 
-Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--json`. It needs only Python 3.
+Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--json`.
 
-## Questions
+## Full Integration: SFP, ECC and OmniRoute
 
-**Does the hive slow the agent down?** No. It runs inside the MCP server or the skill's own script, in about @@HIVE_MS@@ ms, and the agent asks once per phase of work. What it saves is larger: on the no-project tasks it loads @@BENCH_HIVE_SIZE@@ skills on average, against @@BENCH_V1_SIZE@@ for v1.
+SFP carries the **skills** of ECC and OmniRoute. ECC's agents, hooks and rules, and the OmniRoute gateway that routes your IDE to many model providers, need their own install. The short version, in order:
 
-**Is a queen bee really in charge?** No, and that is the point. The queen lays eggs. Work in a colony is divided by thresholds, recruitment, quorum and stop signals among equals. The hive copies those rules, not the myth.
+```bash
+# 1. SFP skills and router
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
+# 2. SFP MCP server
+curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
+# 3. ECC: agents, hooks, commands (Claude Code; Node.js 18+)
+npx ecc-universal@2.2.3 setup
+# 4. OmniRoute gateway, then point your IDE at http://localhost:20128/v1
+npm install -g omniroute && omniroute
+omniroute setup-claude        # or setup-codex, setup-cursor, setup-opencode ...
+```
 
-**Can I go back to the previous engine?** Yes: `python3 mcp/sfp_hive.py recommend "..." --engine v1`.
-
-**Will it slow my agent down?** Only through the descriptions of the skills you install, as the cost table shows. `sfp` alone is about @@SFP_TOKENS@@ tokens, and the MCP server adds nothing until a tool is called.
-
-**Why not install everything?** It works, and `--profile everything` does it. It also puts about @@ALL_TOKENS@@ tokens of descriptions, @@ALL_PERCENT@@% of a 200k window, into every session, and gives your agent @@TOTAL@@ descriptions to choose between.
-
-**Does `sfp` always pick the right skill?** No. On the @@SEARCH_N@@ test tasks the right skill was in the top 3 results @@SEARCH_TOP3@@ of the time. When it misses, name the skill or ask for a category.
-
-**Is it safe?** A skill is third-party instruction text that your agent will follow, so read a skill before you trust it, as you would a script. The installer writes only into skills folders and `~/.sfp`, and backs up an MCP config before changing it. The MCP server makes no network calls, and its only write is the local usage log, which you can turn off. SFP's own scripts send nothing anywhere. Individual skills can do their own network work, such as Impeccable downloading its engine on first use.
-
-**Can I keep my own skills?** Yes. A skill you made with the same name is left alone unless you pass `--force`.
-
-**Which IDEs have you tested?** Claude Code end to end: plugin install from GitHub, the MCP connection, and a real session using the tools. For the other IDEs the installer was tested on fake home folders, and the folder paths follow each tool's documentation. The Windsurf and Copilot paths are unconfirmed.
-
-**Does it work offline?** After installing, yes, for skills that do not need the network. The first install needs GitHub.
-
-**How do I remove it?** Run `./install.sh uninstall --tools cursor` for skills, `./install.sh mcp --remove` for the MCP server, and `/plugin uninstall <category>@sfp` in Claude Code.
+Use one ECC install method per IDE, and install only `sfp` plus non-ECC categories from SFP if you add the ECC plugin, so you do not get skills twice. The [full integration guide](docs/INTEGRATION.md) has every command per IDE, a verification table, updating and removal. I have not run ECC's or OmniRoute's installers myself: their commands come from each project's own documentation.
 
 ## Good to Know
 
@@ -455,12 +371,28 @@ python3 scripts/sync.py --report   # also show what each category got
 - **Add a source:** add an entry to `sources.json` with `repo`, `license`, a `default` category and `skills` paths, then sync.
 - **Move a skill:** add its name to `names` in `categories.json`, or adjust a pattern, then sync.
 - **Add a category:** add it under `categories` in `categories.json`. Names cannot start with `claude-` or `anthropic-`.
+- **Check your work:** `python3 -m unittest discover -s tests` runs the protocol, installer, search, hive and speed tests.
 
-The README, banner, `plugins/`, `catalog.json` and `SKILLS.md` are generated. Edit `templates/README.md.tpl` and the JSON files, not the outputs.
+The README, banner, `plugins/`, `catalog.json`, `index.json` and `SKILLS.md` are generated. Edit `templates/README.md.tpl` and the JSON files, not the outputs.
+
+```text
+SFP/
+  plugins/<category>/skills/<skill>/   the skills, one folder each (generated)
+  mcp/sfp_mcp.py                       the MCP server
+  mcp/sfp_hive.py                      the hive: the manager's engine
+  mcp/sfp_stack.py, stack_recipes.json the v1 engine it builds on, and the recipes (permanent trails)
+  scripts/install.py, sync.py          the installer, and the script that rebuilds everything
+  templates/                           the sfp router, the manager skill, the career launcher, this README
+  docs/                                HIVE.md, MANAGER.md, INTEGRATION.md
+  vendor/                              snapshots of plugins that have no public repo
+  archive/fork-patches/                commits the old forks held, kept as patches
+  tests/                               protocol, installer, search, hive and speed tests
+  sources.json, categories.json        where skills come from and how they are sorted
+```
 
 ## Sources and Licenses
 
-SFP's own code (the installer, sync script, MCP server, router skill, tests and README) is under the [MIT License](LICENSE). That covers only what SFP wrote. Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md) lists every source, and each category folder holds copies of its licenses in `plugins/<category>/LICENSES/`. The full skill list is in [SKILLS.md](SKILLS.md).
+SFP's own code (the installer, sync script, MCP server, hive, router and manager skills, tests and README) is under the [MIT License](LICENSE). That covers only what SFP wrote. Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md) lists every source, and each category folder holds copies of its licenses in `plugins/<category>/LICENSES/`. The full skill list is in [SKILLS.md](SKILLS.md).
 
 <details>
 <summary>Where every source landed (@@SOURCES@@ sources)</summary>

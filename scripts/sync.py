@@ -334,6 +334,21 @@ def measure(cfg, cats, catalog):
         })
     for eng_name in ('hive', 'v1', 'search'):
         stack['WRONG_' + eng_name.upper()] = str(sum(ev[k + '_' + eng_name]['wrong'] for k in ('bench', 'proj', 'fresh')))
+    # The same words in five different projects, as real output, so the README cannot drift from the engine.
+    import tempfile
+    col = eng.Colony(eng.v1.RECIPES, [])
+    same_rows = ['| Your project | The hive stacks |', '|---|---|']
+    with tempfile.TemporaryDirectory() as tmp:
+        homes = {}
+        for fname in ('stack_eval.json', 'hive_fresh.json'):
+            with open(os.path.join(ROOT, 'tests', fname), encoding='utf-8') as f:
+                data = json.load(f)
+            eng._projects(data, os.path.join(tmp, fname))
+            homes.update({k: os.path.join(tmp, fname, k) for k in data['projects']})
+        for label, key in (('Next.js', 'nextjs'), ('Rust', 'rust'), ('.NET', 'dotnet'), ('Flutter', 'flutter'), ('Django', 'django')):
+            res = eng.recommend('write tests for the orders', homes[key], chain=col)
+            same_rows.append('| %s | %s |' % (label, ', '.join('`%s`' % c['name'] for c in res['stack'])))
+    stack['SAME_WORDS_TABLE'] = '\n'.join(same_rows)
     every = [ev[k + '_hive'] for k in ('bench', 'proj', 'fresh')]
     n_all = sum(x['n'] for x in every)
     stack['HIVE_TOKENS'] = format(int(round(sum(x['tokens'] * x['n'] for x in every) / n_all, -2)), ',')
