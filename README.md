@@ -56,6 +56,7 @@ What you get:
 - **Presets.** Pick `frontend-dev`, `backend-dev`, `mobile-dev` or `agent-builder`, or take them all.
 - **Safe installs.** The installer only touches folders it created. Your own skills stay as they are.
 - **A free API finder.** Your agent can search about 2,100 APIs and filter by auth, HTTPS and CORS.
+- **An [MCP server](#mcp-server).** Tools that support MCP can reach every skill without installing any.
 
 ## Install
 
@@ -218,6 +219,41 @@ python3 plugins/data-apis/skills/public-apis/scripts/find_api.py --categories
 ```
 
 Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--json`. It needs only Python 3.
+
+## MCP Server
+
+SFP also runs as an MCP server. Any MCP client can search and read all 557 skills on demand, with nothing copied into a skills folder. This helps IDEs and agents that support MCP but not skills.
+
+Register it in your IDEs. The one-line installer keeps SFP in `~/.sfp/SFP`:
+
+```bash
+~/.sfp/SFP/install.sh mcp --tools cursor,claude
+```
+
+From a clone, run `./install.sh mcp`. On Windows, use `install.ps1`. Add `--remove` to undo it.
+
+Claude Code by hand:
+
+```bash
+claude mcp add --scope user sfp -- python3 /path/to/SFP/mcp/sfp_mcp.py
+```
+
+Any other MCP client: add a stdio server that runs `python3 /path/to/SFP/mcp/sfp_mcp.py`.
+
+| Tool | What it does |
+|---|---|
+| `search_skills` | Finds skills by task or keyword, optionally within one category |
+| `get_skill` | Returns a skill's full `SKILL.md` and the files it bundles |
+| `read_skill_file` | Reads one bundled file, such as a reference doc or script |
+| `list_categories` | Lists categories, skill counts and install presets |
+| `find_api` | Searches the free API list by keyword, auth, CORS and HTTPS |
+| `install_command` | Gives the command that installs a category or preset for good |
+
+Every skill is also a resource at `sfp://skill/{name}`, and two prompts, `use_skill` and `find_skill_for`, load a skill into a chat.
+
+The server is read-only, needs only Python 3 and makes no network calls. A skill it returns is third-party instruction text that your agent will follow, so the same trust applies as when you install it.
+
+I tested it with Claude Code, including a real session that found and read a skill through the tools. The Cursor, Gemini CLI, Windsurf, Kiro and Codex settings follow each tool's documented format but were not run against those tools.
 
 ## Good to Know
 

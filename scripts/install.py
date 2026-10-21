@@ -8,6 +8,7 @@
   python3 scripts/install.py install --profile everything         # all categories (heavy)
   python3 scripts/install.py install --project .                  # into this project's tool folders
   python3 scripts/install.py uninstall --tools cursor
+  python3 scripts/install.py mcp --tools cursor,claude            # register the SFP MCP server
 
 Every install also adds the `sfp` router skill and records this checkout in
 ~/.sfp/root, so an agent can read any SFP skill on demand without installing it.
@@ -262,9 +263,87 @@ def cmd_uninstall(args):
             print(f'  Claude Code plugins stay installed. Remove them with: claude plugin uninstall <category>@{MARKETPLACE}')
 
 
+# MCP: tools whose MCP settings live in one JSON file with an "mcpServers" object.
+MCP_JSON = {
+    'cursor':   h('.cursor', 'mcp.json'),
+    'gemini':   h('.gemini', 'settings.json'),
+    'windsurf': h('.codeium', 'windsurf', 'mcp_config.json'),
+    'kiro':     h('.kiro', 'settings', 'mcp.json'),
+}
+MCP_SERVER = os.path.join(ROOT, 'mcp', 'sfp_mcp.py')
+
+
+def mcp_entry():
+    return {'command': sys.executable, 'args': [MCP_SERVER]}
+
+
+def mcp_snippet(tool):
+    entry = json.dumps({'mcpServers': {'sfp': mcp_entry()}}, indent=2)
+    if tool == 'codex':
+        return f'[mcp_servers.sfp]\ncommand = {json.dumps(sys.executable)}\nargs = [{json.dumps(MCP_SERVER)}]'
+    return entry
+
+
+def cmd_mcp(args):
+    """Register the SFP MCP server in each IDE's MCP settings (or print what to add)."""
+    tools = pick_tools(args.tools)
+    if not tools:
+        sys.exit('No supported tool found. Name one with --tools.')
+    for tool in tools:
+        label = TOOLS[tool][0]
+        if tool == 'claude':
+            if not shutil.which('claude'):
+                print(f'  {label}: `claude` not on PATH. Run: claude mcp add --scope user sfp -- {sys.executable} {MCP_SERVER}')
+                continue
+            if args.remove:
+                subprocess.run(['claude', 'mcp', 'remove', '--scope', 'user', 'sfp'], check=False)
+            else:
+                subprocess.run(['claude', 'mcp', 'add', '--scope', 'user', 'sfp', '--', sys.executable, MCP_SERVER], check=False)
+        elif tool in MCP_JSON:
+            path = MCP_JSON[tool]
+            cfg = {}
+            if os.path.isfile(path):
+                try:
+                    with open(path, encoding='utf-8') as f:
+                        cfg = json.load(f)
+                except ValueError:
+                    print(f'  {label}: {path} is not valid JSON, so I left it alone. Add this by hand:\n{mcp_snippet(tool)}')
+                    continue
+                shutil.copy(path, path + '.sfp-backup')
+            servers = cfg.setdefault('mcpServers', {})
+            if args.remove:
+                servers.pop('sfp', None)
+            else:
+                servers['sfp'] = mcp_entry()
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, 'w', encoding='utf-8') as f:
+                json.dump(cfg, f, indent=2)
+                f.write('\n')
+            print(f'  {label}: {"removed from" if args.remove else "added to"} {path}')
+        elif tool == 'codex':
+            path = h('.codex', 'config.toml')
+            text = open(path, encoding='utf-8').read() if os.path.isfile(path) else ''
+            if args.remove:
+                print(f'  {label}: delete the [mcp_servers.sfp] block from {path}')
+            elif '[mcp_servers.sfp]' in text:
+                print(f'  {label}: already in {path}')
+            else:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                if text:
+                    shutil.copy(path, path + '.sfp-backup')
+                with open(path, 'a', encoding='utf-8') as f:
+                    f.write(('\n' if text and not text.endswith('\n') else '') + '\n' + mcp_snippet('codex') + '\n')
+                print(f'  {label}: added to {path}')
+        else:
+            print(f'  {label}: add this to its MCP settings (stdio server named sfp):\n{mcp_snippet(tool)}')
+    if not args.remove:
+        print('\n  Restart the IDE, then ask it to use the sfp tools (search_skills, get_skill, find_api).')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('command', choices=['list', 'install', 'uninstall'])
+    ap.add_argument('command', choices=['list', 'install', 'uninstall', 'mcp'])
+    ap.add_argument('--remove', action='store_true', help='with `mcp`: remove the sfp server instead of adding it')
     ap.add_argument('--tools', help='comma-separated tools, "all", or "auto" (default: tools found on this machine)')
     ap.add_argument('--categories', help='comma-separated categories or "all"')
     ap.add_argument('--profile', help='starter (default), frontend-dev, backend-dev, mobile-dev, agent-builder, everything')
@@ -279,6 +358,8 @@ def main():
         cmd_list(cat)
     elif args.command == 'install':
         cmd_install(cat, args)
+    elif args.command == 'mcp':
+        cmd_mcp(args)
     else:
         cmd_uninstall(args)
 
