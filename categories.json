@@ -119,7 +119,21 @@
     "mem-setup": "memory",
     "claude-mem-install": "memory",
     "host-observer": "memory",
-    "openclaw": "memory"
+    "openclaw": "memory",
+    "internal-comms": "business-ops",
+    "mcp-builder": "agent-dev",
+    "theme-factory": "frontend",
+    "web-artifacts-builder": "frontend",
+    "algorithmic-art": "content-media",
+    "brand-guidelines": "content-media",
+    "canvas-design": "content-media",
+    "slack-gif-creator": "content-media",
+    "ops-check": "business-ops",
+    "teach-me": "research-docs",
+    "task-observer": "agent-dev",
+    "headroom": "agent-dev",
+    "cowork-plugin-customizer": "agent-dev",
+    "create-cowork-plugin": "agent-dev"
   },
   "patterns": [
     [

@@ -15,11 +15,20 @@ SFP collects skills written by other people. Each skill keeps the license of the
 | [public-apis](https://github.com/siddu1004/public-apis) | MIT | https://github.com/public-apis/public-apis |
 | [freellmapi](https://github.com/siddu1004/freellmapi) | MIT | https://github.com/tashfeenahmed/freellmapi |
 | [web-interface-guidelines](https://github.com/vercel-labs/web-interface-guidelines) | MIT | Vercel Labs |
+| teach-me | MIT | https://github.com/ahmed3bead/teach-me |
+| marketing-psychology | MIT | https://github.com/grayskripko/marketing-skills |
+| design-skills | MIT | https://cuellarfr.github.io/design-skills/ (Carlos Cuellar) |
+| task-observer, headroom | MIT | https://petrovicistefan.ro (Stefan Petrovici) |
+| gia-chief-of-staff | MIT | https://aceexperts.org/gia (Advanced Consulting Experts, LLC) |
+| cowork-plugin-management | Apache-2.0 | Anthropic |
+| Anthropic example skills (algorithmic-art, brand-guidelines, canvas-design, internal-comms, mcp-builder, slack-gif-creator, theme-factory, web-artifacts-builder) | Apache-2.0 | Anthropic |
 | [ECC](https://github.com/siddu1004/ECC) | MIT | |
 | [OmniRoute](https://github.com/siddu1004/OmniRoute) | MIT | |
 | [career-ops](https://github.com/siddu1004/career-ops-for-claude-skill) | MIT | https://github.com/career-ops-hq/career-ops |
 | [claude-mem](https://github.com/siddu1004/claude-mem) | Apache-2.0 | |
 
 `career`, `session-memory`, `ecc-full` and `omniroute-full` are installed from their own repos and are not copied into SFP.
+
+Plugins with no public source repo (the rows from teach-me down to the Anthropic example skills) are kept as snapshots in `vendor/`, each with its license file. Not included, because their licenses do not allow republishing: Greenhouse's plugin (customer use only), Anthropic's docx, pdf, pptx, xlsx and browser skills (all rights reserved), and claude-mem-cowork (noncommercial only).
 
 The tooling in `scripts/`, the router skill in `templates/sfp/` and the `public-apis` skill wrapper in `templates/public-apis/` were written for SFP.

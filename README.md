@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="assets/banner.svg" alt="SFP: Skills for Productivity. 529 skills, 23 categories, 16 IDEs, 1-line install" width="100%">
+  <img src="assets/banner.svg" alt="SFP: Skills for Productivity. 557 skills, 23 categories, 16 IDEs, 1-line install" width="100%">
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/skills-529-22c55e?style=for-the-badge" alt="529 skills">
+  <img src="https://img.shields.io/badge/skills-557-22c55e?style=for-the-badge" alt="557 skills">
   <img src="https://img.shields.io/badge/categories-23-8b5cf6?style=for-the-badge" alt="23 categories">
   <img src="https://img.shields.io/badge/IDEs-16-f97316?style=for-the-badge" alt="16 IDEs">
   <img src="https://img.shields.io/badge/Claude_Code-plugin_marketplace-d97757?style=for-the-badge" alt="Claude Code plugin marketplace">
@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <b>529 agent skills from 15 repos, sorted by what you build.</b><br>
+  <b>557 agent skills from 23 sources, sorted by what you build.</b><br>
   One <code>sfp</code> skill knows all of them and sends your agent to the right one.<br>
   Works in Claude Code, Codex, Cursor, Gemini CLI, Antigravity, Copilot, Windsurf, Kiro, OpenCode and more.
 </p>
@@ -23,7 +23,7 @@
 
 | | |
 |---|---|
-| 🧭 **One router skill** | `sfp` holds an index of every skill, picks the right one for the task, and reads it straight from the checkout. No need to install all 529 |
+| 🧭 **One router skill** | `sfp` holds an index of every skill, picks the right one for the task, and reads it straight from the checkout. No need to install all 557 |
 | 🗂️ **Sorted by what you build** | 23 categories: frontend, backend, mobile, security, agent-driven work, AI, data and more. Not by which repo a skill came from |
 | 🔌 **Works in 16 IDEs and CLIs** | Claude Code gets plugins; every other tool gets plain `SKILL.md` folders in the right place |
 | ⚡ **One-line install** | A `curl` or PowerShell line, a preset for your kind of work, and you're done. Needs only Python 3 |
@@ -37,7 +37,7 @@
 ```mermaid
 flowchart LR
     A([💬 You give the agent a task]) --> B{{🧭 sfp skill}}
-    B --> C[📚 Searches the index of 529 skills]
+    B --> C[📚 Searches the index of 557 skills]
     C --> D{Installed?}
     D -- yes --> E([✅ Uses the skill])
     D -- no --> F[📂 Reads it from the SFP checkout]
@@ -50,7 +50,7 @@ flowchart LR
     style F fill:#0ea5e9,stroke:#0369a1,color:#fff
 ```
 
-Agents read the description of every installed skill at the start of a session, and 529 descriptions is too much to carry. So install `sfp` plus the categories you use every day, and let `sfp` reach the rest on demand. The installer records where the checkout is in `~/.sfp/root` so it can.
+Agents read the description of every installed skill at the start of a session, and 557 descriptions is too much to carry. So install `sfp` plus the categories you use every day, and let `sfp` reach the rest on demand. The installer records where the checkout is in `~/.sfp/root` so it can.
 
 ## 🚀 Install
 
@@ -155,7 +155,7 @@ Each category is its own Claude Code plugin and lives in `plugins/<category>/ski
 | | Category | Skills | What's in it |
 |---|---|---:|---|
 | 🧭 | `sfp` | 1 | The router: finds the right skill for any task, installed or not |
-| 🎨 | `frontend` | 50 | UI design, components, motion, accessibility, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines |
+| 🎨 | `frontend` | 62 | UI design, components, motion, accessibility, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, 10 UX design skills (research, critique, journey mapping, UX writing) and the Vercel web interface guidelines |
 | 🖌️ | `design-styles` | 67 | Named visual styles: brutalism, glassmorphism, editorial, retro, shadcn and more |
 | ⚙️ | `backend` | 27 | Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, MySQL, Redis, Prisma, API design |
 | 📱 | `mobile` | 13 | Android, iOS, Flutter, React Native, Kotlin Multiplatform, Swift |
@@ -164,16 +164,16 @@ Each category is its own Claude Code plugin and lives in `plugins/<category>/ski
 | 🚢 | `devops` | 15 | Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation |
 | 🛡️ | `security` | 21 | Strix autonomous pentesting, OWASP testing, secure coding per framework, agent hardening |
 | 🤖 | `agents` | 33 | Agent-driven work: autonomous loops, orchestration, councils, dev teams, feature pipelines |
-| 🧰 | `agent-dev` | 57 | Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets |
-| 🧠 | `memory` | 31 | claude-mem's skills: search past work, timelines, handoffs, planning with persistent memory |
+| 🧰 | `agent-dev` | 62 | Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression, an MCP builder and Cowork plugin tools |
+| 🧠 | `memory` | 30 | claude-mem's skills: search past work, timelines, handoffs, planning with persistent memory |
 | 🔮 | `ai-ml` | 10 | LLM pipelines, prompts, evals, PyTorch, ML engineering, recommenders |
 | 🚪 | `ai-gateway` | 45 | Driving an OmniRoute AI gateway: routing, providers, budgets, caching, MCP, A2A |
 | 🌐 | `data-apis` | 7 | About 2,100 free APIs, FreeLLMAPI, internet reach across 16 platforms, search, scraping |
-| ✍️ | `content-media` | 17 | Writing, marketing, SEO, video, slides, social posting |
-| 💼 | `business-ops` | 25 | Billing, finance, investors, market research, leads, contracts, email, tickets |
+| ✍️ | `content-media` | 26 | Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art |
+| 💼 | `business-ops` | 27 | Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms, a chief-of-staff ops check |
 | 🏭 | `industry` | 13 | Healthcare, logistics, customs, inventory, production, energy |
 | 🛜 | `networking` | 10 | Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, homelab |
-| 🔬 | `research-docs` | 17 | Deep research, scientific databases, literature review, docs, ADRs |
+| 🔬 | `research-docs` | 18 | Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor |
 | ⛓️ | `web3` | 9 | DeFi, EVM, prediction markets, trading-agent security |
 | 📐 | `engineering` | 15 | Architecture, standards, error handling, performance, benchmarks |
 | 🔧 | `science-hardware` | 6 | Math proofs, Blender, M5Stack and Cardputer |
@@ -221,7 +221,9 @@ A tool counts as found when its home folder exists (for example `~/.cursor`). Na
 
 ## 📦 Where everything came from
 
-Every skill in these repos is in SFP, except the maintainers' own test fixtures and translated example copies. Repos with no skill of their own got one written for them.
+Every skill in these repos is in SFP, except the maintainers' own test fixtures and translated example copies. Repos with no skill of their own got one written for them. Plugins with no public source repo are kept as snapshots in `vendor/`, each with its license.
+
+**Left out on purpose:** anything whose license does not allow republishing (Greenhouse's customer-only plugin, and Anthropic's docx, pdf, pptx, xlsx and browser skills, which are marked all rights reserved), and the `claude-mem-cowork` plugin, which is noncommercial-only.
 
 | Repo | Where it is in SFP |
 |---|---|
@@ -239,6 +241,13 @@ Every skill in these repos is in SFP, except the maintainers' own test fixtures 
 | public-apis | `data-apis`, as a searchable skill over about 2,100 free APIs |
 | freellmapi | `data-apis`, a skill with the project's docs bundled |
 | MoneyPrinterTurbo | `content-media` |
+| teach-me | `research-docs` |
+| marketing-psychology | `content-media` (5 persuasion and behaviour skills) |
+| design-skills | `frontend` (10 UX design skills) |
+| task-observer, headroom | `agent-dev` |
+| gia-chief-of-staff | `business-ops` |
+| cowork-plugin-management | `agent-dev` (Cowork plugin tools) |
+| Anthropic example skills | `content-media`, `frontend`, `agent-dev`, `business-ops` (8 Apache-2.0 skills: algorithmic art, brand guidelines, canvas design, internal comms, MCP builder, Slack GIF creator, theme factory, web artifacts builder) |
 | career-ops | `career` (installed from its own repo) |
 
 ## 🛠️ Keep it fresh and extend it

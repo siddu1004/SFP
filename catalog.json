@@ -6,7 +6,7 @@
   },
   "frontend": {
    "description": "UI design, components, motion, accessibility and frontend frameworks (React, Vue, Next.js, Angular, Vite).",
-   "skills": 50
+   "skills": 62
   },
   "design-styles": {
    "description": "67 named visual styles (brutalism, glassmorphism, editorial, retro, shadcn and more) to build in.",
@@ -42,7 +42,7 @@
   },
   "agent-dev": {
    "description": "Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory, context and token budgets.",
-   "skills": 57
+   "skills": 62
   },
   "ai-ml": {
    "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
@@ -58,11 +58,11 @@
   },
   "content-media": {
    "description": "Writing, marketing, SEO, video, slides, social posting and brand voice.",
-   "skills": 17
+   "skills": 26
   },
   "business-ops": {
    "description": "Billing, finance, investors, market research, sales leads, contracts, email, calendars, tickets and project flow.",
-   "skills": 25
+   "skills": 27
   },
   "industry": {
    "description": "Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy.",
@@ -74,7 +74,7 @@
   },
   "research-docs": {
    "description": "Deep research, scientific databases, literature review, documentation, ADRs and codebase onboarding.",
-   "skills": 17
+   "skills": 18
   },
   "web3": {
    "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
@@ -90,7 +90,7 @@
   },
   "memory": {
    "description": "claude-mem's skills: search past work, build timelines, hand off sessions, plan and run work with persistent memory. Many need claude-mem installed.",
-   "skills": 31
+   "skills": 30
   },
   "career": {
    "description": "AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.",
@@ -4803,15 +4803,6 @@
    "variants": {}
   },
   {
-   "name": "mem-setup",
-   "category": "memory",
-   "description": "This skill should be used when the user asks to \"set up claude-mem\", \"pair claude-mem\", \"connect cmem\", \"add my cmem key\", \"set up cloud sync in Cowork\", or provides cmem.ai Connect values (sync token, user id, SyncHub URL) for this plugin. Configures the claude-mem-cowork plugin credentials.",
-   "source": "siddu1004/claude-mem",
-   "license": "Apache-2.0",
-   "path": "plugins/memory/skills/mem-setup",
-   "variants": {}
-  },
-  {
    "name": "claude-mem-install",
    "category": "memory",
    "description": "Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference.",
@@ -4917,6 +4908,267 @@
    "source": "vercel-labs/web-interface-guidelines",
    "license": "MIT",
    "path": "plugins/frontend/skills/web-interface-guidelines",
+   "variants": {}
+  },
+  {
+   "name": "teach-me",
+   "category": "research-docs",
+   "description": "Teach adaptively from learner goals or authorized sources, or help educators prepare lessons, in English or simplified Modern Standard Arabic. Use for learning, practice, review, or getting unstuck.",
+   "source": "ahmed3bead/teach-me",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/teach-me",
+   "variants": {}
+  },
+  {
+   "name": "behavior-diagnosis",
+   "category": "content-media",
+   "description": "Diagnoses why a target behaviour is not happening (start a trial, connect data, upgrade, invite a teammate, reorder) using the COM-B model and the motivation-ability-prompt check. Takes a description of the behaviour, optional funnel step counts and a few customer quotes, and returns a behaviour specification, step rates with Wilson 95% intervals, a barrier map where each barrier is tagged observed or assumed, a prompt check, matched intervention functions with coercion and restriction excluded, and ranked changes with friction removal first. Use when the user asks \"why don't users do X\" or \"what is stopping customers from Y\". Quotes are pseudonymised; never predicts a lift.",
+   "source": "grayskripko/marketing-skills",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/behavior-diagnosis",
+   "variants": {}
+  },
+  {
+   "name": "dark-pattern-check",
+   "category": "content-media",
+   "description": "Checks a flow or element against a dated register of US, EU and UK consumer-protection rules. Covers countdowns, stock and activity messages, reviews, \"was/now\" prices, fees, pre-ticked extras, free trials, renewals, cancellation paths, consent banners, repeat prompts, streak or expiry rewards and disguised ads. Returns, per element, the fact that makes it legitimate, facts to confirm, the rules it may engage with read dates, a risk triage, a sign-up vs cancel count and an honest version that keeps the business goal. Use when the user asks \"is this allowed\", \"is this a dark pattern\", \"is this manipulative\" or whether a countdown, badge, trial or cancel path breaks US, EU or UK consumer-protection rules. Also use when asked to write, build or tune one of these elements (a \"was\" price, a restarting timer, a stock badge, hidden trial terms, a streak-loss message), to check the request first; a deceptive version is declined and an honest one given. Not legal advice; never declares anything compliant.",
+   "source": "grayskripko/marketing-skills",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/dark-pattern-check",
+   "variants": {}
+  },
+  {
+   "name": "evidence-check",
+   "category": "content-media",
+   "description": "Grades psychology claims used in marketing against the original studies, replications, meta-analyses and field results in a cited evidence ledger. Takes a named effect, bias, statistic or rule of thumb (\"losses hurt twice as much\", \"the paradox of choice\", \"the Rule of 7\", \"Zeigarnik open loops\"), or a deck, memo or post that makes such claims, and returns one evidence card per claim with a grade from A (robust) to D (failed or folklore), P for practitioner anecdotes, the conditions where it holds, and an accurate rewrite. Use when the user asks whether an effect is real, overrated, replicated or safe to repeat. Never invents a study, a citation or an effect size.",
+   "source": "grayskripko/marketing-skills",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/evidence-check",
+   "variants": {}
+  },
+  {
+   "name": "persuasion-audit",
+   "category": "content-media",
+   "description": "Audits an existing page, email, paywall, ad text or onboarding screen for the influence levers it uses. Each lever is quoted, given an evidence grade from a cited ledger, paired with the fact that must be true for it to be legitimate, and checked against a dated US, EU and UK rule register; proof elements are scored and missing proof gets a collection plan. Use when the user pastes or links an asset and asks what psychology it uses, which levers to keep, fix or remove, or how to make it more convincing honestly. A situation mode handles \"which principles fit our onboarding emails?\" when there is no asset. Never invents proof and never predicts a lift.",
+   "source": "grayskripko/marketing-skills",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/persuasion-audit",
+   "variants": {}
+  },
+  {
+   "name": "price-framing",
+   "category": "content-media",
+   "description": "Reads how prices are presented, with the arithmetic shown. Takes price points, tier tables, plan features, monthly and annual prices, discounts, \"was\" prices or trial terms and returns a normalised table (per month, per seat, annual saving, months free, per day), the anchor order and pre-selected plan, a decoy dominance matrix that treats price as an attribute, a price-ending check, percent vs amount discount framing, and the rule cells for reference prices, fees, pre-ticked extras and trials. Use when the user asks to check the prices, tiers, anchoring, decoys or discount framing on a pricing page or paywall. Evidence grades come from a cited ledger. Evaluates the prices given; never proposes a new price unless the user asks, never writes the pricing page itself, and never predicts a lift.",
+   "source": "grayskripko/marketing-skills",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/price-framing",
+   "variants": {}
+  },
+  {
+   "name": "task-observer",
+   "category": "agent-dev",
+   "description": "Use when the user corrects how Claude works or states a lasting preference (style, tools, conventions), to record it so later sessions follow it.",
+   "source": "petrovicistefan.ro/task-observer",
+   "license": "MIT",
+   "path": "plugins/agent-dev/skills/task-observer",
+   "variants": {}
+  },
+  {
+   "name": "headroom",
+   "category": "agent-dev",
+   "description": "Use when the user wants Claude to work with a document, log or data file too large to read whole, such as long specs, big logs or large JSON or CSV files.",
+   "source": "petrovicistefan.ro/headroom",
+   "license": "MIT",
+   "path": "plugins/agent-dev/skills/headroom",
+   "variants": {}
+  },
+  {
+   "name": "accessibility-audit",
+   "category": "frontend",
+   "description": "Conduct accessibility audits against WCAG 2.2 guidelines. Evaluate pages, components, and flows for conformance at A, AA, and AAA levels. Identify issues, assess severity, provide code fixes, and generate audit reports. Covers automated testing, manual testing, keyboard navigation, screen reader compatibility, color contrast, and semantic HTML.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/accessibility-audit",
+   "variants": {}
+  },
+  {
+   "name": "design-critique",
+   "category": "frontend",
+   "description": "Evaluate UI designs against usability heuristics, UX laws, interaction patterns, interaction design principles, information architecture, and content quality. Conduct heuristic evaluations, structured design critiques, pattern-based reviews, posture analysis, excise audits, IA evaluations, and UX writing reviews. Provides specific, actionable feedback grounded in established principles rather than subjective opinion.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/design-critique",
+   "variants": {}
+  },
+  {
+   "name": "design-elevation",
+   "category": "frontend",
+   "description": "Comprehensive design elevation system that automatically transforms functional visual outputs into polished, professional designs. Use when creating ANY visual output including presentations (pptx), spreadsheets (xlsx), dashboards, reports, HTML artifacts, PDFs, web pages, or data visualizations. Applies systematic design thinking grounded in Tailwind CSS as the canonical design token system. Structures decisions through functional patterns (what users interact with) and perceptual patterns (how the design feels), following Alla Kholmatova's design systems framework. Triggers on ALL requests for visual content creation, ensuring outputs look hand-crafted rather than template-based.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/design-elevation",
+   "variants": {}
+  },
+  {
+   "name": "design-ops",
+   "category": "frontend",
+   "description": "Run design sprints, manage handoff, establish team rituals, documentation standards, and design QA processes. Covers the operational side of design \u2014 how teams organize work, collaborate with engineering, and ship quality.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/design-ops",
+   "variants": {}
+  },
+  {
+   "name": "design-systems",
+   "category": "frontend",
+   "description": "Build, document, and maintain design systems with design tokens, component specifications, pattern libraries, naming conventions, and governance processes. Conduct system audits, define component hierarchies, and establish shared design languages.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/design-systems",
+   "variants": {}
+  },
+  {
+   "name": "interaction-design",
+   "category": "frontend",
+   "description": "Design meaningful interactions, microinteractions, animations, state machines, gesture patterns, error prevention, and product behavior. Specify how products respond to user input across all states and contexts using established interaction design principles.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/interaction-design",
+   "variants": {}
+  },
+  {
+   "name": "journey-mapping",
+   "category": "frontend",
+   "description": "Create customer journey maps, service blueprints, experience maps, empathy maps, and other alignment diagrams. Guides diagram type selection, content structure, illustration syntax, and alignment workshops.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/journey-mapping",
+   "variants": {}
+  },
+  {
+   "name": "ux-research",
+   "category": "frontend",
+   "description": "Plan, conduct, and analyze UX research using proven methodologies. Use when planning user research, writing interview scripts, creating test plans, recruiting participants, analyzing qualitative data, or synthesizing findings into actionable insights. Covers generative, evaluative, and continuous discovery research with specific frameworks, scoring rubrics, and templates.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/ux-research",
+   "variants": {}
+  },
+  {
+   "name": "ux-strategy",
+   "category": "frontend",
+   "description": "Connect design decisions to business outcomes through competitive analysis, opportunity mapping, Jobs to Be Done, outcome-driven discovery, value proposition design, and UX metrics. Shape product direction with strategic frameworks grounded in evidence.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/ux-strategy",
+   "variants": {}
+  },
+  {
+   "name": "ux-writing",
+   "category": "frontend",
+   "description": "Create user-centered, accessible interface copy (microcopy) for digital products including buttons, labels, error messages, notifications, forms, onboarding, empty states, success messages, and help text. Use when writing or editing any text that appears in apps, websites, or software interfaces, designing conversational flows, establishing voice and tone guidelines, auditing product content for consistency and usability, reviewing UI strings, or improving existing interface copy. Applies UX writing best practices based on four quality standards \u2014 purposeful, concise, conversational, and clear. Includes accessibility guidelines, research-backed benchmarks (sentence length, comprehension rates, reading levels), expanded error patterns, tone adaptation frameworks, and comprehensive reference materials.",
+   "source": "cuellarfr/design-skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/ux-writing",
+   "variants": {}
+  },
+  {
+   "name": "ops-check",
+   "category": "business-ops",
+   "description": "AI executive operations assistant. Scans your inbox, surfaces priority items, tracks follow-ups, and drafts responses. Powered by GIA. Triggers on: check my inbox, catch me up, what do I need to do, daily briefing, ops check, what did I miss, prioritize my day, status update, morning check, business update, standup, or any request about current business status and priorities.\\n",
+   "source": "aceexperts.org/gia-chief-of-staff",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/ops-check",
+   "variants": {}
+  },
+  {
+   "name": "cowork-plugin-customizer",
+   "category": "agent-dev",
+   "description": "Customize a Claude Code plugin for a specific organization's tools and workflows. Use when: customize plugin, set up plugin, configure plugin, tailor plugin, adjust plugin settings, customize plugin connectors, customize plugin skill, tweak plugin, modify plugin configuration.\\n",
+   "source": "anthropics/cowork-plugin-management",
+   "license": "Apache-2.0",
+   "path": "plugins/agent-dev/skills/cowork-plugin-customizer",
+   "variants": {}
+  },
+  {
+   "name": "create-cowork-plugin",
+   "category": "agent-dev",
+   "description": "Guide users through creating a new plugin from scratch in a cowork session. Use when users want to create a plugin, build a plugin, make a new plugin, develop a plugin, scaffold a plugin, start a plugin from scratch, or design a plugin. This skill requires Cowork mode with access to the outputs directory for delivering the final .plugin file.\\n",
+   "source": "anthropics/cowork-plugin-management",
+   "license": "Apache-2.0",
+   "path": "plugins/agent-dev/skills/create-cowork-plugin",
+   "variants": {}
+  },
+  {
+   "name": "algorithmic-art",
+   "category": "content-media",
+   "description": "Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or particle systems. Create original algorithmic art rather than copying existing artists' work to avoid copyright violations.",
+   "source": "anthropics/skills",
+   "license": "Apache-2.0",
+   "path": "plugins/content-media/skills/algorithmic-art",
+   "variants": {}
+  },
+  {
+   "name": "brand-guidelines",
+   "category": "content-media",
+   "description": "Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting, or company design standards apply.",
+   "source": "anthropics/skills",
+   "license": "Apache-2.0",
+   "path": "plugins/content-media/skills/brand-guidelines",
+   "variants": {}
+  },
+  {
+   "name": "canvas-design",
+   "category": "content-media",
+   "description": "Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create original visual designs, never copying existing artists' work to avoid copyright violations.",
+   "source": "anthropics/skills",
+   "license": "Apache-2.0",
+   "path": "plugins/content-media/skills/canvas-design",
+   "variants": {}
+  },
+  {
+   "name": "internal-comms",
+   "category": "business-ops",
+   "description": "A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal communications (status reports, leadership updates, 3P updates, company newsletters, FAQs, incident reports, project updates, etc.).",
+   "source": "anthropics/skills",
+   "license": "Apache-2.0",
+   "path": "plugins/business-ops/skills/internal-comms",
+   "variants": {}
+  },
+  {
+   "name": "mcp-builder",
+   "category": "agent-dev",
+   "description": "Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate external APIs or services, whether in Python (FastMCP) or Node/TypeScript (MCP SDK).",
+   "source": "anthropics/skills",
+   "license": "Apache-2.0",
+   "path": "plugins/agent-dev/skills/mcp-builder",
+   "variants": {}
+  },
+  {
+   "name": "slack-gif-creator",
+   "category": "content-media",
+   "description": "Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like \"make me a GIF of X doing Y for Slack.",
+   "source": "anthropics/skills",
+   "license": "Apache-2.0",
+   "path": "plugins/content-media/skills/slack-gif-creator",
+   "variants": {}
+  },
+  {
+   "name": "theme-factory",
+   "category": "frontend",
+   "description": "Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact that has been creating, or can generate a new theme on-the-fly.",
+   "source": "anthropics/skills",
+   "license": "Apache-2.0",
+   "path": "plugins/frontend/skills/theme-factory",
+   "variants": {}
+  },
+  {
+   "name": "web-artifacts-builder",
+   "category": "frontend",
+   "description": "Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state management, routing, or shadcn/ui components - not for simple single-file HTML/JSX artifacts.",
+   "source": "anthropics/skills",
+   "license": "Apache-2.0",
+   "path": "plugins/frontend/skills/web-artifacts-builder",
    "variants": {}
   },
   {

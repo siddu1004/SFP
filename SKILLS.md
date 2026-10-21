@@ -10,7 +10,7 @@ The router: one skill that knows every category and every skill, and sends the a
 |---|---|
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 
-## frontend (50)
+## frontend (62)
 
 UI design, components, motion, accessibility and frontend frameworks (React, Vue, Next.js, Angular, Vite).
 
@@ -66,6 +66,18 @@ UI design, components, motion, accessibility and frontend frameworks (React, Vue
 | `vite-patterns` | Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, and build optimization. Activate when working with vite.config.ts, Vite… |
 | `vue-patterns` | Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns. Activates for Vue, Nuxt, Vite, or Pinia proj… |
 | `web-interface-guidelines` | Review UI code against the Vercel Web Interface Guidelines (accessibility, focus states, forms, animation, typography, content handling, images, performance, navigation and state, touch, safe areas, d… |
+| `accessibility-audit` | Conduct accessibility audits against WCAG 2.2 guidelines. Evaluate pages, components, and flows for conformance at A, AA, and AAA levels. Identify issues, assess severity, provide code fixes, and gene… |
+| `design-critique` | Evaluate UI designs against usability heuristics, UX laws, interaction patterns, interaction design principles, information architecture, and content quality. Conduct heuristic evaluations, structured… |
+| `design-elevation` | Comprehensive design elevation system that automatically transforms functional visual outputs into polished, professional designs. Use when creating ANY visual output including presentations (pptx), s… |
+| `design-ops` | Run design sprints, manage handoff, establish team rituals, documentation standards, and design QA processes. Covers the operational side of design — how teams organize work, collaborate with engineer… |
+| `design-systems` | Build, document, and maintain design systems with design tokens, component specifications, pattern libraries, naming conventions, and governance processes. Conduct system audits, define component hier… |
+| `interaction-design` | Design meaningful interactions, microinteractions, animations, state machines, gesture patterns, error prevention, and product behavior. Specify how products respond to user input across all states an… |
+| `journey-mapping` | Create customer journey maps, service blueprints, experience maps, empathy maps, and other alignment diagrams. Guides diagram type selection, content structure, illustration syntax, and alignment work… |
+| `ux-research` | Plan, conduct, and analyze UX research using proven methodologies. Use when planning user research, writing interview scripts, creating test plans, recruiting participants, analyzing qualitative data,… |
+| `ux-strategy` | Connect design decisions to business outcomes through competitive analysis, opportunity mapping, Jobs to Be Done, outcome-driven discovery, value proposition design, and UX metrics. Shape product dire… |
+| `ux-writing` | Create user-centered, accessible interface copy (microcopy) for digital products including buttons, labels, error messages, notifications, forms, onboarding, empty states, success messages, and help t… |
+| `theme-factory` | Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact t… |
+| `web-artifacts-builder` | Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state manag… |
 
 ## design-styles (67)
 
@@ -339,7 +351,7 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `team-builder` | Interactive picker that discovers available agent personas via the claude agents command and agents/ markdown globs, groups them into domains, has the user select up to five, dispatches them in parall… |
 | `ecc-council` | Convene a four-voice council for ambiguous decisions, tradeoffs, and go/no-go calls. Use when multiple valid paths exist and you need structured disagreement before choosing. |
 
-## agent-dev (57)
+## agent-dev (62)
 
 Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory, context and token budgets.
 
@@ -402,6 +414,11 @@ Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory,
 | `workspace-surface-audit` | Audit the active repo, MCP servers, plugins, connectors, env surfaces, and harness setup, then recommend the highest-value ECC-native skills, hooks, agents, and operator workflows. Use when the user w… |
 | `discord-access` | Manage Discord channel access — approve pairings, edit allowlists, set DM/group policy. Use when the user asks to pair, approve someone, check who's allowed, or change policy for the Discord channel. |
 | `discord-configure` | Set up the Discord channel — save the bot token and review access policy. Use when the user pastes a Discord bot token, asks to configure Discord, asks "how do I set this up" or "who can reach me," or… |
+| `task-observer` | Use when the user corrects how Claude works or states a lasting preference (style, tools, conventions), to record it so later sessions follow it. |
+| `headroom` | Use when the user wants Claude to work with a document, log or data file too large to read whole, such as long specs, big logs or large JSON or CSV files. |
+| `cowork-plugin-customizer` | Customize a Claude Code plugin for a specific organization's tools and workflows. Use when: customize plugin, set up plugin, configure plugin, tailor plugin, adjust plugin settings, customize plugin c… |
+| `create-cowork-plugin` | Guide users through creating a new plugin from scratch in a cowork session. Use when users want to create a plugin, build a plugin, make a new plugin, develop a plugin, scaffold a plugin, start a plug… |
+| `mcp-builder` | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate externa… |
 
 ## ai-ml (10)
 
@@ -486,7 +503,7 @@ Direct access to data: a searchable list of about 2,100 free public APIs, intern
 | `x-api` | X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants t… |
 | `freellmapi` | Run and use FreeLLMAPI, one OpenAI-compatible /v1 endpoint that stacks the free tiers of 34 LLM providers with automatic routing and failover. Use when the user wants free LLM inference, to point an O… |
 
-## content-media (17)
+## content-media (26)
 
 Writing, marketing, SEO, video, slides, social posting and brand voice.
 
@@ -509,8 +526,17 @@ Writing, marketing, SEO, video, slides, social posting and brand voice.
 | `ui-demo` | Record polished UI demo videos using Playwright. Use when the user asks to create a demo, walkthrough, screen recording, or tutorial video of a web application. Produces WebM videos with visible curso… |
 | `video-editing` | AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capture through FFmpeg, Remotion, ElevenLabs, fal.ai, and final polish in D… |
 | `videodb` | Ingest, index, search, edit, and monitor video and audio with the VideoDB Python SDK — upload from files, URLs, or RTSP feeds, build spoken and scene indexes with timestamped search and playable clips… |
+| `behavior-diagnosis` | Diagnoses why a target behaviour is not happening (start a trial, connect data, upgrade, invite a teammate, reorder) using the COM-B model and the motivation-ability-prompt check. Takes a description … |
+| `dark-pattern-check` | Checks a flow or element against a dated register of US, EU and UK consumer-protection rules. Covers countdowns, stock and activity messages, reviews, "was/now" prices, fees, pre-ticked extras, free t… |
+| `evidence-check` | Grades psychology claims used in marketing against the original studies, replications, meta-analyses and field results in a cited evidence ledger. Takes a named effect, bias, statistic or rule of thum… |
+| `persuasion-audit` | Audits an existing page, email, paywall, ad text or onboarding screen for the influence levers it uses. Each lever is quoted, given an evidence grade from a cited ledger, paired with the fact that mus… |
+| `price-framing` | Reads how prices are presented, with the arithmetic shown. Takes price points, tier tables, plan features, monthly and annual prices, discounts, "was" prices or trial terms and returns a normalised ta… |
+| `algorithmic-art` | Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or… |
+| `brand-guidelines` | Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting… |
+| `canvas-design` | Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create ori… |
+| `slack-gif-creator` | Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like "make me a G… |
 
-## business-ops (25)
+## business-ops (27)
 
 Billing, finance, investors, market research, sales leads, contracts, email, calendars, tickets and project flow.
 
@@ -541,6 +567,8 @@ Billing, finance, investors, market research, sales leads, contracts, email, cal
 | `social-graph-ranker` | Weighted social-graph ranking for warm intro discovery, bridge scoring, and network gap analysis across X and LinkedIn. Use when the user wants the reusable graph-ranking engine itself, not the broade… |
 | `unified-notifications-ops` | Operate notifications as one ECC-native workflow across GitHub, Linear, desktop alerts, hooks, and connected communication surfaces. Use when the real problem is alert routing, deduplication, escalati… |
 | `visa-doc-translate` | Translate visa document images (bank deposit, employment, income, and retirement certificates; HEIC, PNG, or JPG) into English via OCR and produce a bilingual PDF pairing the original image with a for… |
+| `ops-check` | AI executive operations assistant. Scans your inbox, surfaces priority items, tracks follow-ups, and drafts responses. Powered by GIA. Triggers on: check my inbox, catch me up, what do I need to do, d… |
+| `internal-comms` | A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal com… |
 
 ## industry (13)
 
@@ -579,7 +607,7 @@ Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, conf
 | `network-config-validation` | Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, stale references, management-plane risk, and IOS-style security hygiene. … |
 | `network-interface-health` | Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, switches, and Linux hosts. Use when an interface shows errors, drops, CRCs… |
 
-## research-docs (17)
+## research-docs (18)
 
 Deep research, scientific databases, literature review, documentation, ADRs and codebase onboarding.
 
@@ -602,6 +630,7 @@ Deep research, scientific databases, literature review, documentation, ADRs and 
 | `scientific-thinking-literature-review` | Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, source screening, synthesis, citation checks, and evidence logging. Use whe… |
 | `scientific-thinking-scholar-evaluation` | Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation support, and research-writing feedback. Use when evaluating academic or sci… |
 | `story-lifecycle` | Manage a file-based epic → story → sprint development loop without requiring an external project management tool. Creates and tracks epics, breaks them into user stories, assigns them to sprints, and … |
+| `teach-me` | Teach adaptively from learner goals or authorized sources, or help educators prepare lessons, in English or simplified Modern Standard Arabic. Use for learning, practice, review, or getting unstuck. |
 
 ## web3 (9)
 
@@ -654,7 +683,7 @@ Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 | `solo` | Work on one hard mathematics problem in this session yourself, with no sub-agents: reason in stages, record each settled step in a notes file so that nothing written is lost if a response is cut off, … |
 | `blender-motion-state-inspection` | Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model-vs-motion alignment where screenshots alone are not enough. |
 
-## memory (31)
+## memory (30)
 
 claude-mem's skills: search past work, build timelines, hand off sessions, plan and run work with persistent memory. Many need claude-mem installed.
 
@@ -687,7 +716,6 @@ claude-mem's skills: search past work, build timelines, hand off sessions, plan 
 | `mem-weekly-digests` | Generate a serial week-by-week narrative digest of a project's full claude-mem timeline. Splits the timeline into per-ISO-week files, then runs one consecutive subagent per week — each receiving the p… |
 | `mem-what-the` | What the? Use when the user wants a plain-English breakdown of something technical — the who, what, where, why, and when. |
 | `mem-wowerpoint` | Turn one document into a kawaii NotebookLM slide deck. Use for "wowerpoint this", "make a deck about <file>", "turn this report into slides", or any request to render a single document as narrative sl… |
-| `mem-setup` | This skill should be used when the user asks to "set up claude-mem", "pair claude-mem", "connect cmem", "add my cmem key", "set up cloud sync in Cowork", or provides cmem.ai Connect values (sync token… |
 | `claude-mem-install` | Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference. |
 | `mem-host-observer` | Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose. |
 | `mem-openclaw` |  |

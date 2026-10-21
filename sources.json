@@ -129,7 +129,6 @@
       "fixed": true,
       "skills": [
         "plugin/skills/*",
-        "cowork/skills/mem-setup",
         "claude-mem-cursor/skills/install",
         "claude-mem-grok-bot/skills/host-observer",
         "openclaw"
@@ -172,6 +171,86 @@
       "files": {
         "command.md": "reference/rules.md"
       }
+    },
+    {
+      "repo": "ahmed3bead/teach-me",
+      "license": "MIT",
+      "default": "research-docs",
+      "fixed": true,
+      "local": "vendor/teach-me",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "grayskripko/marketing-skills",
+      "license": "MIT",
+      "default": "content-media",
+      "fixed": true,
+      "local": "vendor/marketing-psychology",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "petrovicistefan.ro/task-observer",
+      "license": "MIT",
+      "default": "agent-dev",
+      "fixed": true,
+      "local": "vendor/task-observer",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "petrovicistefan.ro/headroom",
+      "license": "MIT",
+      "default": "agent-dev",
+      "fixed": true,
+      "local": "vendor/headroom",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "cuellarfr/design-skills",
+      "license": "MIT",
+      "default": "frontend",
+      "fixed": true,
+      "local": "vendor/design-skills",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "aceexperts.org/gia-chief-of-staff",
+      "license": "MIT",
+      "default": "business-ops",
+      "fixed": true,
+      "local": "vendor/gia-chief-of-staff",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "anthropics/cowork-plugin-management",
+      "license": "Apache-2.0",
+      "default": "agent-dev",
+      "fixed": true,
+      "local": "vendor/cowork-plugin-management",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "anthropics/skills",
+      "license": "Apache-2.0",
+      "default": "content-media",
+      "fixed": true,
+      "local": "vendor/anthropic-examples",
+      "skills": [
+        "skills/*"
+      ]
     }
   ],
   "externals": {

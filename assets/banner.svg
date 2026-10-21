@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" role="img" aria-labelledby="t d">
   <title id="t">SFP: Skills for Productivity</title>
-  <desc id="d">529 agent skills in 23 categories for 16 agent IDEs and CLIs</desc>
+  <desc id="d">557 agent skills in 23 categories for 16 agent IDEs and CLIs</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#4f46e5"/>
@@ -29,7 +29,7 @@
   <text x="68" y="228" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="21" fill="#ffffff" fill-opacity="0.85">One library of agent skills for every IDE. Frontend, backend, agents, security, APIs and more.</text>
   <g font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">
     <rect x="68" y="252" width="190" height="44" rx="22" fill="url(#chip)" stroke="#ffffff" stroke-opacity="0.45"/>
-    <text x="163" y="281" text-anchor="middle">529 skills</text>
+    <text x="163" y="281" text-anchor="middle">557 skills</text>
     <rect x="274" y="252" width="230" height="44" rx="22" fill="url(#chip)" stroke="#ffffff" stroke-opacity="0.45"/>
     <text x="389" y="281" text-anchor="middle">23 categories</text>
     <rect x="520" y="252" width="190" height="44" rx="22" fill="url(#chip)" stroke="#ffffff" stroke-opacity="0.45"/>
