@@ -1,6 +1,6 @@
 ---
 name: sfp
-description: SFP (Skills for Productivity) is a library of about 480 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks, MCP), AI/ML, AI gateway, data APIs, content, business, industry, networking, research, web3, engineering. Use it first whenever a task might have a matching skill - building UI, APIs or apps, reviewing or securing code, designing agents, plugins or MCP servers, finding a free API or data source, writing or video work - or when the user asks "is there a skill for...", "what can SFP do", or which skill to use.
+description: SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks, MCP), AI/ML, AI gateway, data APIs, content, business, industry, networking, research, web3, engineering, memory. Use it first whenever a task might have a matching skill - building UI, APIs or apps, reviewing or securing code, designing agents, plugins or MCP servers, finding a free API or data source, writing or video work - or when the user asks "is there a skill for...", "what can SFP do", or which skill to use.
 ---
 
 # SFP: pick the right skill
@@ -37,6 +37,8 @@ Search `reference/index.md` in this skill's folder. It has one line per skill, g
 | architecture, standards, performance, refactoring | `engineering` |
 | math proofs, Blender, M5Stack hardware | `science-hardware` |
 | job search, CVs, applications | `career` |
+| claude-mem, session memory, handoffs, timelines | `memory` |
+| Sai, the user's own voice assistant (Jarvis) | `sai` |
 
 ## 2. Use it
 

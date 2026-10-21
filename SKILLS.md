@@ -8,7 +8,7 @@ The router: one skill that knows every category and every skill, and sends the a
 
 | Skill | What it does |
 |---|---|
-| `sfp` | SFP (Skills for Productivity) is a library of about 480 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
+| `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 
 ## frontend (49)
 
@@ -248,7 +248,7 @@ TDD, end-to-end tests, verification loops, code review, regression and quality g
 | `verification-loop` | Run a six-phase verification of a Claude Code session's work — build, type check, lint, tests with coverage, security grep, and diff review — then produce a PASS/FAIL verification report. Use when ver… |
 | `windows-desktop-e2e` | E2E testing for Windows native desktop apps (WPF, WinForms, Win32/MFC, Qt) using pywinauto and Windows UI Automation. Use when writing E2E tests for a Windows native desktop app with pywinauto or UI A… |
 
-## devops (9)
+## devops (15)
 
 Docker, Kubernetes, deployment, canary watching, git and GitHub workflows, terminals and environments.
 
@@ -263,6 +263,12 @@ Docker, Kubernetes, deployment, canary watching, git and GitHub workflows, termi
 | `terminal-opener` | Open an executable and its argument array in a visible terminal window through a reusable, shell-free launch plan with dry-run, JSON, capability detection, detached fallback, and standalone recovery m… |
 | `terminal-ops` | Evidence-first repo execution workflow for ECC. Use when the user wants a command run, a repo checked, a CI failure debugged, or a narrow fix pushed with exact proof of what was executed and verified. |
 | `uncloud` | Use when managing an Uncloud cluster — deploying services, configuring Caddy ingress, adding static proxy routes for non-cluster devices, publishing ports, scaling, inspecting logs, or managing machin… |
+| `green-prs` | Inspect and prepare the selected PR queue against its exact current base, repair authorized defects with contributor credit, and report full versus partial validation. Use for maintainer pre-greening;… |
+| `merge-batch` | Prepare and merge an owner-selected PR batch with contributor credit and exact-candidate admission. Use for a pasted PR list; combined focused validation is diagnostic, and every actual landing still … |
+| `merge-prs` | Consume analyzed PR plans, implement authorized fixes with contributor credit, validate exact candidates, and merge only owner-selected and explicitly authorized groups through the shared gates. Requi… |
+| `quality-scan` | Run a scoped, read-only quality scan and report exact-candidate evidence, failures and frozen debt. Use for an ad-hoc gate sweep or release preparation; a static scan is not full release acceptance. |
+| `sweep-reds` | Repair confirmed CI failures base-first, then prepare affected PRs one at a time with exact-candidate evidence. Use when asked to sweep reds or restore the queue. Never merges, closes PRs, weakens tes… |
+| `validate-release-green` | Run or inspect the local Release-Green observer for an exact base or combined PR candidate, separating hard failures, advisory drift and incomplete evidence. Use for maintainer preflight; full CI acce… |
 
 ## security (21)
 
@@ -292,7 +298,7 @@ Strix autonomous pentesting, OWASP testing, secure coding for each framework, an
 | `security-scan` | Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks CLAUDE.md, settings.json, MCP servers, hooks, an… |
 | `springboot-security` | Spring Security best practices for authn/authz, validation, CSRF, secrets, headers, rate limiting, and dependency security in Java Spring Boot services. Use when reviewing Spring Security authn/authz,… |
 
-## agents (32)
+## agents (33)
 
 Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.
 
@@ -330,8 +336,9 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `santa-method` | Multi-agent adversarial verification: two independent reviewers with the same rubric must both pass before output ships, with a fix-and-re-review convergence loop and human escalation cap. Use when ga… |
 | `team-agent-orchestration` | Run team-based orchestration for agent squads: work items with owners and scope, agent Kanban state, branch isolation, control pane visibility, and merge gates. Use when coordinating multiple agents i… |
 | `team-builder` | Interactive picker that discovers available agent personas via the claude agents command and agents/ markdown globs, groups them into domains, has the user select up to five, dispatches them in parall… |
+| `ecc-council` | Convene a four-voice council for ambiguous decisions, tradeoffs, and go/no-go calls. Use when multiple valid paths exist and you need structured disagreement before choosing. |
 
-## agent-dev (55)
+## agent-dev (57)
 
 Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory, context and token budgets.
 
@@ -392,6 +399,8 @@ Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory,
 | `token-card` | Render a token-usage stat card from local Claude Code, Codex, Gemini CLI, and OpenCode session logs and commit it into the repository as a file. Use when someone wants a current usage figure in a READ… |
 | `unified-memory` | Share durable, inspectable context and handoffs between Claude, Codex, Hermes, Cursor, OpenCode, and other agents through the local ECC Memory Vault. Use when an agent must save work state, transfer c… |
 | `workspace-surface-audit` | Audit the active repo, MCP servers, plugins, connectors, env surfaces, and harness setup, then recommend the highest-value ECC-native skills, hooks, agents, and operator workflows. Use when the user w… |
+| `discord-access` | Manage Discord channel access — approve pairings, edit allowlists, set DM/group policy. Use when the user asks to pair, approve someone, check who's allowed, or change policy for the Discord channel. |
+| `discord-configure` | Set up the Discord channel — save the bot token and review access policy. Use when the user pastes a Discord bot token, asks to configure Discord, asks "how do I set this up" or "who can reach me," or… |
 
 ## ai-ml (10)
 
@@ -462,7 +471,7 @@ Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compressi
 | `omni-version-manager` | Install, start, stop, restart, and update embedded services (9Router, CLIProxyAPI). Monitor service status, retrieve logs, and configure auto-start for local-only service endpoints. |
 | `omni-webhooks` | Register, list, test, and remove webhook endpoints. Configure event subscriptions (request.completed, request.failed, quota.exceeded, etc.) and manage delivery retries. |
 
-## data-apis (6)
+## data-apis (7)
 
 Direct access to data: a searchable list of about 2,100 free public APIs, internet reach across 16 platforms, search and scraping.
 
@@ -474,6 +483,7 @@ Direct access to data: a searchable list of about 2,100 free public APIs, intern
 | `exa-search` | Neural search via Exa MCP for web, code, and company research. Use when the user needs web search, code examples, company intel, people lookup, or AI-powered deep research with Exa's neural search eng… |
 | `osint-investigation` | Sparse-clue OSINT investigation methodology for extracting overlooked leads, connecting fragmented evidence, and testing explanations across sources. Use for multi-step CTF challenges, image/video geo… |
 | `x-api` | X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants t… |
+| `freellmapi` | Run and use FreeLLMAPI, one OpenAI-compatible /v1 endpoint that stacks the free tiers of 34 LLM providers with automatic routing and failover. Use when the user wants free LLM inference, to point an O… |
 
 ## content-media (17)
 
@@ -608,7 +618,7 @@ DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent secur
 | `prediction-market-oracle-research` | Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligence. Use for source-grounded analysis of market-implied probabilities, c… |
 | `prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and execution risk. Use before any workflow handles venue auth, user portfolio data… |
 
-## engineering (14)
+## engineering (15)
 
 General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.
 
@@ -627,6 +637,7 @@ General engineering practice: architecture, standards, error handling, performan
 | `production-audit` | Local-evidence production readiness audit for shipped apps, pre-launch reviews, post-merge checks, and "what breaks in prod?" questions without sending repo data to an external audit service. Use when… |
 | `repo-scan` | Bootstrap pointer that installs the external repo-scan skill from a pinned, reviewable commit. Use when repo-scan must be installed before running its cross-stack source-code asset audit; this ECC poi… |
 | `search-first` | Research-before-coding workflow: search npm/PyPI, MCP servers, skills, and GitHub for existing tools before writing custom code, then adopt, extend, or build. Launches the researcher agent for non-tri… |
+| `ecc-conventions` | Development conventions and patterns for ECC. JavaScript project with conventional commits. |
 | `ponytail` | External agent skill (MIT, github.com/DietrichGebert/ponytail). Forces the laziest solution that actually works: question whether the task needs to exist at all (YAGNI), reuse what is already in the c… |
 
 ## science-hardware (6)
@@ -641,6 +652,44 @@ Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 | `siege` | Work on one hard mathematics problem in rounds: each round a judge writes a few self-contained questions, independent workers answer them, and the judge keeps a ledger of what is proved, refuted and o… |
 | `solo` | Work on one hard mathematics problem in this session yourself, with no sub-agents: reason in stages, record each settled step in a notes file so that nothing written is lost if a response is cut off, … |
 | `blender-motion-state-inspection` | Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model-vs-motion alignment where screenshots alone are not enough. |
+
+## memory (31)
+
+claude-mem's skills: search past work, build timelines, hand off sessions, plan and run work with persistent memory. Many need claude-mem installed.
+
+| Skill | What it does |
+|---|---|
+| `mem-agent-cost-report` | Believable agent cost report for any period, default the last 7 full days PT, not counting today. Measured tokens from Claude Code transcripts priced at OpenRouter list prices (ESTIMATED), measured pr… |
+| `mem-babysit` | Watch a pull request or review cycle until it is ready to merge. Use when asked to babysit, monitor, or keep checking PR comments, reviews, and CI until all actionable issues are resolved. |
+| `mem-build` | Fully automate a coding task with make-plan, do, and babysit. |
+| `mem-build-and-release` | Fully automate building and releasing a coding task. |
+| `mem-ccs-align` | Run the CCS Align seat's hourly breathing cycle — prove the local claude-mem worker is healthy, pull needle observations through search → timeline → get_observations, land them in a seat-owned middle … |
+| `mem-childhood` | Babysit a shipped release after merge, publication, or deployment. Verify published packages, production behavior, installed plugins, and late CI or user reports until the observation window is clean;… |
+| `mem-cloud-sync` | Set up or check claude-mem cloud sync with cmem.ai Pro. Use when the user says "set up cloud sync", "sync my memories", "cmem pro", "cloud backup", "sync status", or wants their memory database backed… |
+| `mem-design-is` | Audit a design against Dieter Rams' ten "Good design is..." principles, then hand off a /make-plan prompt for one of three outcomes — new design, refine design, or redesign. Use when the user says "au… |
+| `mem-do` | Execute a phased implementation plan using subagents. Use when asked to execute, run, or carry out a plan — especially one created by make-plan. |
+| `mem-handoff` | Generate a HANDOFF.md that captures goal, current state, files touched, failed attempts, and next steps — so a fresh Claude session can continue exactly where this one left off. Use when sessions are … |
+| `mem-how-it-works` | Explain how claude-mem captures observations, when memory injection kicks in, and where data lives. Use when the user asks "how does claude-mem work?" or "what is this thing doing?". |
+| `mem-knowledge-agent` | Build and query AI-powered knowledge bases from claude-mem observations. Use when users want to create focused "brains" from their observation history, ask questions about past work patterns, or compi… |
+| `mem-learn-codebase` | Prime a codebase by reading every source file in full. Use when starting work on a new or unfamiliar project, or when the user asks to "learn the codebase", "read the codebase", "prime", or "get up to… |
+| `mem-make-plan` | Create a detailed, phased implementation plan with documentation discovery. Use when asked to plan a feature, task, or multi-step implementation — especially before executing with do. |
+| `mem-search` | Search claude-mem persistent cross-session memory through enforced progressive disclosure. Use for previous decisions, solutions, work history, and before saving your own durable notes. |
+| `mem-mode-creator` | Interactively create, install, activate, and verify custom claude-mem modes, including domain-specific observation types, concept tags, optional Telegram alerts, bot setup, worker restart, and startup… |
+| `mem-oh-my-issues` | Cluster a GitHub issue backlog by root cause into a small set of plan-master issues, redirect children with a standardized comment, and bundle architectural-fix PRs that close clusters atomically. Use… |
+| `mem-pathfinder` | Map a codebase into feature-grouped flowcharts, identify duplicated concerns across features, and propose a unified architecture. Use when asked to "find the ideal path," unify duplicated systems, or … |
+| `mem-release` | Fully automate a release with version-bump and childhood. |
+| `mem-screenpipe` | Search screen and audio history recorded by Screenpipe and optionally save selected context into claude-mem. Use when the user asks to recall desktop activity, a meeting, or something seen in another … |
+| `mem-smart-explore` | Token-optimized structural code search using tree-sitter AST parsing. Use instead of reading full files when you need to understand code structure, find functions, or explore a codebase efficiently. |
+| `mem-standup` | Facilitate a read-only standup across git worktrees, branches, or PRs to compare changes and produce one consolidation plan. |
+| `mem-timeline-report` | Generate a "Journey Into [Project]" narrative report analyzing a project's entire development history from claude-mem's timeline. Use when asked for a timeline report, project history analysis, develo… |
+| `mem-version-bump` | Automated semantic versioning and release workflow for Claude Code plugins. Handles version increments across package.json, marketplace.json, plugin.json manifests, build verification, git tagging, Gi… |
+| `mem-weekly-digests` | Generate a serial week-by-week narrative digest of a project's full claude-mem timeline. Splits the timeline into per-ISO-week files, then runs one consecutive subagent per week — each receiving the p… |
+| `mem-what-the` | What the? Use when the user wants a plain-English breakdown of something technical — the who, what, where, why, and when. |
+| `mem-wowerpoint` | Turn one document into a kawaii NotebookLM slide deck. Use for "wowerpoint this", "make a deck about <file>", "turn this report into slides", or any request to render a single document as narrative sl… |
+| `mem-setup` | This skill should be used when the user asks to "set up claude-mem", "pair claude-mem", "connect cmem", "add my cmem key", "set up cloud sync in Cowork", or provides cmem.ai Connect values (sync token… |
+| `claude-mem-install` | Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference. |
+| `mem-host-observer` | Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose. |
+| `mem-openclaw` |  |
 
 ## career (plugin)
 
@@ -663,3 +712,7 @@ Claude Code only: install it as a plugin from the marketplace.
 The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other.
 
 Claude Code only: install it as a plugin from the marketplace.
+
+## sai (plugin)
+
+Sai, a personal voice assistant (OpenRouter brain, Jev judgment, open-interpreter hands, Fish Audio voice). Private repo: installs only for accounts with access.

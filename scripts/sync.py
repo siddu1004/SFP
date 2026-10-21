@@ -126,6 +126,9 @@ def main():
         text = open(os.path.join(skill_src, 'SKILL.md'), encoding='utf-8', errors='replace').read()
         fm = frontmatter(text)
         name = slug(field(fm, 'name') or os.path.basename(skill_src))
+        npfx = source.get('name_prefix')
+        if npfx and not name.startswith(tuple(source.get('name_prefix_skip', [npfx.rstrip('-')]))):
+            name = slug(npfx + name)
         digest = tree_hash(skill_src)
         if name in taken:
             if taken[name] == digest:

@@ -142,7 +142,12 @@ def install_app(spec, apps_dir):
         subprocess.run(['git', '-C', checkout, 'pull', '-q', '--ff-only'], check=False)
     else:
         os.makedirs(apps_dir, exist_ok=True)
-        subprocess.run(['git', 'clone', '-q', '--depth', '1', f"https://github.com/{spec['repo']}.git", checkout], check=True)
+        cmd = ['git', 'clone', '-q', '--depth', '1']
+        if spec.get('ref'):
+            cmd += ['--branch', spec['ref']]
+        done = subprocess.run(cmd + [f"https://github.com/{spec['repo']}.git", checkout])
+        if done.returncode != 0:
+            return None
     skill = os.path.join(checkout, spec['skill'], 'SKILL.md')
     with open(skill, encoding='utf-8') as f:
         text = f.read()
@@ -215,6 +220,10 @@ def cmd_install(cat, args):
             if spec.get('app'):
                 if name not in apps:
                     apps[name] = install_app(spec['app'], apps_dir)
+                if apps[name] is None:
+                    print(f"    skip {name}: could not clone github.com/{spec['app']['repo']} "
+                          f"(private repo, or no access with your git credentials)")
+                    continue
                 count += place(apps[name][0], os.path.join(dest_root, spec['app']['name']), name, args.force, args.link)
                 continue
             for s in cat['skills']:
@@ -226,8 +235,11 @@ def cmd_install(cat, args):
         if count > WARN_AT:
             print(f'    note: {count} skills is a lot for one agent. Agents read every skill description up front; '
                   f'the sfp skill can reach the rest on demand, so consider fewer categories.')
-    for name, (_, checkout) in apps.items():
-        print(f'  {name} lives in {checkout}. Run `npm install` there once before first use.')
+    for name, got in apps.items():
+        if got is None:
+            continue
+        setup = cat['categories'][name]['app'].get('setup')
+        print(f'  {name} lives in {got[1]}.' + (f' Set it up once there: {setup}.' if setup else ''))
     print(f'\n  SFP checkout recorded in {os.path.join(HOME, ".sfp", "root")}: the `sfp` skill can read any skill from there on demand.')
 
 

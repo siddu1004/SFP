@@ -30,7 +30,7 @@
   },
   "devops": {
    "description": "Docker, Kubernetes, deployment, canary watching, git and GitHub workflows, terminals and environments.",
-   "skills": 9
+   "skills": 15
   },
   "security": {
    "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
@@ -38,11 +38,11 @@
   },
   "agents": {
    "description": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.",
-   "skills": 32
+   "skills": 33
   },
   "agent-dev": {
    "description": "Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory, context and token budgets.",
-   "skills": 55
+   "skills": 57
   },
   "ai-ml": {
    "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
@@ -54,7 +54,7 @@
   },
   "data-apis": {
    "description": "Direct access to data: a searchable list of about 2,100 free public APIs, internet reach across 16 platforms, search and scraping.",
-   "skills": 6
+   "skills": 7
   },
   "content-media": {
    "description": "Writing, marketing, SEO, video, slides, social posting and brand voice.",
@@ -82,18 +82,24 @@
   },
   "engineering": {
    "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
-   "skills": 14
+   "skills": 15
   },
   "science-hardware": {
    "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
    "skills": 6
+  },
+  "memory": {
+   "description": "claude-mem's skills: search past work, build timelines, hand off sessions, plan and run work with persistent memory. Many need claude-mem installed.",
+   "skills": 31
   },
   "career": {
    "description": "AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.",
    "app": {
     "repo": "siddu1004/career-ops-for-claude-skill",
     "skill": ".agents/skills/career-ops",
-    "name": "career-ops"
+    "name": "career-ops",
+    "ref": "claude/claude-code-plugin",
+    "setup": "npm install"
    },
    "skills": 0
   },
@@ -112,6 +118,18 @@
    "description": "The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other.",
    "claude_only": true,
    "optional": true,
+   "skills": 0
+  },
+  "sai": {
+   "description": "Sai, a personal voice assistant (OpenRouter brain, Jev judgment, open-interpreter hands, Fish Audio voice). Private repo: installs only for accounts with access.",
+   "app": {
+    "repo": "siddu1004/sai_ai_my_own_jarvis",
+    "skill": "skills/sai",
+    "name": "sai",
+    "ref": "claude/sai-skill",
+    "setup": "python -m venv .venv, activate it, then pip install -r requirements.txt"
+   },
+   "private": true,
    "skills": 0
   }
  },
@@ -154,7 +172,8 @@
    "agent-dev",
    "ai-ml",
    "ai-gateway",
-   "data-apis"
+   "data-apis",
+   "memory"
   ]
  },
  "skills": [
@@ -4112,6 +4131,24 @@
    "variants": {}
   },
   {
+   "name": "ecc-conventions",
+   "category": "engineering",
+   "description": "Development conventions and patterns for ECC. JavaScript project with conventional commits.",
+   "source": "siddu1004/ECC",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/ecc-conventions",
+   "variants": {}
+  },
+  {
+   "name": "ecc-council",
+   "category": "agents",
+   "description": "Convene a four-voice council for ambiguous decisions, tradeoffs, and go/no-go calls. Use when multiple valid paths exist and you need structured disagreement before choosing.",
+   "source": "siddu1004/ECC",
+   "license": "MIT",
+   "path": "plugins/agents/skills/ecc-council",
+   "variants": {}
+  },
+  {
    "name": "cli-a2a",
    "category": "ai-gateway",
    "description": "Interact with the OmniRoute A2A server from the CLI. Send tasks, inspect skill execution history, and test the JSON-RPC 2.0 agent-to-agent protocol interactively.",
@@ -4526,9 +4563,369 @@
    "variants": {}
   },
   {
+   "name": "freellmapi",
+   "category": "data-apis",
+   "description": "Run and use FreeLLMAPI, one OpenAI-compatible /v1 endpoint that stacks the free tiers of 34 LLM providers with automatic routing and failover. Use when the user wants free LLM inference, to point an OpenAI SDK, coding agent or other client at a free multi-provider endpoint, to self-host FreeLLMAPI with Docker, to pick a routing strategy such as auto:fast or auto:smart, or to fix a FreeLLMAPI setup problem.",
+   "source": "siddu1004/freellmapi",
+   "license": "MIT",
+   "path": "plugins/data-apis/skills/freellmapi",
+   "variants": {}
+  },
+  {
+   "name": "mem-agent-cost-report",
+   "category": "memory",
+   "description": "Believable agent cost report for any period, default the last 7 full days PT, not counting today. Measured tokens from Claude Code transcripts priced at OpenRouter list prices (ESTIMATED), measured provider spend when a sanctioned source exists, note-taker cost separate, Timing-style HTML/PDF plus report.json, line-items.csv, evidence.json.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-agent-cost-report",
+   "variants": {}
+  },
+  {
+   "name": "mem-babysit",
+   "category": "memory",
+   "description": "Watch a pull request or review cycle until it is ready to merge. Use when asked to babysit, monitor, or keep checking PR comments, reviews, and CI until all actionable issues are resolved.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-babysit",
+   "variants": {}
+  },
+  {
+   "name": "mem-build",
+   "category": "memory",
+   "description": "Fully automate a coding task with make-plan, do, and babysit.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-build",
+   "variants": {}
+  },
+  {
+   "name": "mem-build-and-release",
+   "category": "memory",
+   "description": "Fully automate building and releasing a coding task.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-build-and-release",
+   "variants": {}
+  },
+  {
+   "name": "mem-ccs-align",
+   "category": "memory",
+   "description": "Run the CCS Align seat's hourly breathing cycle \u2014 prove the local claude-mem worker is healthy, pull needle observations through search \u2192 timeline \u2192 get_observations, land them in a seat-owned middle cache via atomic grab \u2192 append \u2192 filter exclude-marks \u2192 replace, manage exclude marks, and walk house \u2192 project \u2192 seat rules to detect conflicts (SHADOW_HOUSE, DENY_ALLOW, DRIFT, CLOCK_HEADER) with an append-only rules-report.md. Use when asked to run CCS Align, breathe the alignment seat, refresh the middle cache, exclude or restore an observation, walk rules, check rules conflicts, or check the Worker Watch board.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-ccs-align",
+   "variants": {}
+  },
+  {
+   "name": "mem-childhood",
+   "category": "memory",
+   "description": "Babysit a shipped release after merge, publication, or deployment. Verify published packages, production behavior, installed plugins, and late CI or user reports until the observation window is clean; use babysit for PR readiness before release.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-childhood",
+   "variants": {}
+  },
+  {
+   "name": "mem-cloud-sync",
+   "category": "memory",
+   "description": "Set up or check claude-mem cloud sync with cmem.ai Pro. Use when the user says \"set up cloud sync\", \"sync my memories\", \"cmem pro\", \"cloud backup\", \"sync status\", or wants their memory database backed up or synced to their cmem.ai account.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-cloud-sync",
+   "variants": {}
+  },
+  {
+   "name": "mem-design-is",
+   "category": "memory",
+   "description": "Audit a design against Dieter Rams' ten \"Good design is...\" principles, then hand off a /make-plan prompt for one of three outcomes \u2014 new design, refine design, or redesign. Use when the user says \"audit this design\", \"design review\", \"check this UI against Rams\", \"is this UI good\", \"critique this design\", \"design audit\", or asks for a critique that should lead to a plan.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-design-is",
+   "variants": {}
+  },
+  {
+   "name": "mem-do",
+   "category": "memory",
+   "description": "Execute a phased implementation plan using subagents. Use when asked to execute, run, or carry out a plan \u2014 especially one created by make-plan.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-do",
+   "variants": {}
+  },
+  {
+   "name": "mem-handoff",
+   "category": "memory",
+   "description": "Generate a HANDOFF.md that captures goal, current state, files touched, failed attempts, and next steps \u2014 so a fresh Claude session can continue exactly where this one left off. Use when sessions are getting long, Claude keeps retrying the same broken solution, or the user wants to step away and resume later.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-handoff",
+   "variants": {}
+  },
+  {
+   "name": "mem-how-it-works",
+   "category": "memory",
+   "description": "Explain how claude-mem captures observations, when memory injection kicks in, and where data lives. Use when the user asks \"how does claude-mem work?\" or \"what is this thing doing?\".",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-how-it-works",
+   "variants": {}
+  },
+  {
+   "name": "mem-knowledge-agent",
+   "category": "memory",
+   "description": "Build and query AI-powered knowledge bases from claude-mem observations. Use when users want to create focused \"brains\" from their observation history, ask questions about past work patterns, or compile expertise on specific topics.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-knowledge-agent",
+   "variants": {}
+  },
+  {
+   "name": "mem-learn-codebase",
+   "category": "memory",
+   "description": "Prime a codebase by reading every source file in full. Use when starting work on a new or unfamiliar project, or when the user asks to \"learn the codebase\", \"read the codebase\", \"prime\", or \"get up to speed\".",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-learn-codebase",
+   "variants": {}
+  },
+  {
+   "name": "mem-make-plan",
+   "category": "memory",
+   "description": "Create a detailed, phased implementation plan with documentation discovery. Use when asked to plan a feature, task, or multi-step implementation \u2014 especially before executing with do.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-make-plan",
+   "variants": {}
+  },
+  {
+   "name": "mem-search",
+   "category": "memory",
+   "description": "Search claude-mem persistent cross-session memory through enforced progressive disclosure. Use for previous decisions, solutions, work history, and before saving your own durable notes.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-search",
+   "variants": {}
+  },
+  {
+   "name": "mem-mode-creator",
+   "category": "memory",
+   "description": "Interactively create, install, activate, and verify custom claude-mem modes, including domain-specific observation types, concept tags, optional Telegram alerts, bot setup, worker restart, and startup-context verification. Use this whenever someone asks to customize what claude-mem remembers, create or change a mode, track domain-specific notes, add observation types or tags, or send Telegram notifications for particular memories\u2014even if they do not use the word \"mode.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-mode-creator",
+   "variants": {}
+  },
+  {
+   "name": "mem-oh-my-issues",
+   "category": "memory",
+   "description": "Cluster a GitHub issue backlog by root cause into a small set of plan-master issues, redirect children with a standardized comment, and bundle architectural-fix PRs that close clusters atomically. Use when an issue tracker has accumulated dozens of reports that share underlying defects, when asked to triage / consolidate / cluster / dedupe issues, when asked to build a plan series or roadmap from open issues, or when routing a new incoming bug into an existing plan.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-oh-my-issues",
+   "variants": {}
+  },
+  {
+   "name": "mem-pathfinder",
+   "category": "memory",
+   "description": "Map a codebase into feature-grouped flowcharts, identify duplicated concerns across features, and propose a unified architecture. Use when asked to \"find the ideal path,\" unify duplicated systems, or audit architecture before a refactor. Emits a proposed unified flowchart plus per-system /make-plan prompts.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-pathfinder",
+   "variants": {}
+  },
+  {
+   "name": "mem-release",
+   "category": "memory",
+   "description": "Fully automate a release with version-bump and childhood.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-release",
+   "variants": {}
+  },
+  {
+   "name": "mem-screenpipe",
+   "category": "memory",
+   "description": "Search screen and audio history recorded by Screenpipe and optionally save selected context into claude-mem. Use when the user asks to recall desktop activity, a meeting, or something seen in another app through Screenpipe.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-screenpipe",
+   "variants": {}
+  },
+  {
+   "name": "mem-smart-explore",
+   "category": "memory",
+   "description": "Token-optimized structural code search using tree-sitter AST parsing. Use instead of reading full files when you need to understand code structure, find functions, or explore a codebase efficiently.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-smart-explore",
+   "variants": {}
+  },
+  {
+   "name": "mem-standup",
+   "category": "memory",
+   "description": "Facilitate a read-only standup across git worktrees, branches, or PRs to compare changes and produce one consolidation plan.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-standup",
+   "variants": {}
+  },
+  {
+   "name": "mem-timeline-report",
+   "category": "memory",
+   "description": "Generate a \"Journey Into [Project]\" narrative report analyzing a project's entire development history from claude-mem's timeline. Use when asked for a timeline report, project history analysis, development journey, or full project report.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-timeline-report",
+   "variants": {}
+  },
+  {
+   "name": "mem-version-bump",
+   "category": "memory",
+   "description": "Automated semantic versioning and release workflow for Claude Code plugins. Handles version increments across package.json, marketplace.json, plugin.json manifests, build verification, git tagging, GitHub releases, and changelog generation. Ends with the agent running npm publish itself using the maintainer's npm token.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-version-bump",
+   "variants": {}
+  },
+  {
+   "name": "mem-weekly-digests",
+   "category": "memory",
+   "description": "Generate a serial week-by-week narrative digest of a project's full claude-mem timeline. Splits the timeline into per-ISO-week files, then runs one consecutive subagent per week \u2014 each receiving the prior week's carry-forward block \u2014 to produce one chapter per ISO week of data. Use when asked for \"weekly digests\", \"week-by-week story\", \"serial timeline\", or \"narrative chapters\" of a project's history.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-weekly-digests",
+   "variants": {}
+  },
+  {
+   "name": "mem-what-the",
+   "category": "memory",
+   "description": "What the? Use when the user wants a plain-English breakdown of something technical \u2014 the who, what, where, why, and when.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-what-the",
+   "variants": {}
+  },
+  {
+   "name": "mem-wowerpoint",
+   "category": "memory",
+   "description": "Turn one document into a kawaii NotebookLM slide deck. Use for \"wowerpoint this\", \"make a deck about <file>\", \"turn this report into slides\", or any request to render a single document as narrative slides.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-wowerpoint",
+   "variants": {}
+  },
+  {
+   "name": "mem-setup",
+   "category": "memory",
+   "description": "This skill should be used when the user asks to \"set up claude-mem\", \"pair claude-mem\", \"connect cmem\", \"add my cmem key\", \"set up cloud sync in Cowork\", or provides cmem.ai Connect values (sync token, user id, SyncHub URL) for this plugin. Configures the claude-mem-cowork plugin credentials.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-setup",
+   "variants": {}
+  },
+  {
+   "name": "claude-mem-install",
+   "category": "memory",
+   "description": "Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/claude-mem-install",
+   "variants": {}
+  },
+  {
+   "name": "mem-host-observer",
+   "category": "memory",
+   "description": "Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose.",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-host-observer",
+   "variants": {}
+  },
+  {
+   "name": "mem-openclaw",
+   "category": "memory",
+   "description": "",
+   "source": "siddu1004/claude-mem",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/mem-openclaw",
+   "variants": {}
+  },
+  {
+   "name": "green-prs",
+   "category": "devops",
+   "description": "Inspect and prepare the selected PR queue against its exact current base, repair authorized defects with contributor credit, and report full versus partial validation. Use for maintainer pre-greening; merging requires separate owner authorization and the shared merge gates.",
+   "source": "siddu1004/OmniRoute",
+   "license": "MIT",
+   "path": "plugins/devops/skills/green-prs",
+   "variants": {}
+  },
+  {
+   "name": "merge-batch",
+   "category": "devops",
+   "description": "Prepare and merge an owner-selected PR batch with contributor credit and exact-candidate admission. Use for a pasted PR list; combined focused validation is diagnostic, and every actual landing still requires its applicable checks and authorization.",
+   "source": "siddu1004/OmniRoute",
+   "license": "MIT",
+   "path": "plugins/devops/skills/merge-batch",
+   "variants": {}
+  },
+  {
+   "name": "merge-prs",
+   "category": "devops",
+   "description": "Consume analyzed PR plans, implement authorized fixes with contributor credit, validate exact candidates, and merge only owner-selected and explicitly authorized groups through the shared gates. Requires prior review evidence; unknown or failing required checks remain HOLD.",
+   "source": "siddu1004/OmniRoute",
+   "license": "MIT",
+   "path": "plugins/devops/skills/merge-prs",
+   "variants": {}
+  },
+  {
+   "name": "quality-scan",
+   "category": "devops",
+   "description": "Run a scoped, read-only quality scan and report exact-candidate evidence, failures and frozen debt. Use for an ad-hoc gate sweep or release preparation; a static scan is not full release acceptance.",
+   "source": "siddu1004/OmniRoute",
+   "license": "MIT",
+   "path": "plugins/devops/skills/quality-scan",
+   "variants": {}
+  },
+  {
+   "name": "sweep-reds",
+   "category": "devops",
+   "description": "Repair confirmed CI failures base-first, then prepare affected PRs one at a time with exact-candidate evidence. Use when asked to sweep reds or restore the queue. Never merges, closes PRs, weakens tests, or changes CI under ordinary sweep authority.",
+   "source": "siddu1004/OmniRoute",
+   "license": "MIT",
+   "path": "plugins/devops/skills/sweep-reds",
+   "variants": {}
+  },
+  {
+   "name": "validate-release-green",
+   "category": "devops",
+   "description": "Run or inspect the local Release-Green observer for an exact base or combined PR candidate, separating hard failures, advisory drift and incomplete evidence. Use for maintainer preflight; full CI acceptance remains a separate requirement.",
+   "source": "siddu1004/OmniRoute",
+   "license": "MIT",
+   "path": "plugins/devops/skills/validate-release-green",
+   "variants": {}
+  },
+  {
+   "name": "discord-access",
+   "category": "agent-dev",
+   "description": "Manage Discord channel access \u2014 approve pairings, edit allowlists, set DM/group policy. Use when the user asks to pair, approve someone, check who's allowed, or change policy for the Discord channel.",
+   "source": "siddu1004/claude-plugins-official",
+   "license": "Apache-2.0",
+   "path": "plugins/agent-dev/skills/discord-access",
+   "variants": {}
+  },
+  {
+   "name": "discord-configure",
+   "category": "agent-dev",
+   "description": "Set up the Discord channel \u2014 save the bot token and review access policy. Use when the user pastes a Discord bot token, asks to configure Discord, asks \"how do I set this up\" or \"who can reach me,\" or wants to check channel status.",
+   "source": "siddu1004/claude-plugins-official",
+   "license": "Apache-2.0",
+   "path": "plugins/agent-dev/skills/discord-configure",
+   "variants": {}
+  },
+  {
    "name": "sfp",
    "category": "sfp",
-   "description": "SFP (Skills for Productivity) is a library of about 480 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks, MCP), AI/ML, AI gateway, data APIs, content, business, industry, networking, research, web3, engineering. Use it first whenever a task might have a matching skill - building UI, APIs or apps, reviewing or securing code, designing agents, plugins or MCP servers, finding a free API or data source, writing or video work - or when the user asks \"is there a skill for...\", \"what can SFP do\", or which skill to use.",
+   "description": "SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks, MCP), AI/ML, AI gateway, data APIs, content, business, industry, networking, research, web3, engineering, memory. Use it first whenever a task might have a matching skill - building UI, APIs or apps, reviewing or securing code, designing agents, plugins or MCP servers, finding a free API or data source, writing or video work - or when the user asks \"is there a skill for...\", \"what can SFP do\", or which skill to use.",
    "source": "siddu1004/SFP",
    "license": "",
    "path": "plugins/sfp/skills/sfp",

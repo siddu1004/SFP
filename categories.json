@@ -23,7 +23,9 @@
     "web3": "DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security.",
     "engineering": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
     "science-hardware": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
-    "career": "AI job search: evaluate offers, tailor CVs, scan portals, track applications."
+    "career": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
+    "memory": "claude-mem's skills: search past work, build timelines, hand off sessions, plan and run work with persistent memory. Many need claude-mem installed.",
+    "sai": "Sai, a personal voice assistant: set it up, run it, add abilities. Private repo, so it installs only for accounts with access."
   },
   "names": {
     "ponytail": "engineering",
@@ -109,7 +111,16 @@
     "cost-tracking": "agent-dev",
     "iterative-retrieval": "agent-dev",
     "hexagonal-architecture": "engineering",
-    "content-hash-cache-pattern": "engineering"
+    "content-hash-cache-pattern": "engineering",
+    "ecc-council": "agents",
+    "ecc-conventions": "engineering",
+    "freellmapi": "data-apis",
+    "agent-cost-report": "memory",
+    "mem-search": "memory",
+    "mem-setup": "memory",
+    "claude-mem-install": "memory",
+    "host-observer": "memory",
+    "openclaw": "memory"
   },
   "patterns": [
     [

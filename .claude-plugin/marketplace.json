@@ -141,12 +141,19 @@
       "source": "./plugins/science-hardware"
     },
     {
+      "name": "memory",
+      "description": "claude-mem's skills: search past work, build timelines, hand off sessions, plan and run work with persistent memory. Many need claude-mem installed.",
+      "category": "skills",
+      "source": "./plugins/memory"
+    },
+    {
       "name": "career",
       "description": "AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.",
       "category": "skills",
       "source": {
         "source": "github",
-        "repo": "siddu1004/career-ops-for-claude-skill"
+        "repo": "siddu1004/career-ops-for-claude-skill",
+        "ref": "claude/claude-code-plugin"
       }
     },
     {
@@ -176,6 +183,16 @@
         "source": "github",
         "repo": "siddu1004/OmniRoute",
         "ref": "claude-plugin"
+      }
+    },
+    {
+      "name": "sai",
+      "description": "Sai, a personal voice assistant (OpenRouter brain, Jev judgment, open-interpreter hands, Fish Audio voice). Private repo: installs only for accounts with access.",
+      "category": "skills",
+      "source": {
+        "source": "github",
+        "repo": "siddu1004/sai_ai_my_own_jarvis",
+        "ref": "claude/sai-skill"
       }
     }
   ]

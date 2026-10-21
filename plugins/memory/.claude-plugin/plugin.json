@@ -1,0 +1,10 @@
+{
+  "name": "memory",
+  "version": "1.0.0",
+  "description": "claude-mem's skills: search past work, build timelines, hand off sessions, plan and run work with persistent memory. Many need claude-mem installed.",
+  "author": {
+    "name": "siddu1004"
+  },
+  "repository": "https://github.com/siddu1004/SFP",
+  "skills": "./skills/"
+}

@@ -1,57 +1,271 @@
 {
   "sources": [
-    {"repo": "siddu1004/impeccable", "license": "Apache-2.0", "upstream": "https://github.com/pbakaus/impeccable",
-     "default": "frontend", "skills": ["plugin/skills/impeccable"],
-     "variants": {"generic": ".agents/skills/impeccable"}},
-    {"repo": "siddu1004/taste-skill-for-claude-and-antigravity", "license": "MIT", "upstream": "https://github.com/Imaidazo/taste-skill-plugin",
-     "default": "frontend", "skills": ["skills/*"]},
-    {"repo": "siddu1004/skills-claude-antigravity", "license": "MIT", "upstream": "https://github.com/emilkowalski/skills",
-     "default": "frontend", "skills": ["skills/*"]},
-    {"repo": "siddu1004/awesome-design-skills", "license": "MIT",
-     "default": "design-styles", "fixed": true, "skills": ["skills/*"], "collision_prefix": "style-"},
-    {"repo": "siddu1004/strix", "license": "Apache-2.0",
-     "default": "security", "fixed": true, "skills": ["skills/*"]},
-    {"repo": "siddu1004/claude-plugins-official", "license": "Apache-2.0",
-     "default": "agent-dev", "skills": ["plugins/*/skills/*"], "exclude": ["plugins/example-plugin/*"]},
-    {"repo": "siddu1004/Agent-Reach", "license": "MIT",
-     "default": "data-apis", "fixed": true, "skills": ["agent_reach/skill"]},
-    {"repo": "siddu1004/MoneyPrinterTurbo-try-it-out-once", "license": "MIT",
-     "default": "content-media", "fixed": true, "skills": ["docs/skill"]},
-    {"repo": "siddu1004/public-apis", "license": "MIT",
-     "default": "data-apis", "fixed": true, "template": "templates/public-apis",
-     "files": {"README.md": "reference/public-apis.md"}},
-    {"repo": "siddu1004/ECC", "license": "MIT",
-     "default": "engineering", "skills": ["skills/*"], "collision_prefix": "ecc-"},
-    {"repo": "siddu1004/OmniRoute", "license": "MIT",
-     "default": "ai-gateway", "fixed": true, "skills": ["skills/*"], "collision_prefix": "omniroute-"}
+    {
+      "repo": "siddu1004/impeccable",
+      "license": "Apache-2.0",
+      "upstream": "https://github.com/pbakaus/impeccable",
+      "default": "frontend",
+      "skills": [
+        "plugin/skills/impeccable"
+      ],
+      "variants": {
+        "generic": ".agents/skills/impeccable"
+      }
+    },
+    {
+      "repo": "siddu1004/taste-skill-for-claude-and-antigravity",
+      "license": "MIT",
+      "upstream": "https://github.com/Imaidazo/taste-skill-plugin",
+      "default": "frontend",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "siddu1004/skills-claude-antigravity",
+      "license": "MIT",
+      "upstream": "https://github.com/emilkowalski/skills",
+      "default": "frontend",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "siddu1004/awesome-design-skills",
+      "license": "MIT",
+      "default": "design-styles",
+      "fixed": true,
+      "skills": [
+        "skills/*"
+      ],
+      "collision_prefix": "style-"
+    },
+    {
+      "repo": "siddu1004/strix",
+      "license": "Apache-2.0",
+      "default": "security",
+      "fixed": true,
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "siddu1004/claude-plugins-official",
+      "license": "Apache-2.0",
+      "default": "agent-dev",
+      "skills": [
+        "plugins/*/skills/*"
+      ],
+      "exclude": [
+        "plugins/example-plugin/*"
+      ]
+    },
+    {
+      "repo": "siddu1004/Agent-Reach",
+      "license": "MIT",
+      "default": "data-apis",
+      "fixed": true,
+      "skills": [
+        "agent_reach/skill"
+      ]
+    },
+    {
+      "repo": "siddu1004/MoneyPrinterTurbo-try-it-out-once",
+      "license": "MIT",
+      "default": "content-media",
+      "fixed": true,
+      "skills": [
+        "docs/skill"
+      ]
+    },
+    {
+      "repo": "siddu1004/public-apis",
+      "license": "MIT",
+      "default": "data-apis",
+      "fixed": true,
+      "template": "templates/public-apis",
+      "files": {
+        "README.md": "reference/public-apis.md"
+      }
+    },
+    {
+      "repo": "siddu1004/ECC",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        "skills/*",
+        ".agents/skills/ecc-conventions",
+        "pi/core/skills/ecc-council"
+      ],
+      "collision_prefix": "ecc-"
+    },
+    {
+      "repo": "siddu1004/OmniRoute",
+      "license": "MIT",
+      "default": "ai-gateway",
+      "fixed": true,
+      "skills": [
+        "skills/*"
+      ],
+      "collision_prefix": "omniroute-"
+    },
+    {
+      "repo": "siddu1004/freellmapi",
+      "license": "MIT",
+      "default": "data-apis",
+      "fixed": true,
+      "template": "templates/freellmapi",
+      "files": {
+        "docs/en/install/01-install.md": "reference/install.md",
+        "docs/en/api/01-rest-api.md": "reference/rest-api.md",
+        "docs/en/clients/01-agent-clients.md": "reference/clients.md",
+        "docs/en/troubleshooting/01-common-issues.md": "reference/troubleshooting.md"
+      }
+    },
+    {
+      "repo": "siddu1004/claude-mem",
+      "license": "Apache-2.0",
+      "default": "memory",
+      "fixed": true,
+      "skills": [
+        "plugin/skills/*",
+        "cowork/skills/mem-setup",
+        "claude-mem-cursor/skills/install",
+        "claude-mem-grok-bot/skills/host-observer",
+        "openclaw"
+      ],
+      "name_prefix": "mem-",
+      "name_prefix_skip": [
+        "mem",
+        "claude-mem"
+      ]
+    },
+    {
+      "repo": "siddu1004/OmniRoute",
+      "license": "MIT",
+      "default": "devops",
+      "fixed": true,
+      "collision_prefix": "omniroute-",
+      "skills": [
+        "config/quality/skill-templates/*"
+      ]
+    },
+    {
+      "repo": "siddu1004/claude-plugins-official",
+      "license": "Apache-2.0",
+      "default": "agent-dev",
+      "fixed": true,
+      "name_prefix": "discord-",
+      "skills": [
+        "external_plugins/discord/skills/*"
+      ],
+      "name_prefix_skip": [
+        "discord"
+      ]
+    }
   ],
   "externals": {
     "career": {
       "description": "AI job search: evaluate offers, tailor CVs, scan job portals and track applications. Runs from its own checkout.",
-      "claude": {"source": "github", "repo": "siddu1004/career-ops-for-claude-skill"},
-      "app": {"repo": "siddu1004/career-ops-for-claude-skill", "skill": ".agents/skills/career-ops", "name": "career-ops"}
+      "claude": {
+        "source": "github",
+        "repo": "siddu1004/career-ops-for-claude-skill",
+        "ref": "claude/claude-code-plugin"
+      },
+      "app": {
+        "repo": "siddu1004/career-ops-for-claude-skill",
+        "skill": ".agents/skills/career-ops",
+        "name": "career-ops",
+        "ref": "claude/claude-code-plugin",
+        "setup": "npm install"
+      }
     },
     "session-memory": {
       "description": "Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker.",
-      "claude": {"source": "git-subdir", "url": "https://github.com/siddu1004/claude-mem.git", "path": "plugin"},
+      "claude": {
+        "source": "git-subdir",
+        "url": "https://github.com/siddu1004/claude-mem.git",
+        "path": "plugin"
+      },
       "claude_only": true
     },
     "ecc-full": {
       "description": "The complete Everything Claude Code plugin: its hooks, agents and commands on top of its skills. Overlaps the ECC skills spread across the category plugins, so install one or the other.",
-      "claude": {"source": "github", "repo": "siddu1004/ECC"},
-      "claude_only": true, "optional": true
+      "claude": {
+        "source": "github",
+        "repo": "siddu1004/ECC"
+      },
+      "claude_only": true,
+      "optional": true
     },
     "omniroute-full": {
       "description": "The complete OmniRoute plugin. Overlaps the ai-gateway category, so install one or the other.",
-      "claude": {"source": "github", "repo": "siddu1004/OmniRoute", "ref": "claude-plugin"},
-      "claude_only": true, "optional": true
+      "claude": {
+        "source": "github",
+        "repo": "siddu1004/OmniRoute",
+        "ref": "claude-plugin"
+      },
+      "claude_only": true,
+      "optional": true
+    },
+    "sai": {
+      "description": "Sai, a personal voice assistant (OpenRouter brain, Jev judgment, open-interpreter hands, Fish Audio voice). Private repo: installs only for accounts with access.",
+      "claude": {
+        "source": "github",
+        "repo": "siddu1004/sai_ai_my_own_jarvis",
+        "ref": "claude/sai-skill"
+      },
+      "app": {
+        "repo": "siddu1004/sai_ai_my_own_jarvis",
+        "skill": "skills/sai",
+        "name": "sai",
+        "ref": "claude/sai-skill",
+        "setup": "python -m venv .venv, activate it, then pip install -r requirements.txt"
+      },
+      "private": true
     }
   },
   "profiles": {
-    "starter":       ["sfp", "engineering", "testing-quality", "data-apis", "agent-dev"],
-    "frontend-dev":  ["sfp", "frontend", "design-styles", "testing-quality", "engineering", "data-apis"],
-    "backend-dev":   ["sfp", "backend", "languages", "testing-quality", "devops", "security", "engineering", "data-apis"],
-    "mobile-dev":    ["sfp", "mobile", "languages", "testing-quality", "engineering"],
-    "agent-builder": ["sfp", "agents", "agent-dev", "ai-ml", "ai-gateway", "data-apis"]
+    "starter": [
+      "sfp",
+      "engineering",
+      "testing-quality",
+      "data-apis",
+      "agent-dev"
+    ],
+    "frontend-dev": [
+      "sfp",
+      "frontend",
+      "design-styles",
+      "testing-quality",
+      "engineering",
+      "data-apis"
+    ],
+    "backend-dev": [
+      "sfp",
+      "backend",
+      "languages",
+      "testing-quality",
+      "devops",
+      "security",
+      "engineering",
+      "data-apis"
+    ],
+    "mobile-dev": [
+      "sfp",
+      "mobile",
+      "languages",
+      "testing-quality",
+      "engineering"
+    ],
+    "agent-builder": [
+      "sfp",
+      "agents",
+      "agent-dev",
+      "ai-ml",
+      "ai-gateway",
+      "data-apis",
+      "memory"
+    ]
   }
 }
