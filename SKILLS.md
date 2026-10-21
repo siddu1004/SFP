@@ -9,7 +9,7 @@ The router and the manager: find the right skill for any task, installed or not,
 | Skill | What it does |
 |---|---|
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
-| `sfp-manager` | Decides which SFP skills to use, when, and in what order. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work moves to a new phase. It reads … |
+| `sfp-manager` | Decides which SFP skills to use, when, and in what order, the way a bee colony divides work. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the w… |
 
 ## frontend (62)
 

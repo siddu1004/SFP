@@ -490,7 +490,7 @@ class Markov:
     def next(self, a, limit=5, exclude=()):
         if a not in core.SKILLS:
             return []
-        scores = [(self.prob(a, b), b) for b in core.SKILLS if b != a and b not in exclude and b != 'sfp']
+        scores = [(self.prob(a, b), b) for b in core.SKILLS if b != a and b not in exclude and b not in ('sfp', 'sfp-manager')]
         scores.sort(key=lambda x: (-x[0], x[1]))
         return scores[:limit]
 
@@ -609,7 +609,7 @@ def recommend(task, project=None, goal=None, after=(), budget=12000, max_skills=
 
     scored = []
     for name in set(rel) | set(hist):
-        if name in after or name == 'sfp':
+        if name in after or name in ('sfp', 'sfp-manager'):
             continue
         r = rel.get(name, 0) / top_rel
         tech = SKILL_TECH.get(name, set())

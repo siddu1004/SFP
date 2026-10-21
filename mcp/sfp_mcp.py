@@ -15,9 +15,9 @@ Tools
   list_categories  categories, skill counts and install presets
   find_api         search about 2,100 free public APIs
   install_command  the command that installs categories or a preset
-  recommend_stack  the few skills a task needs, in order, weighed by task, project files,
-                   goal and the skills used so far (the stack engine, sfp_stack.py)
-  predict_next     the skills most likely to be needed after one (a Markov chain)
+  recommend_stack  the few skills a task needs, in order: the hive (sfp_hive.py), a colony
+                   algorithm of scouts and quorum, stop signals and response thresholds
+  predict_next     the skills most likely to be needed after one (pheromone trails)
   record_usage     note that a skill was used, so predictions learn your habits
 Resources
   sfp://skill/{name}   a skill's SKILL.md      sfp://catalog   the category summary
@@ -35,7 +35,7 @@ import subprocess
 import sys
 
 SERVER_NAME = 'sfp'
-SERVER_VERSION = '1.0.0'
+SERVER_VERSION = '2.0.0'
 SUPPORTED_PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05']
 MAX_FILE_BYTES = 400000
 MAX_LISTED_FILES = 200
@@ -231,6 +231,12 @@ def stack_engine():
     return sfp_stack
 
 
+def hive():
+    stack_engine()  # puts this module and its folder in place for the engines to import
+    import sfp_hive
+    return sfp_hive
+
+
 def tool_get_skill(a):
     name = resolve_name(a.get('name'))
     if name and name != 'sfp' and (not SESSION_HISTORY or SESSION_HISTORY[-1] != name):
@@ -329,8 +335,8 @@ def tool_recommend_stack(a):
     if project and not os.path.isdir(os.path.expanduser(project)):
         raise ValueError('no such folder: %s' % project)
     after = [x.strip() for x in (a.get('after') or '').split(',') if x.strip()] or SESSION_HISTORY[-3:]
-    res = stack_engine().recommend(task, project and os.path.expanduser(project), a.get('goal'), after,
-                                   int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)))
+    res = hive().recommend(task, project and os.path.expanduser(project), a.get('goal'), after,
+                           int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)))
     res['next_step'] = ('Call get_skill for each skill in the stack, in order: base layers do the work, '
                         'check layers verify it, finish layers ship it.')
     return json.dumps(res, indent=1)
@@ -340,9 +346,8 @@ def tool_predict_next(a):
     name = resolve_name(a.get('skill') or (SESSION_HISTORY[-1] if SESSION_HISTORY else ''))
     if not name:
         raise ValueError('give a skill name, or fetch a skill with get_skill first')
-    eng = stack_engine()
     out = [{'name': b, 'category': SKILLS[b]['category'], 'probability': round(p, 4)}
-           for p, b in eng.model().next(name, max(1, min(int(a.get('limit', 5)), 20)))]
+           for p, b in hive().colony().next(name, max(1, min(int(a.get('limit', 5)), 20)))]
     return json.dumps({'after': name, 'next': out}, indent=1)
 
 
@@ -390,7 +395,7 @@ TOOLS = [
          'tools': {'type': 'string', 'description': 'Comma-separated IDE ids, e.g. cursor,codex.'}}},
      'fn': tool_install_command},
     {'name': 'recommend_stack',
-     'description': 'Pick the few SFP skills a task needs and the order to use them in. Weighs the task words, the project (it reads manifests such as package.json, requirements.txt, go.mod, pubspec.yaml), the phase of work and the skills used so far. Use at the start of a substantial task instead of loading many skills.',
+     'description': 'Pick the few SFP skills a task needs and the order to use them in, with a colony algorithm modelled on how honeybees divide work: independent scouts (task words, project files, phase of work, recent skills) must reach a quorum, rival skills suppress each other, and each skill takes the job it responds to most. Reads manifests such as package.json, requirements.txt, go.mod and pubspec.yaml. Use at the start of a substantial task instead of loading many skills.',
      'inputSchema': {'type': 'object', 'properties': {
          'task': {'type': 'string', 'description': 'What the user asked for, in their words.'},
          'project_path': {'type': 'string', 'description': 'Absolute path of the project folder, so the stack fits its technologies.'},
@@ -400,7 +405,7 @@ TOOLS = [
          'max_skills': {'type': 'integer', 'description': 'Most skills in the stack (default 4, max 8).'}}, 'required': ['task']},
      'fn': tool_recommend_stack},
     {'name': 'predict_next',
-     'description': 'Predict which SFP skills are usually needed after one, from a Markov chain over skill sequences (recipes plus your recorded usage).',
+     'description': 'Predict which SFP skills are usually needed after one, by following pheromone trails: a Markov chain over skill sequences from the recipes and your recorded usage, where old usage evaporates with a 30-day half-life.',
      'inputSchema': {'type': 'object', 'properties': {
          'skill': {'type': 'string', 'description': 'The skill just used. Defaults to the last one fetched.'},
          'limit': {'type': 'integer', 'description': 'How many to return (default 5).'}}},

@@ -7,10 +7,11 @@
 
 <p align="center">
   <b>SFP gives your AI coding agent @@TOTAL@@ skills, sorted by what you build.</b><br>
-  Install a handful. <code>sfp</code> finds the rest, and <code>sfp-manager</code> decides which few to use, and when.
+  Install a handful. <code>sfp</code> finds the rest. <code>sfp-manager</code> runs a hive that picks which few to use, and when.
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/version-@@HIVE_VERSION@@-0f766e?style=flat-square&labelColor=3b4350" alt="Version @@HIVE_VERSION@@">
   <img src="https://img.shields.io/badge/skills-@@TOTAL@@-0f766e?style=flat-square&labelColor=3b4350" alt="@@TOTAL@@ skills">
   <img src="https://img.shields.io/badge/works_in-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Works in 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/installer-Python_3_only-0f766e?style=flat-square&labelColor=3b4350" alt="Installer needs only Python 3">
@@ -37,6 +38,10 @@ It registers `sfp` in each IDE it finds and keeps your other MCP servers. See [M
 
 On Windows or in Claude Code? See [Windows](#windows) and [Claude Code](#claude-code). For presets and single IDEs, see [all install options](#install).
 
+## New in @@HIVE_VERSION@@: the Hive
+
+`sfp-manager` now decides which skills to use with a colony algorithm modelled on how honeybees divide work. Scouts must reach a quorum, rival skills send stop signals, each skill takes the job it responds to most, and used paths leave pheromone trails that fade. On @@FRESH_N@@ new tasks it had never seen, it put the right skill in the stack @@FRESH_HIVE@@ of the time, against @@FRESH_V1@@ for the previous engine and @@FRESH_SEARCH@@ for plain search. See [The Hive](#the-hive).
+
 ## Why SFP
 
 Good agent skills exist, but they are scattered across dozens of repos. Each has its own install steps, its own folder layout and its own idea of which IDE you use.
@@ -48,12 +53,12 @@ So you pick between two bad options: install a few skills and miss the good ones
 SFP removes the choice in three moves:
 
 1. **Sort.** @@NCATS@@ categories group skills by what you build, and presets group categories by role.
-2. **Route.** Two small skills hold an index of everything and the judgement to use it: `sfp` finds a skill, and `sfp-manager` picks the few a task needs, in order, for the project in front of it. Together they cost about @@SFP_TOKENS@@ tokens, which is @@RATIO@@ times less than loading every description.
+2. **Route.** Two small skills hold an index of everything and the judgement to use it: `sfp` finds a skill, and `sfp-manager` runs the hive, which picks the few a task needs, in order, for the project in front of it. Together they cost about @@SFP_TOKENS@@ tokens, which is @@RATIO@@ times less than loading every description.
 3. **Install once.** One command puts the right skills in the right folder for each of 16 IDEs and CLIs. Tools with no skills folder get the same library over MCP.
 
 ## What Makes SFP Different
 
-- **A manager decides which skills to use, and when.** It reads the task, the project's files and the skills used so far, and stacks two or three skills in the order to apply them. The same words get `react-testing` in a Next.js app and `django-tdd` in a Django one. See [The Manager](#the-manager).
+- **A hive decides which skills to use, and when.** Modelled on how bee colonies divide work without a boss, it reads the task, the project's files and the skills used so far, and stacks one to three skills in the order to apply them. The same words get `react-testing` in a Next.js app, `django-tdd` in Django and `csharp-testing` in .NET. See [The Hive](#the-hive).
 - **It loads skills on demand, not all at once.** Most collections ask you to install everything or pick by hand. Here the router reads a skill only when your task calls for it. The cost table below shows the difference in tokens.
 - **Skills are sorted by what you build, not by who wrote them.** SFP merges @@SOURCES@@ sources into categories by job. A backend developer finds Postgres, migrations, API design and Docker together.
 - **One library for 16 IDEs.** You do not hunt for each tool's skills folder or format. The installer knows them, and Claude Code gets proper plugins.
@@ -70,8 +75,9 @@ SFP removes the choice in three moves:
 | Category | A group of skills by job, such as `backend` or `security`. There are @@NCATS@@. Each is also a Claude Code plugin. |
 | Preset | A ready-made list of categories for a kind of work, such as `frontend-dev`. Install one name instead of choosing categories. |
 | `sfp` (the router) | The skill that knows all the others. It searches the index and reads the skill your task needs, installed or not. |
-| `sfp-manager` | The skill that decides which few skills a task needs, in what order, from the task, the project files and the skills used so far. |
-| Stack | The manager's answer: two to four skills, ordered from the work itself (`base`) to its checks (`check`) and its release (`finish`). |
+| `sfp-manager` | The skill that decides which few skills a task needs, in what order. It runs the hive. |
+| Hive | The engine behind `sfp-manager` (`mcp/sfp_hive.py`): a colony algorithm of scouts, quorum, stop signals, response thresholds and pheromone trails. |
+| Stack | The hive's answer: one to four skills, ordered from the work itself (`base`) to its checks (`check`) and its release (`finish`). |
 | Recipe | A named stack that works well for one goal, such as `ship-a-service`. There are @@RECIPES@@ in `mcp/stack_recipes.json`. |
 | Installer | `install.sh` and `install.ps1`. They copy skills into each IDE's folder and never touch a skill they did not create. |
 | MCP server | `mcp/sfp_mcp.py`. It gives MCP clients nine tools to search the library, read skills and get a stack. |
@@ -83,7 +89,8 @@ SFP removes the choice in three moves:
 SFP/
   plugins/<category>/skills/<skill>/   the skills, one folder each (generated)
   mcp/sfp_mcp.py                       the MCP server
-  mcp/sfp_stack.py, stack_recipes.json the manager's engine and its recipes
+  mcp/sfp_hive.py                      the hive: the manager's engine
+  mcp/sfp_stack.py, stack_recipes.json the v1 engine it builds on, and the recipes (permanent trails)
   scripts/install.py, sync.py          the installer, and the script that rebuilds everything
   templates/                           the sfp router, the career launcher, the API finder, this README
   vendor/                              snapshots of plugins that have no public repo
@@ -92,48 +99,65 @@ SFP/
   sources.json, categories.json        where skills come from and how they are sorted
 ```
 
-## The Manager
+## The Hive
 
-Skills work like photo filters. One does one thing; a short stack in the right order gives the best result; stacking every filter ruins the picture. `sfp-manager` builds that short stack for each task.
+A bee colony has no manager. The queen lays eggs; she does not hand out work. Yet the colony splits thousands of jobs well, with rules that biologists have measured and modelled. `sfp-manager` uses the same rules to decide which skills your agent loads, and when.
 
-It weighs four things:
+| In a colony | In the hive | What it prevents |
+|---|---|---|
+| **Scouts** judge each possible nest site on their own | Five scouts judge each skill: the task's words, the project's files, the phase of work, the task's category, and the trail from the last skill used | One signal deciding alone |
+| **Quorum**: the colony commits once enough scouts agree | A skill needs strong task words, or the backing of two scouts | A rare word dragging in an unrelated skill |
+| **Stop signals**: scouts for rival sites head-butt each other | Each chosen skill suppresses rivals in proportion to how alike they are | Two skills that do the same thing |
+| **Response thresholds**: a bee takes a job when its need passes her threshold, and doing it lowers the need | Every job (plan, build, test, secure, ship, ...) has a level of need; a skill takes the job it responds to most, then that need drops | Five testing skills for one testing task |
+| **Specialisation**: bees that do a job well get quicker to take it again | A skill you mark as helpful gets a lower threshold and is chosen sooner | The same unhelpful skill coming back |
+| **Pheromone trails** that evaporate (ants) | Recorded sequences of skills leave trails with a 30-day half-life; they predict the next skill | Stale habits steering forever |
 
-- **The task.** Your words, matched against every skill.
-- **The project.** It reads `package.json`, `requirements.txt`, `go.mod`, `pubspec.yaml`, `pom.xml`, Dockerfiles and the like, so it never offers a Django skill for a React app.
-- **The phase of work.** Planning, building, testing, securing, shipping. The stack is ordered by it.
-- **What came before.** A Markov chain over skill sequences predicts what you will need next. It starts from @@RECIPES@@ recipes and learns from the usage you choose to record.
+```mermaid
+flowchart LR
+  T[task words] --> Q{quorum}
+  P[project files] --> Q
+  J[phase of work] --> Q
+  C[category] --> Q
+  H[trail from last skill] --> Q
+  Q --> S[stop signals between rivals]
+  S --> R[each skill takes the job it responds to most]
+  R --> K[ordered stack: base, check, finish]
+```
+
+It runs inside the process that asks: the MCP server, or the skill's own script. A decision takes about @@HIVE_MS@@ ms, and the agent asks once per phase of work, not per message, so there is no middleman to wait on. If Python is not available, the skill tells the agent the same rules in plain words, so it can apply them itself.
 
 Ask your agent "use sfp-manager for this task", or run it yourself:
 
 ```bash
-python3 ~/.sfp/SFP/mcp/sfp_stack.py recommend "write tests for the order view" --project .
+python3 ~/.sfp/SFP/mcp/sfp_hive.py recommend "add an endpoint to list orders" --project .
 ```
+
+Real output for a sample Rails project:
 
 ```text
-Project: celery, django, postgres, python
-Phase of work: test 100%
+Stack for: add an endpoint to list orders
+Project: rails, ruby
+Phase of work: build 100%
 
-1. [base] django-celery  (backend, build, about 3,283 tokens)
-   why: task words: test; fits project: celery, django
-2. [check] django-tdd  (testing-quality, test, about 5,257 tokens)
-   why: task words: test; fits project: django
+1. [base] rails-patterns  (backend, build, about 4,128 tokens)
+   why: fits project: rails; backed by: words, project, role
 
-Matching recipe: django-feature (django-patterns -> django-tdd -> django-security)
-Likely next: django-security, agent-security-hardening, api-security-testing
+Likely next: gateguard, tdd-workflow, test-collaboration
+Colony: 37 skills scouted, 3 reached quorum, 1 took a job.
 ```
 
-That is real output for a sample Django project, flaws included: `django-celery` gets in only because the project uses Celery and its description mentions tests.
+**Measured** with `python3 mcp/sfp_hive.py evaluate`, regenerated on every rebuild. "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-**Measured** with `python3 mcp/sfp_stack.py evaluate`, regenerated on every rebuild:
+| Task set | Hive @@HIVE_VERSION@@ | Previous engine (v1) | Plain search |
+|---|---:|---:|---:|
+| @@FRESH_N@@ new tasks in 8 new projects, written before the hive and scored once | **@@FRESH_HIVE@@** | @@FRESH_V1@@ | @@FRESH_SEARCH@@ |
+| @@PROJ_N@@ tasks in 10 sample projects | @@PROJ_HIVE@@ | @@PROJ_V1@@ | @@PROJ_SEARCH@@ |
+| @@BENCH_N@@ tasks with no project | @@BENCH_HIVE@@ | @@BENCH_V1@@ | @@BENCH_SEARCH@@ |
+| Top pick right, on the new tasks | @@FRESH_HIVE_FIRST@@ | @@FRESH_V1_FIRST@@ | |
+| Skills per stack, no project | @@BENCH_HIVE_SIZE@@ | @@BENCH_V1_SIZE@@ | |
+| Stacks with a skill for the wrong technology, all sets | @@WRONG_HIVE@@ | @@WRONG_V1@@ | @@WRONG_SEARCH@@ |
 
-| | Manager | Plain search, same number of results |
-|---|---:|---:|
-| @@STACK_PROJ_N@@ tasks in 10 sample projects: the right skill is in the stack | @@STACK_PROJ_HIT@@ | @@STACK_PROJ_SEARCH@@ |
-| Stacks with a skill for the wrong technology | @@STACK_PROJ_WRONG@@ | @@STACK_PROJ_SEARCH_WRONG@@ |
-| @@SEARCH_N@@ tasks with no project: the right skill is in the stack | @@STACK_BENCH_HIT@@ | @@STACK_BENCH_SEARCH@@ |
-| The top pick is right | @@STACK_FIRST@@ | @@SEARCH_TOP1@@ |
-
-A stack holds @@STACK_SIZE@@ skills on average, about @@STACK_TOKENS@@ tokens of instructions, chosen in about @@STACK_MS@@ ms. The weights were tuned on the no-project tasks, so those rows are optimistic; the project tasks were written afterwards and scored once. Whether stacks make finished work better is not measured yet. [docs/MANAGER.md](docs/MANAGER.md) has the algorithm, the failure cases, the roadmap and how this could become a product.
+How far to trust it: the hive's constants were tuned on the 10-project and no-project sets, where it matches v1 with fewer skills. The new set was written before the hive existed and opened once, after tuning. The tasks and answers were written by one person. Whether stacks make the finished work better is not measured. It still makes mistakes you can see: `application-security-testing` joins many "write tests" stacks, and a word like "version" can pull in an unrelated skill. [docs/HIVE.md](docs/HIVE.md) has the full algorithm, the biology it comes from, the tuning history and the misses.
 
 ## What It Does for Your IDE
 
@@ -191,15 +215,16 @@ Search is keyword-based, with no embeddings. It does best when your task shares 
 ## Use It Well
 
 1. **Start with a preset, not everything.** Pick the one that matches your work. You can add a category later.
-2. **Describe the task and let `sfp` pick.** Say what you want, for example "use sfp to find a skill for adding rate limiting". One or two skills usually fit.
-3. **Name the skill when you know it.** "Use the `impeccable` skill to critique this page" skips the search.
-4. **Chain skills for a whole job.**
+2. **For a whole task, let the hive pick.** Say "use sfp-manager for this task" at the start, and again when the work moves on (from building to testing, or to shipping). It returns the few skills that fit this project, in order.
+3. **For one skill, let `sfp` find it.** "Use sfp to find a skill for adding rate limiting."
+4. **Name the skill when you know it.** "Use the `impeccable` skill to critique this page" skips the search.
+5. **Chain skills for a whole job.**
    - Ship a page: `design-taste-frontend`, then `accessibility-audit`, then `break-ui`.
    - Ship a service: `api-design`, then `database-migrations`, then `tdd-workflow`, then `security-review`.
    - Ship a plugin: `skill-creator`, then `hook-development`, then `mcp-builder`.
-5. **Grow your install from use.** As a rule of thumb, when you ask `sfp` for the same category three times, install it. Run `./install.sh list` to see what is available.
-6. **Use the MCP server where skills folders do not exist.** It gives the same skills to any MCP client.
-7. **Keep it current.** Run your install line again. It updates only the folders it created.
+6. **Grow your install from use.** As a rule of thumb, when you ask `sfp` for the same category three times, install it. Run `./install.sh list` to see what is available.
+7. **Use the MCP server where skills folders do not exist.** It gives the same skills to any MCP client.
+8. **Keep it current.** Run your install line again. It updates only the folders it created.
 
 Prompts to try:
 
@@ -365,8 +390,8 @@ Any other MCP client: add a stdio server that runs `python3 /path/to/SFP/mcp/sfp
 | `list_categories` | Lists categories, skill counts and install presets |
 | `find_api` | Searches the free API list by keyword, auth, CORS and HTTPS |
 | `install_command` | Gives the command that installs a category or preset for good |
-| `recommend_stack` | Picks the few skills a task needs, in order, for the project at `project_path` |
-| `predict_next` | The skills most likely needed after one, from the Markov chain |
+| `recommend_stack` | Runs the hive: the few skills a task needs, in order, for the project at `project_path` |
+| `predict_next` | The skills most likely needed after one, by following pheromone trails |
 | `record_usage` | Notes that a skill was used, and whether it helped, in `~/.sfp/usage.jsonl` |
 
 Every skill is also a resource at `sfp://skill/{name}`, and two prompts, `use_skill` and `find_skill_for`, load a skill into a chat.
@@ -388,6 +413,12 @@ python3 plugins/data-apis/skills/public-apis/scripts/find_api.py --categories
 Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--json`. It needs only Python 3.
 
 ## Questions
+
+**Does the hive slow the agent down?** No. It runs inside the MCP server or the skill's own script, in about @@HIVE_MS@@ ms, and the agent asks once per phase of work. What it saves is larger: on the no-project tasks it loads @@BENCH_HIVE_SIZE@@ skills on average, against @@BENCH_V1_SIZE@@ for v1.
+
+**Is a queen bee really in charge?** No, and that is the point. The queen lays eggs. Work in a colony is divided by thresholds, recruitment, quorum and stop signals among equals. The hive copies those rules, not the myth.
+
+**Can I go back to the previous engine?** Yes: `python3 mcp/sfp_hive.py recommend "..." --engine v1`.
 
 **Will it slow my agent down?** Only through the descriptions of the skills you install, as the cost table shows. `sfp` alone is about @@SFP_TOKENS@@ tokens, and the MCP server adds nothing until a tool is called.
 

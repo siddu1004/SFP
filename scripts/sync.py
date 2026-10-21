@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IGNORE = shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
-VERSION = '1.0.0'
+VERSION = '2.0.0'
 OUT = os.path.join(ROOT, 'plugins')
 
 
@@ -308,25 +308,35 @@ def measure(cfg, cats, catalog):
             sizes.append(os.path.getsize(f) // 4)
     sizes.sort()
 
-    # The stack engine, scored against plain search on the same tasks.
+    # The hive (the manager's engine), scored against v1 and plain search on the same tasks.
     sys.modules['sfp_mcp'] = mod
-    spec = importlib.util.spec_from_file_location('sfp_stack_measure', os.path.join(ROOT, 'mcp', 'sfp_stack.py'))
+    sys.path.insert(0, os.path.join(ROOT, 'mcp'))
+    spec = importlib.util.spec_from_file_location('sfp_hive_measure', os.path.join(ROOT, 'mcp', 'sfp_hive.py'))
     eng = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(eng)
     ev = eng.evaluate(os.path.join(ROOT, 'tests'))
-    del sys.modules['sfp_mcp']
+    sys.modules.pop('sfp_mcp', None)
+    sys.modules.pop('sfp_stack', None)
 
     def pct(x):
         return '%d%%' % round(100.0 * x)
 
-    stack = {
-        'STACK_BENCH_HIT': pct(ev['bench_hit']), 'STACK_BENCH_SEARCH': pct(ev['bench_search_hit']),
-        'STACK_FIRST': pct(ev['bench_first']), 'STACK_SIZE': '%.1f' % ev['avg_size'],
-        'STACK_TOKENS': format(int(round(ev['avg_tokens'], -2)), ','), 'STACK_MS': str(max(1, round(ev['avg_ms']))),
-        'STACK_PROJ_N': str(ev.get('proj_n', 0)), 'STACK_PROJ_HIT': pct(ev.get('proj_hit', 0)),
-        'STACK_PROJ_SEARCH': pct(ev.get('proj_search_hit', 0)), 'STACK_PROJ_WRONG': str(ev.get('proj_wrong', 0)),
-        'STACK_PROJ_SEARCH_WRONG': str(ev.get('proj_search_wrong', 0)), 'RECIPES': str(len(eng.RECIPES)),
-    }
+    stack = {'RECIPES': str(len(eng.v1.RECIPES)), 'HIVE_VERSION': eng.VERSION}
+    for key in ('bench', 'proj', 'fresh'):
+        k = key.upper()
+        h, o, s = ev[key + '_hive'], ev[key + '_v1'], ev[key + '_search']
+        stack.update({
+            k + '_N': str(h['n']), k + '_HIVE': pct(h['hit']), k + '_V1': pct(o['hit']), k + '_SEARCH': pct(s['hit']),
+            k + '_HIVE_FIRST': pct(h['first']), k + '_V1_FIRST': pct(o['first']),
+            k + '_HIVE_SIZE': '%.1f' % h['size'], k + '_V1_SIZE': '%.1f' % o['size'],
+            k + '_HIVE_WRONG': str(h['wrong']), k + '_SEARCH_WRONG': str(s['wrong']),
+        })
+    for eng_name in ('hive', 'v1', 'search'):
+        stack['WRONG_' + eng_name.upper()] = str(sum(ev[k + '_' + eng_name]['wrong'] for k in ('bench', 'proj', 'fresh')))
+    every = [ev[k + '_hive'] for k in ('bench', 'proj', 'fresh')]
+    n_all = sum(x['n'] for x in every)
+    stack['HIVE_TOKENS'] = format(int(round(sum(x['tokens'] * x['n'] for x in every) / n_all, -2)), ',')
+    stack['HIVE_MS'] = str(max(1, round(sum(x['ms'] * x['n'] for x in every) / n_all)))
     return dict(stack, **{
         'SEARCH_N': str(n),
         'SEARCH_TOP1': '%d%%' % round(100.0 * hits[1] / n) if n else 'n/a',

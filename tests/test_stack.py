@@ -195,10 +195,12 @@ class MarkovTest(unittest.TestCase):
 
     def test_log_holds_names_and_times_only(self):
         st.record('react-testing', 'helped', session='abc')
-        event = json.loads(open(self.log).read().strip())
+        with open(self.log) as f:
+            event = json.loads(f.read().strip())
         self.assertEqual(set(event), {'t', 'skill', 'outcome', 'session'})
         st.recommend('a secret prompt about my-private-repo', chain=st.model())
-        self.assertNotIn('secret', open(self.log).read())
+        with open(self.log) as f:
+            self.assertNotIn('secret', f.read())
 
     def test_logging_can_be_turned_off(self):
         os.environ['SFP_NO_USAGE_LOG'] = '1'

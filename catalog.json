@@ -5173,7 +5173,7 @@
   {
    "name": "sfp-manager",
    "category": "sfp",
-   "description": "Decides which SFP skills to use, when, and in what order. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work moves to a new phase. It reads the task, the project files and the skills used so far, and returns a short ordered stack of skills to load instead of many.",
+   "description": "Decides which SFP skills to use, when, and in what order, the way a bee colony divides work. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work moves to a new phase. It reads the task, the project files and the skills used so far, and returns a short ordered stack of skills to load instead of many.",
    "source": "siddu1004/SFP",
    "license": "MIT",
    "path": "plugins/sfp/skills/sfp-manager",

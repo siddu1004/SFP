@@ -1,5 +1,7 @@
 # The SFP Manager
 
+> Since version 2.0.0 the manager runs on [the hive](HIVE.md), a colony algorithm that builds on the engine described here (now called v1). This page still describes v1's scoring, which the hive reuses for quality, and the product thinking.
+
 The manager decides which skills an agent uses, when, and in what order. It is the `sfp-manager` skill, backed by the stack engine in `mcp/sfp_stack.py`, and it is also available as the `recommend_stack`, `predict_next` and `record_usage` MCP tools.
 
 This page explains the idea, the algorithm, what has been measured, where it fails, what to build next, and how it could become a product.
