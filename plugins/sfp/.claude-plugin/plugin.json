@@ -1,7 +1,7 @@
 {
   "name": "sfp",
   "version": "1.0.0",
-  "description": "The router: finds the right skill for any task, installed or not.",
+  "description": "The router and the manager: find the right skill for any task, installed or not, and decide which few skills to use, in what order, for the task and the project.",
   "author": {
     "name": "siddu1004"
   },

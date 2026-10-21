@@ -1,8 +1,8 @@
 {
  "categories": {
   "sfp": {
-   "description": "The router: finds the right skill for any task, installed or not.",
-   "skills": 1
+   "description": "The router and the manager: find the right skill for any task, installed or not, and decide which few skills to use, in what order, for the task and the project.",
+   "skills": 2
   },
   "frontend": {
    "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.",
@@ -5168,6 +5168,15 @@
    "source": "siddu1004/SFP",
    "license": "",
    "path": "plugins/sfp/skills/sfp",
+   "variants": {}
+  },
+  {
+   "name": "sfp-manager",
+   "category": "sfp",
+   "description": "Decides which SFP skills to use, when, and in what order. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work moves to a new phase. It reads the task, the project files and the skills used so far, and returns a short ordered stack of skills to load instead of many.",
+   "source": "siddu1004/SFP",
+   "license": "MIT",
+   "path": "plugins/sfp/skills/sfp-manager",
    "variants": {}
   }
  ]

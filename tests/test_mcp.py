@@ -73,9 +73,11 @@ class McpServerTest(unittest.TestCase):
 
     def test_tools_list_is_read_only_and_complete(self):
         tools = {t['name']: t for t in self.c.rpc('tools/list')['result']['tools']}
-        self.assertEqual(set(tools), {'search_skills', 'get_skill', 'read_skill_file', 'list_categories', 'find_api', 'install_command'})
-        for t in tools.values():
-            self.assertTrue(t['annotations']['readOnlyHint'])
+        self.assertEqual(set(tools), {'search_skills', 'get_skill', 'read_skill_file', 'list_categories', 'find_api',
+                                      'install_command', 'recommend_stack', 'predict_next', 'record_usage'})
+        for name, t in tools.items():
+            # record_usage is the one tool that writes, and only to the local usage log.
+            self.assertEqual(t['annotations']['readOnlyHint'], name != 'record_usage')
             self.assertEqual(t['inputSchema']['type'], 'object')
             self.assertNotIn('fn', t)
 

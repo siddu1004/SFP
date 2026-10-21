@@ -4,7 +4,8 @@
 Speaks the Model Context Protocol over stdio (newline-delimited JSON-RPC) using
 only the Python standard library. It is read-only: it searches the skill
 catalog, returns a skill's SKILL.md and bundled files on demand, and runs the
-bundled free-API search. An IDE or agent that has MCP but no skills folder can
+bundled free-API search. The only write is record_usage, which appends a skill
+name and time to ~/.sfp/usage.jsonl on this machine. An IDE or agent that has MCP but no skills folder can
 use every skill without installing it.
 
 Tools
@@ -14,6 +15,10 @@ Tools
   list_categories  categories, skill counts and install presets
   find_api         search about 2,100 free public APIs
   install_command  the command that installs categories or a preset
+  recommend_stack  the few skills a task needs, in order, weighed by task, project files,
+                   goal and the skills used so far (the stack engine, sfp_stack.py)
+  predict_next     the skills most likely to be needed after one (a Markov chain)
+  record_usage     note that a skill was used, so predictions learn your habits
 Resources
   sfp://skill/{name}   a skill's SKILL.md      sfp://catalog   the category summary
 Prompts
@@ -130,6 +135,11 @@ INDEX, DF = build_index()
 
 
 def search(query, category=None, limit=10):
+    return [s for _, s in scored_search(query, category, min(limit, MAX_RESULTS))]
+
+
+def scored_search(query, category=None, limit=10):
+    """Like search, but returns (score, skill) pairs so callers can weigh relevance."""
     words = list(dict.fromkeys(tokens(query)))
     if not words:
         return []
@@ -157,7 +167,7 @@ def search(query, category=None, limit=10):
                 score *= 1.5
             hits.append((score, s))
     hits.sort(key=lambda h: (-h[0], h[1]['name']))
-    return [h[1] for h in hits[:max(1, min(limit, MAX_RESULTS))]]
+    return hits[:max(1, limit)]
 
 
 def brief(s, desc_len=240):
@@ -207,8 +217,24 @@ def tool_search_skills(a):
                        'next': 'Call get_skill with a name to read the full instructions.'}, indent=1)
 
 
+# Skills fetched in this session, most recent last. Kept in memory only; the stack
+# engine uses it as the history for its predictions.
+SESSION_HISTORY = []
+
+
+def stack_engine():
+    sys.modules.setdefault('sfp_mcp', sys.modules[__name__])
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:  # python -I leaves the script's folder off the path
+        sys.path.insert(0, here)
+    import sfp_stack
+    return sfp_stack
+
+
 def tool_get_skill(a):
     name = resolve_name(a.get('name'))
+    if name and name != 'sfp' and (not SESSION_HISTORY or SESSION_HISTORY[-1] != name):
+        SESSION_HISTORY.append(name)
     if not name:
         near = [s['name'] for s in search(a.get('name', ''), limit=5)]
         raise ValueError('no skill named %r.%s' % (a.get('name'), (' Closest: %s.' % ', '.join(near)) if near else ''))
@@ -295,6 +321,35 @@ def tool_install_command(a):
     return '\n\n'.join(out)
 
 
+def tool_recommend_stack(a):
+    task = a.get('task') or ''
+    if not tokens(task):
+        raise ValueError('describe the task, for example "add tests for the checkout form"')
+    project = a.get('project_path')
+    if project and not os.path.isdir(os.path.expanduser(project)):
+        raise ValueError('no such folder: %s' % project)
+    after = [x.strip() for x in (a.get('after') or '').split(',') if x.strip()] or SESSION_HISTORY[-3:]
+    res = stack_engine().recommend(task, project and os.path.expanduser(project), a.get('goal'), after,
+                                   int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)))
+    res['next_step'] = ('Call get_skill for each skill in the stack, in order: base layers do the work, '
+                        'check layers verify it, finish layers ship it.')
+    return json.dumps(res, indent=1)
+
+
+def tool_predict_next(a):
+    name = resolve_name(a.get('skill') or (SESSION_HISTORY[-1] if SESSION_HISTORY else ''))
+    if not name:
+        raise ValueError('give a skill name, or fetch a skill with get_skill first')
+    eng = stack_engine()
+    out = [{'name': b, 'category': SKILLS[b]['category'], 'probability': round(p, 4)}
+           for p, b in eng.model().next(name, max(1, min(int(a.get('limit', 5)), 20)))]
+    return json.dumps({'after': name, 'next': out}, indent=1)
+
+
+def tool_record_usage(a):
+    return json.dumps(stack_engine().record(a.get('skill'), a.get('outcome')))
+
+
 TOOLS = [
     {'name': 'search_skills',
      'description': 'Search the SFP skill library by task or keyword. Returns matching skills with their category and a short description. Use first when a task might have a matching skill, then call get_skill.',
@@ -334,10 +389,32 @@ TOOLS = [
          'profile': {'type': 'string', 'description': 'A preset: starter, frontend-dev, backend-dev, mobile-dev, agent-builder, everything.'},
          'tools': {'type': 'string', 'description': 'Comma-separated IDE ids, e.g. cursor,codex.'}}},
      'fn': tool_install_command},
+    {'name': 'recommend_stack',
+     'description': 'Pick the few SFP skills a task needs and the order to use them in. Weighs the task words, the project (it reads manifests such as package.json, requirements.txt, go.mod, pubspec.yaml), the phase of work and the skills used so far. Use at the start of a substantial task instead of loading many skills.',
+     'inputSchema': {'type': 'object', 'properties': {
+         'task': {'type': 'string', 'description': 'What the user asked for, in their words.'},
+         'project_path': {'type': 'string', 'description': 'Absolute path of the project folder, so the stack fits its technologies.'},
+         'goal': {'type': 'string', 'description': 'The end goal, if broader than the task, e.g. "ship to production".'},
+         'after': {'type': 'string', 'description': 'Comma-separated skills already used, most recent last. Defaults to the skills fetched in this session.'},
+         'budget': {'type': 'integer', 'description': 'Token budget for the instructions loaded (default 12000).'},
+         'max_skills': {'type': 'integer', 'description': 'Most skills in the stack (default 4, max 8).'}}, 'required': ['task']},
+     'fn': tool_recommend_stack},
+    {'name': 'predict_next',
+     'description': 'Predict which SFP skills are usually needed after one, from a Markov chain over skill sequences (recipes plus your recorded usage).',
+     'inputSchema': {'type': 'object', 'properties': {
+         'skill': {'type': 'string', 'description': 'The skill just used. Defaults to the last one fetched.'},
+         'limit': {'type': 'integer', 'description': 'How many to return (default 5).'}}},
+     'fn': tool_predict_next},
+    {'name': 'record_usage',
+     'description': 'Record that a skill was used, and optionally whether it helped, so future stacks and predictions learn. Appends one line to ~/.sfp/usage.jsonl on this machine; nothing is sent anywhere. Set SFP_NO_USAGE_LOG=1 to turn it off.',
+     'inputSchema': {'type': 'object', 'properties': {
+         'skill': {'type': 'string'},
+         'outcome': {'type': 'string', 'enum': ['helped', 'unhelpful']}}, 'required': ['skill']},
+     'fn': tool_record_usage},
 ]
 TOOL_INDEX = {t['name']: t for t in TOOLS}
 for _t in TOOLS:
-    _t['annotations'] = {'readOnlyHint': True, 'openWorldHint': False}
+    _t['annotations'] = {'readOnlyHint': _t['name'] != 'record_usage', 'openWorldHint': False}
 
 # ------------------------------------------------------------ resources/prompts
 
@@ -417,7 +494,8 @@ def handle(msg):
                                  'prompts': {'listChanged': False}},
                 'serverInfo': {'name': SERVER_NAME, 'version': SERVER_VERSION},
                 'instructions': 'SFP skill library: %d skills in %d categories. Call search_skills with words from the task, '
-                                'then get_skill and follow it. Use find_api for free public APIs.' % (len(SKILLS), n_cats)})
+                                'then get_skill and follow it. For a substantial task, call recommend_stack first: it picks the few skills '
+                                'that fit the task and the project, in order. Use find_api for free public APIs.' % (len(SKILLS), n_cats)})
         if method == 'ping':
             return ok(rid, {})
         if method == 'tools/list':

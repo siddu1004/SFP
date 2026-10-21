@@ -232,6 +232,14 @@ def main():
         'description': ' '.join(field(frontmatter(open(os.path.join(router, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
         'source': 'siddu1004/SFP', 'license': '', 'path': os.path.relpath(router, ROOT), 'variants': {},
     })
+    # The manager skill: decides which skills a task needs and in what order (engine in mcp/sfp_stack.py).
+    manager = os.path.join(OUT, 'sfp', 'skills', 'sfp-manager')
+    shutil.copytree(os.path.join(ROOT, 'templates', 'sfp-manager'), manager)
+    catalog.append({
+        'name': 'sfp-manager', 'category': 'sfp',
+        'description': ' '.join(field(frontmatter(open(os.path.join(manager, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
+        'source': 'siddu1004/SFP', 'license': 'MIT', 'path': os.path.relpath(manager, ROOT), 'variants': {},
+    })
 
     write_manifests(cfg, cats, catalog)
     render_readme(cfg, cats, catalog)
@@ -283,7 +291,7 @@ def measure(cfg, cats, catalog):
     rows = ['| What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |',
             '|---|---:|---:|---:|']
     sfp_n, sfp_t = cost(['sfp'])
-    rows.append('| `sfp` alone (the rest on demand) | %d + all %d through `sfp` | about %s tokens | %.1f%% |'
+    rows.append('| `sfp` and `sfp-manager` only (the rest on demand) | %d + all %d through them | about %s tokens | %.1f%% |'
                 % (sfp_n, len(catalog) - sfp_n, format(sfp_t, ','), 100.0 * sfp_t / window))
     for name, members in cfg['profiles'].items():
         k, tk = cost(sorted(set(members) | {'sfp'}))
@@ -299,7 +307,27 @@ def measure(cfg, cats, catalog):
         if os.path.isfile(f):
             sizes.append(os.path.getsize(f) // 4)
     sizes.sort()
-    return {
+
+    # The stack engine, scored against plain search on the same tasks.
+    sys.modules['sfp_mcp'] = mod
+    spec = importlib.util.spec_from_file_location('sfp_stack_measure', os.path.join(ROOT, 'mcp', 'sfp_stack.py'))
+    eng = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(eng)
+    ev = eng.evaluate(os.path.join(ROOT, 'tests'))
+    del sys.modules['sfp_mcp']
+
+    def pct(x):
+        return '%d%%' % round(100.0 * x)
+
+    stack = {
+        'STACK_BENCH_HIT': pct(ev['bench_hit']), 'STACK_BENCH_SEARCH': pct(ev['bench_search_hit']),
+        'STACK_FIRST': pct(ev['bench_first']), 'STACK_SIZE': '%.1f' % ev['avg_size'],
+        'STACK_TOKENS': format(int(round(ev['avg_tokens'], -2)), ','), 'STACK_MS': str(max(1, round(ev['avg_ms']))),
+        'STACK_PROJ_N': str(ev.get('proj_n', 0)), 'STACK_PROJ_HIT': pct(ev.get('proj_hit', 0)),
+        'STACK_PROJ_SEARCH': pct(ev.get('proj_search_hit', 0)), 'STACK_PROJ_WRONG': str(ev.get('proj_wrong', 0)),
+        'STACK_PROJ_SEARCH_WRONG': str(ev.get('proj_search_wrong', 0)), 'RECIPES': str(len(eng.RECIPES)),
+    }
+    return dict(stack, **{
         'SEARCH_N': str(n),
         'SEARCH_TOP1': '%d%%' % round(100.0 * hits[1] / n) if n else 'n/a',
         'SEARCH_TOP3': '%d%%' % round(100.0 * hits[3] / n) if n else 'n/a',
@@ -311,7 +339,7 @@ def measure(cfg, cats, catalog):
         'RATIO': str(round(tk / sfp_t)) if sfp_t else 'n/a',
         'ALL_TOKENS': format(tk, ','),
         'ALL_PERCENT': '%d' % round(100.0 * tk / window),
-    }
+    })
 
 
 def render_readme(cfg, cats, catalog):

@@ -1,0 +1,42 @@
+{
+  "about": "Project-aware tasks for the stack engine. Written after the engine's weights were tuned on the search task sets, and scored once without further tuning. expect: any one of these in the stack counts as right. avoid: skills for the wrong technology that must not be in the stack.",
+  "projects": {
+    "nextjs": {"package.json": "{\"dependencies\": {\"next\": \"15.0.0\", \"react\": \"19.0.0\"}, \"devDependencies\": {\"typescript\": \"5.6.0\", \"@playwright/test\": \"1.48.0\"}}",
+               "app/page.tsx": "", "app/layout.tsx": "", "next.config.mjs": ""},
+    "django": {"requirements.txt": "django>=5.1\npsycopg2-binary\ncelery\n", "manage.py": "", "shop/models.py": "", "shop/views.py": "", "shop/migrations/0001_initial.py": ""},
+    "fastapi": {"pyproject.toml": "[project]\nname = \"api\"\ndependencies = [\"fastapi\", \"asyncpg\", \"redis\"]\n", "app/main.py": "", "app/routes.py": ""},
+    "go": {"go.mod": "module example.com/svc\n\ngo 1.23\n", "main.go": "", "internal/store.go": "", "Dockerfile": ""},
+    "spring": {"pom.xml": "<project><parent><artifactId>spring-boot-starter-parent</artifactId></parent><dependency>spring-boot-starter-data-jpa</dependency></project>", "src/main/java/App.java": ""},
+    "flutter": {"pubspec.yaml": "name: shop\ndependencies:\n  flutter:\n    sdk: flutter\n", "lib/main.dart": "", "lib/cart.dart": ""},
+    "android": {"build.gradle.kts": "plugins { id(\"com.android.application\") }\ndependencies { implementation(\"androidx.compose.ui:ui\") }", "app/src/main/AndroidManifest.xml": "", "app/src/main/java/Main.kt": ""},
+    "rust": {"Cargo.toml": "[package]\nname = \"cli\"\n", "src/main.rs": "", "src/lib.rs": ""},
+    "laravel": {"composer.json": "{\"require\": {\"laravel/framework\": \"^11.0\"}}", "app/Http/Controllers/OrderController.php": ""},
+    "vue": {"package.json": "{\"dependencies\": {\"vue\": \"3.5.0\", \"vite\": \"5.4.0\"}}", "src/App.vue": "", "vite.config.ts": ""}
+  },
+  "cases": [
+    {"project": "nextjs", "task": "write tests for the signup form", "expect": ["react-testing", "e2e-testing"], "avoid": ["django-tdd", "python-testing", "golang-testing", "laravel-tdd"]},
+    {"project": "nextjs", "task": "the dashboard renders slowly, speed it up", "expect": ["react-performance", "nextjs-turbopack"], "avoid": ["django-patterns"]},
+    {"project": "nextjs", "task": "add end to end tests for checkout", "expect": ["e2e-testing", "browser-qa"], "avoid": ["django-tdd", "springboot-tdd"]},
+    {"project": "django", "task": "write tests for the order view", "expect": ["django-tdd", "python-testing"], "avoid": ["react-testing", "golang-testing", "laravel-tdd", "springboot-tdd"]},
+    {"project": "django", "task": "check the app for security holes before launch", "expect": ["django-security", "security-review"], "avoid": ["laravel-security", "springboot-security"]},
+    {"project": "django", "task": "add a column to a big table without downtime", "expect": ["database-migrations", "postgres-patterns"], "avoid": ["prisma-patterns"]},
+    {"project": "django", "task": "run slow work in background jobs", "expect": ["django-celery"], "avoid": []},
+    {"project": "fastapi", "task": "add a new endpoint with validation", "expect": ["fastapi-patterns", "api-design"], "avoid": ["nestjs-patterns", "laravel-patterns"]},
+    {"project": "fastapi", "task": "write tests for the routes", "expect": ["python-testing", "tdd-workflow"], "avoid": ["react-testing", "golang-testing"]},
+    {"project": "fastapi", "task": "cache expensive responses", "expect": ["redis-patterns", "content-hash-cache-pattern"], "avoid": []},
+    {"project": "go", "task": "write table driven tests", "expect": ["golang-testing"], "avoid": ["python-testing", "rust-testing"]},
+    {"project": "go", "task": "make the service idiomatic and handle errors well", "expect": ["golang-patterns", "error-handling"], "avoid": ["rust-patterns"]},
+    {"project": "go", "task": "containerize and deploy the service", "expect": ["docker-patterns", "deployment-patterns"], "avoid": []},
+    {"project": "spring", "task": "write unit tests for the order service", "expect": ["springboot-tdd", "java-coding-standards"], "avoid": ["django-tdd", "python-testing"]},
+    {"project": "spring", "task": "secure the REST endpoints", "expect": ["springboot-security", "api-security-testing", "security-review"], "avoid": ["django-security", "laravel-security"]},
+    {"project": "spring", "task": "map entities to the database", "expect": ["jpa-patterns"], "avoid": ["prisma-patterns"]},
+    {"project": "flutter", "task": "review the cart screen code", "expect": ["flutter-dart-code-review", "dart-flutter-patterns"], "avoid": ["swiftui-patterns", "react-native-patterns"]},
+    {"project": "flutter", "task": "manage state across screens", "expect": ["dart-flutter-patterns"], "avoid": ["react-patterns"]},
+    {"project": "android", "task": "structure the app into clean layers", "expect": ["android-clean-architecture"], "avoid": ["swiftui-patterns"]},
+    {"project": "android", "task": "write tests for the view model", "expect": ["kotlin-testing"], "avoid": ["python-testing", "golang-testing"]},
+    {"project": "rust", "task": "add tests for the parser", "expect": ["rust-testing"], "avoid": ["golang-testing", "python-testing"]},
+    {"project": "laravel", "task": "write feature tests for orders", "expect": ["laravel-tdd"], "avoid": ["django-tdd", "springboot-tdd"]},
+    {"project": "laravel", "task": "harden the app against common attacks", "expect": ["laravel-security", "security-review"], "avoid": ["django-security"]},
+    {"project": "vue", "task": "build a reusable component library", "expect": ["vue-patterns", "design-system", "design-systems"], "avoid": ["react-patterns", "angular-developer"]}
+  ]
+}

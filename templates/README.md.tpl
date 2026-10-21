@@ -7,7 +7,7 @@
 
 <p align="center">
   <b>SFP gives your AI coding agent @@TOTAL@@ skills, sorted by what you build.</b><br>
-  Install a handful. One skill, <code>sfp</code>, finds the rest.
+  Install a handful. <code>sfp</code> finds the rest, and <code>sfp-manager</code> decides which few to use, and when.
 </p>
 
 <p align="center">
@@ -48,11 +48,12 @@ So you pick between two bad options: install a few skills and miss the good ones
 SFP removes the choice in three moves:
 
 1. **Sort.** @@NCATS@@ categories group skills by what you build, and presets group categories by role.
-2. **Route.** One small skill, `sfp`, holds an index of everything. It costs about @@SFP_TOKENS@@ tokens, which is @@RATIO@@ times less than loading every description, and it finds the right skill when a task needs one.
+2. **Route.** Two small skills hold an index of everything and the judgement to use it: `sfp` finds a skill, and `sfp-manager` picks the few a task needs, in order, for the project in front of it. Together they cost about @@SFP_TOKENS@@ tokens, which is @@RATIO@@ times less than loading every description.
 3. **Install once.** One command puts the right skills in the right folder for each of 16 IDEs and CLIs. Tools with no skills folder get the same library over MCP.
 
 ## What Makes SFP Different
 
+- **A manager decides which skills to use, and when.** It reads the task, the project's files and the skills used so far, and stacks two or three skills in the order to apply them. The same words get `react-testing` in a Next.js app and `django-tdd` in a Django one. See [The Manager](#the-manager).
 - **It loads skills on demand, not all at once.** Most collections ask you to install everything or pick by hand. Here the router reads a skill only when your task calls for it. The cost table below shows the difference in tokens.
 - **Skills are sorted by what you build, not by who wrote them.** SFP merges @@SOURCES@@ sources into categories by job. A backend developer finds Postgres, migrations, API design and Docker together.
 - **One library for 16 IDEs.** You do not hunt for each tool's skills folder or format. The installer knows them, and Claude Code gets proper plugins.
@@ -68,9 +69,12 @@ SFP removes the choice in three moves:
 | Skill | A folder with a `SKILL.md`, and sometimes scripts or reference files, that an agent loads when a task matches. Example: `database-migrations`. |
 | Category | A group of skills by job, such as `backend` or `security`. There are @@NCATS@@. Each is also a Claude Code plugin. |
 | Preset | A ready-made list of categories for a kind of work, such as `frontend-dev`. Install one name instead of choosing categories. |
-| `sfp` (the router) | The one skill that knows all the others. It searches the index and reads the skill your task needs, installed or not. |
+| `sfp` (the router) | The skill that knows all the others. It searches the index and reads the skill your task needs, installed or not. |
+| `sfp-manager` | The skill that decides which few skills a task needs, in what order, from the task, the project files and the skills used so far. |
+| Stack | The manager's answer: two to four skills, ordered from the work itself (`base`) to its checks (`check`) and its release (`finish`). |
+| Recipe | A named stack that works well for one goal, such as `ship-a-service`. There are @@RECIPES@@ in `mcp/stack_recipes.json`. |
 | Installer | `install.sh` and `install.ps1`. They copy skills into each IDE's folder and never touch a skill they did not create. |
-| MCP server | `mcp/sfp_mcp.py`. It gives MCP clients six read-only tools to search the library and read skills. |
+| MCP server | `mcp/sfp_mcp.py`. It gives MCP clients nine tools to search the library, read skills and get a stack. |
 | Launcher | A skill that sets up an app before it works, such as `career-ops`. |
 | Catalog | `catalog.json` and `SKILLS.md`. A generated list of every skill, its category, source and license. |
 | Sync | `scripts/sync.py`. It pulls the latest skills from every source and rebuilds everything, including this page. |
@@ -79,6 +83,7 @@ SFP removes the choice in three moves:
 SFP/
   plugins/<category>/skills/<skill>/   the skills, one folder each (generated)
   mcp/sfp_mcp.py                       the MCP server
+  mcp/sfp_stack.py, stack_recipes.json the manager's engine and its recipes
   scripts/install.py, sync.py          the installer, and the script that rebuilds everything
   templates/                           the sfp router, the career launcher, the API finder, this README
   vendor/                              snapshots of plugins that have no public repo
@@ -86,6 +91,49 @@ SFP/
   tests/                               protocol, installer-facing and search-quality tests
   sources.json, categories.json        where skills come from and how they are sorted
 ```
+
+## The Manager
+
+Skills work like photo filters. One does one thing; a short stack in the right order gives the best result; stacking every filter ruins the picture. `sfp-manager` builds that short stack for each task.
+
+It weighs four things:
+
+- **The task.** Your words, matched against every skill.
+- **The project.** It reads `package.json`, `requirements.txt`, `go.mod`, `pubspec.yaml`, `pom.xml`, Dockerfiles and the like, so it never offers a Django skill for a React app.
+- **The phase of work.** Planning, building, testing, securing, shipping. The stack is ordered by it.
+- **What came before.** A Markov chain over skill sequences predicts what you will need next. It starts from @@RECIPES@@ recipes and learns from the usage you choose to record.
+
+Ask your agent "use sfp-manager for this task", or run it yourself:
+
+```bash
+python3 ~/.sfp/SFP/mcp/sfp_stack.py recommend "write tests for the order view" --project .
+```
+
+```text
+Project: celery, django, postgres, python
+Phase of work: test 100%
+
+1. [base] django-celery  (backend, build, about 3,283 tokens)
+   why: task words: test; fits project: celery, django
+2. [check] django-tdd  (testing-quality, test, about 5,257 tokens)
+   why: task words: test; fits project: django
+
+Matching recipe: django-feature (django-patterns -> django-tdd -> django-security)
+Likely next: django-security, agent-security-hardening, api-security-testing
+```
+
+That is real output for a sample Django project, flaws included: `django-celery` gets in only because the project uses Celery and its description mentions tests.
+
+**Measured** with `python3 mcp/sfp_stack.py evaluate`, regenerated on every rebuild:
+
+| | Manager | Plain search, same number of results |
+|---|---:|---:|
+| @@STACK_PROJ_N@@ tasks in 10 sample projects: the right skill is in the stack | @@STACK_PROJ_HIT@@ | @@STACK_PROJ_SEARCH@@ |
+| Stacks with a skill for the wrong technology | @@STACK_PROJ_WRONG@@ | @@STACK_PROJ_SEARCH_WRONG@@ |
+| @@SEARCH_N@@ tasks with no project: the right skill is in the stack | @@STACK_BENCH_HIT@@ | @@STACK_BENCH_SEARCH@@ |
+| The top pick is right | @@STACK_FIRST@@ | @@SEARCH_TOP1@@ |
+
+A stack holds @@STACK_SIZE@@ skills on average, about @@STACK_TOKENS@@ tokens of instructions, chosen in about @@STACK_MS@@ ms. The weights were tuned on the no-project tasks, so those rows are optimistic; the project tasks were written afterwards and scored once. Whether stacks make finished work better is not measured yet. [docs/MANAGER.md](docs/MANAGER.md) has the algorithm, the failure cases, the roadmap and how this could become a product.
 
 ## What It Does for Your IDE
 
@@ -317,10 +365,13 @@ Any other MCP client: add a stdio server that runs `python3 /path/to/SFP/mcp/sfp
 | `list_categories` | Lists categories, skill counts and install presets |
 | `find_api` | Searches the free API list by keyword, auth, CORS and HTTPS |
 | `install_command` | Gives the command that installs a category or preset for good |
+| `recommend_stack` | Picks the few skills a task needs, in order, for the project at `project_path` |
+| `predict_next` | The skills most likely needed after one, from the Markov chain |
+| `record_usage` | Notes that a skill was used, and whether it helped, in `~/.sfp/usage.jsonl` |
 
 Every skill is also a resource at `sfp://skill/{name}`, and two prompts, `use_skill` and `find_skill_for`, load a skill into a chat.
 
-The server is read-only, needs only Python 3 and makes no network calls. A skill it returns is third-party instruction text that your agent will follow, so the same trust applies as when you install it.
+The server needs only Python 3 and makes no network calls. It reads the project folder you pass to `recommend_stack`. Its one write is `record_usage`, which appends a skill name and time to `~/.sfp/usage.jsonl`; set `SFP_NO_USAGE_LOG=1` to turn it off. A skill it returns is third-party instruction text that your agent will follow, so the same trust applies as when you install it.
 
 I tested it with Claude Code, including a real session that found and read a skill through the tools. The Cursor, Gemini CLI, Windsurf, Kiro and Codex settings follow each tool's documented format but were not run against those tools.
 
@@ -344,7 +395,7 @@ Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--js
 
 **Does `sfp` always pick the right skill?** No. On the @@SEARCH_N@@ test tasks the right skill was in the top 3 results @@SEARCH_TOP3@@ of the time. When it misses, name the skill or ask for a category.
 
-**Is it safe?** A skill is third-party instruction text that your agent will follow, so read a skill before you trust it, as you would a script. The installer writes only into skills folders and `~/.sfp`, and backs up an MCP config before changing it. The MCP server is read-only and makes no network calls. SFP's own scripts send nothing anywhere. Individual skills can do their own network work, such as Impeccable downloading its engine on first use.
+**Is it safe?** A skill is third-party instruction text that your agent will follow, so read a skill before you trust it, as you would a script. The installer writes only into skills folders and `~/.sfp`, and backs up an MCP config before changing it. The MCP server makes no network calls, and its only write is the local usage log, which you can turn off. SFP's own scripts send nothing anywhere. Individual skills can do their own network work, such as Impeccable downloading its engine on first use.
 
 **Can I keep my own skills?** Yes. A skill you made with the same name is left alone unless you pass `--force`.
 
