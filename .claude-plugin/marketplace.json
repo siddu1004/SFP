@@ -10,19 +10,19 @@
   "plugins": [
     {
       "name": "sfp",
-      "description": "The router: one skill that knows every category and every skill, and sends the agent to the right one.",
+      "description": "The router: finds the right skill for any task, installed or not.",
       "category": "skills",
       "source": "./plugins/sfp"
     },
     {
       "name": "frontend",
-      "description": "UI design, components, motion, accessibility and frontend frameworks (React, Vue, Next.js, Angular, Vite).",
+      "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.",
       "category": "skills",
       "source": "./plugins/frontend"
     },
     {
       "name": "design-styles",
-      "description": "67 named visual styles (brutalism, glassmorphism, editorial, retro, shadcn and more) to build in.",
+      "description": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more.",
       "category": "skills",
       "source": "./plugins/design-styles"
     },
@@ -52,7 +52,7 @@
     },
     {
       "name": "devops",
-      "description": "Docker, Kubernetes, deployment, canary watching, git and GitHub workflows, terminals and environments.",
+      "description": "Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation.",
       "category": "skills",
       "source": "./plugins/devops"
     },
@@ -70,7 +70,7 @@
     },
     {
       "name": "agent-dev",
-      "description": "Building for agents: skills, plugins, hooks, MCP servers, harness setup, memory, context and token budgets.",
+      "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.",
       "category": "skills",
       "source": "./plugins/agent-dev"
     },
@@ -88,19 +88,19 @@
     },
     {
       "name": "data-apis",
-      "description": "Direct access to data: a searchable list of about 2,100 free public APIs, internet reach across 16 platforms, search and scraping.",
+      "description": "About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platforms, search and scraping.",
       "category": "skills",
       "source": "./plugins/data-apis"
     },
     {
       "name": "content-media",
-      "description": "Writing, marketing, SEO, video, slides, social posting and brand voice.",
+      "description": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.",
       "category": "skills",
       "source": "./plugins/content-media"
     },
     {
       "name": "business-ops",
-      "description": "Billing, finance, investors, market research, sales leads, contracts, email, calendars, tickets and project flow.",
+      "description": "Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check.",
       "category": "skills",
       "source": "./plugins/business-ops"
     },
@@ -118,7 +118,7 @@
     },
     {
       "name": "research-docs",
-      "description": "Deep research, scientific databases, literature review, documentation, ADRs and codebase onboarding.",
+      "description": "Deep research, scientific databases, literature review, docs, ADRs and a teach-me tutor.",
       "category": "skills",
       "source": "./plugins/research-docs"
     },
@@ -142,7 +142,7 @@
     },
     {
       "name": "memory",
-      "description": "claude-mem's skills: search past work, build timelines, hand off sessions, plan and run work with persistent memory. Many need claude-mem installed.",
+      "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
       "category": "skills",
       "source": "./plugins/memory"
     },

@@ -1,7 +1,7 @@
 {
   "name": "sfp",
   "version": "1.0.0",
-  "description": "The router: one skill that knows every category and every skill, and sends the agent to the right one.",
+  "description": "The router: finds the right skill for any task, installed or not.",
   "author": {
     "name": "siddu1004"
   },

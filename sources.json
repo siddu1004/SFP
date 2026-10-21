@@ -340,5 +340,13 @@
       "data-apis",
       "memory"
     ]
+  },
+  "profile_notes": {
+    "starter": "A first install: the router, engineering practice, testing, data APIs and agent-building tools. This is the default.",
+    "frontend-dev": "UI, design styles, testing and engineering practice.",
+    "backend-dev": "Services and databases, languages, DevOps and security.",
+    "mobile-dev": "Android, iOS, Flutter and React Native.",
+    "agent-builder": "Agents, MCP and plugins, AI, gateways and memory.",
+    "everything": "Every category. Heavy: expect your agent to carry hundreds of descriptions."
   }
 }

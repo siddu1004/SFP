@@ -1,7 +1,7 @@
 {
   "name": "research-docs",
   "version": "1.0.0",
-  "description": "Deep research, scientific databases, literature review, documentation, ADRs and codebase onboarding.",
+  "description": "Deep research, scientific databases, literature review, docs, ADRs and a teach-me tutor.",
   "author": {
     "name": "siddu1004"
   },

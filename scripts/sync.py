@@ -209,7 +209,7 @@ def main():
     })
 
     write_manifests(cfg, cats, catalog)
-    update_docs(cfg, catalog)
+    render_readme(cfg, cats, catalog)
     used = sorted({c['category'] for c in catalog})
     print(f'{len(catalog)} skills in {len(used)} categories')
     if args.report:
@@ -218,36 +218,40 @@ def main():
             print(f'\n{cat} ({len(names)}): ' + ', '.join(names))
 
 
-def update_docs(cfg, catalog):
-    """Rewrite the counts in README.md and assets/banner.svg from the catalog."""
-    total = len(catalog)
-    with_skills = len({c['category'] for c in catalog})
-    repos = len({s['repo'] for s in cfg['sources']} | {e['app']['repo'] for e in cfg['externals'].values() if 'app' in e})
+def render_readme(cfg, cats, catalog):
+    """Fill templates/README.md.tpl from the catalog; write README.md and draw the banners."""
+    tpl = os.path.join(ROOT, 'templates', 'README.md.tpl')
+    if not os.path.isfile(tpl):
+        return
     per_cat = {}
     for c in catalog:
         per_cat[c['category']] = per_cat.get(c['category'], 0) + 1
+    total = len(catalog)
+    repos = len({s['repo'] for s in cfg['sources']} | {e['app']['repo'] for e in cfg['externals'].values() if 'app' in e})
 
-    readme = os.path.join(ROOT, 'README.md')
-    if os.path.isfile(readme):
-        t = open(readme, encoding='utf-8').read()
-        t = re.sub(r'skills-\d+-22c55e', f'skills-{total}-22c55e', t)
-        t = re.sub(r'categories-\d+-8b5cf6', f'categories-{with_skills}-8b5cf6', t)
-        t = re.sub(r'\d+ skills, \d+ categories, 16 IDEs', f'{total} skills, {with_skills} categories, 16 IDEs', t)
-        t = re.sub(r'<b>\d+ agent skills from \d+ [a-z ]+, sorted', f'<b>{total} agent skills from {repos} sources, sorted', t)
-        t = re.sub(r'alt="\d+ skills"', f'alt="{total} skills"', t)
-        t = re.sub(r'(index of|and) \d+ (skills|descriptions)', lambda m: f'{m.group(1)} {total} {m.group(2)}', t)
-        t = re.sub(r'install all \d+', f'install all {total}', t)
-        t = re.sub(r'(\d+) categories: frontend', f'{with_skills} categories: frontend', t)
-        for cat, n in per_cat.items():
-            t = re.sub(rf'(\| `{re.escape(cat)}` \| )\d+( \|)', rf'\g<1>{n}\g<2>', t)
-        open(readme, 'w', encoding='utf-8').write(t)
-    banner = os.path.join(ROOT, 'assets', 'banner.svg')
-    if os.path.isfile(banner):
-        t = open(banner, encoding='utf-8').read()
-        t = re.sub(r'\d+ skills</text>', f'{total} skills</text>', t)
-        t = re.sub(r'\d+ categories</text>', f'{with_skills} categories</text>', t)
-        t = re.sub(r'\d+ agent skills in \d+ categories', f'{total} agent skills in {with_skills} categories', t)
-        open(banner, 'w', encoding='utf-8').write(t)
+    rows = ['| Category | Skills | What is in it |', '|---|---:|---|']
+    for cat, desc in cats['categories'].items():
+        if per_cat.get(cat):
+            rows.append(f'| `{cat}` | {per_cat[cat]} | {desc} |')
+    for name, ext in cfg['externals'].items():
+        rows.append(f"| `{name}` | plugin | {ext['description']} |")
+
+    notes = cfg.get('profile_notes', {})
+    prows = ['| Preset | Good for | Categories |', '|---|---|---|']
+    for name, members in cfg['profiles'].items():
+        prows.append(f"| `{name}` | {notes.get(name, '')} | " + ' '.join(f'`{m}`' for m in members) + ' |')
+    prows.append(f"| `everything` | {notes.get('everything', '')} | all |")
+
+    text = open(tpl, encoding='utf-8').read()
+    values = {'TOTAL': str(total), 'NCATS': str(len(per_cat)), 'SOURCES': str(repos),
+              'CATEGORY_TABLE': '\n'.join(rows), 'PRESET_TABLE': '\n'.join(prows)}
+    for key, value in values.items():
+        text = text.replace('@@' + key + '@@', value)
+    open(os.path.join(ROOT, 'README.md'), 'w', encoding='utf-8').write(text)
+
+    sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+    import banner
+    banner.main()
 
 
 def write_index(path, cats, cfg, catalog):
