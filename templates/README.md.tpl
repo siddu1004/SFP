@@ -38,7 +38,7 @@ It registers `sfp` in each IDE it finds and keeps your other MCP servers. See [M
 
 On Windows or in Claude Code? See [Windows](#windows) and [Claude Code](#claude-code). For presets and single IDEs, see [all install options](#install).
 
-## New in @@HIVE_VERSION@@: the Hive
+## New in 2.0: the Hive
 
 `sfp-manager` now decides which skills to use with a colony algorithm modelled on how honeybees divide work. Scouts must reach a quorum, rival skills send stop signals, each skill takes the job it responds to most, and used paths leave pheromone trails that fade. On @@FRESH_N@@ new tasks it had never seen, it put the right skill in the stack @@FRESH_HIVE@@ of the time, against @@FRESH_V1@@ for the previous engine and @@FRESH_SEARCH@@ for plain search. See [The Hive](#the-hive).
 
@@ -124,7 +124,7 @@ flowchart LR
   R --> K[ordered stack: base, check, finish]
 ```
 
-It runs inside the process that asks: the MCP server, or the skill's own script. A decision takes about @@HIVE_MS@@ ms, and the agent asks once per phase of work, not per message, so there is no middleman to wait on. If Python is not available, the skill tells the agent the same rules in plain words, so it can apply them itself.
+It runs inside the process that asks: the MCP server, or the skill's own script. A decision takes about @@HIVE_MS@@ ms, and the agent asks once per phase of work, not per message, so there is no middleman to wait on. Version 2.0.1 made it several times faster again: a search takes about 0.1 ms, a prediction under 1 ms, and a call through the running MCP server about 3 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after. If Python is not available, the skill tells the agent the same rules in plain words, so it can apply them itself.
 
 Ask your agent "use sfp-manager for this task", or run it yourself:
 

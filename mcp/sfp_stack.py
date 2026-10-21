@@ -31,7 +31,7 @@ CLI
   sfp_stack.py recipes
   sfp_stack.py evaluate      (engine against plain search, on the task sets in tests/)
 """
-import argparse
+import heapq
 import json
 import math
 import os
@@ -139,6 +139,10 @@ SKIP_DIRS = {'node_modules', '.git', '.venv', 'venv', 'env', '__pycache__', 'dis
 # ------------------------------------------------------------- skill profiles
 
 SKILL_TOKENS, SKILL_TECH, SKILL_PHASE, NAME_TOKENS = {}, {}, {}, {}
+WORD_JOBS = {}
+for _p, _lex in PHASE_LEX.items():
+    for _w in _lex:
+        WORD_JOBS.setdefault(_w, []).append(_p)
 for _s, _name, _desc, _cat in core.INDEX:
     SKILL_TOKENS[_s['name']] = set(_name) | set(_desc)
     NAME_TOKENS[_s['name']] = set(_name)
@@ -146,12 +150,16 @@ for _s, _name, _desc, _cat in core.INDEX:
     # ("works with React, Vue and Svelte") is general, not about one of them.
     _desc_tech = {w for w in _desc if w in TECH_STEMS}
     SKILL_TECH[_s['name']] = (_name & TECH_STEMS) or (_desc_tech if len(_desc_tech) <= 2 else set())
-    _vec = {}
-    for _p, _lex in PHASE_LEX.items():
-        _v = 2.0 * len(_name & _lex) + sum(c for w, c in _desc.items() if w in _lex)
-        if _v:
-            _vec[_p] = _v
-    SKILL_PHASE[_s['name']] = _vec
+    # Each job's score is twice the words its lexicon shares with the name, plus its count in the
+    # description. One pass over the skill's own words, through a word -> jobs map, finds them all.
+    _count = {}
+    for _w in _name:
+        for _p in WORD_JOBS.get(_w, ()):
+            _count[_p] = _count.get(_p, 0) + 2.0
+    for _w, _c in _desc.items():
+        for _p in WORD_JOBS.get(_w, ()):
+            _count[_p] = _count.get(_p, 0) + _c
+    SKILL_PHASE[_s['name']] = {_p: _count[_p] for _p in PHASE_ORDER if _p in _count}
 
 # Which categories a task is about, from the words in each category's description.
 CAT_TOKENS = {c: set(core.tokens(c.replace('-', ' ') + ' ' + v.get('description', '')))
@@ -183,11 +191,20 @@ def body_tokens(name):
     return _BODY[name]
 
 
-def main_phase(name):
+def _main_phase(name):
     v = SKILL_PHASE.get(name) or {}
     if not v:
         return 'build'
     return max(PHASE_ORDER, key=lambda p: (v.get(p, 0), -PHASE_ORDER.index(p)))
+
+
+MAIN_PHASE = {n: _main_phase(n) for n in SKILL_PHASE}
+
+
+def main_phase(name):
+    """The job a skill does most: computed once at load, since the hive asks tens of thousands of times."""
+    p = MAIN_PHASE.get(name)
+    return p if p is not None else _main_phase(name)
 
 
 def phase_of_text(text):
@@ -237,10 +254,24 @@ def _read(path, limit=200000):
         return ''
 
 
+# Every file name, extension and name prefix that _scan_file below reacts to. A file matching none
+# of them (most files in a project) is only counted for its language, which skips the long chain of tests.
+_NAMES = frozenset(('package.json', 'pyproject.toml', 'pipfile', 'setup.py', 'setup.cfg', 'go.mod', 'cargo.toml', 'pom.xml',
+                    'build.gradle', 'build.gradle.kts', 'settings.gradle', 'settings.gradle.kts', 'pubspec.yaml', 'gemfile',
+                    'composer.json', 'package.swift', 'androidmanifest.xml', 'docker-compose.yml', 'docker-compose.yaml',
+                    'compose.yaml', 'compose.yml', 'chart.yaml', 'schema.prisma', 'angular.json', 'pytest.ini', 'conftest.py',
+                    'skill.md', 'plugin.json', 'app.json', '.mcp.json', 'mcp.json'))
+_EXTS = frozenset(('.csproj', '.sln', '.fsproj', '.yaml', '.yml'))
+_PREFIXES = ('requirements', 'dockerfile', 'hardhat.config', 'foundry.toml', 'next.config', 'nuxt.config', 'vite.config',
+             'tailwind.config', 'playwright.config', 'jest.config', 'vitest.config')
+
+
 def _scan_file(f, d, depth, base, terms, signals):
     low = f.lower()
-    full = os.path.join(d, f)
     ext = os.path.splitext(low)[1]
+    if low not in _NAMES and ext not in _EXTS and not low.startswith(_PREFIXES):
+        return EXT.get(ext)
+    full = os.path.join(d, f)
     if low == 'package.json' and depth <= 2:
         try:
             pkg = json.loads(_read(full))
@@ -333,13 +364,14 @@ def scan_project(path, max_files=5000, max_depth=5):
     root = os.path.abspath(path)
     ext_count, seen = {}, 0
     for d, dirs, files in os.walk(root):
-        depth = 0 if d == root else os.path.relpath(d, root).count(os.sep) + 1
+        rel_os = '.' if d == root else os.path.relpath(d, root)
+        depth = 0 if d == root else rel_os.count(os.sep) + 1
         dirs[:] = sorted(x for x in dirs if x in ('.github', '.claude-plugin')
                          or (x not in SKIP_DIRS and not x.startswith('.')))
         if depth >= max_depth:
             dirs[:] = []
         base = os.path.basename(d)
-        rel = os.path.relpath(d, root).replace(os.sep, '/')
+        rel = rel_os.replace(os.sep, '/')
         if rel.endswith('.github/workflows'):
             _add(terms, signals, 'ci', 2.0, '.github/workflows')
         if base == 'migrations':
@@ -435,6 +467,7 @@ class Markov:
     def __init__(self, recipes=(), events=()):
         self.c, self.total, self.cat_c, self.cat_total, self.outcome = {}, {}, {}, {}, {}
         self._z = {}
+        self._bo = {}
         events = list(events)
         seqs = [(r['skills'], SEED_WEIGHT) for r in recipes] + [(s, 1.0) for s in sessions(events)]
         for seq, w in seqs:
@@ -459,17 +492,35 @@ class Markov:
             self.phase_size[p] = self.phase_size.get(p, 0) + 1
 
     def back_off(self, a, b):
+        """What usually follows a skill like a: a depends on a's category and job, b on b's.
+
+        So the value is computed once per (category, job, category, job) and reused; the 559
+        skills fall into a few hundred such groups, and a prediction asks about all of them.
+        """
         ca, cb = core.SKILLS[a]['category'], core.SKILLS[b]['category']
-        # Unseen category pairs get a prior in proportion to category size, so a
-        # one-skill category is not predicted as often as a sixty-skill one.
-        n_all = len(core.SKILLS)
-        prior = 0.5 * (ca == cb) + 0.5 * self.cat_size[cb] / n_all
-        if self.cat_total.get(ca):
-            p_cat = (self.cat_c[ca].get(cb, 0) + prior) / (self.cat_total[ca] + 1.0)
-        else:
-            p_cat = prior
-        p_phase = PHASE_NEXT.get(main_phase(a), {}).get(main_phase(b), 0.02)
-        return 0.5 * p_cat / self.cat_size[cb] + 0.5 * p_phase / self.phase_size.get(main_phase(b), 1)
+        pa, pb = main_phase(a), main_phase(b)
+        key = (ca, pa, cb, pb)
+        v = self._bo.get(key)
+        if v is None:
+            # Unseen category pairs get a prior in proportion to category size, so a
+            # one-skill category is not predicted as often as a sixty-skill one.
+            prior = 0.5 * (ca == cb) + 0.5 * self.cat_size[cb] / len(core.SKILLS)
+            if self.cat_total.get(ca):
+                p_cat = (self.cat_c[ca].get(cb, 0) + prior) / (self.cat_total[ca] + 1.0)
+            else:
+                p_cat = prior
+            p_phase = PHASE_NEXT.get(pa, {}).get(pb, 0.02)
+            v = self._bo[key] = 0.5 * p_cat / self.cat_size[cb] + 0.5 * p_phase / self.phase_size.get(pb, 1)
+        return v
+
+    def _groups(self):
+        if not hasattr(self, '_grp'):
+            self._grp, self._key = {}, {}
+            for b in core.SKILLS:
+                k = (core.SKILLS[b]['category'], main_phase(b))
+                self._grp.setdefault(k, []).append(b)
+                self._key[b] = k
+        return self._grp
 
     def _norm(self, a):
         """The back-off's total over every possible next skill, so each row sums to 1."""
@@ -490,9 +541,25 @@ class Markov:
     def next(self, a, limit=5, exclude=()):
         if a not in core.SKILLS:
             return []
-        scores = [(self.prob(a, b), b) for b in core.SKILLS if b != a and b not in exclude and b not in ('sfp', 'sfp-manager')]
-        scores.sort(key=lambda x: (-x[0], x[1]))
-        return scores[:limit]
+        n = self.total.get(a, 0)
+        z = self._norm(a)
+        row = self.c.get(a) or {}
+        lam = n / (n + len(row)) if n else 0.0
+        # Skills in the same category and job share a back-off, so score each group once.
+        group_score = {}
+        for key, members in self._groups().items():
+            back = self.back_off(a, members[0]) / z
+            group_score[key] = (1 - lam) * back if n else back
+        scores = []
+        for b in core.SKILLS:
+            if b == a or b in exclude or b == 'sfp' or b == 'sfp-manager':
+                continue
+            seen = row.get(b, 0)
+            s = group_score[self._key[b]]
+            if seen:
+                s = lam * seen / n + s
+            scores.append((s, b))
+        return heapq.nsmallest(limit, scores, key=lambda x: (-x[0], x[1]))
 
     def prior(self, name):
         """Posterior mean of 'this skill helped', centred on 0: Beta(1 + helped, 1 + unhelpful)."""
@@ -808,6 +875,7 @@ def format_stack(res):
 
 
 def main(argv=None):
+    import argparse
     ap = argparse.ArgumentParser(description='Pick and order the SFP skills a task needs.')
     sub = ap.add_subparsers(dest='cmd', required=True)
     r = sub.add_parser('recommend', help='build a skill stack for a task')

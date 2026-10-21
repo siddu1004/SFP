@@ -71,7 +71,7 @@ Rivalry between two skills is their similarity (names count as much as descripti
 | Top pick right, new tasks | 68% | 55% | |
 | Skills per stack: no project / sample projects / new projects | 1.8 / 2.1 / 2.4 | 2.0 / 2.25 / 2.5 | |
 | Stacks with a skill for the wrong technology, all sets | 0 | 0 | 2 |
-| Time per decision | about 10 to 25 ms | about 10 ms | |
+| Time per decision, project already scanned | about 2 to 3 ms (7 ms in 2.0.0) | about 1 to 2 ms | |
 
 Plain search gets about as many results as the hive's average stack.
 
@@ -97,6 +97,34 @@ Two bugs were found and fixed on the way: v1 could recommend `sfp-manager` itsel
 - **Vocabulary gaps.** Search is keyword-based, so tasks that share no words with the right skill miss it, as in v1. On the new tasks: "build the settings screen" in an iOS project, "add a tool that creates tickets" in an MCP server, and "write tests for the resource" in Quarkus (it picks `quarkus-verification`, not `quarkus-tdd`).
 - **Learning is shown, not measured.** Tests prove that outcomes change thresholds and choices, and that trails evaporate, but there is no long-run data yet on whether learning improves real sessions.
 - **Not measured at all:** whether the finished work is better.
+
+## Speed
+
+Version 2.0.1 sped up every step without changing a single answer. Before and after, medians on the same machine (a shared cloud sandbox, so absolute numbers vary, the ratios are what to read):
+
+| Step | 2.0.0 | 2.0.1 | What changed |
+|---|---:|---:|---|
+| Search the library | 0.4 to 0.6 ms | 0.08 ms | A word-to-skills lookup, so a query scores only the skills that share a word with it, not all 559 |
+| Predict the next skill | 5 to 8 ms | 0.3 to 0.4 ms | Skills in the same category and job share one back-off value, computed once; the top few are picked without sorting everything |
+| One decision, project already scanned | 7.5 ms | 1.8 to 2.8 ms | The two changes above, plus a per-skill cache of its main job |
+| Through the running MCP server, later calls | 15 to 27 ms | 3 to 5 ms | The same |
+| MCP server, first call after start-up (client pauses half a second) | 47 to 55 ms | 5 to 9 ms | The hive is loaded in the background while the client starts |
+| One-shot command line call on this repo | 167 to 180 ms | 125 to 129 ms | The saved search index, a faster start-up, and the above |
+| Scan a project of 1,495 files | 28 to 40 ms | 27 to 41 ms | Unchanged: it is mostly the cost of walking the folders |
+
+How, in order of effect:
+
+1. **Faster prediction.** The Markov back-off depends only on the category and job of the two skills, so it is computed once per group (a few hundred) instead of once per pair (over 55,000 per decision). This was the largest single cost.
+2. **A lookup instead of a full scan** for search, built from the same index.
+3. **A saved search index.** The sync writes `index.json`; start-up loads it instead of tokenizing 559 descriptions. It is used only if its key matches the catalog and the tokenizer exactly, and is rebuilt otherwise, so a stale file can never change an answer.
+4. **Cheaper start-up work.** Stemming is cached, the job vectors are built in one pass per skill instead of eleven, and `argparse` and `subprocess` load only when used.
+5. **Warm-up.** The MCP server loads the hive in the background right after start, so the first real call is not the slow one.
+
+What I tried to keep honest: before touching the code I recorded every engine's exact output on all 137 evaluation tasks, and after each change compared it byte for byte. All of them stayed identical. `tests/test_speed.py` now keeps this true: it checks each fast path against the plain definition it replaced (search against scoring every skill, prediction against scoring every pair, the saved index against a fresh build), and holds generous speed budgets, about ten times what a laptop needs, so only a real regression fails.
+
+What did not get faster: scanning a large project. A scan of this repo (1,495 files in 846 folders) takes about 30 ms, which is now most of a one-shot call. The running MCP server caches it for 30 seconds, so it is paid once per project, not per call. Caching it on disk would risk serving stale results after a dependency edit, so I left it.
+
+Most of the remaining time in a one-shot call is starting Python (about 20 ms) and loading the catalog (about 25 ms). The MCP server pays that once, when your IDE starts it.
 
 ## Embedded, not a middleman
 

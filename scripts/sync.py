@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IGNORE = shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
-VERSION = '2.0.0'
+VERSION = '2.0.1'
 OUT = os.path.join(ROOT, 'plugins')
 
 
@@ -259,6 +259,7 @@ def measure(cfg, cats, catalog):
     mod = importlib.util.module_from_spec(spec)
     os.environ['SFP_ROOT'] = ROOT
     spec.loader.exec_module(mod)
+    mod.write_index()  # the start-up cache for the search index; see load_index in mcp/sfp_mcp.py
 
     # Retrieval: does the right skill come back for a plain-language task?
     n = 0

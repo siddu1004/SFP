@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 2.0.0">
+  <img src="https://img.shields.io/badge/version-2.0.1-0f766e?style=flat-square&labelColor=3b4350" alt="Version 2.0.1">
   <img src="https://img.shields.io/badge/skills-559-0f766e?style=flat-square&labelColor=3b4350" alt="559 skills">
   <img src="https://img.shields.io/badge/works_in-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Works in 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/installer-Python_3_only-0f766e?style=flat-square&labelColor=3b4350" alt="Installer needs only Python 3">
@@ -38,7 +38,7 @@ It registers `sfp` in each IDE it finds and keeps your other MCP servers. See [M
 
 On Windows or in Claude Code? See [Windows](#windows) and [Claude Code](#claude-code). For presets and single IDEs, see [all install options](#install).
 
-## New in 2.0.0: the Hive
+## New in 2.0: the Hive
 
 `sfp-manager` now decides which skills to use with a colony algorithm modelled on how honeybees divide work. Scouts must reach a quorum, rival skills send stop signals, each skill takes the job it responds to most, and used paths leave pheromone trails that fade. On 22 new tasks it had never seen, it put the right skill in the stack 86% of the time, against 68% for the previous engine and 14% for plain search. See [The Hive](#the-hive).
 
@@ -124,7 +124,7 @@ flowchart LR
   R --> K[ordered stack: base, check, finish]
 ```
 
-It runs inside the process that asks: the MCP server, or the skill's own script. A decision takes about 13 ms, and the agent asks once per phase of work, not per message, so there is no middleman to wait on. If Python is not available, the skill tells the agent the same rules in plain words, so it can apply them itself.
+It runs inside the process that asks: the MCP server, or the skill's own script. A decision takes about 3 ms, and the agent asks once per phase of work, not per message, so there is no middleman to wait on. Version 2.0.1 made it several times faster again: a search takes about 0.1 ms, a prediction under 1 ms, and a call through the running MCP server about 3 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after. If Python is not available, the skill tells the agent the same rules in plain words, so it can apply them itself.
 
 Ask your agent "use sfp-manager for this task", or run it yourself:
 
@@ -148,7 +148,7 @@ Colony: 37 skills scouted, 3 reached quorum, 1 took a job.
 
 **Measured** with `python3 mcp/sfp_hive.py evaluate`, regenerated on every rebuild. "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive 2.0.0 | Previous engine (v1) | Plain search |
+| Task set | Hive 2.0.1 | Previous engine (v1) | Plain search |
 |---|---:|---:|---:|
 | 22 new tasks in 8 new projects, written before the hive and scored once | **86%** | 68% | 14% |
 | 24 tasks in 10 sample projects | 79% | 79% | 33% |
@@ -455,7 +455,7 @@ Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--js
 
 ## Questions
 
-**Does the hive slow the agent down?** No. It runs inside the MCP server or the skill's own script, in about 13 ms, and the agent asks once per phase of work. What it saves is larger: on the no-project tasks it loads 1.8 skills on average, against 2.0 for v1.
+**Does the hive slow the agent down?** No. It runs inside the MCP server or the skill's own script, in about 3 ms, and the agent asks once per phase of work. What it saves is larger: on the no-project tasks it loads 1.8 skills on average, against 2.0 for v1.
 
 **Is a queen bee really in charge?** No, and that is the point. The queen lays eggs. Work in a colony is divided by thresholds, recruitment, quorum and stop signals among equals. The hive copies those rules, not the myth.
 

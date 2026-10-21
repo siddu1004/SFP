@@ -48,7 +48,6 @@ CLI
   sfp_hive.py record api-design --outcome helped
   sfp_hive.py evaluate
 """
-import argparse
 import json
 import math
 import os
@@ -61,7 +60,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '2.0.0'
+VERSION = '2.0.1'
 
 # Languages, as opposed to frameworks. A project that shows only a language
 # (a Package.swift, a go.mod) may use any framework of it.
@@ -489,6 +488,7 @@ def format_stack(res):
 
 
 def main(argv=None):
+    import argparse
     ap = argparse.ArgumentParser(description='The SFP hive: decide which skills a task needs, and in what order.')
     sub = ap.add_subparsers(dest='cmd', required=True)
     r = sub.add_parser('recommend', help='build a skill stack for a task')

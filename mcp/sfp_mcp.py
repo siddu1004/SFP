@@ -27,15 +27,17 @@ Prompts
 Run:  python3 mcp/sfp_mcp.py          (an MCP client starts it; it talks on stdin/stdout)
 Env:  SFP_ROOT=/path/to/SFP           (only if the server is not inside the SFP checkout)
 """
+import functools
+import hashlib
 import json
 import math
 import os
 import re
-import subprocess
 import sys
+import threading
 
 SERVER_NAME = 'sfp'
-SERVER_VERSION = '2.0.0'
+SERVER_VERSION = '2.0.1'
 SUPPORTED_PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05']
 MAX_FILE_BYTES = 400000
 MAX_LISTED_FILES = 200
@@ -55,7 +57,11 @@ def find_root():
 
 
 ROOT = find_root()
-CATALOG = json.load(open(os.path.join(ROOT, 'catalog.json'), encoding='utf-8'))
+with open(os.path.join(ROOT, 'catalog.json'), 'rb') as _f:
+    _RAW = _f.read()
+CATALOG = json.loads(_RAW.decode('utf-8'))
+CATALOG_SHA = hashlib.sha1(_RAW).hexdigest()
+del _RAW
 SKILLS = {s['name']: s for s in CATALOG['skills']}
 
 
@@ -90,6 +96,7 @@ STOP = frozenset('a an the and or of to in on at by for with from into onto up o
                  'which that this these those i me we you can could should would will please need want make'.split())
 
 
+@functools.lru_cache(maxsize=None)  # the same few thousand words come back on every call
 def stem(w):
     for suf in ('ing', 'ed', 'es', 's'):
         if w.endswith(suf) and len(w) - len(suf) >= 3 and not w.endswith('ss'):
@@ -131,7 +138,49 @@ def build_index():
     return docs, df
 
 
-INDEX, DF = build_index()
+# The search index is built from the catalog with the tokenizer above. Building it means
+# tokenizing every description (about 30 ms), so the sync saves it to index.json and start-up
+# loads that instead. The file is used only if it was made from this exact catalog with this
+# exact tokenizer; otherwise the index is rebuilt. tests/test_speed.py checks the two agree.
+INDEX_FILE = os.path.join(ROOT, 'index.json')
+TOKENIZER = hashlib.sha1(json.dumps([sorted(STOP), ALIASES, 'stem: ing ed es s, then silent e']).encode()).hexdigest()[:12]
+
+
+def index_key():
+    return {'catalog': CATALOG_SHA, 'tokenizer': TOKENIZER}
+
+
+def load_index():
+    try:
+        with open(INDEX_FILE, encoding='utf-8') as f:
+            data = json.load(f)
+        if data.get('key') == index_key() and len(data['skills']) == len(CATALOG['skills']):
+            docs = [(s, set(name), desc, set(cat))
+                    for s, (name, desc, cat) in zip(CATALOG['skills'], data['skills'])]
+            return docs, data['df']
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    return build_index()
+
+
+def write_index():
+    """Save the freshly built index next to the catalog (the sync calls this)."""
+    docs, df = build_index()
+    data = {'key': index_key(), 'df': df,
+            'skills': [[sorted(name), desc, sorted(cat)] for _, name, desc, cat in docs]}
+    with open(INDEX_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, separators=(',', ':'), sort_keys=True)
+        f.write('\n')
+
+
+INDEX, DF = load_index()
+
+# word -> the skills that contain it (in name, description or category). A query only has to score
+# these, not all of the library: most words appear in a handful of skills.
+POSTINGS = {}
+for _i, (_s, _name, _desc, _cat) in enumerate(INDEX):
+    for _w in _name | set(_desc) | _cat:
+        POSTINGS.setdefault(_w, []).append(_i)
 
 
 def search(query, category=None, limit=10):
@@ -146,7 +195,10 @@ def scored_search(query, category=None, limit=10):
     n = len(INDEX)
     idf = {w: math.log(1 + n / (1 + DF.get(w, 0))) for w in words}
     hits = []
-    for s, name, desc, cat in INDEX:
+    wanted = set(words)
+    candidates = sorted({i for w in words for i in POSTINGS.get(w, ())})
+    for i in candidates:
+        s, name, desc, cat = INDEX[i]
         if category and s['category'] != category:
             continue
         score, matched = 0.0, 0
@@ -163,7 +215,7 @@ def scored_search(query, category=None, limit=10):
                 score += part
         if score:
             score *= 0.4 + 0.6 * matched / len(words)  # a skill that covers more of the task ranks higher
-            if set(words) == name:
+            if wanted == name:
                 score *= 1.5
             hits.append((score, s))
     hits.sort(key=lambda h: (-h[0], h[1]['name']))
@@ -296,7 +348,11 @@ def tool_find_api(a):
         if a.get(opt):
             cmd += ['--' + opt, str(a[opt])]
     cmd += raw_words(a.get('query', ''))
-    done = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    import subprocess  # only this tool needs it; keeping it out of start-up saves several milliseconds
+    try:
+        done = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+    except subprocess.SubprocessError as e:
+        raise ValueError('find_api failed: %s' % e)
     if done.returncode != 0:
         raise ValueError(done.stderr.strip() or 'find_api failed')
     return done.stdout.strip() or '[]'
@@ -325,6 +381,13 @@ def tool_install_command(a):
     if cats and (not tools or 'claude' in tools):
         out.append('Claude Code:\n' + '\n'.join('  /plugin install %s@sfp' % c for c in cats))
     return '\n\n'.join(out)
+
+
+def _warm_up():
+    try:
+        hive()
+    except Exception as e:  # warming is only an optimisation: a real call will report any real problem
+        log('warm-up skipped: %r' % (e,))
 
 
 def tool_recommend_stack(a):
@@ -512,7 +575,7 @@ def handle(msg):
             try:
                 text = tool['fn'](params.get('arguments') or {})
                 return ok(rid, {'content': [{'type': 'text', 'text': text}], 'isError': False})
-            except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as e:
+            except (ValueError, KeyError, TypeError, OSError) as e:
                 return ok(rid, {'content': [{'type': 'text', 'text': 'Error: %s' % e}], 'isError': True})
         if method == 'resources/list':
             return ok(rid, {'resources': resources_list()})
@@ -544,6 +607,8 @@ def main():
         sys.stdin.reconfigure(encoding='utf-8')
         sys.stdout.reconfigure(encoding='utf-8')
     log('ready: %d skills from %s' % (len(SKILLS), ROOT))
+    # Load the hive while the client is still starting up, so the first recommend_stack is as fast as the rest.
+    threading.Thread(target=_warm_up, daemon=True).start()
     for line in sys.stdin:
         line = line.strip()
         if not line:
