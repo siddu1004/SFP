@@ -4,12 +4,29 @@ const fs = require('fs');
 
 class HiveBridge {
   constructor(sfpRoot) {
-    this.sfpRoot = sfpRoot || path.resolve(__dirname, '../..');
+    this.sfpRoot = this._resolveSfpRoot(sfpRoot);
     this.pythonBin = process.platform === 'win32' ? 'python' : 'python3';
     this.catalogPath = path.join(this.sfpRoot, 'catalog.json');
     this.hiveScript = path.join(this.sfpRoot, 'mcp', 'sfp_hive.py');
     this.allSkills = [];
     this._loadCatalog();
+  }
+
+  _resolveSfpRoot(givenPath) {
+    if (givenPath && fs.existsSync(path.join(givenPath, 'catalog.json'))) {
+      return givenPath;
+    }
+    const candidates = [
+      'c:\\Users\\saisi\\.antigravity-ide\\SFP',
+      path.resolve(__dirname, '../..'),
+      path.resolve(__dirname, '../../..')
+    ];
+    for (const c of candidates) {
+      if (fs.existsSync(path.join(c, 'catalog.json'))) {
+        return c;
+      }
+    }
+    return givenPath || candidates[0];
   }
 
   _loadCatalog() {

@@ -14,11 +14,34 @@ class SkillMonitorProvider {
     this._sfpRoot = sfpRoot;
     this._bridge = new HiveBridge(sfpRoot);
     this._view = undefined;
+    this._statusBarItem = null;
 
     this._currentPrompt = '';
     this._currentRes = null;
     this._previousSkillNames = new Set();
     this._userExcluded = new Set();
+  }
+
+  setStatusBarItem(item) {
+    this._statusBarItem = item;
+  }
+
+  async syncFromActiveEditor() {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+      vscode.window.showInformationMessage('No active editor open to sync prompt from.');
+      return;
+    }
+    const selection = editor.document.getText(editor.selection).trim();
+    const lineText = editor.document.lineAt(editor.selection.active.line).text.trim();
+    const promptText = selection || lineText;
+
+    if (promptText) {
+      await this.analyzePrompt(promptText);
+      vscode.window.setStatusBarMessage(`SFP Hive: Synced prompt from editor selection`, 3000);
+    } else {
+      vscode.window.showInformationMessage('Please select text or place cursor on a prompt/task line.');
+    }
   }
 
   resolveWebviewView(webviewView, context, _token) {
@@ -40,6 +63,11 @@ class SkillMonitorProvider {
 
         case 'promptChanged': {
           await this.analyzePrompt(message.text);
+          break;
+        }
+
+        case 'syncEditor': {
+          await this.syncFromActiveEditor();
           break;
         }
 
@@ -83,6 +111,10 @@ class SkillMonitorProvider {
       this._previousSkillNames.clear();
       this._currentRes = null;
       this._syncWebviewState({ added: [], removed: [] });
+      if (this._statusBarItem) {
+        this._statusBarItem.text = '$(sparkle) SFP Hive: Ready';
+        this._statusBarItem.tooltip = 'Click to open SFP Live Skill Monitor';
+      }
       vscode.commands.executeCommand('setContext', 'sfp.hasActiveSkills', false);
       return;
     }
@@ -99,6 +131,12 @@ class SkillMonitorProvider {
 
         this._previousSkillNames = currentNames;
         this._currentRes = res;
+
+        if (this._statusBarItem) {
+          const count = res.stack.length;
+          this._statusBarItem.text = `$(sparkle) SFP Hive: ${count} skill${count === 1 ? '' : 's'}`;
+          this._statusBarItem.tooltip = `Active skills: ${res.stack.map(s => s.name).join(', ')}`;
+        }
 
         this._syncWebviewState({ added, removed });
         vscode.commands.executeCommand('setContext', 'sfp.hasActiveSkills', true);
@@ -286,12 +324,41 @@ class SkillMonitorProvider {
   }
 }
 
+function findSfpRoot() {
+  const folders = vscode.workspace.workspaceFolders || [];
+  for (const f of folders) {
+    const p = f.uri.fsPath;
+    if (fs.existsSync(path.join(p, 'catalog.json')) && fs.existsSync(path.join(p, 'mcp', 'sfp_hive.py'))) {
+      return p;
+    }
+  }
+  const hardcoded = 'c:\\Users\\saisi\\.antigravity-ide\\SFP';
+  if (fs.existsSync(path.join(hardcoded, 'catalog.json'))) {
+    return hardcoded;
+  }
+  const rel = path.resolve(__dirname, '../..');
+  if (fs.existsSync(path.join(rel, 'catalog.json'))) {
+    return rel;
+  }
+  return hardcoded;
+}
+
 /**
  * Activate extension
  */
 function activate(context) {
-  const sfpRoot = path.resolve(__dirname, '../..');
+  const sfpRoot = findSfpRoot();
   const provider = new SkillMonitorProvider(context.extensionUri, sfpRoot);
+
+  // Status Bar Item
+  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  statusBarItem.command = 'sfp.showMonitor';
+  statusBarItem.text = '$(sparkle) SFP Hive: Ready';
+  statusBarItem.tooltip = 'Click to open SFP Live Skill Monitor';
+  statusBarItem.show();
+  context.subscriptions.push(statusBarItem);
+
+  provider.setStatusBarItem(statusBarItem);
 
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(SkillMonitorProvider.viewType, provider, {
@@ -299,18 +366,15 @@ function activate(context) {
     })
   );
 
-  // Status Bar Item
-  const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  statusBarItem.command = 'sfp.showMonitor';
-  statusBarItem.text = '$(sparkle) SFP Hive';
-  statusBarItem.tooltip = 'Click to open SFP Live Skill Monitor';
-  statusBarItem.show();
-  context.subscriptions.push(statusBarItem);
-
   // Commands
   context.subscriptions.push(
     vscode.commands.registerCommand('sfp.showMonitor', async () => {
       await vscode.commands.executeCommand('sfp.skillMonitor.focus');
+    }),
+
+    vscode.commands.registerCommand('sfp.syncEditorSelection', async () => {
+      await vscode.commands.executeCommand('sfp.skillMonitor.focus');
+      await provider.syncFromActiveEditor();
     }),
 
     vscode.commands.registerCommand('sfp.analyzePrompt', async () => {
