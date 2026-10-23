@@ -1,0 +1,62 @@
+{
+  "name": "sfp-hive-extension",
+  "displayName": "SFP Hive: Dynamic Skill Monitor & Agentic Chat",
+  "description": "Real-time AI skill detector, layer-aware monitor and customizer for agentic workflows.",
+  "version": "1.0.0",
+  "publisher": "sfp",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "icon": "media/icon.svg",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "sfp-hive-container",
+          "title": "SFP Hive Skills",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "sfp-hive-container": [
+        {
+          "type": "webview",
+          "id": "sfp.skillMonitor",
+          "name": "Live Skill Monitor",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "sfp.showMonitor",
+        "title": "SFP: Focus Skill Monitor",
+        "category": "SFP Hive"
+      },
+      {
+        "command": "sfp.analyzePrompt",
+        "title": "SFP: Analyze Prompt for Skills",
+        "category": "SFP Hive"
+      },
+      {
+        "command": "sfp.trainHive",
+        "title": "SFP: Train Hive Learning Model",
+        "category": "SFP Hive"
+      },
+      {
+        "command": "sfp.refreshCatalog",
+        "title": "SFP: Refresh Skills Library",
+        "category": "SFP Hive"
+      }
+    ]
+  }
+}
