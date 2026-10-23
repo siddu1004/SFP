@@ -270,6 +270,12 @@ def history_events(decisions=None, feedback=None):
             for name in d['stack']:
                 if name in core.SKILLS:
                     events.append({'t': d.get('t', 0), 'skill': name, 'session': did})
+    for r in feedback:
+        if r.get('verdict') == 'missing' and r.get('decision') in decisions:
+            did = r['decision']
+            d = decisions[did]
+            if r.get('skill') in core.SKILLS:
+                events.append({'t': r.get('t', d.get('t', 0)), 'skill': r['skill'], 'session': did})
     return events
 
 
@@ -527,6 +533,53 @@ def learning_curve(tests_dir=None, folds=5, seeds=5, rng_seed=7):
         'training_mistakes_fixed_on_retry': round(fixed / retried, 4) if retried else None,
         'heldout_tasks_that_got_worse': broke, 'wrong_technology_stacks_heldout': wrong_new,
     }
+
+
+def train_from_benchmarks(tests_dir=None, reset=False):
+    """Train the model from the benchmark task suites so the hive starts with a strong, tested foundation."""
+    import tempfile
+    tests_dir = tests_dir or os.path.join(os.path.dirname(HERE), 'tests')
+    if reset:
+        forget()
+    cases = []
+    with tempfile.TemporaryDirectory() as tmp:
+        for key, cs in sel.load_cases(tests_dir, tmp):
+            if key in ('bench', 'proj'):  # train on training suites; never on heldout
+                cases.extend(cs)
+
+        trained = 0
+        decisions_added = 0
+        feedback_added = 0
+        for c in cases:
+            task = c['task']
+            proj = c.get('project')
+            res = decide(task, proj, learn=False)
+            did = res.get('decision')
+            if not did:
+                continue
+            decisions_added += 1
+            chosen = {s['name'] for s in res.get('stack', [])}
+            expect = [x for x in c.get('expect', []) if x in core.SKILLS]
+            avoid = [x for x in c.get('avoid', []) if x in core.SKILLS]
+
+            helped = [s for s in chosen if s in expect]
+            unhelpful = [s for s in chosen if s in avoid]
+            missing = [s for s in expect if s not in chosen]
+
+            if helped or unhelpful or missing:
+                fb_res = give_feedback(did, helped=helped, unhelpful=unhelpful, missing=missing, task=task)
+                feedback_added += fb_res.get('recorded', 0)
+                trained += 1
+
+        m = load_model()
+        return {
+            'cases_processed': len(cases),
+            'tasks_trained': trained,
+            'decisions_logged': decisions_added,
+            'verdicts_recorded': feedback_added,
+            'model_associations': len(m.w),
+            'model_examples': m.examples,
+        }
 
 
 if __name__ == '__main__':

@@ -223,6 +223,8 @@ def assemble(quality, demand, budget, max_skills):
     """Choose the stack: overlap suppression, then role allocation.
 
     Take the skill with the most quality left after the penalty for overlap with those already chosen.
+    For subsequent choices, balance quality with response to unfulfilled layer demand so the stack covers
+    base, check and finish layers when the task needs them.
     It then looks at every job and responds to the one whose need, scaled by the skill's own quality,
     most exceeds its threshold for that job. If no response clears ENGAGE (or the token budget would
     be broken) it stays in reserve. Taking a job uses up WORK_DONE of its need, so a second skill
@@ -233,7 +235,14 @@ def assemble(quality, demand, budget, max_skills):
     chosen, reserve, spent = [], [], 0
     while pool and len(chosen) < max_skills:
         left = {n: q - OVERLAP_PENALTY * max((overlap(n, c[0]) for c in chosen), default=0.0) for n, q in pool.items()}
-        name = max(left, key=lambda n: (left[n], n))
+        if not chosen:
+            name = max(left, key=lambda n: (left[n], n))
+        else:
+            def cand_key(n):
+                aff = affinity(n)
+                cur_need = max(need[p] * aff[p] for p in v1.PHASE_ORDER)
+                return (left[n] * (1.0 + 0.35 * cur_need), left[n])
+            name = max(left, key=cand_key)
         pool.pop(name)
         if left[name] <= 0:
             break  # everything left overlaps a skill already chosen
@@ -386,12 +395,17 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                 break
 
     ctx = sit['ctx']
+    layers = {'base': [], 'check': [], 'finish': []}
+    for c in stack:
+        layers[c['layer']].append(c['name'])
+
     res = {
         'engine': 'sfp-hive ' + VERSION,
         'task': task, 'goal': goal,
         'project': {'technologies': v1.show(sorted(sit['ctx_tech'], key=lambda t: (-ctx[t], t))[:8]),
                     'evidence': sc['signals'][:8], 'files_scanned': sc['files']},
         'phases': {p: round(v, 2) for p, v in sorted(sit['demand'].items(), key=lambda kv: -kv[1])},
+        'layers': layers,
         'stack': stack,
         'tokens': spent,
         'recipe': recipe and {'name': recipe['name'], 'skills': recipe['skills']},
@@ -545,6 +559,9 @@ def main(argv=None):
     sub.add_parser('recipes', help='list the named stacks')
     sub.add_parser('evaluate', help='score the hive against the earlier engine and plain search')
     sub.add_parser('learning-curve', help='measure whether learning from feedback improves held-out tasks')
+    tr = sub.add_parser('train', help='train the hive learning model from the benchmark task suites')
+    tr.add_argument('--reset', action='store_true', help='reset prior feedback before training')
+    tr.add_argument('--json', action='store_true')
     a = ap.parse_args(argv)
 
     if a.cmd == 'select':
@@ -564,6 +581,15 @@ def main(argv=None):
         print(json.dumps(st_, indent=1) if a.json else sfp_learn.format_status(st_))
     elif a.cmd == 'forget':
         print(json.dumps(sfp_learn.forget()))
+    elif a.cmd == 'train':
+        res = sfp_learn.train_from_benchmarks(reset=a.reset)
+        if a.json:
+            print(json.dumps(res, indent=1))
+        else:
+            print('Trained on %d cases (%d tasks with feedback):' % (res['cases_processed'], res['tasks_trained']))
+            print('  Decisions logged: %d' % res['decisions_logged'])
+            print('  Verdicts recorded: %d' % res['verdicts_recorded'])
+            print('  Learned associations: %d (%d training examples)' % (res['model_associations'], res['model_examples']))
     elif a.cmd == 'next':
         name = core.resolve_name(a.skill)
         if not name:

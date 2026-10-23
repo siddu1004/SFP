@@ -57,12 +57,28 @@ def find_root():
 
 
 ROOT = find_root()
-with open(os.path.join(ROOT, 'catalog.json'), 'rb') as _f:
-    _RAW = _f.read()
-CATALOG = json.loads(_RAW.decode('utf-8'))
-CATALOG_SHA = hashlib.sha1(_RAW).hexdigest()
-del _RAW
-SKILLS = {s['name']: s for s in CATALOG['skills']}
+_CATALOG_STAT = None
+
+
+def _load_catalog():
+    global CATALOG, CATALOG_SHA, SKILLS, _CATALOG_STAT
+    cat_path = os.path.join(ROOT, 'catalog.json')
+    try:
+        st = os.stat(cat_path)
+        cur_stat = (st.st_mtime_ns, st.st_size)
+    except OSError:
+        cur_stat = None
+    if _CATALOG_STAT == cur_stat and _CATALOG_STAT is not None:
+        return
+    with open(cat_path, 'rb') as _f:
+        _RAW = _f.read()
+    CATALOG = json.loads(_RAW.decode('utf-8'))
+    CATALOG_SHA = hashlib.sha1(_RAW).hexdigest()
+    SKILLS = {s['name']: s for s in CATALOG['skills']}
+    _CATALOG_STAT = cur_stat
+
+
+_load_catalog()
 
 
 def log(msg):
@@ -73,6 +89,7 @@ def log(msg):
 # ---------------------------------------------------------------- skill access
 
 def skill_dir(name):
+    _load_catalog()
     entry = SKILLS[name]
     path = os.path.realpath(os.path.join(ROOT, entry['path']))
     plugins = os.path.realpath(os.path.join(ROOT, 'plugins'))
@@ -83,6 +100,7 @@ def skill_dir(name):
 
 def resolve_name(name):
     """Return the skill name for an exact (case-insensitive) match, else None."""
+    _load_catalog()
     name = (name or '').strip().lower()
     if name in SKILLS:
         return name
