@@ -451,6 +451,15 @@
       "license": "MIT",
       "default": "engineering",
       "template": "templates/graphify"
+    },
+    {
+      "repo": "siddu1004/laws-of-designing",
+      "local": "templates/laws-of-designing",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "."
+      ]
     }
   ],
   "externals": {

@@ -27,6 +27,7 @@
     "memory": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory."
   },
   "names": {
+    "laws-of-designing": "frontend",
     "huashu-art-motion": "content-media",
     "huashu-design": "frontend",
     "awwwards": "frontend",

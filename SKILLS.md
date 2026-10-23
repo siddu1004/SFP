@@ -11,7 +11,7 @@ The router and the hive: find the right skill for any task, installed or not, an
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 | `sfp-hive` | Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work move… |
 
-## frontend (75)
+## frontend (76)
 
 UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.
 
@@ -92,6 +92,7 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `ui-ux-pro-max` | UI/UX design intelligence for web, mobile, and desktop. This skill should be used when designing, building, reviewing, or fixing interfaces, including pages, components, design systems, accessibility,… |
 | `gsap` | Build high-performance web animations with GSAP (GreenSock Animation Platform) — tweens, timelines, ScrollTrigger, Flip, MorphSVG, SplitText, and physics. Use when implementing fluid transitions, scro… |
 | `react-bits` | Curated collection of rich, animated React components, interactive text, dynamic backgrounds, audio synthesizers, and micro-interactions. Use when building eye-catching landing pages, creative interfa… |
+| `laws-of-designing` | Follow these 20 foundational UX laws and core design principles whenever designing, building, reviewing, or revising a user interface. Applies across layouts, navigation, onboarding, forms, settings, … |
 
 ## design-styles (67)
 

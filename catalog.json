@@ -6,7 +6,7 @@
   },
   "frontend": {
    "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.",
-   "skills": 75
+   "skills": 76
   },
   "design-styles": {
    "description": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more.",
@@ -7539,6 +7539,15 @@
    "source": "Graphify-Labs/graphify",
    "license": "MIT",
    "path": "plugins\\engineering\\skills\\graphify",
+   "variants": {}
+  },
+  {
+   "name": "laws-of-designing",
+   "category": "frontend",
+   "description": "Follow these 20 foundational UX laws and core design principles whenever designing, building, reviewing, or revising a user interface. Applies across layouts, navigation, onboarding, forms, settings, dashboards, and interactive flows to minimize confusion, reduce friction, prevent errors, and optimize task completion.",
+   "source": "siddu1004/laws-of-designing",
+   "license": "MIT",
+   "path": "plugins\\frontend\\skills\\laws-of-designing",
    "variants": {}
   },
   {
