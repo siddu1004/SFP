@@ -510,6 +510,16 @@ pointing to the next UTC month. OpenAI-compatible endpoints also return
 error format. Fusion subcalls obey the caps but retain Fusion's aggregate error
 format. If another key has capacity, normal fallback can use it.
 
+Crossing 80% and again 100% of either cap logs a soft budget alert — a
+structured `key_budget_threshold` event in the dashboard's Logs page (the same
+viewer as provider logs), naming the key, the cap kind, the usage and the reset
+time. Each threshold fires once per key per UTC month, so a key cannot flood the
+log. This mirrors LiteLLM's budget alerts and OpenRouter's per-key spend-limit
+alert: the warning arrives while requests still flow, before the hard `429`.
+Set `BUDGET_ALERT_WEBHOOK_URL` to also POST each alert as JSON
+(`type: freellmapi.key_budget_threshold`) to a webhook, such as a Slack or
+Discord workflow.
+
 Embeddings additionally relay the upstream providers' own back-off. A provider
 that answers `429` is simply skipped for the next one in the family; only when
 every provider in the family was rate limited and each stated a `Retry-After`

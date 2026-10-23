@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Backend-Selected RPC Call Paths",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "web",
+        "label": "Web dispatch",
+        "focus": [
+          "caller",
+          "adapter",
+          "webexec",
+          "google"
+        ],
+        "note": "Web typed calls and WebRawAPI dispatch directly through WebRuntime.executor."
+      },
+      {
+        "id": "android",
+        "label": "Android dispatch",
+        "focus": [
+          "caller",
+          "adapter",
+          "androidsession",
+          "google"
+        ],
+        "note": "Android typed calls and AndroidRawAPI unary operations use AndroidRuntime.session."
+      },
+      {
+        "id": "compat",
+        "label": "Deprecated rpc_call",
+        "focus": [
+          "adapter",
+          "sidecar",
+          "webexec"
+        ],
+        "note": "Android rpc_call materializes the pre-registered sidecar's WebRuntime in operation_scope; root lifecycle closes and reopens it."
+      }
+    ],
+    "column_fit": "spread",
+    "viewBox": [
+      1080,
+      660
+    ]
+  },
+  "participants": [
+    {
+      "id": "caller",
+      "type": "external",
+      "label": "Caller",
+      "sublabel": "CLI · MCP · REST · library"
+    },
+    {
+      "id": "adapter",
+      "type": "backend",
+      "label": "Selected Adapter",
+      "sublabel": "typed API · client.raw"
+    },
+    {
+      "id": "webexec",
+      "type": "backend",
+      "label": "Web Executor",
+      "sublabel": "WebRuntime.executor"
+    },
+    {
+      "id": "sidecar",
+      "type": "security",
+      "label": "LazyWebSidecar",
+      "sublabel": "first rpc_call · scoped"
+    },
+    {
+      "id": "androidsession",
+      "type": "backend",
+      "label": "AndroidSession",
+      "sublabel": "AndroidRuntime.session"
+    },
+    {
+      "id": "google",
+      "type": "cloud",
+      "label": "NotebookLM Services",
+      "sublabel": "batchexecute · gRPC"
+    }
+  ],
+  "segments": [
+    {
+      "from": 158,
+      "to": 320,
+      "label": "Web-selected dispatch"
+    },
+    {
+      "from": 328,
+      "to": 454,
+      "label": "Android-selected dispatch"
+    },
+    {
+      "from": 462,
+      "to": 600,
+      "label": "Deprecated Web compatibility on Android"
+    }
+  ],
+  "messages": [
+    {
+      "id": "web-call",
+      "from": "caller",
+      "to": "adapter",
+      "y": 176,
+      "label": "typed call or WebRawAPI.call",
+      "variant": "emphasis"
+    },
+    {
+      "id": "web-exec",
+      "from": "adapter",
+      "to": "webexec",
+      "y": 208,
+      "label": "executor.rpc_call(method, params)",
+      "variant": "emphasis",
+      "note": "retry policy and idempotency resolve once per call"
+    },
+    {
+      "id": "web-wire",
+      "from": "webexec",
+      "to": "google",
+      "y": 240,
+      "label": "POST batchexecute"
+    },
+    {
+      "id": "web-body",
+      "from": "google",
+      "to": "webexec",
+      "y": 272,
+      "label": "streamed response",
+      "variant": "return"
+    },
+    {
+      "id": "web-return",
+      "from": "webexec",
+      "to": "caller",
+      "y": 304,
+      "label": "decoded result",
+      "variant": "return"
+    },
+    {
+      "id": "android-call",
+      "from": "caller",
+      "to": "adapter",
+      "y": 346,
+      "label": "typed call or AndroidRawAPI",
+      "variant": "emphasis"
+    },
+    {
+      "id": "android-session",
+      "from": "adapter",
+      "to": "androidsession",
+      "y": 378,
+      "label": "unary / unary_stream",
+      "variant": "emphasis"
+    },
+    {
+      "id": "android-wire",
+      "from": "androidsession",
+      "to": "google",
+      "y": 410,
+      "label": "protobuf over gRPC"
+    },
+    {
+      "id": "android-return",
+      "from": "google",
+      "to": "caller",
+      "y": 442,
+      "label": "typed result",
+      "variant": "return"
+    },
+    {
+      "id": "compat-enter",
+      "from": "caller",
+      "to": "adapter",
+      "y": 480,
+      "label": "client.rpc_call (deprecated)",
+      "variant": "security"
+    },
+    {
+      "id": "compat-materialize",
+      "from": "adapter",
+      "to": "sidecar",
+      "y": 512,
+      "label": "enter operation_scope; materialize",
+      "variant": "security"
+    },
+    {
+      "id": "compat-exec",
+      "from": "sidecar",
+      "to": "webexec",
+      "y": 544,
+      "label": "executor.rpc_call",
+      "variant": "dashed"
+    },
+    {
+      "id": "compat-close",
+      "from": "webexec",
+      "to": "caller",
+      "y": 576,
+      "label": "return; retain sidecar for reuse",
+      "variant": "return",
+      "note": "root lifecycle closes and reopens its resources; the proxy never starts keepalive"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Backend-selected dispatch",
+      "items": [
+        "Web APIs/WebRawAPI use WebRuntime.executor; Android APIs/AndroidRawAPI use AndroidSession"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Retry and write safety",
+      "items": [
+        "Both backends match retry policy; ambiguous writes scrub traceback, cause, context, and frames"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Compatibility guardrail",
+      "items": [
+        "rpc_call is deprecated; Android pre-registers LazyWebSidecar and builds its WebRuntime only inside operation_scope, with no keepalive"
+      ]
+    }
+  ]
+}

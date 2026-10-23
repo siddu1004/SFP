@@ -7,12 +7,12 @@
 
 <p align="center">
   <b>Give your AI coding agent the right skills for the job, not all of them.</b><br>
-  560 skills, sorted by what you build. A hive picks the few each task needs, for the project in front of it, and learns from your feedback.
+  813 skills, sorted by what you build. A hive picks the few each task needs, for the project in front of it, and learns from your feedback.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-3.4.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.4.0">
-  <img src="https://img.shields.io/badge/skills-560-0f766e?style=flat-square&labelColor=3b4350" alt="560 skills">
+  <img src="https://img.shields.io/badge/skills-813-0f766e?style=flat-square&labelColor=3b4350" alt="813 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
   <img src="https://img.shields.io/badge/needs-Python_3-0f766e?style=flat-square&labelColor=3b4350" alt="Needs Python 3">
@@ -37,7 +37,7 @@ It should name the few skills that fit your project, say why, and follow them in
 
 Good agent skills exist, but they are scattered across dozens of repos, each with its own install steps and folder layout. And installing many of them costs more than it looks.
 
-- **Agents typically read every installed skill's description at the start of every session.** For this library that is about 44,369 tokens, or 22% of a 200k window, before you type a word.
+- **Agents typically read every installed skill's description at the start of every session.** For this library that is about 57,733 tokens, or 29% of a 200k window, before you type a word.
 - **So you choose between two bad options.** Install a few skills and miss the good ones, or install many and pay for a catalog you rarely use.
 - **Picking by hand is guesswork.** The skill for "write tests" is a different skill in a Next.js app, a Django app and a Rust crate.
 
@@ -45,8 +45,8 @@ Good agent skills exist, but they are scattered across dozens of repos, each wit
 
 | Move | How | What it gives you |
 |---|---|---|
-| **Sort** | 24 sources merged into 24 categories, grouped by what you build; presets group categories by role | A backend developer finds Postgres, migrations, API design and Docker together |
-| **Select** | `sfp` finds a skill; `sfp-hive` picks the few a task needs, in order, from the task, the project's files and the work so far | About 266 tokens of descriptions instead of 44,369: 167 times less |
+| **Sort** | 47 sources merged into 24 categories, grouped by what you build; presets group categories by role | A backend developer finds Postgres, migrations, API design and Docker together |
+| **Select** | `sfp` finds a skill; `sfp-hive` picks the few a task needs, in order, from the task, the project's files and the work so far | About 266 tokens of descriptions instead of 57,733: 217 times less |
 | **Learn** | You report which chosen skills helped, which did not and which were missing; a small model adjusts future choices | A mistake you report is not repeated on the same kind of task |
 | **Install once** | One command writes each of 16 IDEs' skills folders; the MCP server serves the same library to tools with no skills folder | No hunting for formats and paths |
 
@@ -58,7 +58,7 @@ The same words, "write tests for the orders", in five different projects. This i
 
 | Your project | The hive chooses |
 |---|---|
-| Next.js | `react-testing`, `application-security-testing` |
+| Next.js | `react-testing`, `playwright-cli`, `application-security-testing` |
 | Rust | `rust-testing` |
 | .NET | `csharp-testing` |
 | Flutter | `dart-flutter-patterns`, `flutter-dart-code-review` |
@@ -105,11 +105,11 @@ A task that really needs Celery, such as "set up background jobs with celery", s
 
 | | Result |
 |---|---:|
-| Mistakes on training tasks fixed when the same task is asked again | **94%** |
-| Unseen tasks answered correctly, without learning | 86.8% |
-| Unseen tasks answered correctly, with learning | 87.7% (+0.9 points) |
-| Folds that improved, against folds that got worse | 11 against 5 |
-| Unseen tasks that were right and became wrong | 8 |
+| Mistakes on training tasks fixed when the same task is asked again | **90%** |
+| Unseen tasks answered correctly, without learning | 85.4% |
+| Unseen tasks answered correctly, with learning | 86.1% (+0.7 points) |
+| Folds that improved, against folds that got worse | 11 against 6 |
+| Unseen tasks that were right and became wrong | 10 |
 | Stacks with a skill for the wrong technology | 0 |
 
 Read this honestly. The reliable effect is that a mistake you report gets fixed. The effect on unseen tasks is small and in the right direction, but within the noise of the benchmark. The first design learned a weight per skill, per technology and per signal, and it made unseen tasks worse, so it was dropped; the history is in [docs/HIVE.md](docs/HIVE.md#how-the-learning-was-built-including-what-failed). Real feedback is noisier than an answer key, and I have not measured long-run use.
@@ -124,24 +124,24 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 | Task set | Hive 3.4.0 | Earlier engine | Plain search |
 |---|---:|---:|---:|
-| 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 68% | 14% |
-| 24 tasks in 10 sample projects | 79% | 79% | 33% |
-| 91 tasks with no project | 89% | 89% | 86% |
-| Stacks with a skill for the wrong technology, all sets | 0 | 0 | 2 |
+| 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 64% | 9% |
+| 24 tasks in 10 sample projects | 75% | 75% | 25% |
+| 91 tasks with no project | 88% | 88% | 84% |
+| Stacks with a skill for the wrong technology, all sets | 0 | 0 | 1 |
 
 **What does it cost your agent?** Every installed skill puts its name and description into each session, at about 4 characters per token.
 
 | What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |
 |---|---:|---:|---:|
-| `sfp` and `sfp-hive` only (the rest on demand) | 2 + all 558 through them | about 266 tokens | 0.1% |
-| `starter` preset | 118 | about 10,303 tokens | 5.2% |
-| `frontend-dev` preset | 185 | about 13,131 tokens | 6.6% |
-| `backend-dev` preset | 127 | about 11,310 tokens | 5.7% |
-| `mobile-dev` preset | 70 | about 5,821 tokens | 2.9% |
-| `agent-builder` preset | 189 | about 14,358 tokens | 7.2% |
-| `everything` | 560 | about 44,369 tokens | 22.2% |
+| `sfp` and `sfp-hive` only (the rest on demand) | 2 + all 811 through them | about 266 tokens | 0.1% |
+| `starter` preset | 165 | about 14,603 tokens | 7.3% |
+| `frontend-dev` preset | 207 | about 14,872 tokens | 7.4% |
+| `backend-dev` preset | 137 | about 11,820 tokens | 5.9% |
+| `mobile-dev` preset | 79 | about 6,394 tokens | 3.2% |
+| `agent-builder` preset | 298 | about 19,876 tokens | 9.9% |
+| `everything` | 813 | about 57,733 tokens | 28.9% |
 
-With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,599 tokens, and 90% are under 4,662. A selection averages 1.8 skills when there is no project.
+With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,212 tokens, and 90% are under 4,292. A selection averages 1.9 skills when there is no project.
 
 **How fast is it?** About 3 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
 
@@ -178,7 +178,7 @@ curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
 # One IDE, one preset
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- --tools cursor --profile frontend-dev
 
-# Everything (it costs about 22% of your context in descriptions)
+# Everything (it costs about 29% of your context in descriptions)
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- --profile everything
 ```
 </details>
@@ -341,7 +341,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 
 ## Questions
 
-**Does selection slow my agent down?** No. A decision takes about 3 ms and happens once per phase of work. It also loads fewer skills: 1.8 on average with no project.
+**Does selection slow my agent down?** No. A decision takes about 3 ms and happens once per phase of work. It also loads fewer skills: 1.9 on average with no project.
 
 **Does it always pick right?** No. The right skill was in the selection 86% of the time on held-out tasks, and the misses are listed in [docs/HIVE.md](docs/HIVE.md#where-it-fails). When it misses, tell it with feedback, name the skill, or ask for a category.
 
@@ -353,7 +353,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 
 **Is it safe?** A skill is third-party instruction text that your agent will follow, so read a skill before you trust it, as you would a script. The installer writes only into skills folders and `~/.sfp`, and backs up an MCP config before changing it. The MCP server makes no network calls. Some skills do their own network work, such as Impeccable downloading its engine on first use.
 
-**Why not install everything?** It works, and `--profile everything` does it. It puts about 44,369 tokens of descriptions into every session and gives your agent 560 to choose between.
+**Why not install everything?** It works, and `--profile everything` does it. It puts about 57,733 tokens of descriptions into every session and gives your agent 813 to choose between.
 
 **Which IDEs have you tested?** Claude Code end to end: plugin install from GitHub, the MCP connection, and a real session using the tools. For the other IDEs the installer was tested on fake home folders, and the folder paths follow each tool's documentation. The Windsurf and Copilot paths are unconfirmed.
 
@@ -380,27 +380,27 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 | Category | Skills | What is in it |
 |---|---:|---|
 | `sfp` | 2 | The router and the hive: find the right skill for any task, installed or not, and choose which few skills to use, in what order, for the task and the project, learning from feedback. |
-| `frontend` | 62 | UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines. |
+| `frontend` | 75 | UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines. |
 | `design-styles` | 67 | 67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more. |
 | `backend` | 27 | Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, Redis, Prisma). |
 | `mobile` | 13 | Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift. |
 | `languages` | 8 | Language idioms, standards and testing for Go, Rust, Python, C++, C#, F#, Java, Kotlin, Perl and .NET. |
-| `testing-quality` | 32 | TDD, end-to-end tests, verification loops, code review, regression and quality gates. |
+| `testing-quality` | 35 | TDD, end-to-end tests, verification loops, code review, regression and quality gates. |
 | `devops` | 15 | Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation. |
-| `security` | 21 | Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening. |
-| `agents` | 33 | Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines. |
-| `agent-dev` | 62 | Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools. |
+| `security` | 22 | Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening. |
+| `agents` | 104 | Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines. |
+| `agent-dev` | 100 | Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools. |
 | `ai-ml` | 10 | LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media. |
 | `ai-gateway` | 45 | Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A. |
 | `data-apis` | 7 | About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platforms, search and scraping. |
-| `content-media` | 26 | Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art. |
+| `content-media` | 28 | Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art. |
 | `business-ops` | 27 | Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check. |
 | `industry` | 13 | Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy. |
 | `networking` | 10 | Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, config validation. |
-| `research-docs` | 19 | Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself. |
-| `web3` | 9 | DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security. |
-| `engineering` | 15 | General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring. |
-| `science-hardware` | 6 | Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware. |
+| `research-docs` | 28 | Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself. |
+| `web3` | 9 | DeFi, EVM, prediction markets, ItÃ´ baskets and compute, and trading-agent security. |
+| `engineering` | 21 | General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring. |
+| `science-hardware` | 116 | Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware. |
 | `career` | 1 | AI job search: evaluate offers, tailor CVs, scan portals, track applications. |
 | `memory` | 30 | claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory. |
 | `session-memory` | plugin | Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker. |
@@ -438,7 +438,7 @@ I could not confirm the Windsurf and Copilot paths against their docs. If one is
 
 ## MCP Server
 
-SFP also runs as an MCP server, so any MCP client can search and read all 560 skills on demand, with nothing copied into a skills folder. It helps IDEs and agents that support MCP but not skills.
+SFP also runs as an MCP server, so any MCP client can search and read all 813 skills on demand, with nothing copied into a skills folder. It helps IDEs and agents that support MCP but not skills.
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
@@ -556,7 +556,7 @@ SFP/
 SFP's own code (the installer, sync script, MCP server, hive and learner, router and selection skills, tests and README) is under the [MIT License](LICENSE). That covers only what SFP wrote. Each skill keeps the license of the project it came from. [NOTICE.md](NOTICE.md) lists every source, and each category folder holds copies of its licenses in `plugins/<category>/LICENSES/`. The full skill list is in [SKILLS.md](SKILLS.md).
 
 <details>
-<summary>Where every source landed (24 sources)</summary>
+<summary>Where every source landed (47 sources)</summary>
 
 Every skill in these repos is in SFP, except test fixtures and translated example copies. Repos with no skill of their own got one written for them. Plugins with no public repo are kept as snapshots in `vendor/`.
 

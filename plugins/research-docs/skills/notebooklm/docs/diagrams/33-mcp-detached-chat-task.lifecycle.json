@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "MCP Detached Chat Task Lifecycle",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1020, 640],
+    "views": [
+      {
+        "id": "main-task",
+        "label": "Accepted task",
+        "focus": ["submitted", "claimed", "queued", "generating", "cached"],
+        "note": "A fresh semantic ask is claimed atomically, queued behind the concurrency gate, generated, and retained for polling."
+      },
+      {
+        "id": "dedupe-and-capacity",
+        "label": "Dedupe and capacity",
+        "focus": ["submitted", "claimed", "queued", "generating"],
+        "note": "An identical unfinished ask attaches to its task id; only a registry full of unfinished work rejects a fresh claim."
+      },
+      {
+        "id": "terminal-cleanup",
+        "label": "Cancellation and expiry",
+        "focus": ["queued", "generating", "failed", "cancelled", "expired"],
+        "note": "Errors and cancellations are stamped for status polling, then become indistinguishable from unknown after the completion TTL."
+      }
+    ]
+  },
+  "lanes": [
+    {"id": "main", "label": "Fresh ask"},
+    {"id": "terminal", "label": "Terminal retention"}
+  ],
+  "states": [
+    {"id": "submitted", "type": "start", "label": "Submitted", "sublabel": "resolved semantic inputs", "lane": "main", "col": 0, "step": "01", "tag": "chat_start"},
+    {"id": "claimed", "type": "decision", "label": "Claim Key", "sublabel": "atomic map lookup", "lane": "main", "col": 1, "step": "02", "tag": "SHA-256"},
+    {"id": "queued", "type": "waiting", "label": "Queued", "sublabel": "await concurrency slot", "lane": "main", "col": 2, "step": "03", "tag": "FIFO"},
+    {"id": "generating", "type": "active", "label": "Generating", "sublabel": "server-owned asyncio task", "lane": "main", "col": 3, "step": "04", "tag": "detached"},
+    {"id": "cached", "type": "success", "label": "Result Cached", "sublabel": "pollable by task id", "lane": "main", "col": 4, "step": "05", "tag": "30 min TTL"},
+    {"id": "cancelled", "type": "failure", "label": "Cancelled", "sublabel": "queued, active, or shutdown", "lane": "terminal", "col": 0, "tag": "pollable"},
+    {"id": "failed", "type": "failure", "label": "Error Cached", "sublabel": "projected at read time", "lane": "terminal", "col": 1, "tag": "pollable"},
+    {"id": "expired", "type": "neutral", "label": "Expired / Unknown", "sublabel": "entry dropped", "lane": "terminal", "col": 2, "tag": "chat_start to ask again"}
+  ],
+  "transitions": [
+    {"id": "submit-claim", "from": "submitted", "to": "claimed", "variant": "emphasis"},
+    {"id": "claim-queue", "from": "claimed", "to": "queued", "variant": "emphasis"},
+    {"id": "queue-generate", "from": "queued", "to": "generating", "variant": "emphasis", "route": "straight"},
+    {"id": "generate-cache", "from": "generating", "to": "cached", "variant": "emphasis"},
+    {"id": "queue-cancel", "from": "queued", "to": "cancelled", "variant": "security"},
+    {"id": "generate-failed", "from": "generating", "to": "failed", "variant": "security"},
+    {"id": "generate-cancel", "from": "generating", "to": "cancelled", "variant": "security"},
+    {"id": "cache-expire", "from": "cached", "to": "expired", "variant": "dashed"},
+    {"id": "failed-expire", "from": "failed", "to": "expired", "variant": "dashed"},
+    {"id": "cancelled-expire", "from": "cancelled", "to": "expired", "variant": "dashed", "fromSide": "bottom", "toSide": "bottom", "route": "bottom-channel"}
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Detached Completion",
+      "items": [
+        "ChatTaskRegistry.start detaches work behind the gate"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Bounded Admission",
+      "items": [
+        "Semantic duplicates attach; only unfinished saturation rejects"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Truthful Observation",
+      "items": [
+        "chat_status exposes state until wall-clock TTL expiry"
+      ]
+    }
+  ]
+}

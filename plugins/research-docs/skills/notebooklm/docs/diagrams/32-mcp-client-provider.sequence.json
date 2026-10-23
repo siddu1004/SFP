@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "MCP Client Provider Open and Recovery",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [1060, 640],
+    "views": [
+      {
+        "id": "fast-handshake",
+        "label": "Fast initialize",
+        "focus": ["host", "lifespan", "provider", "opentask"],
+        "note": "Lifespan starts one background open and yields immediately, so MCP initialize does not wait for Google authentication."
+      },
+      {
+        "id": "single-flight-get",
+        "label": "First tool call",
+        "focus": ["host", "tool", "provider", "opentask", "factory"],
+        "note": "Tool calls join the same open through asyncio.shield; cancellation of one waiter does not cancel shared warm-up."
+      },
+      {
+        "id": "retry-and-close",
+        "label": "Failure and shutdown",
+        "focus": ["lifespan", "tool", "provider", "opentask", "factory"],
+        "note": "A failed open clears only its own slot for the next call; shutdown cancels warm-up or exits the owned context manager."
+      }
+    ]
+  },
+  "participants": [
+    {"id": "host", "type": "external", "label": "MCP Host", "sublabel": "initialize / tools"},
+    {"id": "lifespan", "type": "backend", "label": "FastMCP Lifespan", "sublabel": "process owner"},
+    {"id": "tool", "type": "frontend", "label": "Tool Handler", "sublabel": "first real use"},
+    {"id": "provider", "type": "backend", "label": "ClientProvider", "sublabel": "single-flight owner"},
+    {"id": "opentask", "type": "messagebus", "label": "Open Task", "sublabel": "shared asyncio task"},
+    {"id": "factory", "type": "backend", "label": "Client Factory", "sublabel": "async context manager"}
+  ],
+  "segments": [
+    {"from": 150, "to": 282, "label": "Background warm-up"},
+    {"from": 290, "to": 478, "label": "Shielded first use"},
+    {"from": 486, "to": 562, "label": "Retry and teardown"}
+  ],
+  "messages": [
+    {"id": "enter", "from": "host", "to": "lifespan", "y": 178, "label": "enter server lifespan", "variant": "emphasis"},
+    {"id": "start", "from": "lifespan", "to": "provider", "y": 208, "label": "start() without await", "variant": "emphasis"},
+    {"id": "spawn", "from": "provider", "to": "opentask", "y": 238, "label": "ensure_future(_open)", "variant": "dashed"},
+    {"id": "ready", "from": "lifespan", "to": "host", "y": 268, "label": "yield; initialize can finish", "variant": "return"},
+    {"id": "invoke", "from": "host", "to": "tool", "y": 318, "label": "invoke tool", "variant": "default"},
+    {"id": "get", "from": "tool", "to": "provider", "y": 348, "label": "get()", "variant": "emphasis"},
+    {"id": "join", "from": "provider", "to": "opentask", "y": 378, "label": "await asyncio.shield(task)", "variant": "security", "note": "Cancellation of one waiter leaves the shared open running."},
+    {"id": "open", "from": "opentask", "to": "factory", "y": 408, "label": "await __aenter__", "variant": "default"},
+    {"id": "result", "from": "factory", "to": "opentask", "y": 438, "label": "NotebookLMClient or error", "variant": "return"},
+    {"id": "handoff", "from": "provider", "to": "tool", "y": 468, "label": "cached client or real error", "variant": "return"},
+    {"id": "retry", "from": "tool", "to": "provider", "y": 496, "label": "next get() retries failure", "variant": "emphasis"},
+    {"id": "close", "from": "lifespan", "to": "provider", "y": 526, "label": "aclose(exception triple)", "variant": "security"},
+    {"id": "exit", "from": "provider", "to": "factory", "y": 556, "label": "cancel open / await __aexit__", "variant": "return"}
+  ],
+  "activations": [
+    {"participant": "lifespan", "from": 172, "to": 532, "type": "backend"},
+    {"participant": "tool", "from": 312, "to": 502, "type": "frontend"},
+    {"participant": "provider", "from": 202, "to": 562, "type": "backend"},
+    {"participant": "opentask", "from": 232, "to": 444, "type": "messagebus"},
+    {"participant": "factory", "from": 402, "to": 562, "type": "backend"}
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Handshake Decoupling",
+      "items": [
+        "ClientProvider.start warms while initialize returns"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "One Shared Open",
+      "items": [
+        "_ensure_open_task plus asyncio.shield share one open"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Owned Teardown",
+      "items": [
+        "aclose cancels warm-up, then exits the owned context"
+      ]
+    }
+  ]
+}

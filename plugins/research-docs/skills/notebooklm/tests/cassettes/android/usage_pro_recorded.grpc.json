@@ -1,0 +1,36 @@
+{
+  "format": "notebooklm.android.grpc-cassette",
+  "interactions": [
+    {
+      "method": "/google.internal.labs.tailwind.orchestration.v1.LabsTailwindOrchestrationService/GetAccount",
+      "request": {
+        "protobuf_b64": "",
+        "protobuf_type": "google.protobuf.Empty"
+      },
+      "response_protobuf_type": "google.internal.labs.tailwind.orchestration.v1.GetOrCreateAccountResponse",
+      "responses": [
+        {
+          "protobuf_b64": "CjASCggBEAEYASABKAEaHAgBIAEqFgoUU0NSVUJCRURfU1RSSU5HXzAwMjYqBAgBOAE=",
+          "protobuf_type": "google.internal.labs.tailwind.orchestration.v1.GetOrCreateAccountResponse"
+        }
+      ],
+      "shape": "unary_unary"
+    },
+    {
+      "method": "/google.internal.labs.tailwind.orchestration.v1.LabsTailwindOrchestrationService/ListQuotaSummary",
+      "request": {
+        "protobuf_b64": "CjwIAxIXChVTQ1JVQkJFRF9SRVFVRVNUXzAwMDEiHwgBWhsIAhABGhVTQ1JVQkJFRF9SRVFVRVNUXzAwMDE=",
+        "protobuf_type": "google.internal.labs.tailwind.api.v1.ListQuotaSummaryRequest"
+      },
+      "response_protobuf_type": "notebooklm.internal.android.wire.v1.WireListQuotaSummaryResponse",
+      "responses": [
+        {
+          "protobuf_b64": "CAESGigBMgQIARABOQAAAAAAAPA/QQAAAAAAAPA/EhooAjIECAEQATkAAAAAAADwP0EAAAAAAADwPyITCAEQARgBIAMoATEAAAAAAADwPyITCAIQARgBIAMoATEAAAAAAADwPyITCAMQARgBIAQoATEAAAAAAADwPyITCAQQARgBIAMoATEAAAAAAADwPyITCAUQARgBIAIoATEAAAAAAADwPyITCAYQARgBIAMoATEAAAAAAADwPyITCAcQARgBIAIoATEAAAAAAADwPyITCAgQARgBIAIoATEAAAAAAADwPyITCAkQARgBIAEoATEAAAAAAADwPyITCAoQARgBIAEoATEAAAAAAADwPyITCAsQARgBIAEoATEAAAAAAADwPyITCAwQARgBIAEoATEAAAAAAADwPyIRCA0QASACKAExAAAAAAAA8D8iEQgOEAEgASgBMQAAAAAAAPA/IhEIDxABIAIoATEAAAAAAADwPyIRCBAQASABKAExAAAAAAAA8D8iEQgREAEgASgBMQAAAAAAAPA/IhEIEhABIAEoATEAAAAAAADwPyIRCBMQASABKAExAAAAAAAA8D8iEwgUEAEYASABKAExAAAAAAAA8D8iEQgVEAEgASgBMQAAAAAAAPA/IhEIFhABIAEoATEAAAAAAADwPw==",
+          "protobuf_type": "notebooklm.internal.android.wire.v1.WireListQuotaSummaryResponse"
+        }
+      ],
+      "shape": "unary_unary"
+    }
+  ],
+  "version": 1
+}

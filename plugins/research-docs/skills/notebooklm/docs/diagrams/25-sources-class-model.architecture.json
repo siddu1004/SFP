@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Sources Class Model",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "hierarchy",
+        "label": "Inheritance",
+        "focus": [
+          "baseapi",
+          "webns",
+          "andns"
+        ],
+        "note": "Neutral _sources.py owns shared workflows; Web and Android subclasses satisfy one hook contract."
+      },
+      {
+        "id": "upload",
+        "label": "Upload classes",
+        "focus": [
+          "webns",
+          "pipeline",
+          "scotty",
+          "andns",
+          "andupload"
+        ],
+        "note": "Each backend upload pipeline owns its client, semaphore, and transport-lifecycle participation."
+      },
+      {
+        "id": "values",
+        "label": "Value types",
+        "focus": [
+          "addsvc",
+          "source",
+          "sourcetype"
+        ],
+        "note": "Both backends return the same mutable Source dataclass and SourceStatus enum."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "pipeline",
+      "type": "backend",
+      "label": "WebRuntime Upload",
+      "sublabel": "SourceUploadPipeline",
+      "tag": "loop-bound",
+      "pos": [
+        544,
+        60
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "scotty",
+      "type": "cloud",
+      "label": "Scotty Upload",
+      "sublabel": "start · finalize",
+      "pos": [
+        806,
+        60
+      ],
+      "size": [
+        165,
+        84
+      ]
+    },
+    {
+      "id": "client",
+      "type": "backend",
+      "label": "NotebookLMClient",
+      "sublabel": "composition root",
+      "pos": [
+        30,
+        260
+      ],
+      "size": [
+        160,
+        90
+      ]
+    },
+    {
+      "id": "baseapi",
+      "type": "backend",
+      "label": "Neutral SourcesAPI",
+      "sublabel": "_sources.py · shared workflows",
+      "tag": "one contract",
+      "pos": [
+        282,
+        260
+      ],
+      "size": [
+        170,
+        90
+      ]
+    },
+    {
+      "id": "webns",
+      "type": "backend",
+      "label": "WebSourcesAPI",
+      "sublabel": "_web/sources/",
+      "pos": [
+        544,
+        260
+      ],
+      "size": [
+        170,
+        90
+      ]
+    },
+    {
+      "id": "addsvc",
+      "type": "backend",
+      "label": "SourceAddService",
+      "sublabel": "one send · inspect if unknown",
+      "pos": [
+        806,
+        260
+      ],
+      "size": [
+        165,
+        90
+      ]
+    },
+    {
+      "id": "poller",
+      "type": "backend",
+      "label": "SourcePoller",
+      "sublabel": "shared readiness loop",
+      "pos": [
+        1063,
+        260
+      ],
+      "size": [
+        155,
+        90
+      ]
+    },
+    {
+      "id": "andns",
+      "type": "backend",
+      "label": "AndroidSourcesAPI",
+      "sublabel": "_android/sources.py",
+      "pos": [
+        282,
+        460
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "andupload",
+      "type": "backend",
+      "label": "AndroidRuntime Upload",
+      "sublabel": "control + data plane",
+      "pos": [
+        544,
+        460
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "source",
+      "type": "database",
+      "label": "Source",
+      "sublabel": "_types/sources.py",
+      "tag": "mutable dataclass",
+      "pos": [
+        806,
+        460
+      ],
+      "size": [
+        165,
+        84
+      ]
+    },
+    {
+      "id": "sourcetype",
+      "type": "database",
+      "label": "SourceStatus",
+      "sublabel": "UNKNOWN · PROCESSING · READY",
+      "tag": "ERROR · PREPARING",
+      "pos": [
+        1063,
+        460
+      ],
+      "size": [
+        155,
+        84
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "client-base",
+      "from": "client",
+      "to": "baseapi",
+      "label": "constructs",
+      "variant": "emphasis"
+    },
+    {
+      "id": "base-web",
+      "from": "baseapi",
+      "to": "webns",
+      "label": "subclass",
+      "variant": "emphasis"
+    },
+    {
+      "id": "base-android",
+      "from": "baseapi",
+      "to": "andns",
+      "label": "subclass",
+      "variant": "dashed",
+      "labelAt": [
+        367,
+        398
+      ]
+    },
+    {
+      "id": "web-pipeline",
+      "from": "webns",
+      "to": "pipeline",
+      "label": "add_file",
+      "labelAt": [
+        629,
+        202
+      ]
+    },
+    {
+      "id": "pipeline-scotty",
+      "from": "pipeline",
+      "to": "scotty",
+      "label": "resumable",
+      "variant": "dashed"
+    },
+    {
+      "id": "web-addsvc",
+      "from": "webns",
+      "to": "addsvc",
+      "label": "add_url"
+    },
+    {
+      "id": "addsvc-poller",
+      "from": "addsvc",
+      "to": "poller",
+      "label": "wait hook"
+    },
+    {
+      "id": "android-upload",
+      "from": "andns",
+      "to": "andupload",
+      "label": "add_file",
+      "variant": "dashed"
+    },
+    {
+      "id": "addsvc-source",
+      "from": "addsvc",
+      "to": "source",
+      "label": "returns",
+      "labelAt": [
+        888.5,
+        398
+      ]
+    },
+    {
+      "id": "source-status",
+      "from": "source",
+      "to": "sourcetype",
+      "label": "status"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Hoisted workflows",
+      "items": [
+        "Neutral _sources.py owns lookup, readiness polling, and post-upload finalization",
+        "WebSourcesAPI and AndroidSourcesAPI implement one backend hook contract"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Upload pipeline",
+      "items": [
+        "WebRuntime and AndroidRuntime own their corresponding upload pipelines",
+        "Each pipeline keeps its own upload semaphore and dedicated client"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Duplicate safety",
+      "items": [
+        "SourceAddService sends each mutation once; callers inspect only after an unknown outcome",
+        "Text adds stay non-idempotent unless the caller dedupes externally"
+      ]
+    }
+  ]
+}

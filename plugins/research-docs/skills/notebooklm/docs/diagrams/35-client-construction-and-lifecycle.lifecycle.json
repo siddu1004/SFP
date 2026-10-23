@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Client Construction and Lifecycle Handoff",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1080, 566],
+    "views": [
+      {"id": "direct-construction", "label": "Direct construction", "focus": ["direct-inputs", "normalized", "assembled", "installed"], "note": "Direct construction normalizes options, assembles one complete graph, and installs it CLOSED without credential reads or network I/O."},
+      {"id": "stored-construction", "label": "from_storage handoff", "focus": ["storage-context", "credential-load", "normalized", "assembled", "installed"], "note": "from_storage() returns an inert context; its first await loads credentials before joining the same normalization and assembly path."},
+      {"id": "ownership-handoff", "label": "Ownership handoff", "focus": ["assembled", "installed", "resource-lifecycle"], "note": "Backend assembly returns a complete graph; the root client installs it once, then delegates resource generations to Diagram 19."}
+    ]
+  },
+  "lanes": [
+    {"id": "main", "label": "Construction and installation"},
+    {"id": "coordination", "label": "Deferred storage input"}
+  ],
+  "states": [
+    {"id": "direct-inputs", "type": "start", "label": "Direct Inputs", "sublabel": "AuthTokens + ClientConfig", "lane": "main", "col": 0, "step": "01", "tag": "sync · no read · no I/O"},
+    {"id": "normalized", "type": "active", "label": "Normalized", "sublabel": "backend frozen", "lane": "main", "col": 1, "step": "02", "tag": "typed owners"},
+    {"id": "assembled", "type": "active", "label": "Complete Assembly", "sublabel": "services + resources", "lane": "main", "col": 2, "step": "03", "tag": "no partial install"},
+    {"id": "installed", "type": "success", "label": "Installed · CLOSED", "sublabel": "root is sole graph owner", "lane": "main", "col": 3, "step": "04", "tag": "construction complete"},
+    {"id": "resource-lifecycle", "type": "external", "label": "Resource Lifecycle", "sublabel": "state machine", "lane": "main", "col": 4, "step": "05", "tag": "see Diagram 19"},
+    {"id": "storage-context", "type": "external", "label": "from_storage()", "sublabel": "returns inert context", "lane": "coordination", "col": 0, "yOffset": -50, "tag": "no credential read yet"},
+    {"id": "credential-load", "type": "waiting", "label": "First Await / Enter", "sublabel": "load credentials", "lane": "coordination", "col": 1, "yOffset": -50, "tag": "before construction"}
+  ],
+  "transitions": [
+    {"id": "storage-load", "from": "storage-context", "to": "credential-load", "variant": "emphasis", "fromSide": "bottom", "toSide": "bottom", "via": [[402, 310], [556, 310]]},
+    {"id": "load-normalize", "from": "credential-load", "to": "normalized", "label": "tokens + options", "variant": "emphasis", "fromSide": "top", "toSide": "bottom", "via": [[556, 208], [248, 208]], "labelAt": [400, 208]},
+    {"id": "installed-lifecycle", "from": "installed", "to": "resource-lifecycle", "variant": "dashed"}
+  ],
+  "cards": [
+    {"dot": "cyan", "title": "Scope boundary", "items": ["This diagram ends when the complete graph is installed CLOSED", "Diagram 19 owns OPENING, OPEN, DRAINING, CLOSING, rollback, and fresh epochs"]},
+    {"dot": "emerald", "title": "Construction evidence", "items": ["Direct constructor and sole graph install: src/notebooklm/client.py:261-490; src/notebooklm/_client_assembly.py:60-110", "Deferred storage load precedes the same construction path: src/notebooklm/client.py:1117-1243"]}
+  ]
+}

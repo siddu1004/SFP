@@ -1,0 +1,3 @@
+Standard License
+
+Source: https://github.com/greensock/GSAP

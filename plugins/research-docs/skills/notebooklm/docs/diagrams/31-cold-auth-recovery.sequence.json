@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Cold Authentication Recovery Ladder",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "column_fit": "spread",
+    "viewBox": [1060, 640],
+    "views": [
+      {
+        "id": "initial-and-command",
+        "label": "Initial attempt and L2.5",
+        "focus": ["caller", "driver", "service", "refreshcmd", "store"],
+        "note": "A failed initial token fetch may run the configured refresh command, reload its exact profile pair, and validate once."
+      },
+      {
+        "id": "coalesced-cold",
+        "label": "Coalesced L3 and L4",
+        "focus": ["driver", "recovery", "store", "headless", "master", "service"],
+        "note": "File-backed login redirects enter a policy-keyed flight; a path lock serializes L3/L4 recovery across headless policies."
+      },
+      {
+        "id": "terminal-result",
+        "label": "Result or exhaustion",
+        "focus": ["caller", "driver", "recovery", "service"],
+        "note": "The first validated replacement is cloned into the caller jar; otherwise the original or refresh-rung error remains authoritative."
+      }
+    ]
+  },
+  "participants": [
+    {"id": "caller", "type": "frontend", "label": "Client Open", "sublabel": "token request"},
+    {"id": "driver", "type": "backend", "label": "Token Driver", "sublabel": "_auth.refresh"},
+    {"id": "service", "type": "external", "label": "NotebookLM", "sublabel": "homepage / CSRF"},
+    {"id": "refreshcmd", "type": "external", "label": "Refresh Cmd", "sublabel": "L2.5"},
+    {"id": "recovery", "type": "security", "label": "Cold Recovery", "sublabel": "path + rung policy"},
+    {"id": "headless", "type": "security", "label": "Headless Rung", "sublabel": "L3 opt-in"},
+    {"id": "master", "type": "security", "label": "Master Token", "sublabel": "L4 re-mint"},
+    {"id": "store", "type": "database", "label": "Profile Store", "sublabel": "cookies + baseline"}
+  ],
+  "segments": [
+    {"from": 150, "to": 250, "label": "Initial token acquisition"},
+    {"from": 258, "to": 346, "label": "L2.5 refresh command"},
+    {"from": 354, "to": 562, "label": "Coalesced L3 / L4 recovery"}
+  ],
+  "messages": [
+    {"id": "fetch", "from": "caller", "to": "driver", "y": 178, "label": "fetch_tokens", "variant": "emphasis"},
+    {"id": "initial", "from": "driver", "to": "service", "y": 208, "label": "fetch CSRF + session", "variant": "security"},
+    {"id": "rejected", "from": "service", "to": "driver", "y": 238, "label": "tokens or auth failure", "variant": "return", "note": "Only a failed initial attempt enters the recovery ladder."},
+    {"id": "command", "from": "driver", "to": "refreshcmd", "y": 276, "label": "run configured command", "variant": "dashed"},
+    {"id": "commandwrite", "from": "refreshcmd", "to": "store", "y": 306, "label": "replace profile cookies", "variant": "security"},
+    {"id": "commandvalidate", "from": "driver", "to": "service", "y": 336, "label": "reload pair + validate", "variant": "security", "note": "A failed or ineligible L2.5 attempt falls through only for a login redirect with writable storage."},
+    {"id": "coalesce", "from": "driver", "to": "recovery", "y": 374, "label": "claim path + policy flight", "variant": "emphasis"},
+    {"id": "reload", "from": "recovery", "to": "store", "y": 404, "label": "lock path + reload profile", "variant": "security"},
+    {"id": "headlessrun", "from": "recovery", "to": "headless", "y": 434, "label": "try optional L3 re-auth", "variant": "dashed"},
+    {"id": "masterrun", "from": "recovery", "to": "master", "y": 464, "label": "try L4 after L3 fails", "variant": "dashed", "note": "Each produced cookie pair is validated before the coordinator advances."},
+    {"id": "masterwrite", "from": "master", "to": "store", "y": 494, "label": "persist + reload cookie pair", "variant": "security"},
+    {"id": "finalvalidate", "from": "recovery", "to": "service", "y": 524, "label": "validate recovered cookies", "variant": "security"},
+    {"id": "final", "from": "recovery", "to": "caller", "y": 554, "label": "cloned tokens or terminal error", "variant": "return"}
+  ],
+  "activations": [
+    {"participant": "driver", "from": 172, "to": 380, "type": "backend"},
+    {"participant": "service", "from": 202, "to": 530, "type": "external"},
+    {"participant": "refreshcmd", "from": 270, "to": 312, "type": "external"},
+    {"participant": "recovery", "from": 368, "to": 560, "type": "security"},
+    {"participant": "headless", "from": 428, "to": 440, "type": "security"},
+    {"participant": "master", "from": 458, "to": 500, "type": "security"},
+    {"participant": "store", "from": 300, "to": 500, "type": "database"}
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "One Ordered Ladder",
+      "items": [
+        "_fetch_tokens_with_refresh_core owns the ordered ladder"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Concurrency Boundaries",
+      "items": [
+        "ColdRecoveryState serializes each path; SingleFlight keys by path plus rung policy",
+        "L2.5 refresh-command execution uses its own single flight"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Fail-Closed Conditions",
+      "items": [
+        "Env auth skips file recovery; exhaustion preserves the error"
+      ]
+    }
+  ]
+}

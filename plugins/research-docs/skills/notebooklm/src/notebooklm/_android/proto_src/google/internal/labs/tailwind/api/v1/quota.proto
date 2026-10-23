@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package google.internal.labs.tailwind.api.v1;
+
+import "labs/language/tailwind/common/protos/metadata.proto";
+
+// Exact request identity and field recovered from Android 1.55.10. The APK's
+// QuotaService binding is not the live orchestration gRPC alias, so the
+// message remains service-free here.
+message ListQuotaSummaryRequest {
+  .labs.language.tailwind.common.protos.RequestContext request_context = 1;
+}

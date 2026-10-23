@@ -1,0 +1,808 @@
+"""Deterministic public-Web-API cohorts for the local fault harness."""
+
+from __future__ import annotations
+
+import asyncio
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
+from typing import Any, Literal
+
+import httpx
+
+from notebooklm import (
+    DecodingError,
+    NetworkError,
+    NotebookLMError,
+    RateLimitError,
+    RPCTimeoutError,
+    ServerError,
+)
+from notebooklm.client import NotebookLMClient
+from notebooklm.outcomes import CommitState
+from notebooklm.rpc import RPCMethod
+
+from .adapter_registry import SCENARIOS as _ADAPTER_SCENARIOS
+from .common import ScenarioFailure, ScenarioResult
+from .http import Disconnect, HttpFaultServer, Reply, Route, Stall, Truncate
+from .web import (
+    COOKIE_NAME,
+    NEW_COOKIE,
+    NEW_CSRF,
+    NEW_SESSION,
+    OLD_COOKIE,
+    OLD_CSRF,
+    OLD_SESSION,
+    build_fault_client,
+    create_response,
+    homepage_response,
+    list_response,
+    rpc_response,
+)
+from .web_concurrency import BUDGETS as CONCURRENCY_BUDGETS
+from .web_concurrency import IMPLEMENTATIONS as CONCURRENCY_IMPLEMENTATIONS
+from .web_concurrency import PLANS as CONCURRENCY_PLANS
+from .web_concurrency import REQUIRED_CHECKS as CONCURRENCY_REQUIRED_CHECKS
+from .web_connections import IMPLEMENTATIONS as CONNECTION_IMPLEMENTATIONS
+from .web_connections import PLANS as CONNECTION_PLANS
+from .web_consistency import BUDGETS as CONSISTENCY_BUDGETS
+from .web_consistency import IMPLEMENTATIONS as CONSISTENCY_IMPLEMENTATIONS
+from .web_consistency import PLANS as CONSISTENCY_PLANS
+from .web_consistency import REQUIRED_CHECKS as CONSISTENCY_REQUIRED_CHECKS
+from .web_persistence import IMPLEMENTATIONS as PERSISTENCE_IMPLEMENTATIONS
+from .web_persistence import PLANS as PERSISTENCE_PLANS
+from .web_persistence import REQUIRED_CHECKS as PERSISTENCE_REQUIRED_CHECKS
+from .web_protocol import SCENARIOS as PROTOCOL_SCENARIOS
+from .web_resilience_scenarios import BUDGETS as RESILIENCE_BUDGETS
+from .web_resilience_scenarios import (
+    IMPLEMENTATIONS as RESILIENCE_IMPLEMENTATIONS,
+)
+from .web_resilience_scenarios import (
+    PLANS as RESILIENCE_PLANS,
+)
+from .web_resilience_scenarios import REQUIRED_CHECKS as RESILIENCE_REQUIRED_CHECKS
+from .web_resilience_scenarios import (
+    SCENARIOS as RESILIENCE_SCENARIOS,
+)
+from .web_saturation import SCENARIOS as SATURATION_SCENARIOS
+from .web_slow_responses import SCENARIOS as SLOW_SCENARIOS
+from .web_streaming import IMPLEMENTATIONS as CHAT_IMPLEMENTATIONS
+from .web_streaming import PLANS as CHAT_PLANS
+from .web_transfers import BUDGETS as TRANSFER_BUDGETS
+from .web_transfers import IMPLEMENTATIONS as TRANSFER_IMPLEMENTATIONS
+from .web_transfers import PLANS as TRANSFER_PLANS
+from .web_workflows import SCENARIOS as WORKFLOW_SCENARIOS
+from .web_workflows import run_scenario as run_workflow_scenario
+
+_READ = Route.rpc(RPCMethod.LIST_NOTEBOOKS.value)
+_CREATE = Route.rpc(RPCMethod.CREATE_NOTEBOOK.value)
+_HOME = Route.homepage()
+_LOGIN = Route.login()
+
+SCENARIOS: tuple[str, ...] = tuple(
+    sorted(
+        (
+            "auth_refresh",
+            "auth_refresh_coalesced",
+            "auth_refresh_login_redirect",
+            "auth_refresh_malformed",
+            "cancel_blocked_read",
+            "close_reopen",
+            "committed_create_disconnect",
+            "delayed_headers",
+            "malformed_payload",
+            "rate_limit_exhaustion",
+            "rate_limit_recovery",
+            "server_error_exhaustion",
+            "server_error_recovery",
+            "stalled_body",
+            "truncated_body",
+            "valid_read_create",
+            *RESILIENCE_SCENARIOS,
+        )
+    )
+)
+
+SCENARIOS = tuple(sorted((*SCENARIOS, *_ADAPTER_SCENARIOS)))
+
+
+_PLANS: dict[str, tuple[tuple[str, ...], int]] = {
+    "auth_refresh": (("rpc:400", "homepage:tokens+secure-cookie", "rpc:200"), 1),
+    "auth_refresh_coalesced": (
+        ("rpc:400x6@gate", "homepage:tokens+secure-cookie", "rpc:200x6"),
+        6,
+    ),
+    "auth_refresh_login_redirect": (
+        ("rpc:400", "homepage:302-login", "login:html"),
+        1,
+    ),
+    "auth_refresh_malformed": (("rpc:400", "homepage:malformed"), 1),
+    "cancel_blocked_read": (("rpc:stall-headers", "caller:cancel"), 1),
+    "close_reopen": (("rpc:stall-headers", "client:close", "client:reopen", "rpc:200"), 1),
+    "committed_create_disconnect": (("create:commit", "socket:disconnect"), 1),
+    "delayed_headers": (("rpc:stall-headers", "deadline:expire"), 1),
+    "malformed_payload": (("rpc:200-malformed-payload",), 1),
+    "rate_limit_exhaustion": (("rpc:429x3", "retry:exhaust"), 1),
+    "rate_limit_recovery": (("rpc:429-retry-after", "rpc:200"), 1),
+    "server_error_exhaustion": (("rpc:503x3", "retry:exhaust"), 1),
+    "server_error_recovery": (("rpc:503", "rpc:200"), 1),
+    "stalled_body": (("rpc:headers+partial-body", "deadline:expire"), 1),
+    "truncated_body": (("rpc:truncated-body-x3", "retry:exhaust"), 1),
+    "valid_read_create": (("read:200", "create:200"), 1),
+}
+_PLANS.update({name: (RESILIENCE_PLANS[name], 1) for name in RESILIENCE_SCENARIOS})
+
+_CLOSE_TIMEOUT = 2.0
+
+
+async def _recording_sleep(result: ScenarioResult, seconds: float) -> None:
+    result.record("sleep", seconds=seconds)
+
+
+@asynccontextmanager
+async def _cohort(
+    result: ScenarioResult,
+    server: HttpFaultServer,
+    *,
+    timeout: float = 0.5,
+    rate_retries: int = 2,
+    server_retries: int = 2,
+    max_concurrent_rpcs: int | None = 16,
+    operation_timeout: float | None = None,
+    record_sleep: bool = True,
+    transfer_timeout: float | None = None,
+    transfer_client_factory: Callable[..., Any] | None = None,
+) -> AsyncIterator[NotebookLMClient]:
+    client: NotebookLMClient | None = None
+    close_error: BaseException | None = None
+    server_close_error: BaseException | None = None
+    primary_error: BaseException | None = None
+    result.record(
+        "configuration",
+        transport="httpx",
+        rpc_timeout=timeout,
+        transfer_timeout=transfer_timeout,
+        rate_limit_max_retries=rate_retries,
+        server_error_max_retries=server_retries,
+        retry_sleep="record_only" if record_sleep else "real_clock",
+        cleanup_timeout=_CLOSE_TIMEOUT,
+    )
+    await server.__aenter__()
+    try:
+
+        async def sleep(seconds: float) -> None:
+            await _recording_sleep(result, seconds)
+
+        client = build_fault_client(
+            server,
+            timeout=timeout,
+            rate_limit_max_retries=rate_retries,
+            server_error_max_retries=server_retries,
+            max_concurrent_rpcs=max_concurrent_rpcs,
+            operation_timeout=operation_timeout,
+            sleep=sleep if record_sleep else None,
+            transfer_timeout=transfer_timeout,
+            transfer_client_factory=transfer_client_factory,
+        )
+        await client.__aenter__()
+        yield client
+    except BaseException as exc:
+        primary_error = exc
+        raise
+    finally:
+        if client is not None:
+            try:
+                await asyncio.wait_for(client.close(drain=False), _CLOSE_TIMEOUT)
+            except BaseException as exc:
+                close_error = exc
+        try:
+            await asyncio.wait_for(server.aclose(), _CLOSE_TIMEOUT)
+        except BaseException as exc:
+            server_close_error = exc
+        _record_http_trace(result, server)
+        result.record(
+            "cleanup",
+            client_closed=client is None or not client._lifecycle.is_open(),
+            active_handlers=server.active_handlers,
+            close_error=None if close_error is None else type(close_error).__name__,
+            server_close_error=(
+                None if server_close_error is None else type(server_close_error).__name__
+            ),
+            server_errors=list(server.errors),
+            remaining_actions=server.remaining(),
+            primary_error=None if primary_error is None else type(primary_error).__name__,
+        )
+        for cleanup_error in (close_error, server_close_error):
+            if cleanup_error is not None and (
+                primary_error is None
+                or (
+                    isinstance(primary_error, Exception)
+                    and not isinstance(cleanup_error, Exception)
+                )
+            ):
+                raise cleanup_error
+        if primary_error is None:
+            result.require("client_closed", client is None or not client._lifecycle.is_open())
+
+
+def _requests(server: HttpFaultServer, route: Route) -> list[Any]:
+    return [record for record in server.journal if record.route == route]
+
+
+def _record_error(result: ScenarioResult, exc: BaseException | None) -> None:
+    result.record(
+        "outcome",
+        error=None if exc is None else type(exc).__name__,
+    )
+
+
+def _generation(value: str | None, *, old: str, new: str) -> int | str | None:
+    if value is None:
+        return None
+    if value == old:
+        return 1
+    if value == new:
+        return 2
+    return "other-synthetic"
+
+
+def _record_http_trace(result: ScenarioResult, server: HttpFaultServer) -> None:
+    result.record(
+        "http_trace",
+        requests=[
+            {
+                "sequence": record.sequence,
+                "method": record.route.method,
+                "logical_host": record.route.host,
+                "path": record.route.path,
+                "rpc_id": record.route.rpc_id,
+                "action": record.action,
+                "csrf_generation": _generation(record.csrf, old=OLD_CSRF, new=NEW_CSRF),
+                "session_generation": _generation(
+                    record.session_id, old=OLD_SESSION, new=NEW_SESSION
+                ),
+                "cookie_generation": _generation(
+                    record.cookie_values.get(COOKIE_NAME), old=OLD_COOKIE, new=NEW_COOKIE
+                ),
+            }
+            for record in server.journal
+        ],
+        committed=list(server.committed),
+    )
+
+
+def _require_clean(result: ScenarioResult, server: HttpFaultServer) -> None:
+    failed = False
+    for name, passed in (
+        ("server_required_gates_observed", server.unobserved_required_gates == 0),
+        ("server_plan_consumed", server.remaining() == 0),
+        ("server_had_no_errors", not server.errors),
+        ("server_handlers_drained", server.active_handlers == 0),
+    ):
+        try:
+            result.require(name, passed)
+        except ScenarioFailure:
+            failed = True
+    if failed:
+        raise ScenarioFailure(result)
+
+
+async def _valid_read_create(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(_READ, Reply(body=list_response(_READ.rpc_id or "", [("nb-1", "Fault Lab")])))
+    server.enqueue(
+        _CREATE,
+        Reply(body=create_response(_CREATE.rpc_id or "", "nb-created", "Created locally")),
+    )
+    async with _cohort(result, server, timeout=10.0) as client:
+        notebooks = await client.notebooks.list()
+        created = await client.notebooks.create("Created locally")
+        result.record(
+            "decoded",
+            list_ids=[notebook.id for notebook in notebooks],
+            created_id=created.id,
+        )
+    result.require("read_decoded", [notebook.id for notebook in notebooks] == ["nb-1"])
+    result.require("create_decoded", created.id == "nb-created")
+    result.require("one_request_each", len(server.journal) == 2)
+    _require_clean(result, server)
+
+
+async def _rate_limit_recovery(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(
+        _READ,
+        Reply(429, headers={"Retry-After": "0.25"}),
+        Reply(body=list_response(_READ.rpc_id or "", [("nb-rate", "Recovered")])),
+    )
+    async with _cohort(result, server, timeout=10.0) as client:
+        notebooks = await client.notebooks.list()
+    sleeps = [event["seconds"] for event in result.events if event["kind"] == "sleep"]
+    result.require("rate_limit_recovered", [item.id for item in notebooks] == ["nb-rate"])
+    result.require("fractional_retry_after_rounded_up", sleeps == [1])
+    result.require("rate_limit_request_count", len(_requests(server, _READ)) == 2)
+    _require_clean(result, server)
+
+
+async def _rate_limit_exhaustion(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(_READ, *(Reply(429, headers={"Retry-After": "0"}) for _ in range(3)))
+    error: BaseException | None = None
+    async with _cohort(result, server, timeout=10.0) as client:
+        try:
+            await client.notebooks.list()
+        except Exception as exc:
+            error = exc
+    _record_error(result, error)
+    result.require("rate_limit_public_error", isinstance(error, RateLimitError))
+    result.require("rate_limit_budget_bounded", len(_requests(server, _READ)) == 3)
+    _require_clean(result, server)
+
+
+async def _server_error_recovery(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(
+        _READ,
+        Reply(503),
+        Reply(body=list_response(_READ.rpc_id or "", [("nb-503", "Recovered")])),
+    )
+    async with _cohort(result, server, timeout=10.0) as client:
+        notebooks = await client.notebooks.list()
+    result.require("server_error_recovered", [item.id for item in notebooks] == ["nb-503"])
+    result.require("server_error_request_count", len(_requests(server, _READ)) == 2)
+    _require_clean(result, server)
+
+
+async def _server_error_exhaustion(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(_READ, *(Reply(503) for _ in range(3)))
+    error: BaseException | None = None
+    async with _cohort(result, server, timeout=10.0) as client:
+        try:
+            await client.notebooks.list()
+        except Exception as exc:
+            error = exc
+    _record_error(result, error)
+    result.require("server_error_public_error", isinstance(error, ServerError))
+    result.require("server_error_budget_bounded", len(_requests(server, _READ)) == 3)
+    _require_clean(result, server)
+
+
+async def _malformed_payload(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(_READ, Reply(body=rpc_response(_READ.rpc_id or "", "not-a-list")))
+    error: BaseException | None = None
+    async with _cohort(result, server) as client:
+        try:
+            await client.notebooks.list()
+        except Exception as exc:
+            error = exc
+    _record_error(result, error)
+    result.require("malformed_public_decode_error", isinstance(error, DecodingError))
+    result.require("malformed_not_retried", len(_requests(server, _READ)) == 1)
+    _require_clean(result, server)
+
+
+async def _truncated_body(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(_READ, *(Truncate(b"partial", 100) for _ in range(3)))
+    error: BaseException | None = None
+    async with _cohort(result, server, timeout=10.0) as client:
+        try:
+            await client.notebooks.list()
+        except Exception as exc:
+            error = exc
+    _record_error(result, error)
+    result.require("truncated_public_network_error", isinstance(error, NetworkError))
+    result.require("truncated_retry_budget", len(_requests(server, _READ)) == 3)
+    _require_clean(result, server)
+
+
+async def _timeout_scenario(result: ScenarioResult, *, phase: Literal["headers", "body"]) -> None:
+    server = HttpFaultServer()
+    gate = f"stall-{phase}"
+    reply = Reply(body=list_response(_READ.rpc_id or "", []))
+    server.enqueue(_READ, Stall(phase, gate, reply, prefix=b")]}'"))
+    error: BaseException | None = None
+    async with _cohort(result, server, timeout=0.08) as client:
+        try:
+            await asyncio.wait_for(client.notebooks.list(), 1.5)
+        except Exception as exc:
+            error = exc
+        finally:
+            server.release(gate)
+            await asyncio.sleep(0)
+    _record_error(result, error)
+    result.require(f"{phase}_public_timeout", isinstance(error, RPCTimeoutError))
+    result.require(f"{phase}_aggregate_deadline_bounded", len(_requests(server, _READ)) == 1)
+    _require_clean(result, server)
+
+
+async def _auth_refresh(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(
+        _READ,
+        Reply(400),
+        Reply(body=list_response(_READ.rpc_id or "", [("nb-auth", "Fresh")])),
+    )
+    server.enqueue(
+        _HOME,
+        Reply(
+            body=homepage_response(),
+            headers={
+                "Set-Cookie": (f"{COOKIE_NAME}={NEW_COOKIE}; Domain=.google.com; Path=/; Secure")
+            },
+        ),
+    )
+    async with _cohort(result, server) as client:
+        notebooks = await client.notebooks.list()
+        auth = client.auth
+    calls = _requests(server, _READ)
+    result.record(
+        "auth_generations",
+        csrf=[_generation(call.csrf, old=OLD_CSRF, new=NEW_CSRF) for call in calls],
+        session=[_generation(call.session_id, old=OLD_SESSION, new=NEW_SESSION) for call in calls],
+        cookie=[
+            _generation(call.cookie_values.get(COOKIE_NAME), old=OLD_COOKIE, new=NEW_COOKIE)
+            for call in calls
+        ],
+    )
+    result.require("auth_refresh_succeeded", [item.id for item in notebooks] == ["nb-auth"])
+    result.require("one_homepage_refresh", len(_requests(server, _HOME)) == 1)
+    result.require("csrf_changed", [call.csrf for call in calls] == [OLD_CSRF, NEW_CSRF])
+    result.require(
+        "session_changed", [call.session_id for call in calls] == [OLD_SESSION, NEW_SESSION]
+    )
+    result.require(
+        "cookie_changed",
+        [call.cookie_values.get(COOKIE_NAME) for call in calls] == [OLD_COOKIE, NEW_COOKIE],
+    )
+    result.require(
+        "public_auth_updated", (auth.csrf_token, auth.session_id) == (NEW_CSRF, NEW_SESSION)
+    )
+    _require_clean(result, server)
+
+
+async def _auth_refresh_coalesced(result: ScenarioResult) -> None:
+    count = 6
+    server = HttpFaultServer()
+    stale = Stall("headers", "stale-batch", Reply(400))
+    fresh = Reply(body=list_response(_READ.rpc_id or "", [("nb-shared", "Shared")]))
+    server.enqueue(_READ, *(stale for _ in range(count)), *(fresh for _ in range(count)))
+    server.enqueue(
+        _HOME,
+        Reply(
+            body=homepage_response(),
+            headers={
+                "Set-Cookie": (f"{COOKIE_NAME}={NEW_COOKIE}; Domain=.google.com; Path=/; Secure")
+            },
+        ),
+    )
+    calls: list[asyncio.Task[list[Any]]] = []
+    async with _cohort(result, server) as client:
+        try:
+            calls = [asyncio.create_task(client.notebooks.list()) for _ in range(count)]
+            await server.wait_for_requests(_READ, count)
+            server.release("stale-batch")
+            notebooks = await asyncio.wait_for(asyncio.gather(*calls), _CLOSE_TIMEOUT)
+        finally:
+            server.release("stale-batch")
+            for call in calls:
+                if not call.done():
+                    call.cancel()
+            if calls:
+                await asyncio.gather(*calls, return_exceptions=True)
+    requests = _requests(server, _READ)
+    result.require("coalesced_results", all(rows[0].id == "nb-shared" for rows in notebooks))
+    result.require("coalesced_one_refresh", len(_requests(server, _HOME)) == 1)
+    result.require("coalesced_request_count", len(requests) == count * 2)
+    result.require(
+        "coalesced_fresh_replays", sum(call.csrf == NEW_CSRF for call in requests) == count
+    )
+    _require_clean(result, server)
+
+
+async def _failed_refresh(result: ScenarioResult, *, redirect: bool) -> None:
+    server = HttpFaultServer()
+    server.enqueue(_READ, Reply(400))
+    if redirect:
+        server.enqueue(
+            _HOME,
+            Reply(302, headers={"Location": "https://accounts.google.com/ServiceLogin"}),
+        )
+        server.enqueue(_LOGIN, Reply(body=b"<html>sign in</html>"))
+    else:
+        server.enqueue(_HOME, Reply(body=b"<html>missing bootstrap fields</html>"))
+    error: BaseException | None = None
+    async with _cohort(result, server) as client:
+        try:
+            await client.notebooks.list()
+        except Exception as exc:
+            error = exc
+    _record_error(result, error)
+    label = "login" if redirect else "malformed"
+    result.require(f"{label}_refresh_original_status", isinstance(error, httpx.HTTPStatusError))
+    result.require(f"{label}_refresh_failure_cause", isinstance(error.__cause__, ValueError))
+    result.require(f"{label}_refresh_no_replay", len(_requests(server, _READ)) == 1)
+    result.require(f"{label}_one_homepage", len(_requests(server, _HOME)) == 1)
+    if redirect:
+        result.require("logical_login_followed", len(_requests(server, _LOGIN)) == 1)
+    _require_clean(result, server)
+
+
+async def _committed_create_disconnect(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(_CREATE, Disconnect(commit_id="nb-committed"))
+    error: BaseException | None = None
+    async with _cohort(result, server, server_retries=5) as client:
+        try:
+            await client.notebooks.create("Committed once")
+        except Exception as exc:
+            error = exc
+    _record_error(result, error)
+    result.require("create_public_network_error", isinstance(error, NetworkError))
+    result.require(
+        "create_unknown_commit", getattr(error, "commit_state", None) is CommitState.UNKNOWN
+    )
+    result.require("create_unconfirmed", bool(getattr(error, "unconfirmed", False)))
+    result.require("create_sent_once", len(_requests(server, _CREATE)) == 1)
+    result.require("create_committed_once", server.committed == ["nb-committed"])
+    _require_clean(result, server)
+
+
+async def _cancel_blocked_read(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(
+        _READ, Stall("headers", "cancel-read", Reply(body=list_response(_READ.rpc_id or "", [])))
+    )
+    cancelled = False
+    async with _cohort(result, server, server_retries=0) as client:
+        task = asyncio.create_task(client.notebooks.list())
+        await server.wait_for_requests(_READ, 1)
+        task.cancel()
+        try:
+            await task
+        except asyncio.CancelledError:
+            cancelled = True
+        server.release("cancel-read")
+        await asyncio.sleep(0)
+    result.require("blocked_read_cancelled", cancelled)
+    result.require("cancel_sent_once", len(_requests(server, _READ)) == 1)
+    _require_clean(result, server)
+
+
+async def _close_reopen(result: ScenarioResult) -> None:
+    server = HttpFaultServer()
+    server.enqueue(
+        _READ,
+        Stall("headers", "close-read", Reply(body=list_response(_READ.rpc_id or "", []))),
+        Reply(body=list_response(_READ.rpc_id or "", [("nb-reopen", "Reopened")])),
+    )
+    first_error: BaseException | None = None
+    cleanup_error: BaseException | None = None
+    server_close_error: BaseException | None = None
+    reopened: list[Any] = []
+    await server.__aenter__()
+    client = build_fault_client(server, server_error_max_retries=0)
+    try:
+        await client.__aenter__()
+        task = asyncio.create_task(client.notebooks.list())
+        await server.wait_for_requests(_READ, 1)
+        await asyncio.wait_for(client.close(drain=False), _CLOSE_TIMEOUT)
+        try:
+            await asyncio.wait_for(task, _CLOSE_TIMEOUT)
+        except BaseException as exc:
+            first_error = exc
+        server.release("close-read")
+        await client.__aenter__()
+        reopened = await client.notebooks.list()
+        await asyncio.wait_for(client.close(drain=False), _CLOSE_TIMEOUT)
+    finally:
+        server.release("close-read")
+        try:
+            await asyncio.wait_for(client.close(drain=False), _CLOSE_TIMEOUT)
+        except BaseException as exc:
+            cleanup_error = exc
+        try:
+            await asyncio.wait_for(server.aclose(), _CLOSE_TIMEOUT)
+        except BaseException as exc:
+            server_close_error = exc
+        _record_http_trace(result, server)
+        result.record(
+            "cleanup",
+            client_closed=not client._lifecycle.is_open(),
+            active_handlers=server.active_handlers,
+            close_error=None if cleanup_error is None else type(cleanup_error).__name__,
+            server_close_error=(
+                None if server_close_error is None else type(server_close_error).__name__
+            ),
+            server_errors=list(server.errors),
+            remaining_actions=server.remaining(),
+        )
+        if cleanup_error is not None:
+            raise cleanup_error
+        if server_close_error is not None:
+            raise server_close_error
+        result.require("client_closed", not client._lifecycle.is_open())
+    _record_error(result, first_error)
+    result.require("active_read_terminated", isinstance(first_error, NotebookLMError))
+    result.require("reopen_succeeded", [item.id for item in reopened] == ["nb-reopen"])
+    result.require("close_reopen_request_count", len(_requests(server, _READ)) == 2)
+    _require_clean(result, server)
+
+
+_IMPLEMENTATIONS: dict[str, Callable[[ScenarioResult], Awaitable[None]]] = {
+    "auth_refresh": _auth_refresh,
+    "auth_refresh_coalesced": _auth_refresh_coalesced,
+    "auth_refresh_login_redirect": lambda result: _failed_refresh(result, redirect=True),
+    "auth_refresh_malformed": lambda result: _failed_refresh(result, redirect=False),
+    "cancel_blocked_read": _cancel_blocked_read,
+    "close_reopen": _close_reopen,
+    "committed_create_disconnect": _committed_create_disconnect,
+    "delayed_headers": lambda result: _timeout_scenario(result, phase="headers"),
+    "malformed_payload": _malformed_payload,
+    "rate_limit_exhaustion": _rate_limit_exhaustion,
+    "rate_limit_recovery": _rate_limit_recovery,
+    "server_error_exhaustion": _server_error_exhaustion,
+    "server_error_recovery": _server_error_recovery,
+    "stalled_body": lambda result: _timeout_scenario(result, phase="body"),
+    "truncated_body": _truncated_body,
+    "valid_read_create": _valid_read_create,
+}
+_IMPLEMENTATIONS.update(RESILIENCE_IMPLEMENTATIONS)
+
+_IMPLEMENTATIONS.update(CONCURRENCY_IMPLEMENTATIONS)
+_PLANS.update(CONCURRENCY_PLANS)
+
+
+_IMPLEMENTATIONS.update(CONNECTION_IMPLEMENTATIONS)
+_PLANS.update(CONNECTION_PLANS)
+_IMPLEMENTATIONS.update(CHAT_IMPLEMENTATIONS)
+_PLANS.update(CHAT_PLANS)
+_IMPLEMENTATIONS.update(CONSISTENCY_IMPLEMENTATIONS)
+_PLANS.update(CONSISTENCY_PLANS)
+_IMPLEMENTATIONS.update(PERSISTENCE_IMPLEMENTATIONS)
+_PLANS.update(PERSISTENCE_PLANS)
+_IMPLEMENTATIONS.update(TRANSFER_IMPLEMENTATIONS)
+_PLANS.update(TRANSFER_PLANS)
+SCENARIOS = tuple(
+    sorted(
+        (
+            *_IMPLEMENTATIONS,
+            *_ADAPTER_SCENARIOS,
+            *WORKFLOW_SCENARIOS,
+            *SLOW_SCENARIOS,
+            *PROTOCOL_SCENARIOS,
+            *SATURATION_SCENARIOS,
+        )
+    )
+)
+
+
+def _required_checks(name: str) -> list[str]:
+    checks = [
+        "client_closed",
+        "server_required_gates_observed",
+        "server_plan_consumed",
+        "server_had_no_errors",
+        "server_handlers_drained",
+    ]
+    if name.startswith("upload_") or name == "connection_slow_upload_consumer":
+        checks += [
+            "successful_upload_baseline",
+            "one_registration_per_upload",
+            "no_duplicate_transfer",
+            "independent_commit_evidence",
+            "body_descriptors_observed",
+            "body_descriptors_closed",
+            "upload_children_settled",
+            "upload_clients_settled",
+            "upload_permit_returned",
+            "same_client_recovery",
+            "credential_policy_preserved",
+        ]
+    elif name.startswith("download_"):
+        checks += ["same_client_recovery", "credential_policy_preserved"]
+        if "cookie_" in name:
+            checks += ["credential_download_baseline", "initial_hop_received_live_cookie"]
+        else:
+            checks += [
+                "successful_download_baseline",
+                "staging_removed",
+                "writer_settled",
+                "asset_clients_settled",
+                "asset_tasks_settled",
+                "asset_responses_closed",
+                "bounded_asset_requests",
+                "asset_hop_cookie_policy",
+            ]
+        if name in {"download_redirect_loop", "download_batch_redirect_loop"}:
+            checks += ["redirect_limit_error"]
+    elif name.startswith("chat_"):
+        checks += [
+            "valid_chat_baseline",
+            "no_partial_public_answer",
+            "chat_never_replayed",
+            "same_client_recovery",
+            "credential_policy_preserved",
+        ]
+        if name == "chat_multibyte_fragmented_success":
+            checks += [
+                "multibyte_prefix_received",
+                "partial_codepoint_waits_for_continuation",
+                "fragmented_bytes_reassembled",
+            ]
+    elif name in {"connection_peer_close", "connection_server_restart"}:
+        checks += [
+            "actual_connection_reuse",
+            "same_client_recovered",
+            "new_connection_after_peer_loss",
+            "exact_read_dispatches",
+            "no_mutation_commits",
+        ]
+    elif name == "connection_slow_read_consumer":
+        checks += [
+            "request_prefix_observed",
+            "read_progress_after_release",
+            "body_consumption_completed",
+            "same_client_recovery",
+            "bounded_read_requests",
+        ]
+    return checks
+
+
+async def run_scenario(
+    name: str,
+    *,
+    operation_id: str,
+    result: ScenarioResult | None = None,
+) -> ScenarioResult:
+    """Run one bounded Web cohort and retain evidence on every failure path."""
+    if name in PROTOCOL_SCENARIOS:
+        from .web_protocol import run_scenario as run_protocol
+
+        return await run_protocol(name, operation_id=operation_id, result=result)
+    if name in SATURATION_SCENARIOS:
+        from .web_saturation import run_scenario as run_saturation
+
+        return await run_saturation(name, operation_id=operation_id, result=result)
+    if name in SLOW_SCENARIOS:
+        from .web_slow_responses import run_scenario as run_slow
+
+        return await run_slow(name, operation_id=operation_id, result=result)
+    if name in WORKFLOW_SCENARIOS:
+        return await run_workflow_scenario(name, operation_id=operation_id, result=result)
+    if name in _ADAPTER_SCENARIOS:
+        from .adapter_scenarios import run_scenario as run_adapter
+
+        return await run_adapter(name, operation_id=operation_id, result=result)
+    implementation = _IMPLEMENTATIONS.get(name)
+    if implementation is None:
+        raise ValueError(f"unknown web fault scenario {name!r}; choose from {SCENARIOS!r}")
+    if result is None:
+        result = ScenarioResult("web", name, operation_id)
+    elif (result.backend, result.scenario, result.operation_id) != ("web", name, operation_id):
+        raise ValueError("supplied ScenarioResult identity does not match this web operation")
+    faults, cohort_count = _PLANS[name]
+    result.record(
+        "plan",
+        faults=list(faults),
+        cohort_ids=[f"{operation_id}:{index}" for index in range(cohort_count)],
+        transport="httpx",
+        budgets={
+            **RESILIENCE_BUDGETS,
+            **CONCURRENCY_BUDGETS,
+            **CONSISTENCY_BUDGETS,
+            **TRANSFER_BUDGETS,
+        }.get(name, {"scenario_timeout_s": 15.0, "cleanup_timeout_s": 2.0}),
+        required_checks={
+            **RESILIENCE_REQUIRED_CHECKS,
+            **CONCURRENCY_REQUIRED_CHECKS,
+            **PERSISTENCE_REQUIRED_CHECKS,
+            **CONSISTENCY_REQUIRED_CHECKS,
+        }.get(name, _required_checks(name)),
+    )
+    await implementation(result)
+    return result
+
+
+__all__ = ["SCENARIOS", "run_scenario"]

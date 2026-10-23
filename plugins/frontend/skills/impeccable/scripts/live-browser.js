@@ -13,13 +13,17 @@
   'use strict';
   if (typeof window === 'undefined') return;
 
+  // Take the helper token out of the global before anything else, including
+  // on the double-init return below: each served copy re-prepends it.
+  const TOKEN = window.__IMPECCABLE_TOKEN__;
+  try { delete window.__IMPECCABLE_TOKEN__; } catch { /* non-configurable */ }
+
   // Guard against double-init. Bun's HTML loader may process the <script> tag
   // and create a bundled copy alongside the external load, or HMR may re-execute.
-  // Check BEFORE reading token/port to catch all cases.
+  // Check BEFORE reading port to catch all cases.
   if (window.__IMPECCABLE_LIVE_INIT__) return;
   window.__IMPECCABLE_LIVE_INIT__ = true;
 
-  const TOKEN = window.__IMPECCABLE_TOKEN__;
   const PORT = window.__IMPECCABLE_PORT__;
   const APP_ROOT = window.__IMPECCABLE_APP_ROOT__ || null;
   if (!TOKEN || !PORT) {
@@ -63,11 +67,13 @@
   const MANUAL_APPLY_STATE_TTL_MS = 15 * 60 * 1000;
   // No idFactory: the session helper's default works on plain-HTTP origins,
   // where the secure-context-only randomUUID does not exist (issue #1055).
+  let liveStorage = null;
+  try { liveStorage = window.localStorage; } catch { /* storage denied */ }
   let sessionState = null;
   try {
     sessionState = window.__IMPECCABLE_LIVE_SESSION__?.createLiveBrowserSessionState({
       prefix: PREFIX,
-      storage: localStorage,
+      storage: liveStorage,
     });
   } catch (err) {
     console.error('[impeccable] Live mode could not create its session state.', err);
@@ -3271,6 +3277,14 @@
     const P = paramsPanelPalette || barPaletteForTheme(detectPageTheme());
     paramsPanelBody.innerHTML = '';
     for (const p of params) {
+      // A knob the panel shows must be in the live values and on the variant,
+      // or accept drops it and the preview ignores it. Seed only missing keys
+      // so a reopen keeps edits.
+      if (!Object.hasOwn(paramsCurrentValues, p.id)) {
+        paramsCurrentValues[p.id] = p.default;
+        applyParamValue(variantEl, p, p.default);
+      }
+      const value = paramsCurrentValues[p.id];
       const row = el('div', { display: 'flex', flexDirection: 'column', gap: '6px' });
       const labelRow = el('div', {
         display: 'flex', justifyContent: 'space-between',
@@ -3295,7 +3309,7 @@
         input.min = String(p.min != null ? p.min : 0);
         input.max = String(p.max != null ? p.max : 1);
         input.step = String(p.step != null ? p.step : 0.05);
-        input.value = String(p.default);
+        input.value = String(value);
         Object.assign(input.style, {
           width: '100%', accentColor: C.brand, cursor: 'pointer',
         });
@@ -3310,7 +3324,7 @@
         });
         row.appendChild(input);
       } else if (p.kind === 'toggle') {
-        const initial = !!p.default;
+        const initial = !!value;
         readout.textContent = initial ? 'On' : 'Off';
         const track = el('button', {
           position: 'relative', width: '36px', height: '20px',
@@ -3344,8 +3358,8 @@
         const opts = (p.options || []).map(o =>
           typeof o === 'string' ? { value: o, label: o } : o
         );
-        const activeOpt = opts.find(o => o.value === p.default) || opts[0];
-        readout.textContent = activeOpt ? activeOpt.label : String(p.default);
+        const activeOpt = opts.find(o => o.value === value) || opts[0];
+        readout.textContent = activeOpt ? activeOpt.label : String(value);
         const segRow = el('div', {
           display: 'grid',
           gridTemplateColumns: 'repeat(' + opts.length + ', 1fr)',
@@ -3354,7 +3368,7 @@
         });
         const segBtns = [];
         opts.forEach(o => {
-          const active = o.value === p.default;
+          const active = o.value === value;
           const b = el('button', {
             padding: '5px 4px', border: 'none', borderRadius: '3px',
             background: active ? C.brand : 'transparent',
@@ -4988,8 +5002,8 @@
     const variantEl = getVisibleVariantEl();
     const params = parseVariantParams(variantEl);
     if (!variantEl || params.length === 0) return;
-    // Build fresh to ensure the current variant's controls are shown.
-    applyParamDefaults(variantEl, params);
+    // Rebuild the controls from the current values. Defaults are applied
+    // when the variant is initialized, not when its Tune panel is reopened.
     buildParamsPanel(variantEl, params);
     tuneOpen = true;
     showParamsPanel();
@@ -13461,12 +13475,22 @@ void main() {
     // Code spans
     s = s.replace(/`([^`]+)`/g, (_, code) => `<code>${code}</code>`);
     // Links [text](url)
-    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) => `<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>`);
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, t, u) => (
+      isSafeHref(u) ? `<a href="${u}" target="_blank" rel="noopener noreferrer">${t}</a>` : t
+    ));
     // Bold
     s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     // Italic (only single *…*, skip if inside bold already handled)
     s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
     return s;
+  }
+
+  function isSafeHref(url) {
+    // Browsers drop ASCII whitespace and C0 controls inside a scheme, so
+    // "java\tscript:" still runs; strip them before reading the scheme.
+    const probe = String(url).replace(/[\u0000-\u0020\u007f]/g, '');
+    const scheme = probe.match(/^([a-z][a-z0-9+.-]*):/i);
+    return !scheme || ['http', 'https', 'mailto'].includes(scheme[1].toLowerCase());
   }
 
   function highlightBold(text) {

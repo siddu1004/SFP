@@ -1,0 +1,460 @@
+"""Internal helper for emitting the project's ``DeprecationWarning`` family.
+
+Centralises the one-off ``warnings.warn`` calls so the message text, the
+``NOTEBOOKLM_QUIET_DEPRECATIONS`` suppression gate, and the ``stacklevel``
+bookkeeping live in a single, tested place instead of being copy-pasted at
+every deprecated call site.
+
+This is an implementation module. There is no public surface here; the public
+deprecation *policy* (what is deprecated, since when, removal target) is
+documented in ``docs/deprecations.md``.
+
+``warn_deprecated`` is the generic gated primitive for one-off deprecations
+(e.g. awaiting ``from_storage(...)``). It exists so ad-hoc deprecations have a
+gated home rather than hand-rolling ``warnings.warn(...)`` and silently
+bypassing the suppression switch (issue #1369). Note that not every inline
+warning is a deprecation: ``save_cookies_to_storage(original_snapshot=None)``
+emits a permanent ``RuntimeWarning`` race advisory (not a scheduled removal), so
+it is emitted inline and is *not* routed through here.
+
+It honors the single ``NOTEBOOKLM_QUIET_DEPRECATIONS`` suppression gate (read
+live, never cached) and a parameterized ``stacklevel`` so the warning's
+``filename``/``lineno`` point at the *user's* call site. When a removal version
+is given the warning message names it, so
+``scripts/check_deprecation_targets.py`` can verify the shipping release never
+names *itself* as the removal target.
+
+The v0.8.0 error contract (ADR-0019, umbrella #1346) retired the
+``NOTEBOOKLM_FUTURE_ERRORS`` preview gate and the dict-subscript / get-returns-
+None / kwarg-alias runway helpers that lived here through v0.7.0; the breaks
+they previewed are now the default behavior. See ``docs/deprecations.md``.
+"""
+
+from __future__ import annotations
+
+import os
+import warnings
+from collections.abc import Mapping
+from dataclasses import dataclass
+from types import MappingProxyType
+
+# Suppression gate. Setting ``NOTEBOOKLM_QUIET_DEPRECATIONS`` to a truthy value
+# silences the warnings emitted through this module. It is intentionally read
+# live (not cached) so tests and callers can toggle it per call.
+_QUIET_ENV_VAR = "NOTEBOOKLM_QUIET_DEPRECATIONS"
+
+
+@dataclass(frozen=True, slots=True)
+class DeprecationSpec:
+    """One immutable, statically-auditable deprecation contract."""
+
+    key: str
+    message: str
+    category: type[Warning]
+    replacement: str
+    since: str
+    removal: str
+    stacklevel: int
+
+
+DEPRECATION_SPECS: Mapping[str, DeprecationSpec] = MappingProxyType(
+    {
+        "mind_map_legacy_terminal_hydration": DeprecationSpec(
+            key="mind_map_legacy_terminal_hydration",
+            message=(
+                "Continuing Web interactive mind-map hydration after failed/removed completion "
+                "is deprecated; pass failure_policy='raise' to reject before hydration. "
+                "The legacy default will change only after this warning's own stable release "
+                "and migration interval. The earliest target is v1.0, conditional on that "
+                "interval having elapsed; v1.0 alone does not authorize the change."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.mind_maps",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "auth_tokens_from_storage": DeprecationSpec(
+            key="auth_tokens_from_storage",
+            message=(
+                "AuthTokens.from_storage(...) is deprecated; use "
+                "notebooklm.NotebookLMClient.from_storage(...) and access client.auth within "
+                "the managed client lifecycle instead. It will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.from_storage",
+            since="0.8.1",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "auth_tokens_sync_storage_construction": DeprecationSpec(
+            key="auth_tokens_sync_storage_construction",
+            message=(
+                "Constructing AuthTokens(..., storage_path=..., cookie_jar=None) is deprecated "
+                "because it performs synchronous storage/recovery I/O; use "
+                "notebooklm.NotebookLMClient.from_storage(...) and access client.auth within "
+                "the managed client lifecycle instead. It will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.from_storage",
+            since="0.8.1",
+            removal="1.0",
+            stacklevel=4,
+        ),
+        "auth_tokens_flat_cookies": DeprecationSpec(
+            key="auth_tokens_flat_cookies",
+            message=(
+                "AuthTokens.flat_cookies is deprecated because its name-only projection "
+                "discards domain/path siblings; use AuthTokens.jar for bootstrap cookie "
+                "questions and managed NotebookLMClient request APIs for HTTP. It will be "
+                "removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.AuthTokens.jar",
+            since="0.8.1",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "auth_tokens_replace_cookie_jar": DeprecationSpec(
+            key="auth_tokens_replace_cookie_jar",
+            message=(
+                "AuthTokens.replace_cookie_jar(...) is deprecated; use managed "
+                "NotebookLMClient request APIs instead. Cookie-jar replacement is an internal "
+                "compatibility sync-back operation. It will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.auth",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "artifact_from_api_response": DeprecationSpec(
+            key="artifact_from_api_response",
+            message=(
+                "Artifact.from_api_response(...) is deprecated; use client.artifacts typed "
+                "APIs instead. Raw Web row decoding has no supported public replacement. It "
+                "will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.artifacts",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "artifact_from_mind_map": DeprecationSpec(
+            key="artifact_from_mind_map",
+            message=(
+                "Artifact.from_mind_map(...) is deprecated; use client.artifacts typed APIs "
+                "instead. Raw Web row decoding has no supported public replacement. It will "
+                "be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.artifacts",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "collection_from_api_response": DeprecationSpec(
+            key="collection_from_api_response",
+            message=(
+                "Collection.from_api_response(...) is deprecated; use client.collections typed "
+                "APIs instead. Raw Web row decoding has no supported public replacement. It "
+                "will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.collections",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "label_from_api_response": DeprecationSpec(
+            key="label_from_api_response",
+            message=(
+                "Label.from_api_response(...) is deprecated; use client.labels typed APIs "
+                "instead. Raw Web row decoding has no supported public replacement. It will "
+                "be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.labels",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "notebook_from_api_response": DeprecationSpec(
+            key="notebook_from_api_response",
+            message=(
+                "Notebook.from_api_response(...) is deprecated; use client.notebooks typed "
+                "APIs instead. Raw Web row decoding has no supported public replacement. It "
+                "will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.notebooks",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "share_status_from_api_response": DeprecationSpec(
+            key="share_status_from_api_response",
+            message=(
+                "ShareStatus.from_api_response(...) is deprecated; use client.sharing typed "
+                "APIs instead. Raw Web row decoding has no supported public replacement. It "
+                "will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.sharing",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "shared_user_from_api_response": DeprecationSpec(
+            key="shared_user_from_api_response",
+            message=(
+                "SharedUser.from_api_response(...) is deprecated; use client.sharing typed "
+                "APIs instead. Raw Web row decoding has no supported public replacement. It "
+                "will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.sharing",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "source_from_api_response": DeprecationSpec(
+            key="source_from_api_response",
+            message=(
+                "Source.from_api_response(...) is deprecated; use client.sources typed APIs "
+                "instead. Raw Web row decoding has no supported public replacement. It will "
+                "be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.sources",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "source_from_row": DeprecationSpec(
+            key="source_from_row",
+            message=(
+                "Source.from_row(...) is deprecated; use client.sources typed APIs instead. "
+                "Raw Web row decoding has no supported public replacement. It will be removed "
+                "in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.sources",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "client_rpc_call_web": DeprecationSpec(
+            key="client_rpc_call_web",
+            message=(
+                "NotebookLMClient.rpc_call(...) is deprecated; use "
+                "client.raw.call(...) on a Web-selected client instead. It will be removed "
+                "in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.raw.WebRawAPI.call",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "client_rpc_call_android": DeprecationSpec(
+            key="client_rpc_call_android",
+            message=(
+                "NotebookLMClient.rpc_call(...) is deprecated and crosses from Android into "
+                "a lazy Web compatibility transport; use client.raw.unary(...) or "
+                "client.raw.unary_stream(...) for Android methods, or client.raw.call(...) on "
+                "a separate Web-selected client. It will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.raw.AndroidRawAPI.unary",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "client_legacy_constructor_options": DeprecationSpec(
+            key="client_legacy_constructor_options",
+            message=(
+                "Non-default legacy NotebookLMClient tuning arguments are deprecated; "
+                "group them under config=ClientConfig(...). They will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.options.ClientConfig",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "client_legacy_from_storage_options": DeprecationSpec(
+            key="client_legacy_from_storage_options",
+            message=(
+                "Non-default legacy NotebookLMClient.from_storage tuning arguments are "
+                "deprecated; group them under config=ClientConfig(...). They will be removed "
+                "in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.options.ClientConfig",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "mcp_confirmed_name_references": DeprecationSpec(
+            key="mcp_confirmed_name_references",
+            message=(
+                "Using a name or partial id on a confirmed MCP mutation is deprecated; "
+                "pass the canonical notebook and target ids returned by the confirmation "
+                "preview. Confirmed calls using names or partial ids will be rejected in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=4,
+        ),
+        "artifact_poll_absence_thresholds": DeprecationSpec(
+            key="artifact_poll_absence_thresholds",
+            message=(
+                "ArtifactsAPI.wait_for_completion max_not_found and min_not_found_window "
+                "are deprecated and ignored; use timeout to bound unresolved listing absence. "
+                "The parameters will be removed in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient.artifacts",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=3,
+        ),
+        "artifact_poll_follower_options": DeprecationSpec(
+            key="artifact_poll_follower_options",
+            message=(
+                "ArtifactsAPI.wait_for_completion follower polling options are leader-only "
+                "today and ignored while another waiter leads; they become per-waiter in v1.0."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=5,
+        ),
+        "artifact_poll_follower_callback": DeprecationSpec(
+            key="artifact_poll_follower_callback",
+            message=(
+                "ArtifactsAPI.wait_for_completion follower on_status_change currently receives "
+                "only the final status; in v1.0 it will receive every observed status."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=5,
+        ),
+        "artifact_raw_download_prefetch": DeprecationSpec(
+            key="artifact_raw_download_prefetch",
+            message=(
+                "Raw artifact download prefetch parameters are deprecated. Use "
+                "artifacts.prepare_downloads(...) and artifacts.download(selection, path). "
+                "Removal in v1.0 requires this warning's own shipped compatibility interval; "
+                "otherwise they remain supported until a later breaking release."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=4,
+        ),
+        "artifact_ambiguous_absence": DeprecationSpec(
+            key="artifact_ambiguous_absence",
+            message=(
+                "Artifact get()/get_or_none() and Android get_prompt(..., "
+                "require_complete=False) encountered an unavailable aggregate backing and "
+                "are preserving the legacy absence result. Use artifacts.lookup(...) or "
+                "get_prompt(..., require_complete=True) to distinguish MISSING from UNKNOWN. "
+                "The legacy ambiguous-absence projection is scheduled to change in v1.0 only "
+                "after this warning has shipped for the required interval; otherwise it will "
+                "remain until a later breaking release."
+            ),
+            category=DeprecationWarning,
+            replacement="notebooklm.NotebookLMClient",
+            since="0.9.0",
+            removal="1.0",
+            stacklevel=4,
+        ),
+    }
+)
+
+
+def _deprecations_quiet() -> bool:
+    """Return ``True`` when deprecation warnings are suppressed via env var."""
+    raw = os.environ.get(_QUIET_ENV_VAR, "")
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def deprecations_quiet() -> bool:
+    """Public alias for :func:`_deprecations_quiet`.
+
+    ``NOTEBOOKLM_QUIET_DEPRECATIONS=1`` (or any truthy ``1``/``true``/``yes``/
+    ``on`` spelling, case-insensitive) silences the ``DeprecationWarning``
+    emitted by :func:`warn_deprecated`. Any other value — including unset —
+    leaves the warning enabled.
+    """
+    return _deprecations_quiet()
+
+
+def warn_deprecated(message: str, *, removal: str | None = None, stacklevel: int = 3) -> None:
+    """Emit a project ``DeprecationWarning``, honoring the suppression gate.
+
+    The generic primitive for one-off deprecations. Routing every ad-hoc
+    warning through here keeps the ``NOTEBOOKLM_QUIET_DEPRECATIONS`` gate and the
+    ``DeprecationWarning`` category in one place — ADR-0018 rejects inline
+    ``warnings.warn(...)`` calls scattered through feature modules precisely
+    because they bypass this gate.
+
+    No-ops when :func:`_deprecations_quiet` is true (i.e. when
+    ``NOTEBOOKLM_QUIET_DEPRECATIONS`` is set to a truthy value); otherwise emits
+    a single :class:`DeprecationWarning` with ``message``.
+
+    Args:
+        message: The full warning text. Callers own the wording (what is
+            deprecated, what to use instead). When ``removal`` is given and the
+            message does not already name that version, a sentence naming the
+            removal version is appended so every gated warning states its
+            removal target consistently.
+        removal: Optional removal version, e.g. ``"1.0"`` or ``"0.8.0"``. Pass
+            a version when one is scheduled; the version is ensured to appear in
+            the emitted text. Pass ``None`` in two cases — the message is emitted
+            verbatim for both: (a) a *permanent* back-compat shim that is never
+            scheduled for removal, or (b) a deprecation that *will* be removed
+            but has no pinned version yet (the message can still say "a future
+            major release"). Always pass ``removal`` explicitly so a future
+            reader patching the call to add a version knows where to put it.
+        stacklevel: ``warnings.warn`` stacklevel. The default of ``3`` accounts
+            for the single-hop case ``warn_deprecated`` (1) → the deprecated
+            method/property (2) → the user's call site (3), so the warning's
+            ``filename``/``lineno`` point at user code. Pass ``4`` (etc.) when an
+            extra wrapper frame sits between the deprecated public surface and
+            this helper (e.g. ``poll`` → ``_select_polled_tasks`` →
+            ``warn_deprecated``). The default ``3`` is correct for any call made
+            directly from the deprecated public surface; do not drop to ``2``,
+            which would attribute the warning to the library's own line.
+    """
+    if _deprecations_quiet():
+        return
+
+    text = message
+    # ``v{removal}`` is the precise spelling our messages use; the bare
+    # ``removal`` fallback catches messages that name the version without the
+    # ``v`` prefix. Both checks are substring matches — fine for the short,
+    # single-sentence deprecation messages this helper emits (no version-looking
+    # URLs or longer numbers), and only ever skip an otherwise-redundant append.
+    if removal is not None and f"v{removal}" not in text and removal not in text:
+        text = f"{text} It will be removed in v{removal}."
+    warnings.warn(text, DeprecationWarning, stacklevel=stacklevel)
+
+
+def warn_registered_deprecation(key: str, *, detail: str | None = None) -> None:
+    """Emit one registered deprecation with optional bounded non-sensitive detail."""
+    spec = DEPRECATION_SPECS[key]
+    message = spec.message
+    if detail:
+        bounded = " ".join(detail.split())[:300]
+        message = f"{message} {bounded}"
+    warn_deprecated(message, removal=spec.removal, stacklevel=spec.stacklevel + 1)

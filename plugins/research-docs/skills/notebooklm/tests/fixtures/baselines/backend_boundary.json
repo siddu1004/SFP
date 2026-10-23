@@ -1,0 +1,72 @@
+{
+  "lazy_web_import_allowlist": [
+    {
+      "module": "notebooklm._artifacts",
+      "scope": "__getattr__"
+    },
+    {
+      "module": "notebooklm._chat",
+      "scope": "__getattr__"
+    },
+    {
+      "module": "notebooklm._types.artifacts",
+      "scope": "Artifact.from_api_response"
+    },
+    {
+      "module": "notebooklm._types.artifacts",
+      "scope": "Artifact.from_mind_map"
+    },
+    {
+      "module": "notebooklm._types.artifacts",
+      "scope": "_extract_artifact_url"
+    },
+    {
+      "module": "notebooklm._types.artifacts",
+      "scope": "_extract_audio_artifact_url"
+    },
+    {
+      "module": "notebooklm._types.artifacts",
+      "scope": "_extract_infographic_artifact_url"
+    },
+    {
+      "module": "notebooklm._types.artifacts",
+      "scope": "_extract_slide_deck_artifact_url"
+    },
+    {
+      "module": "notebooklm._types.artifacts",
+      "scope": "_extract_video_artifact_url"
+    },
+    {
+      "module": "notebooklm._types.collections",
+      "scope": "Collection.from_api_response"
+    },
+    {
+      "module": "notebooklm._types.labels",
+      "scope": "Label.from_api_response"
+    },
+    {
+      "module": "notebooklm._types.notebooks",
+      "scope": "Notebook.from_api_response"
+    },
+    {
+      "module": "notebooklm._types.sharing",
+      "scope": "ShareStatus.from_api_response"
+    },
+    {
+      "module": "notebooklm._types.sharing",
+      "scope": "SharedUser.from_api_response"
+    },
+    {
+      "module": "notebooklm._types.sources",
+      "scope": "Source.from_api_response"
+    },
+    {
+      "module": "notebooklm._types.sources",
+      "scope": "_extract_source_created_at"
+    },
+    {
+      "module": "notebooklm._types.sources",
+      "scope": "_extract_source_url"
+    }
+  ]
+}

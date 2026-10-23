@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "title_regex": "^Make Your Writing More Powerful and Persuasive$",
+  "reserved_title_prefix": "notebooklm-py-ci/",
+  "sources": {
+    "minimum_ready": 3,
+    "minimum_distinct_titles": 3,
+    "require_text_addressable": true
+  },
+  "artifacts": {
+    "required_completed_families": [
+      "audio",
+      "video",
+      "infographic",
+      "slide_deck"
+    ],
+    "require_interactive_mind_map": false
+  },
+  "content_policy": {
+    "private_personal_licensed_or_unstable_web_content_allowed": false,
+    "copy_permission_required_for_all_ci_slots": true
+  }
+}

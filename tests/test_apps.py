@@ -110,10 +110,16 @@ class EngineTest(unittest.TestCase):
         self.assertTrue(os.path.exists(self.marker))
 
     def test_a_downloaded_script_is_hashed_and_shown_before_it_runs(self):
-        script = os.path.join(self.tmp.name, 'inst.sh')
+        import shutil as _shutil, pathlib as _pathlib
+        shell = 'sh' if _shutil.which('sh') else sys.executable
+        ext = '.sh' if shell == 'sh' else '.py'
+        script = os.path.join(self.tmp.name, 'inst' + ext)
         with open(script, 'w') as f:
-            f.write('echo ran > "%s"\n' % self.marker)
-        self.write(install=[{'os': 'any', 'script': 'file://' + script, 'shell': 'sh'}])
+            if shell == sys.executable:
+                f.write('open(%r,"w").write("ran")\n' % self.marker)
+            else:
+                f.write('echo ran > "%s"\n' % self.marker)
+        self.write(install=[{'os': 'any', 'script': _pathlib.Path(script).as_uri(), 'shell': shell}])
         done = self.go('install', '--yes')
         self.assertEqual(done.returncode, 0, done.stdout + done.stderr)
         self.assertRegex(done.stdout, r'sha256 [0-9a-f]{64}')

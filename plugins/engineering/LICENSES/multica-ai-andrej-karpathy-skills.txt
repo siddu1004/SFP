@@ -1,0 +1,3 @@
+MIT License
+
+Source: https://github.com/multica-ai/andrej-karpathy-skills

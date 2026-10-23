@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package google.internal.labs.tailwind.metering.v1;
+
+import "google/protobuf/timestamp.proto";
+
+// Exact Android 1.55.10 metering declarations. Fields found only in the
+// newer live protobuf-JSON response are intentionally kept out of this file;
+// the runtime parser uses notebooklm/internal/android/wire/v1/usage.proto.
+
+enum UserAction {
+  USER_ACTION_UNSPECIFIED = 0;
+  AUDIO_OVERVIEW = 1;
+  VIDEO_OVERVIEW = 2;
+  BREAKDOWNS_VIDEO = 3;
+  SHORTS_VIDEO = 4;
+  INFOGRAPHIC = 5;
+  SLIDES = 6;
+  REPORTS = 7;
+  TABLES = 8;
+  FLASHCARDS = 9;
+  QUIZ = 10;
+  MINDMAP = 11;
+  CANVAS = 12;
+  SLIDES_EDITING = 13;
+  FLASHCARD_EDITING = 14;
+  DEEP_RESEARCH = 15;
+  NOS = 16;
+  FAST_RESEARCH = 17;
+  QNA = 18;
+  NOS_IMAGE_GENERATION = 19;
+  GUIDED_VIEW = 20;
+  DOCUMENT_GUIDE = 21;
+  // Newer server value named by the first-party protobuf JSON endpoint.
+  SUGGESTION_CHIPS = 22;
+}
+
+enum ActionCostTier {
+  ACTION_COST_TIER_UNSPECIFIED = 0;
+  LOW = 1;
+  MEDIUM = 2;
+  HIGH = 3;
+  VERY_HIGH = 4;
+}
+
+message QuotaSummaryEntry {
+  enum QuotaRefreshWindow {
+    WINDOW_UNSPECIFIED = 0;
+    HOUR = 1;
+    WEEK = 2;
+  }
+
+  QuotaRefreshWindow window = 5;
+  google.protobuf.Timestamp next_refresh_time = 6;
+  double used_micros_percent = 7;
+}
+
+message UserActionQuotaSummary {
+  UserAction action = 1;
+  bool has_sufficient_quota = 2;
+  ActionCostTier cost_tier = 4;
+  double estimated_cost_pct_of_budget = 6;
+}
+
+message ListQuotaSummaryResponse {
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    SUCCESS = 1;
+    SKIPPED = 2;
+    FAILED = 3;
+  }
+
+  Status status = 1;
+  repeated QuotaSummaryEntry summaries = 2;
+  repeated UserAction out_of_quota_actions = 3;
+  repeated UserActionQuotaSummary action_quota_summaries = 4;
+}

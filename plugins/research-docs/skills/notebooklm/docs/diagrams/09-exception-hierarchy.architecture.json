@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Selected Public Exception Hierarchy",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1258, 740],
+    "views": [
+      {
+        "id": "rpc",
+        "label": "RPC and auth failures",
+        "focus": ["root", "network", "rpc", "rpctimeout", "autherror", "downloadhop"],
+        "note": "A download-hop 401 or 403 is an AuthError; request timeout remains a NetworkError."
+      },
+      {
+        "id": "download",
+        "label": "Download failures",
+        "focus": ["root", "rpc", "autherror", "artifact", "artifactdownload", "downloadhop"],
+        "note": "Authentication failures stay distinguishable from media, policy and publication failures."
+      },
+      {
+        "id": "domain",
+        "label": "Domain failures",
+        "focus": ["root", "rpc", "notfound", "domainmissing", "wait", "artifact", "artifacttimeout"],
+        "note": "Seven resource not-found families and artifact timeouts retain their multiple-inheritance catch surfaces."
+      }
+    ]
+  },
+  "components": [
+    {"id": "root", "type": "backend", "label": "NotebookLMError", "sublabel": "public exception root", "tag": "Exception", "pos": [30, 315], "size": [160, 96]},
+    {"id": "network", "type": "backend", "label": "NetworkError", "sublabel": "transport failures", "pos": [282, 40], "size": [176, 86]},
+    {"id": "rpc", "type": "backend", "label": "RPCError", "sublabel": "remote-call failures", "pos": [282, 180], "size": [176, 86]},
+    {"id": "notfound", "type": "backend", "label": "NotFoundError", "sublabel": "missing entity", "pos": [282, 340], "size": [176, 86]},
+    {"id": "wait", "type": "backend", "label": "WaitTimeoutError", "sublabel": "local polling timeout", "pos": [282, 500], "size": [176, 86]},
+    {"id": "artifact", "type": "backend", "label": "ArtifactError", "sublabel": "artifact failure family", "pos": [282, 640], "size": [176, 86]},
+    {"id": "rpctimeout", "type": "backend", "label": "RPCTimeoutError", "sublabel": "request timed out", "pos": [1022, 40], "size": [206, 86]},
+    {"id": "autherror", "type": "security", "label": "AuthError", "sublabel": "credential rejected", "tag": "RPCError", "pos": [750, 180], "size": [190, 86]},
+    {"id": "downloadhop", "type": "external", "label": "Download Hop 401/403", "sublabel": "guarded asset GET", "tag": "raises AuthError", "pos": [1022, 180], "size": [206, 86]},
+    {"id": "domainmissing", "type": "backend", "label": "Domain *NotFoundError", "sublabel": "7 resource families", "tag": "also RPCError", "pos": [1002, 340], "size": [226, 100]},
+    {"id": "artifactdownload", "type": "backend", "label": "ArtifactDownloadError", "sublabel": "media · policy · publication", "pos": [1002, 640], "size": [226, 86]},
+    {"id": "artifacttimeout", "type": "backend", "label": "ArtifactTimeoutError", "sublabel": "generation wait expired", "tag": "also ArtifactError", "pos": [1002, 500], "size": [226, 86]}
+  ],
+  "connections": [
+    {"id": "root-network", "from": "root", "to": "network"},
+    {"id": "root-rpc", "from": "root", "to": "rpc", "variant": "emphasis"},
+    {"id": "root-notfound", "from": "root", "to": "notfound"},
+    {"id": "root-wait", "from": "root", "to": "wait"},
+    {"id": "root-artifact", "from": "root", "to": "artifact"},
+    {"id": "network-timeout", "from": "network", "to": "rpctimeout", "label": "specializes"},
+    {"id": "rpc-auth", "from": "rpc", "to": "autherror", "label": "specializes", "variant": "security"},
+    {"id": "hop-auth", "from": "downloadhop", "to": "autherror", "label": "raises", "variant": "security"},
+    {"id": "notfound-domain", "from": "notfound", "to": "domainmissing"},
+    {"id": "rpc-domain", "from": "rpc", "to": "domainmissing", "label": "also RPCError", "variant": "dashed"},
+    {"id": "artifact-download", "from": "artifact", "to": "artifactdownload", "label": "specializes"},
+    {"id": "wait-artifact", "from": "wait", "to": "artifacttimeout", "label": "specializes"}
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Download authentication",
+      "items": [
+        "Guarded 401/403 raises AuthError; single, MCP, and REST preserve its auth classification"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Batch result metadata",
+      "items": [
+        "--all preserves DownloadResult AUTH_ERROR metadata; seven missing-resource families inherit NotFoundError + RPCError"
+      ]
+    }
+  ]
+}

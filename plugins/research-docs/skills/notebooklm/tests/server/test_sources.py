@@ -1,0 +1,1241 @@
+"""U5: /v1/notebooks/{id}/sources add (url·text·file) / list / get / delete."""
+
+from __future__ import annotations
+
+import asyncio
+import io
+
+import pytest
+from fastapi.testclient import TestClient
+
+from notebooklm._redact import redact
+from notebooklm._types.notebooks import Notebook
+from notebooklm._types.sources import Source
+from notebooklm.rpc.types import DriveSourceStatus, SourceStatus
+from notebooklm.server._pagination import MAX_LIMIT
+from notebooklm.server.routes.sources import (
+    MAX_BATCH_URLS,
+    MAX_WAIT_SOURCE_IDS,
+)
+
+from .fakes import FakeClient
+
+
+def _seed_notebook(fake_client: FakeClient, nid: str = "nb-1") -> None:
+    """Seed the notebook so the batch route's shared-context preflight passes."""
+    fake_client.notebooks_store[nid] = Notebook(id=nid, title="NB")
+
+
+def test_add_url_returns_non_ready_source(authed_client: TestClient) -> None:
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/url", json={"url": "https://example.com"})
+    assert resp.status_code == 201
+    body = resp.json()
+    # The serialized status is the SourceStatus int (PROCESSING == 1, not READY).
+    assert body["status"] == int(SourceStatus.PROCESSING)
+    assert body["status"] != int(SourceStatus.READY)
+
+
+def test_add_text_returns_source(authed_client: TestClient) -> None:
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/text", json={"text": "hello", "title": "Note"}
+    )
+    assert resp.status_code == 201
+    assert resp.json()["title"] == "Note"
+
+
+def test_url_fallback_options_and_provenance(authed_client: TestClient, monkeypatch) -> None:
+    from unittest.mock import AsyncMock
+
+    from notebooklm._app import source_add
+    from notebooklm._app.source_fallback import FallbackProvenance, RecoveredSourceAddResult
+
+    result = RecoveredSourceAddResult(
+        Source("copy", title="Article"),
+        FallbackProvenance("https://example.com", "https://example.com/", "2026-09-27"),
+    )
+    execute = AsyncMock(return_value=result)
+    monkeypatch.setattr(source_add, "execute_source_add", execute)
+    response = authed_client.post(
+        "/v1/notebooks/nb-1/sources/url",
+        json={
+            "url": "https://example.com",
+            "fallback_fetch": True,
+            "cleanup_on_failure": True,
+        },
+    )
+    assert response.status_code == 201
+    assert response.json()["fallback"]["refreshable"] is False
+    assert response.json()["id"] == "copy"
+    plan = execute.call_args.args[1]
+    assert plan.fallback_fetch and plan.cleanup_on_failure
+
+
+def test_add_private_url_is_4xx_not_500(authed_client: TestClient) -> None:
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/url", json={"url": "http://127.0.0.1:9/secret"}
+    )
+    assert resp.status_code == 400
+    assert resp.json()["error"]["category"] == "validation"
+
+
+def test_add_file_spools_and_cleans_up(authed_client: TestClient, fake_client: FakeClient) -> None:
+    files = {"file": ("doc.txt", io.BytesIO(b"file-bytes"), "text/plain")}
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/file", files=files)
+    assert resp.status_code == 201
+    # add_file received a server-generated temp path that no longer exists.
+    assert len(fake_client.uploaded_paths) == 1
+    import os
+
+    assert not os.path.exists(fake_client.uploaded_paths[0])
+
+
+def test_upload_over_limit_is_413(authed_client: TestClient, monkeypatch: object) -> None:
+    import pytest
+
+    from notebooklm.server.routes import sources as sources_route
+
+    assert isinstance(monkeypatch, pytest.MonkeyPatch)
+    monkeypatch.setattr(sources_route, "MAX_UPLOAD_BYTES", 4)
+    files = {"file": ("big.bin", io.BytesIO(b"way too many bytes"), "application/octet-stream")}
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/file", files=files)
+    assert resp.status_code == 413
+
+
+def test_unauthenticated_file_upload_rejected_before_mutation_limiter(
+    monkeypatch: object,
+) -> None:
+    from collections.abc import AsyncIterator
+    from contextlib import asynccontextmanager
+
+    import pytest
+
+    from notebooklm.server._limits import ServerLimiters
+    from notebooklm.server.app import create_app
+
+    assert isinstance(monkeypatch, pytest.MonkeyPatch)
+
+    @asynccontextmanager
+    async def _forbid_acquire(self: ServerLimiters, group: object) -> AsyncIterator[None]:
+        raise AssertionError(f"unauthenticated upload acquired {group} limiter")
+        yield
+
+    @asynccontextmanager
+    async def _factory() -> AsyncIterator[FakeClient]:
+        yield FakeClient()
+
+    monkeypatch.setattr(ServerLimiters, "acquire", _forbid_acquire)
+    app = create_app(client_factory=_factory)
+    with TestClient(app, client=("127.0.0.1", 5555), raise_server_exceptions=False) as client:
+        resp = client.post(
+            "/v1/notebooks/nb-1/sources/file",
+            headers={"Host": "127.0.0.1"},
+            files={"file": ("doc.txt", io.BytesIO(b"file-bytes"), "text/plain")},
+        )
+
+    assert resp.status_code == 401
+    assert resp.json()["error"]["category"] == "auth"
+
+
+def test_poll_known_source_returns_200_pending_then_ready(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    # Create via add_url so the registry knows the id; then hide it (not-yet-listable).
+    created = authed_client.post(
+        "/v1/notebooks/nb-1/sources/url", json={"url": "https://example.com"}
+    ).json()
+    source_id = created["id"]
+    # Drop it from the listable store to simulate the lag window.
+    fake_client.sources_store["nb-1"].pop(source_id)
+
+    pending = authed_client.get(f"/v1/notebooks/nb-1/sources/{source_id}")
+    assert pending.status_code == 200
+    assert pending.json()["status"] == "pending"
+
+    # Now it becomes listable and READY.
+    fake_client.sources_store.setdefault("nb-1", {})[source_id] = Source(
+        id=source_id, title="x", status=SourceStatus.READY
+    )
+    ready = authed_client.get(f"/v1/notebooks/nb-1/sources/{source_id}")
+    assert ready.status_code == 200
+    assert ready.json()["id"] == source_id
+
+
+def test_poll_unknown_source_is_404(authed_client: TestClient) -> None:
+    resp = authed_client.get("/v1/notebooks/nb-1/sources/never-created")
+    assert resp.status_code == 404
+
+
+def _seed_ready_source(fake_client: FakeClient, *, content: str) -> str:
+    src_id = "src-ready"
+    fake_client.sources_store["nb-1"] = {
+        src_id: Source(id=src_id, title="Doc", status=SourceStatus.READY)
+    }
+    fake_client.fulltext_store[("nb-1", src_id)] = content
+    return src_id
+
+
+def test_content_ready_source_returns_body(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    src_id = _seed_ready_source(fake_client, content="hello world")
+    resp = authed_client.get(f"/v1/notebooks/nb-1/sources/{src_id}/content")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["content"] == "hello world"
+    assert body["char_count"] == 11
+    assert body["truncated"] is False
+
+
+def test_content_windowing_max_chars_offset_truncated(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    src_id = _seed_ready_source(fake_client, content="abcdefghij")
+    resp = authed_client.get(
+        f"/v1/notebooks/nb-1/sources/{src_id}/content", params={"offset": 2, "max_chars": 3}
+    )
+    body = resp.json()
+    assert body["content"] == "cde"
+    assert body["char_count"] == 10  # full length, not the window
+    assert body["truncated"] is True
+    # A window covering the remainder is not truncated.
+    resp2 = authed_client.get(
+        f"/v1/notebooks/nb-1/sources/{src_id}/content", params={"offset": 7, "max_chars": 100}
+    )
+    assert resp2.json()["content"] == "hij"
+    assert resp2.json()["truncated"] is False
+
+
+def test_content_negative_max_chars_is_422(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    src_id = _seed_ready_source(fake_client, content="abc")
+    resp = authed_client.get(
+        f"/v1/notebooks/nb-1/sources/{src_id}/content", params={"max_chars": -1}
+    )
+    assert resp.status_code == 422
+
+
+def test_content_ready_but_empty_fulltext_is_null(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    # A READY source whose extracted text is empty → content None (not ""), char 0.
+    src_id = _seed_ready_source(fake_client, content="")
+    resp = authed_client.get(f"/v1/notebooks/nb-1/sources/{src_id}/content")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["content"] is None
+    assert body["char_count"] == 0
+    assert body["truncated"] is False
+
+
+def test_content_offset_past_end_is_null_not_truncated(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    # An offset beyond the body yields an empty slice → normalized to None, and
+    # nothing was omitted past the window, so truncated is False.
+    src_id = _seed_ready_source(fake_client, content="abc")
+    resp = authed_client.get(f"/v1/notebooks/nb-1/sources/{src_id}/content", params={"offset": 10})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["content"] is None
+    assert body["char_count"] == 3  # full length preserved
+    assert body["truncated"] is False
+
+
+def test_content_output_format_markdown(authed_client: TestClient, fake_client: FakeClient) -> None:
+    # output_format is propagated to the shared read core and echoed in the body
+    # (parity with the MCP source_read tool).
+    src_id = _seed_ready_source(fake_client, content="# Heading")
+    resp = authed_client.get(
+        f"/v1/notebooks/nb-1/sources/{src_id}/content", params={"output_format": "markdown"}
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["output_format"] == "markdown"
+    assert body["content"] == "# Heading"
+    # The default is text.
+    default = authed_client.get(f"/v1/notebooks/nb-1/sources/{src_id}/content").json()
+    assert default["output_format"] == "text"
+
+
+def test_content_bad_output_format_is_422(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    src_id = _seed_ready_source(fake_client, content="abc")
+    resp = authed_client.get(
+        f"/v1/notebooks/nb-1/sources/{src_id}/content", params={"output_format": "html"}
+    )
+    assert resp.status_code == 422
+
+
+def test_content_known_pending_source_is_404(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    # The content route requires a LISTABLE source: a known-but-not-yet-listable
+    # (pending) id — unlike the status-poll GET /{source_id} route — is a 404 here.
+    created = authed_client.post(
+        "/v1/notebooks/nb-1/sources/url", json={"url": "https://example.com"}
+    ).json()
+    source_id = created["id"]
+    fake_client.sources_store["nb-1"].pop(source_id)
+    resp = authed_client.get(f"/v1/notebooks/nb-1/sources/{source_id}/content")
+    assert resp.status_code == 404
+
+
+def test_content_not_ready_source_content_is_null(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    fake_client.sources_store["nb-1"] = {
+        "src-p": Source(id="src-p", title="Doc", status=SourceStatus.PROCESSING)
+    }
+    resp = authed_client.get("/v1/notebooks/nb-1/sources/src-p/content")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["content"] is None
+    assert body["char_count"] == 0
+    assert body["truncated"] is False
+
+
+def test_content_missing_source_is_404(authed_client: TestClient) -> None:
+    resp = authed_client.get("/v1/notebooks/nb-1/sources/nope/content")
+    assert resp.status_code == 404
+
+
+def test_content_summary_variant(authed_client: TestClient, fake_client: FakeClient) -> None:
+    from notebooklm._types.research import SourceGuide
+
+    src_id = _seed_ready_source(fake_client, content="body")
+    fake_client.guide_store[("nb-1", src_id)] = SourceGuide(
+        summary="A digest", keywords=("k1", "k2")
+    )
+    resp = authed_client.get(
+        f"/v1/notebooks/nb-1/sources/{src_id}/content", params={"detail": "summary"}
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["summary"] == "A digest"
+    assert body["keywords"] == ["k1", "k2"]
+
+
+def test_content_summary_missing_source_is_404(authed_client: TestClient) -> None:
+    resp = authed_client.get(
+        "/v1/notebooks/nb-1/sources/nope/content", params={"detail": "summary"}
+    )
+    assert resp.status_code == 404
+
+
+def test_list_and_delete(authed_client: TestClient, fake_client: FakeClient) -> None:
+    fake_client.sources_store["nb-1"] = {
+        "src-7": Source(id="src-7", title="S", status=SourceStatus.READY)
+    }
+    listed = authed_client.get("/v1/notebooks/nb-1/sources")
+    assert listed.status_code == 200
+    row = listed.json()["sources"][0]
+    assert row["id"] == "src-7"
+    # Shared view: string kind + status_label alongside the raw status int.
+    assert row["status_label"] == "ready"
+    assert "kind" in row
+    # Default (no limit) stays unbounded, no meta block.
+    assert "meta" not in listed.json()
+
+    deleted = authed_client.delete("/v1/notebooks/nb-1/sources/src-7")
+    assert deleted.status_code == 204
+    # Idempotent re-delete.
+    assert authed_client.delete("/v1/notebooks/nb-1/sources/src-7").status_code == 204
+
+
+def test_get_source_carries_kind_and_status_label(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    fake_client.sources_store["nb-1"] = {
+        "src-9": Source(id="src-9", title="Doc", status=SourceStatus.READY)
+    }
+    resp = authed_client.get("/v1/notebooks/nb-1/sources/src-9")
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["id"] == "src-9"
+    assert body["status_label"] == "ready"
+    assert "kind" in body
+
+
+def test_get_source_carries_drive_health(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    """The REST source view projects Drive-side health, not just ingestion (#2111).
+
+    ``_app/views.py`` claims REST and MCP emit the identical enriched shape; without
+    this the whole Drive axis could vanish from every ``/v1`` source response with
+    the server suite still green.
+    """
+    fake_client.sources_store["nb-1"] = {
+        "src-d": Source(
+            id="src-d",
+            title="Shared Doc",
+            status=SourceStatus.READY,
+            drive_document_id="1AbC",
+            drive_status=DriveSourceStatus.INACCESSIBLE,
+        ),
+        "src-w": Source(id="src-w", title="Page", status=SourceStatus.READY),
+    }
+
+    degraded = authed_client.get("/v1/notebooks/nb-1/sources/src-d").json()
+    # Ingestion finished, so status_label still reads ready — that is the bug
+    # #2111 is about, and the Drive axis is what disambiguates it.
+    assert degraded["status_label"] == "ready"
+    assert degraded["drive_status"] == DriveSourceStatus.INACCESSIBLE.value
+    assert degraded["drive_status_label"] == "inaccessible"
+    assert degraded["is_drive_degraded"] is True
+
+    plain = authed_client.get("/v1/notebooks/nb-1/sources/src-w").json()
+    assert plain["drive_status"] is None
+    assert plain["drive_status_label"] is None
+    assert plain["is_drive_degraded"] is False
+
+
+def test_source_list_pagination_slices_and_adds_meta(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    fake_client.sources_store["nb-1"] = {
+        f"src-{i}": Source(id=f"src-{i}", title=f"S{i}", status=SourceStatus.READY)
+        for i in range(5)
+    }
+    resp = authed_client.get("/v1/notebooks/nb-1/sources", params={"limit": 2, "offset": 1})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["notebook_id"] == "nb-1"
+    assert len(body["sources"]) == 2
+    assert body["meta"] == {"total": 5, "has_more": True, "limit": 2, "offset": 1}
+
+
+def test_source_list_bad_limit_is_422(authed_client: TestClient, fake_client: FakeClient) -> None:
+    fake_client.sources_store["nb-1"] = {
+        "src-1": Source(id="src-1", title="S", status=SourceStatus.READY)
+    }
+    assert authed_client.get("/v1/notebooks/nb-1/sources", params={"limit": 0}).status_code == 422
+    assert authed_client.get("/v1/notebooks/nb-1/sources", params={"offset": -1}).status_code == 422
+
+
+def test_source_list_limit_over_max_is_422(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    fake_client.sources_store["nb-1"] = {
+        "src-1": Source(id="src-1", title="S", status=SourceStatus.READY)
+    }
+    over = authed_client.get("/v1/notebooks/nb-1/sources", params={"limit": MAX_LIMIT + 1})
+    assert over.status_code == 422
+    at_cap = authed_client.get("/v1/notebooks/nb-1/sources", params={"limit": MAX_LIMIT})
+    assert at_cap.status_code == 200
+
+
+def test_source_list_offset_without_limit_is_rejected(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    fake_client.sources_store["nb-1"] = {
+        f"src-{i}": Source(id=f"src-{i}", title=f"S{i}", status=SourceStatus.READY)
+        for i in range(3)
+    }
+    # offset>0 with no limit is an ambiguous window → 400, not silently ignored.
+    rejected = authed_client.get("/v1/notebooks/nb-1/sources", params={"offset": 2})
+    assert rejected.status_code == 400
+    assert rejected.json()["error"]["category"] == "validation"
+    # offset=0 with no limit is the unchanged full-list default (no meta).
+    full = authed_client.get("/v1/notebooks/nb-1/sources", params={"offset": 0})
+    assert full.status_code == 200
+    body = full.json()
+    assert len(body["sources"]) == 3
+    assert "meta" not in body
+
+
+def test_add_url_returns_enriched_view(authed_client: TestClient) -> None:
+    # The create path projects the shared enriched view (string kind /
+    # status_label), matching GET rather than leaking bare integer codes.
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/url", json={"url": "https://example.com"})
+    assert resp.status_code == 201
+    body = resp.json()
+    assert "kind" in body
+    assert "status_label" in body
+    assert body["status_label"] == "processing"
+
+
+# --- Phase 4: source rename (PATCH) ------------------------------------------
+
+
+def _seed_source(
+    fake_client: FakeClient, nid: str, sid: str, *, status: SourceStatus = SourceStatus.PROCESSING
+) -> None:
+    fake_client.sources_store.setdefault(nid, {})[sid] = Source(
+        id=sid, title="Old", url=None, status=status
+    )
+
+
+def test_rename_source(authed_client: TestClient, fake_client: FakeClient) -> None:
+    _seed_source(fake_client, "nb-1", "src-1")
+    resp = authed_client.patch("/v1/notebooks/nb-1/sources/src-1", json={"title": "Renamed"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["title"] == "Renamed"
+    # Enriched view shape (matches GET).
+    assert "kind" in body and "status_label" in body
+    assert fake_client.sources_store["nb-1"]["src-1"].title == "Renamed"
+
+
+def test_rename_missing_source_is_404(authed_client: TestClient) -> None:
+    resp = authed_client.patch("/v1/notebooks/nb-1/sources/ghost", json={"title": "X"})
+    assert resp.status_code == 404
+
+
+# --- Phase 4: Drive source add -----------------------------------------------
+
+
+def test_add_drive_source(authed_client: TestClient, fake_client: FakeClient) -> None:
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/drive",
+        json={"document_id": "doc-abc", "title": "Spec", "mime_type": "google-doc"},
+    )
+    assert resp.status_code == 201
+    body = resp.json()
+    assert body["title"] == "Spec"
+    assert "status_label" in body
+    # The core maps the ``google-doc`` choice to the real Drive MIME before add.
+    nid, doc, title, mime = fake_client.added_drive[0]
+    assert (nid, doc, title) == ("nb-1", "doc-abc", "Spec")
+    assert mime == "application/vnd.google-apps.document"
+
+
+def test_add_drive_missing_mime_is_422(authed_client: TestClient, fake_client: FakeClient) -> None:
+    """``mime_type`` is required — an omitted value is rejected (422) with no add
+    RPC, so no error source stub is left behind (#1827)."""
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/drive", json={"document_id": "doc-1"})
+    assert resp.status_code == 422
+    assert fake_client.added_drive == []
+
+
+def test_add_drive_pdf_kind_not_spreadsheet(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    """A Drive PDF add surfaces as ``kind='pdf'``, not ``google_spreadsheet`` (#1828)."""
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/drive",
+        json={"document_id": "doc-pdf", "title": "Report.pdf", "mime_type": "pdf"},
+    )
+    assert resp.status_code == 201
+    assert resp.json()["kind"] == "pdf"
+
+
+def test_add_drive_bad_mime_is_422(authed_client: TestClient) -> None:
+    # mime_type is a Literal → rejected at the schema boundary. A before-validator
+    # enriches the 422 with the file-upload hint (Google-native + PDF only).
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/drive",
+        json={"document_id": "doc-1", "mime_type": "bogus"},
+    )
+    assert resp.status_code == 422
+    body = resp.text.lower()
+    assert "not importable via drive" in body
+    assert "download" in body
+    assert "file" in body
+
+
+# --- Phase 4: batch URL add --------------------------------------------------
+
+
+def test_add_batch_all_valid(authed_client: TestClient, fake_client: FakeClient) -> None:
+    _seed_notebook(fake_client)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": ["https://a.example.com", "https://b.example.com"]},
+    )
+    assert resp.status_code == 201
+    body = resp.json()
+    # Top-level status mirrors the MCP batch envelope (parity).
+    assert body["status"] == "added"
+    assert body["added"] == 2
+    assert body["failed"] == 0
+    # Results are positional and carry status_label.
+    assert body["results"][0]["input"] == "https://a.example.com"
+    assert body["results"][0]["status"] == "added"
+    assert "status_label" in body["results"][0]
+
+
+def test_add_batch_success_redacts_and_caps_provisional_url_title(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    """A provisional URL title is safe on the REST wire without mutating the source."""
+    from unittest.mock import AsyncMock
+
+    from notebooklm.outcomes import SourceBatchItemOutcome
+
+    _seed_notebook(fake_client)
+    unsafe_title = (
+        "https://batch-title-user:batch-title-password@example.com/path"
+        "?token=batch-title-token&padding=" + "x" * 300
+    )
+    ordinary_title = "Quarterly research notes"
+    sources = [
+        Source(id="source-sensitive-title", title=unsafe_title),
+        Source(id="source-ordinary-title", title=ordinary_title),
+    ]
+    fake_client.sources.add_urls_batch = AsyncMock(
+        return_value=[
+            SourceBatchItemOutcome(url="https://example.com/a", source=sources[0]),
+            SourceBatchItemOutcome(url="https://example.com/b", source=sources[1]),
+        ]
+    )
+
+    response = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": ["https://example.com/a", "https://example.com/b"]},
+    )
+
+    assert response.status_code == 201
+    rows = response.json()["results"]
+    assert rows[0]["title"] == redact(unsafe_title, max_length=200)
+    assert len(rows[0]["title"]) <= 201
+    assert "batch-title-user" not in rows[0]["title"]
+    assert "batch-title-password" not in rows[0]["title"]
+    assert "batch-title-token" not in rows[0]["title"]
+    assert rows[1]["title"] == ordinary_title
+    assert sources[0].title == unsafe_title
+
+
+def test_add_batch_partial_failure_isolated(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    # A private/SSRF URL fails its own item without aborting the batch.
+    _seed_notebook(fake_client)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": ["https://ok.example.com", "http://127.0.0.1:9/secret"]},
+    )
+    assert resp.status_code == 201
+    body = resp.json()
+    assert body["status"] == "added"  # ≥1 added
+    assert body["added"] == 1
+    assert body["failed"] == 1
+    assert body["results"][1]["status"] == "error"
+    err = body["results"][1]["error"]
+    assert err["category"] == "validation"
+    assert "retriable" in err
+    assert "--allow-internal" not in str(err)
+    assert "notebooklm " not in str(err)
+
+
+def test_add_batch_all_failed_is_200_status_error(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    # Every item fails a per-item VALIDATION check → nothing created: 200 (not
+    # 201) with a top-level status="error" (MCP _add_url_batch parity), so the
+    # envelope never claims success while every result says error.
+    _seed_notebook(fake_client)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": ["http://127.0.0.1:9/a", "http://169.254.169.254/b"]},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "error"
+    assert body["added"] == 0
+    assert body["failed"] == 2
+
+
+def test_add_batch_bad_notebook_is_top_level_404(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    # A shared-context failure (unknown notebook) is validated ONCE up front and
+    # surfaces as a top-level 404 — NOT a 201 with every item silently errored.
+    # (nb-1 is intentionally NOT seeded.)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": ["https://a.example.com", "https://b.example.com"]},
+    )
+    assert resp.status_code == 404
+    assert resp.json()["error"]["category"] == "not_found"
+    # No item was attempted (the batch aborted before the loop).
+    assert not fake_client.sources_store.get("nb-1")
+
+
+def test_add_batch_stale_auth_is_top_level_401(
+    authed_client: TestClient, fake_client: FakeClient, monkeypatch: object
+) -> None:
+    # Stale auth on the shared preflight surfaces as a top-level 401, not a
+    # 201-all-errored body.
+    import pytest
+
+    from notebooklm.exceptions import AuthError
+
+    assert isinstance(monkeypatch, pytest.MonkeyPatch)
+
+    async def _boom(notebook_id: str) -> object:
+        raise AuthError("session expired")
+
+    monkeypatch.setattr(fake_client.notebooks, "get", _boom)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch", json={"urls": ["https://a.example.com"]}
+    )
+    assert resp.status_code == 401
+    assert resp.json()["error"]["category"] == "auth"
+
+
+def test_add_batch_mid_item_auth_uses_typed_unknown_without_status_oracle(
+    authed_client: TestClient, fake_client: FakeClient, monkeypatch: object
+) -> None:
+    # A provenance-free AUTH error returned for a dispatched member is unknown.
+    # Its HTTP category is not a continuation-policy oracle.
+    import pytest
+
+    from notebooklm.exceptions import AuthError
+
+    assert isinstance(monkeypatch, pytest.MonkeyPatch)
+    _seed_notebook(fake_client)
+
+    async def _boom(notebook_id: str, url: str) -> object:
+        raise AuthError("session expired mid-batch")
+
+    monkeypatch.setattr(fake_client.sources, "add_url", _boom)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": ["https://a.example.com", "https://b.example.com"]},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert [item["commit_state"] for item in body["results"]] == ["unknown", "unknown"]
+    assert all(item["error"]["category"] == "auth" for item in body["results"])
+
+
+def test_add_batch_transport_rate_limit_projects_unknown_member(
+    authed_client: TestClient, fake_client: FakeClient, monkeypatch: object
+) -> None:
+    # The typed RateLimitError carries UNKNOWN evidence for this member. REST
+    # projects that evidence without converting an HTTP status into batch policy.
+    import pytest
+
+    from notebooklm.exceptions import RateLimitError
+
+    assert isinstance(monkeypatch, pytest.MonkeyPatch)
+    _seed_notebook(fake_client)
+
+    async def _boom(notebook_id: str, url: str) -> object:
+        raise RateLimitError("slow down")
+
+    monkeypatch.setattr(fake_client.sources, "add_url", _boom)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch", json={"urls": ["https://a.example.com"]}
+    )
+    assert resp.status_code == 200
+    item = resp.json()["results"][0]
+    assert item["commit_state"] == "unknown"
+    assert item["error"]["category"] == "rpc"
+    assert item["error"]["unconfirmed"] is True
+
+
+def test_e9_rest_batch_error_preserves_committed_sibling_id(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    from unittest.mock import AsyncMock
+
+    from notebooklm._idempotency import mark_unconfirmed
+    from notebooklm.exceptions import RateLimitError
+    from notebooklm.outcomes import SourceBatchItemOutcome
+
+    _seed_notebook(fake_client)
+    committed = Source(id="committed-before-failure", title="Committed")
+    unresolved = RateLimitError("batch response left another member unresolved")
+    mark_unconfirmed(unresolved)
+    fake_client.sources.add_urls_batch = AsyncMock(
+        return_value=[
+            SourceBatchItemOutcome(url="https://a.example.com", source=committed),
+            SourceBatchItemOutcome(url="https://b.example.com", error=unresolved),
+        ]
+    )
+
+    response = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": ["https://a.example.com", "https://b.example.com"]},
+    )
+
+    assert response.status_code == 201
+    results = response.json()["results"]
+    assert results[0]["source_id"] == "committed-before-failure"
+    assert results[0]["commit_state"] == "confirmed"
+    assert results[1]["commit_state"] == "unknown"
+
+
+def test_add_batch_projects_all_four_public_commit_states(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    """The REST endpoint preserves one ordered mixed four-state outcome."""
+    from unittest.mock import AsyncMock
+
+    from notebooklm.exceptions import SourceAddError
+    from notebooklm.outcomes import BatchItemOutcome, CommitState, SourceBatchItemOutcome
+
+    _seed_notebook(fake_client)
+    invalid = (
+        "ftp://not-sent-user:not-sent-password@example.com/path?token=not-sent-token&pad="
+        + "x" * 300
+    )
+    valid = [
+        f"https://{state}-user:{state}-password@example.com/path?token={state}-token&pad="
+        + "x" * 300
+        for state in ("confirmed", "rejected", "unknown")
+    ]
+    rejected = SourceAddError(valid[1])
+    fake_client.sources.add_urls_batch = AsyncMock(
+        return_value=[
+            SourceBatchItemOutcome(
+                url=valid[0], source=Source(id="source-confirmed", title="Committed")
+            ),
+            SourceBatchItemOutcome(
+                url=valid[1],
+                error=rejected,
+                member=1,
+                outcome=BatchItemOutcome(
+                    member=1,
+                    input=valid[1],
+                    commit_state=CommitState.REJECTED,
+                    error=rejected,
+                ),
+            ),
+            SourceBatchItemOutcome(
+                url=valid[2],
+                error=SourceAddError(valid[2]),
+                member=2,
+            ),
+        ]
+    )
+
+    response = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": [invalid, *valid]},
+    )
+
+    assert response.status_code == 201
+    rows = response.json()["results"]
+    assert [row["commit_state"] for row in rows] == [
+        "not_sent",
+        "confirmed",
+        "rejected",
+        "unknown",
+    ]
+    assert rows[1]["source_id"] == "source-confirmed"
+    for row, raw in zip(rows, [invalid, *valid], strict=True):
+        assert row["input"] == redact(raw, max_length=200)
+        assert len(row["input"]) <= 201
+        assert "password" not in row["input"]
+        assert "-token" not in row["input"]
+    fake_client.sources.add_urls_batch.assert_awaited_once_with("nb-1", valid)
+
+
+def test_add_batch_projection_failure_returns_all_settled_outcomes(
+    authed_client: TestClient,
+    fake_client: FakeClient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The endpoint error envelope keeps committed IDs after projection fails."""
+    from unittest.mock import AsyncMock
+
+    from notebooklm.exceptions import SourceAddError
+    from notebooklm.outcomes import SourceBatchItemOutcome
+    from notebooklm.server.routes import sources as sources_route
+
+    _seed_notebook(fake_client)
+    fake_client.sources.add_urls_batch = AsyncMock(
+        return_value=[
+            SourceBatchItemOutcome(
+                url="https://ok.example.com",
+                source=Source(id="source-before-projection", title="Committed"),
+            ),
+            SourceBatchItemOutcome(
+                url="https://unknown.example.com",
+                error=SourceAddError("https://unknown.example.com"),
+            ),
+        ]
+    )
+    monkeypatch.setattr(
+        sources_route,
+        "_project_batch_item",
+        lambda _item: (_ for _ in ()).throw(RuntimeError("projection failed")),
+    )
+
+    response = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={"urls": ["https://ok.example.com", "https://unknown.example.com"]},
+    )
+
+    assert response.status_code == 500
+    batch = response.json()["error"]["batch_outcome"]
+    assert [item["commit_state"] for item in batch["items"]] == ["confirmed", "unknown"]
+    assert batch["items"][0]["resource_id"] == "source-before-projection"
+    assert batch["whole_request_retriable"] is False
+
+
+@pytest.mark.asyncio
+async def test_add_batch_projection_cancellation_retains_all_settled_outcomes(
+    fake_client: FakeClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Cancellation propagates unchanged with already-settled member evidence."""
+    from unittest.mock import AsyncMock
+
+    from fastapi import Response
+
+    from notebooklm.outcomes import SourceBatchItemOutcome, operation_metadata_payload
+    from notebooklm.server._pending import PendingRegistry
+    from notebooklm.server.routes import sources as sources_route
+
+    _seed_notebook(fake_client)
+    fake_client.sources.add_urls_batch = AsyncMock(
+        return_value=[
+            SourceBatchItemOutcome(
+                url="https://ok.example.com",
+                source=Source(id="source-before-cancel", title="Committed"),
+            )
+        ]
+    )
+    cancelled = asyncio.CancelledError("projection cancelled")
+
+    def _cancel_projection(_item: object) -> object:
+        raise cancelled
+
+    monkeypatch.setattr(sources_route, "_project_batch_item", _cancel_projection)
+    with pytest.raises(asyncio.CancelledError):
+        await sources_route.add_batch(
+            "nb-1",
+            sources_route.SourceAddBatch(urls=["https://ok.example.com"]),
+            fake_client,
+            PendingRegistry(),
+            Response(),
+        )
+
+    items = operation_metadata_payload(cancelled)["batch_outcome"]["items"]  # type: ignore[index]
+    assert items[0]["commit_state"] == "confirmed"
+    assert items[0]["resource_id"] == "source-before-cancel"
+
+
+@pytest.mark.parametrize("failure_type", [RuntimeError, asyncio.CancelledError])
+@pytest.mark.asyncio
+async def test_add_batch_call_failure_merges_local_and_facade_members(
+    fake_client: FakeClient, failure_type: type[BaseException]
+) -> None:
+    """The original failure retains local and remapped facade settlements."""
+    from unittest.mock import AsyncMock
+
+    from fastapi import Response
+
+    from notebooklm._idempotency import attach_batch_outcome
+    from notebooklm.exceptions import SourceAddError
+    from notebooklm.outcomes import (
+        BatchItemOutcome,
+        BatchOutcome,
+        CommitState,
+        operation_metadata_payload,
+    )
+    from notebooklm.server._pending import PendingRegistry
+    from notebooklm.server.routes import sources as sources_route
+
+    _seed_notebook(fake_client)
+    invalid = "ftp://local-user:local-password@example.com/path?token=local-token"
+    valid = [
+        "https://ok-user:ok-password@example.com/path?token=ok-token",
+        "https://no-user:no-password@example.com/path?token=no-token",
+    ]
+    failure = failure_type("batch interrupted")
+    rejected = SourceAddError(valid[1])
+    attach_batch_outcome(
+        failure,
+        BatchOutcome(
+            items=(
+                BatchItemOutcome(
+                    member=0,
+                    input=valid[0],
+                    commit_state=CommitState.CONFIRMED,
+                    resource_id="source-before-failure",
+                ),
+                BatchItemOutcome(
+                    member=1,
+                    input=valid[1],
+                    commit_state=CommitState.REJECTED,
+                    error=rejected,
+                ),
+            )
+        ),
+    )
+    fake_client.sources.add_urls_batch = AsyncMock(side_effect=failure)
+
+    with pytest.raises(failure_type) as excinfo:
+        await sources_route.add_batch(
+            "nb-1",
+            sources_route.SourceAddBatch(urls=[invalid, *valid]),
+            fake_client,
+            PendingRegistry(),
+            Response(),
+        )
+
+    assert excinfo.value is failure
+    items = operation_metadata_payload(failure)["batch_outcome"]["items"]  # type: ignore[index]
+    assert [item["member"] for item in items] == [0, 1, 2]
+    assert [item["commit_state"] for item in items] == ["not_sent", "confirmed", "rejected"]
+    assert items[1]["resource_id"] == "source-before-failure"
+    for item, raw in zip(items, [invalid, *valid], strict=True):
+        assert item["input"] == redact(raw, max_length=200)
+
+
+def test_add_batch_mid_item_source_add_error_isolates_not_aborts(
+    authed_client: TestClient, fake_client: FakeClient, monkeypatch: object
+) -> None:
+    # A per-URL SourceAddError (bad domain) is a 4xx INPUT failure specific to the
+    # one URL — it must isolate as a per-item source_add error (422 partition) while
+    # the rest of the batch proceeds, without consulting HTTP status policy.
+    import pytest
+
+    from notebooklm.exceptions import SourceAddError
+
+    assert isinstance(monkeypatch, pytest.MonkeyPatch)
+    _seed_notebook(fake_client)
+
+    real_add_url = fake_client.sources.add_url
+
+    async def _maybe_bad(notebook_id: str, url: str) -> object:
+        if "bad-domain" in url:
+            raise SourceAddError(url)
+        return await real_add_url(notebook_id, url)
+
+    monkeypatch.setattr(fake_client.sources, "add_url", _maybe_bad)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch",
+        json={
+            "urls": [
+                "https://good-a.example.com",
+                "https://bad-domain.example.com",
+                "https://good-b.example.com",
+            ]
+        },
+    )
+    # Isolated, not aborted: a 201 batch envelope with per-item results.
+    assert resp.status_code == 201
+    body = resp.json()
+    assert body["status"] == "added"
+    assert body["added"] == 2
+    assert body["failed"] == 1
+    assert [item["status"] for item in body["results"]] == ["added", "error", "added"]
+    err = body["results"][1]["error"]
+    assert err["category"] == "source_add"
+    assert err["retriable"] is False
+
+
+def test_add_batch_per_item_error_is_redacted(
+    authed_client: TestClient, fake_client: FakeClient, monkeypatch: object
+) -> None:
+    # A per-item (isolated, 4xx-input) failure whose message carries a home path
+    # must be scrubbed in the batch envelope — no raw /home/<user>/ leak.
+    import pytest
+
+    from notebooklm.exceptions import ValidationError
+
+    assert isinstance(monkeypatch, pytest.MonkeyPatch)
+    _seed_notebook(fake_client)
+
+    async def _boom(notebook_id: str, url: str) -> object:
+        raise ValidationError("bad source spooled to /home/alice/secret.txt")
+
+    monkeypatch.setattr(fake_client.sources, "add_url", _boom)
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/batch", json={"urls": ["https://a.example.com"]}
+    )
+    # A VALIDATION failure stays isolated: nothing created → 200 status=error.
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "error"
+    message = body["results"][0]["error"]["message"]
+    assert "/home/alice" not in message
+    assert "/home/***" in message
+
+
+def test_add_batch_empty_is_400(authed_client: TestClient) -> None:
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/batch", json={"urls": []})
+    assert resp.status_code == 400
+
+
+def test_add_batch_over_limit_is_422(authed_client: TestClient, fake_client: FakeClient) -> None:
+    _seed_notebook(fake_client)
+    urls = [f"https://{i}.example.com" for i in range(MAX_BATCH_URLS + 1)]
+
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/batch", json={"urls": urls})
+
+    assert resp.status_code == 422
+    assert not fake_client.sources_store.get("nb-1")
+
+
+# --- Phase 4: source_wait ----------------------------------------------------
+
+
+def test_wait_specific_source_ready(authed_client: TestClient, fake_client: FakeClient) -> None:
+    _seed_source(fake_client, "nb-1", "src-1")
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/wait", json={"source_ids": ["src-1"], "timeout": 1.0}
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["ok"] is True
+    assert len(body["ready"]) == 1
+    assert body["ready"][0]["status_label"] == "ready"
+    assert body["timed_out"] == [] and body["failed"] == [] and body["not_found"] == []
+    # Explicit counts mirror the MCP aggregate (#1822): additive, total folds all four.
+    assert body["ready_count"] == 1
+    assert body["timed_out_count"] == body["failed_count"] == body["not_found_count"] == 0
+    assert body["total_count"] == 1
+
+
+def test_wait_explicit_source_ids_over_max_is_validation_error(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    source_ids = [f"src-{i}" for i in range(MAX_WAIT_SOURCE_IDS + 1)]
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/wait", json={"source_ids": source_ids})
+    assert resp.status_code == 422
+    assert resp.json()["error"]["category"] == "validation"
+    assert fake_client.wait_calls == []
+
+
+def test_wait_duplicate_source_ids_are_deduped(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    _seed_source(fake_client, "nb-1", "src-1")
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/wait",
+        json={"source_ids": ["src-1", "src-1", "src-1"], "timeout": 1.0},
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert [source["id"] for source in body["ready"]] == ["src-1"]
+    assert fake_client.wait_calls == ["src-1"]
+
+
+def test_wait_all_sources_over_max_is_validation_error(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    for i in range(MAX_WAIT_SOURCE_IDS + 1):
+        _seed_source(fake_client, "nb-1", f"src-{i}")
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/wait", json={"timeout": 1.0})
+    assert resp.status_code == 400
+    assert resp.json()["error"]["category"] == "validation"
+    assert fake_client.wait_calls == []
+
+
+def test_wait_all_sources_resolves_every_id_in_one_request(
+    authed_client: TestClient, fake_client: FakeClient
+) -> None:
+    """The multi-source wait resolves every requested id through the single
+    snapshot loop (#1870) — every id is waited on and reported ready."""
+    source_ids = [f"src-{i}" for i in range(12)]
+    for source_id in source_ids:
+        _seed_source(fake_client, "nb-1", source_id)
+
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/wait",
+        json={"source_ids": source_ids, "timeout": 1.0},
+    )
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert {source["id"] for source in body["ready"]} == set(source_ids)
+    assert set(fake_client.wait_calls) == set(source_ids)
+
+
+def test_wait_all_sources_partial(authed_client: TestClient, fake_client: FakeClient) -> None:
+    _seed_source(fake_client, "nb-1", "src-ok")
+    _seed_source(fake_client, "nb-1", "src-slow")
+    _seed_source(fake_client, "nb-1", "src-bad")
+    fake_client.wait_outcomes["src-slow"] = "timeout"
+    fake_client.wait_outcomes["src-bad"] = "processing"
+    # No source_ids → wait for every source in the notebook.
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/wait", json={"timeout": 0.5})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["ok"] is False
+    ready_ids = {r["id"] for r in body["ready"]}
+    assert ready_ids == {"src-ok"}
+    assert body["timed_out"][0]["source_id"] == "src-slow"
+    assert body["failed"][0]["source_id"] == "src-bad"
+    assert body["ready_count"] == 1
+    assert body["timed_out_count"] == 1
+    assert body["failed_count"] == 1
+    assert body["not_found_count"] == 0
+    assert body["total_count"] == 3
+
+
+def test_wait_not_found_bucket(authed_client: TestClient, fake_client: FakeClient) -> None:
+    fake_client.wait_outcomes["src-x"] = "not_found"
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/wait", json={"source_ids": ["src-x"]})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["ok"] is False
+    assert body["not_found"][0]["source_id"] == "src-x"
+
+
+def test_wait_bad_timeout_is_400(authed_client: TestClient) -> None:
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/wait", json={"source_ids": ["s"], "timeout": -1}
+    )
+    assert resp.status_code == 400
+
+
+def test_wait_bad_interval_is_400(authed_client: TestClient) -> None:
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/wait", json={"source_ids": ["s"], "interval": 0}
+    )
+    assert resp.status_code == 400
+
+
+def test_wait_non_finite_timeout_is_rejected(authed_client: TestClient) -> None:
+    # JSON allows Infinity / NaN; timeout=inf would wait forever, NaN breaks
+    # comparisons. Both must be rejected before any waiting starts.
+    for bad in ("Infinity", "NaN"):
+        resp = authed_client.post(
+            "/v1/notebooks/nb-1/sources/wait",
+            content=f'{{"source_ids": ["s"], "timeout": {bad}}}',
+            headers={"Content-Type": "application/json"},
+        )
+        assert resp.status_code in (400, 422), (bad, resp.status_code)
+
+
+def test_wait_non_finite_interval_is_rejected(authed_client: TestClient) -> None:
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/wait",
+        content='{"source_ids": ["s"], "interval": Infinity}',
+        headers={"Content-Type": "application/json"},
+    )
+    assert resp.status_code in (400, 422)
+
+
+def test_wait_timeout_over_max_is_400(authed_client: TestClient) -> None:
+    from notebooklm.server.routes.sources import MAX_WAIT_TIMEOUT
+
+    resp = authed_client.post(
+        "/v1/notebooks/nb-1/sources/wait",
+        json={"source_ids": ["s"], "timeout": MAX_WAIT_TIMEOUT + 1},
+    )
+    assert resp.status_code == 400
+
+
+def test_wait_explicit_empty_source_ids_is_400(authed_client: TestClient) -> None:
+    # An explicit empty list would return immediate ok:true (false-ready if a
+    # caller serialized "all" as []). Reject it; omitting source_ids waits all.
+    resp = authed_client.post("/v1/notebooks/nb-1/sources/wait", json={"source_ids": []})
+    assert resp.status_code == 400
+    assert resp.json()["error"]["category"] == "validation"
+
+
+def test_wait_bucket_entry_redacts_error_text() -> None:
+    # A handled wait failure's error text is scrubbed via safe_detail before it
+    # reaches the {source_id, error} bucket — no raw /home/<user>/ leak (F7).
+    from notebooklm.server.routes.sources import _wait_bucket_entry
+
+    class _Err:
+        source_id = "src-1"
+
+        def __str__(self) -> str:
+            return "processing failed, spooled to /home/alice/tmp/x"
+
+    entry = _wait_bucket_entry(_Err())
+    assert entry["source_id"] == "src-1"
+    assert "/home/alice" not in entry["error"]
+    assert "/home/***" in entry["error"]

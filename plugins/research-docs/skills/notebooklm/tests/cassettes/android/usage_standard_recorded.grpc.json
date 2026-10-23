@@ -1,0 +1,36 @@
+{
+  "format": "notebooklm.android.grpc-cassette",
+  "interactions": [
+    {
+      "method": "/google.internal.labs.tailwind.orchestration.v1.LabsTailwindOrchestrationService/GetAccount",
+      "request": {
+        "protobuf_b64": "",
+        "protobuf_type": "google.protobuf.Empty"
+      },
+      "response_protobuf_type": "google.internal.labs.tailwind.orchestration.v1.GetOrCreateAccountResponse",
+      "responses": [
+        {
+          "protobuf_b64": "CiwSCggBEAEYASABKAEaGggBKhYKFFNDUlVCQkVEX1NUUklOR18wMDI2KgI4AQ==",
+          "protobuf_type": "google.internal.labs.tailwind.orchestration.v1.GetOrCreateAccountResponse"
+        }
+      ],
+      "shape": "unary_unary"
+    },
+    {
+      "method": "/google.internal.labs.tailwind.orchestration.v1.LabsTailwindOrchestrationService/ListQuotaSummary",
+      "request": {
+        "protobuf_b64": "CjwIAxIXChVTQ1JVQkJFRF9SRVFVRVNUXzAwMDEiHwgBWhsIAhABGhVTQ1JVQkJFRF9SRVFVRVNUXzAwMDE=",
+        "protobuf_type": "google.internal.labs.tailwind.api.v1.ListQuotaSummaryRequest"
+      },
+      "response_protobuf_type": "notebooklm.internal.android.wire.v1.WireListQuotaSummaryResponse",
+      "responses": [
+        {
+          "protobuf_b64": "CAESESgBMgQIARABOQAAAAAAAPA/EhooAjIECAEQATkAAAAAAADwP0EAAAAAAADwPxoWAQIDBAUGBwgJCgsMDQ4PEBESExQVFiIRCAEYASADKAExAAAAAAAA8D8iEQgCGAEgAygBMQAAAAAAAPA/IhEIAxgBIAQoATEAAAAAAADwPyIRCAQYASADKAExAAAAAAAA8D8iEQgFGAEgAigBMQAAAAAAAPA/IhEIBhgBIAMoATEAAAAAAADwPyIRCAcYASACKAExAAAAAAAA8D8iEQgIGAEgAigBMQAAAAAAAPA/IhEICRgBIAEoATEAAAAAAADwPyIRCAoYASABKAExAAAAAAAA8D8iEQgLGAEgASgBMQAAAAAAAPA/IhEIDBgBIAEoATEAAAAAAADwPyIPCA0gAigBMQAAAAAAAPA/Ig8IDiABKAExAAAAAAAA8D8iDwgPIAIoATEAAAAAAADwPyIPCBAgASgBMQAAAAAAAPA/Ig8IESABKAExAAAAAAAA8D8iDwgSIAEoATEAAAAAAADwPyIPCBMgASgBMQAAAAAAAPA/IhEIFBgBIAEoATEAAAAAAADwPyIPCBUgASgBMQAAAAAAAPA/Ig8IFiABKAExAAAAAAAA8D8=",
+          "protobuf_type": "notebooklm.internal.android.wire.v1.WireListQuotaSummaryResponse"
+        }
+      ],
+      "shape": "unary_unary"
+    }
+  ],
+  "version": 1
+}

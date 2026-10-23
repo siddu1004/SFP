@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Testing Infrastructure and Guardrails",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "animation": "none",
+    "output": "docs/diagrams/22-testing-and-guardrails.html",
+    "repository": {
+      "url": "https://github.com/teng-lin/notebooklm-py",
+      "revision": "acb7fa96de00be9b07d81abf433f96beb607a560"
+    },
+    "viewBox": [1180, 720]
+  },
+  "components": [
+    {
+      "id": "source",
+      "type": "backend",
+      "label": "src/notebooklm",
+      "sublabel": "system under test",
+      "sources": [{ "path": "src/notebooklm/client.py", "line": 1, "label": "public client" }],
+      "pos": [505, 40],
+      "size": [170, 72]
+    },
+    {
+      "id": "unit",
+      "type": "backend",
+      "label": "Unit tests",
+      "sublabel": "logic · local I/O",
+      "sources": [{ "path": "tests/unit/test_ci_test_matrix.py", "line": 1, "label": "suite contract" }],
+      "pos": [45, 220],
+      "size": [160, 78]
+    },
+    {
+      "id": "server",
+      "type": "backend",
+      "label": "Server adapter tests",
+      "sublabel": "REST behavior and mappings",
+      "sources": [{ "path": "tests/server/test_main.py", "line": 1, "label": "REST adapter suite" }],
+      "pos": [213, 220],
+      "size": [160, 78]
+    },
+    {
+      "id": "integration",
+      "type": "database",
+      "label": "VCR integration",
+      "sublabel": "recorded Web + Android replay",
+      "sources": [
+        { "path": "tests/integration/test_session_integration.py", "line": 1, "label": "VCR-backed flow" },
+        { "path": "tests/cassettes/web/notebooks_list.yaml", "line": 1, "label": "sanitized recording" }
+      ],
+      "pos": [400, 220],
+      "size": [170, 78]
+    },
+    {
+      "id": "e2e",
+      "type": "external",
+      "label": "Authenticated E2E",
+      "sublabel": "live Google · explicit credentials",
+      "sources": [{ "path": "tests/e2e/test_notebooks.py", "line": 1, "label": "live read/write suite" }],
+      "pos": [995, 220],
+      "size": [170, 78]
+    },
+    {
+      "id": "fault",
+      "type": "cloud",
+      "label": "Real-loopback faults",
+      "sublabel": "HTTP · gRPC · curl transports",
+      "tag": "local, deterministic",
+      "sources": [
+        { "path": "tests/_fault_server/http.py", "line": 1, "label": "real HTTP harness" },
+        { "path": "tests/integration/faults/test_web_faults.py", "line": 1, "label": "socket regressions" },
+        { "path": "docs/fault-injection.md", "line": 1, "label": "acceptance matrix" }
+      ],
+      "pos": [600, 220],
+      "size": [170, 78]
+    },
+    {
+      "id": "guardrails",
+      "type": "security",
+      "label": "Static guardrails",
+      "sublabel": "contracts · fixtures · APIs · docs",
+      "sources": [
+        { "path": "tests/_guardrails/test_backend_boundaries.py", "line": 1, "label": "architecture checks" },
+        { "path": "tests/scripts/check_method_coverage.py", "line": 1, "label": "RPC coverage audit" }
+      ],
+      "pos": [780, 220],
+      "size": [170, 78]
+    },
+    {
+      "id": "pr_ci",
+      "type": "messagebus",
+      "label": "PR / push CI",
+      "sublabel": "quality + focused OS/Python matrix",
+      "tag": "test lanes use --no-cov",
+      "sources": [{ "path": ".github/workflows/test.yml", "line": 1, "label": "test workflow" }],
+      "pos": [215, 505],
+      "size": [220, 86]
+    },
+    {
+      "id": "fault_ci",
+      "type": "messagebus",
+      "label": "Fault stress CI",
+      "sublabel": "PR full deck · scheduled ≥400",
+      "sources": [{ "path": ".github/workflows/fault-stress.yml", "line": 1, "label": "fault stress workflow" }],
+      "pos": [480, 505],
+      "size": [220, 86]
+    },
+    {
+      "id": "nightly",
+      "type": "messagebus",
+      "label": "Nightly CI",
+      "sublabel": "coverage · full scheduled matrix",
+      "tag": "coverage owner",
+      "sources": [{ "path": ".github/workflows/nightly.yml", "line": 1, "label": "nightly workflow" }],
+      "pos": [745, 505],
+      "size": [220, 86]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Deterministic, credential-free validation",
+      "wraps": ["unit", "server", "integration", "fault", "guardrails"],
+      "pad": 22
+    }
+  ],
+  "connections": [
+    { "id": "source-unit", "from": "source", "to": "unit", "fromSide": "bottom", "toSide": "top" },
+    { "id": "source-server", "from": "source", "to": "server", "fromSide": "bottom", "toSide": "top" },
+    { "id": "source-integration", "from": "source", "to": "integration", "fromSide": "bottom", "toSide": "top" },
+    { "id": "source-fault", "from": "source", "to": "fault", "fromSide": "bottom", "toSide": "top" },
+    { "id": "source-e2e", "from": "source", "to": "e2e", "variant": "dashed", "fromSide": "bottom", "toSide": "top" },
+    { "id": "source-guardrails", "from": "source", "to": "guardrails", "variant": "security", "fromSide": "bottom", "toSide": "top" },
+    { "id": "unit-pr", "from": "unit", "to": "pr_ci", "fromSide": "bottom", "toSide": "top" },
+    { "id": "server-pr", "from": "server", "to": "pr_ci", "fromSide": "bottom", "toSide": "top" },
+    { "id": "vcr-pr", "from": "integration", "to": "pr_ci", "label": "ordinary suite", "fromSide": "bottom", "toSide": "top" },
+    { "id": "fault-stress", "from": "fault", "to": "fault_ci", "label": "seeded stress", "fromSide": "bottom", "toSide": "top" },
+    { "id": "guard-nightly", "from": "guardrails", "to": "nightly", "label": "coverage floors", "variant": "security", "fromSide": "bottom", "toSide": "top" },
+    { "id": "e2e-nightly", "from": "e2e", "to": "nightly", "label": "protected live lanes", "variant": "dashed", "fromSide": "bottom", "toSide": "top" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Two kinds of integration evidence",
+      "items": [
+        "VCR replays sanitized recordings; the fault suite drives real loopback sockets.",
+        "Both are local and credential-free; neither is a live Google API run."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "CI scope",
+      "items": [
+        "PR test lanes use --no-cov; quality still audits threshold configuration and RPC coverage.",
+        "Nightly enforces ≥90% aggregate plus per-file floors; scheduled runs add the full 3×5 matrix."
+      ]
+    }
+  ]
+}

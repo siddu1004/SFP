@@ -1,0 +1,400 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "REST Server Subsystem",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/teng-lin/notebooklm-py",
+      "revision": "719378b8af7023b8eca0c33d2de6d44d35db3434"
+    },
+    "views": [
+      {
+        "id": "request",
+        "label": "Request path",
+        "focus": [
+          "caller",
+          "app",
+          "routes",
+          "cores",
+          "client"
+        ],
+        "note": "Routes parse HTTP models, build typed neutral requests, and project their own responses."
+      },
+      {
+        "id": "guards",
+        "label": "Guards",
+        "focus": [
+          "auth",
+          "bodylimit",
+          "limiters"
+        ],
+        "note": "Bearer plus loopback peer and Host checks, a body cap, and per-group concurrency limits."
+      },
+      {
+        "id": "async",
+        "label": "Long-running work",
+        "focus": [
+          "pending",
+          "routes",
+          "errors"
+        ],
+        "note": "Generation returns a task ID; source batches return one ordered four-state result per input."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Auth Dependency",
+      "sublabel": "bearer + peer + Host",
+      "tag": "constant-time",
+      "pos": [
+        282,
+        60
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "bodylimit",
+      "type": "security",
+      "label": "Body Limit",
+      "sublabel": "per-route cap",
+      "pos": [
+        544,
+        60
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "limiters",
+      "type": "security",
+      "label": "Concurrency Limits",
+      "sublabel": "lifespan-owned",
+      "pos": [
+        806,
+        60
+      ],
+      "size": [
+        165,
+        84
+      ]
+    },
+    {
+      "id": "caller",
+      "type": "external",
+      "label": "HTTP Caller",
+      "sublabel": "loopback client",
+      "pos": [
+        30,
+        260
+      ],
+      "size": [
+        160,
+        90
+      ]
+    },
+    {
+      "id": "app",
+      "type": "frontend",
+      "label": "FastAPI App",
+      "sublabel": "create_app()",
+      "tag": "docs disabled",
+      "pos": [
+        282,
+        260
+      ],
+      "size": [
+        170,
+        90
+      ]
+    },
+    {
+      "id": "routes",
+      "type": "frontend",
+      "label": "/v1 Routes",
+      "sublabel": "HTTP models · projection",
+      "sources": [
+        {
+          "path": "src/notebooklm/server/routes/artifacts.py",
+          "line": 117,
+          "label": "generation model"
+        },
+        {
+          "path": "src/notebooklm/server/routes/sources.py",
+          "line": 485,
+          "label": "batch route"
+        }
+      ],
+      "pos": [
+        544,
+        260
+      ],
+      "size": [
+        170,
+        90
+      ]
+    },
+    {
+      "id": "cores",
+      "type": "backend",
+      "label": "Neutral Contracts",
+      "sublabel": "requests · events · outcomes",
+      "sources": [
+        {
+          "path": "src/notebooklm/_app/generation_requests.py",
+          "line": 531,
+          "label": "11-kind union"
+        },
+        {
+          "path": "src/notebooklm/_app/generation_requests.py",
+          "line": 657,
+          "label": "shared validation"
+        },
+        {
+          "path": "src/notebooklm/_app/source_batch.py",
+          "line": 1,
+          "label": "batch policy"
+        }
+      ],
+      "pos": [
+        806,
+        260
+      ],
+      "size": [
+        165,
+        90
+      ]
+    },
+    {
+      "id": "client",
+      "type": "backend",
+      "label": "NotebookLMClient",
+      "sublabel": "process singleton",
+      "tag": "ADR-0004",
+      "pos": [
+        1063,
+        260
+      ],
+      "size": [
+        155,
+        90
+      ]
+    },
+    {
+      "id": "healthz",
+      "type": "frontend",
+      "label": "/healthz",
+      "sublabel": "only public route",
+      "pos": [
+        30,
+        460
+      ],
+      "size": [
+        160,
+        84
+      ]
+    },
+    {
+      "id": "errors",
+      "type": "backend",
+      "label": "REST Projection",
+      "sublabel": "HTTP status · safe detail",
+      "sources": [
+        {
+          "path": "src/notebooklm/server/_errors.py",
+          "line": 242,
+          "label": "classify once"
+        }
+      ],
+      "pos": [
+        282,
+        460
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "pending",
+      "type": "database",
+      "label": "Pending Registry",
+      "sublabel": "bounded FIFO",
+      "tag": "poll the resource",
+      "sources": [
+        {
+          "path": "src/notebooklm/server/routes/artifacts.py",
+          "line": 182,
+          "label": "task registry"
+        }
+      ],
+      "pos": [
+        544,
+        460
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "passthrough",
+      "type": "backend",
+      "label": "Full-ID Resolvers",
+      "sublabel": "identity functions",
+      "sources": [
+        {
+          "path": "src/notebooklm/server/routes/_passthrough.py",
+          "line": 1,
+          "label": "canonical IDs"
+        }
+      ],
+      "pos": [
+        806,
+        460
+      ],
+      "size": [
+        165,
+        84
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "caller-app",
+      "from": "caller",
+      "to": "app",
+      "label": "HTTP",
+      "variant": "emphasis"
+    },
+    {
+      "id": "app-routes",
+      "from": "app",
+      "to": "routes",
+      "label": "dispatch",
+      "variant": "emphasis"
+    },
+    {
+      "id": "routes-cores",
+      "from": "routes",
+      "to": "cores",
+      "label": "typed request",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cores-client",
+      "from": "cores",
+      "to": "client",
+      "label": "live client",
+      "variant": "emphasis"
+    },
+    {
+      "id": "app-auth",
+      "from": "app",
+      "to": "auth",
+      "label": "guards",
+      "variant": "security",
+      "labelAt": [
+        367,
+        202
+      ]
+    },
+    {
+      "id": "routes-bodylimit",
+      "from": "routes",
+      "to": "bodylimit",
+      "label": "size cap",
+      "variant": "security",
+      "labelAt": [
+        629,
+        202
+      ]
+    },
+    {
+      "id": "cores-limiters",
+      "from": "cores",
+      "to": "limiters",
+      "label": "admission",
+      "variant": "security",
+      "labelAt": [
+        888.5,
+        202
+      ]
+    },
+    {
+      "id": "app-errors",
+      "from": "app",
+      "to": "errors",
+      "label": "classify",
+      "labelAt": [
+        367,
+        398
+      ]
+    },
+    {
+      "id": "routes-pending",
+      "from": "routes",
+      "to": "pending",
+      "label": "created ids",
+      "labelAt": [
+        629,
+        398
+      ]
+    },
+    {
+      "id": "cores-passthrough",
+      "from": "cores",
+      "to": "passthrough",
+      "label": "injected resolver",
+      "variant": "dashed",
+      "labelAt": [
+        888.5,
+        398
+      ]
+    },
+    {
+      "id": "app-healthz",
+      "from": "app",
+      "to": "healthz",
+      "label": "unguarded",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Single tenant",
+      "items": [
+        "One client is attempted at ASGI lifespan and lazy-retried after a stale-auth startup",
+        "Routes own Pydantic input, HTTP responses, safe errors, and status codes",
+        "Neutral cores expose typed contracts; server/ imports no click, rich, or cli"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Guards",
+      "items": [
+        "Every /v1 request needs a static bearer plus loopback peer and Host checks by default",
+        "The /docs and /openapi.json schema surface is disabled"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Long-running work",
+      "items": [
+        "Create returns immediately; the matching GET reports pending, 200, 404, 409 or 410",
+        "One table validates generation; source batches preserve ordered four-state evidence",
+        "URLs and titles are redacted; expensive route groups have concurrency limiters"
+      ]
+    }
+  ]
+}

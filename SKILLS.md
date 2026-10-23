@@ -11,7 +11,7 @@ The router and the hive: find the right skill for any task, installed or not, an
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 | `sfp-hive` | Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work move… |
 
-## frontend (62)
+## frontend (75)
 
 UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.
 
@@ -79,6 +79,19 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `ux-writing` | Create user-centered, accessible interface copy (microcopy) for digital products including buttons, labels, error messages, notifications, forms, onboarding, empty states, success messages, and help t… |
 | `theme-factory` | Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 10 pre-set themes with colors/fonts that you can apply to any artifact t… |
 | `web-artifacts-builder` | Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Tailwind CSS, shadcn/ui). Use for complex artifacts requiring state manag… |
+| `huashu-design` | 花叔Design——用HTML做高保真原型、幻灯片、动画、可视化与专家评审。任何新设计100%先出三个方向初稿给用户选（指定风格/品牌也不豁免），选定后才执行。触发词：做原型、PPT、幻灯片、动画、设计风格、评审、做个HTML页面、UI mockup、导出MP4/GIF、做个好看的。生产级Web App/需后端的系统不适用。 |
+| `awwwards` | Build award-caliber websites from a one-line prompt such as "make me a portfolio, my name is Ana". Uses the bar of sites that win Awwwards Site of the Day as a quality standard. Covers concept, art di… |
+| `jury` | Score any website the way an Awwwards jury would, from evidence alone. Screenshots every page type on desktop, a throttled phone and reduced motion, measures LCP, CLS, FPS, axe, keyboard focus and hov… |
+| `framer-motion` | Production-ready motion library for React. Use for declaratively animating layout transitions, gestures (drag, hover, tap), enter/exit animations with AnimatePresence, scroll-linked animations, and ph… |
+| `uimax-banner-design` | Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with optional generated or supplied visuals. Actions: design, create, generate banner. … |
+| `uimax-brand` | Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of voice, marketing assets, brand compliance, style guides. |
+| `uimax-design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini, Atlas Cloud, or MuAPI AI), corporate identity program (50 deliverables, CIP mockups), HTML pr… |
+| `uimax-design-system` | Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variables, spacing/typography scales, component specs, strategic slide creati… |
+| `uimax-slides` | Create strategic HTML presentations with Chart.js, design tokens, responsive layouts, copywriting formulas, and contextual slide strategies. |
+| `uimax-ui-styling` | Create beautiful, accessible user interfaces with shadcn/ui components (built on Radix UI + Tailwind), Tailwind CSS utility-first styling, and canvas-based visual designs. Use when building user inter… |
+| `ui-ux-pro-max` | UI/UX design intelligence for web, mobile, and desktop. This skill should be used when designing, building, reviewing, or fixing interfaces, including pages, components, design systems, accessibility,… |
+| `gsap` | Build high-performance web animations with GSAP (GreenSock Animation Platform) — tweens, timelines, ScrollTrigger, Flip, MorphSVG, SplitText, and physics. Use when implementing fluid transitions, scro… |
+| `react-bits` | Curated collection of rich, animated React components, interactive text, dynamic backgrounds, audio synthesizers, and micro-interactions. Use when building eye-catching landing pages, creative interfa… |
 
 ## design-styles (67)
 
@@ -223,7 +236,7 @@ Language idioms, standards and testing for Go, Rust, Python, C++, C#, F#, Java, 
 | `python-patterns` | Pythonic idioms, PEP 8 standards, type hints, and best practices for building robust, efficient, and maintainable Python applications. Use when writing or reviewing Python code and idiomatic structure… |
 | `rust-patterns` | Idiomatic Rust patterns, ownership, error handling, traits, concurrency, and best practices for building safe, performant applications. Use when writing or reviewing Rust code and ownership, error han… |
 
-## testing-quality (32)
+## testing-quality (35)
 
 TDD, end-to-end tests, verification loops, code review, regression and quality gates.
 
@@ -261,6 +274,9 @@ TDD, end-to-end tests, verification loops, code review, regression and quality g
 | `test-collaboration` | Inventory and govern a project's test assets. Connect requirements, business rules, risks, bugs, and cross-boundary contracts to stable TEST-IDs and executable evidence in the repository's existing te… |
 | `verification-loop` | Run a six-phase verification of a Claude Code session's work — build, type check, lint, tests with coverage, security grep, and diff review — then produce a PASS/FAIL verification report. Use when ver… |
 | `windows-desktop-e2e` | E2E testing for Windows native desktop apps (WPF, WinForms, Win32/MFC, Qt) using pywinauto and Windows UI Automation. Use when writing E2E tests for a Windows native desktop app with pywinauto or UI A… |
+| `rea-ci-tests-audit` | Audit REA CI and test suites for correctness, fixture drift, false passes, and measured performance; use for suite or workflow investigations and efficiency changes, rather than ordinary feature testi… |
+| `playwright-cli` | Automate browser interactions, test web pages and work with Playwright tests. |
+| `gsd-code-review` | Review source files changed during a phase for bugs, security issues, and code quality problems |
 
 ## devops (15)
 
@@ -284,7 +300,7 @@ Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR an
 | `sweep-reds` | Repair confirmed CI failures base-first, then prepare affected PRs one at a time with exact-candidate evidence. Use when asked to sweep reds or restore the queue. Never merges, closes PRs, weakens tes… |
 | `validate-release-green` | Run or inspect the local Release-Green observer for an exact base or combined PR candidate, separating hard failures, advisory drift and incomplete evidence. Use for maintainer preflight; full CI acce… |
 
-## security (21)
+## security (22)
 
 Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.
 
@@ -311,8 +327,9 @@ Strix autonomous pentesting, OWASP testing, secure coding for each framework, an
 | `security-review` | Use this skill when adding authentication, handling user input, working with secrets, creating API endpoints, or implementing payment/sensitive features. Provides comprehensive security checklist and … |
 | `security-scan` | Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks CLAUDE.md, settings.json, MCP servers, hooks, an… |
 | `springboot-security` | Spring Security best practices for authn/authz, validation, CSRF, secrets, headers, rate limiting, and dependency security in Java Spring Boot services. Use when reviewing Spring Security authn/authz,… |
+| `reverse-engineer-anything` | Reverse engineer native, managed, Electron/JavaScript, packaged, firmware, and browser targets with REA. Use shipped-artifact or requested runtime evidence to explain features, compare versions, decom… |
 
-## agents (33)
+## agents (104)
 
 Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.
 
@@ -351,8 +368,79 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `team-agent-orchestration` | Run team-based orchestration for agent squads: work items with owners and scope, agent Kanban state, branch isolation, control pane visibility, and merge gates. Use when coordinating multiple agents i… |
 | `team-builder` | Interactive picker that discovers available agent personas via the claude agents command and agents/ markdown globs, groups them into domains, has the user select up to five, dispatches them in parall… |
 | `ecc-council` | Convene a four-voice council for ambiguous decisions, tradeoffs, and go/no-go calls. Use when multiple valid paths exist and you need structured disagreement before choosing. |
+| `gsd-add-tests` | Generate tests for a completed phase based on UAT criteria and implementation |
+| `gsd-ai-integration-phase` | Generate an AI-SPEC.md design contract for phases that involve building AI systems. |
+| `gsd-audit-fix` | Autonomous audit-to-fix pipeline — find issues, classify, fix, test, commit |
+| `gsd-audit-milestone` | Audit milestone completion against original intent before archiving |
+| `gsd-audit-uat` | Cross-phase audit of all outstanding UAT and verification items |
+| `gsd-autonomous` | Run all remaining phases autonomously — discuss→plan→execute per phase |
+| `gsd-capture` | Capture ideas, tasks, notes, and seeds to their destination |
+| `gsd-cleanup` | Archive accumulated phase directories from completed milestones |
+| `gsd-complete-milestone` | Archive completed milestone and prepare for next version |
+| `gsd-config` | Configure GSD settings — workflow toggles, advanced knobs, integrations, and model profile |
+| `gsd-debug` | Systematic debugging with persistent state across context resets |
+| `gsd-discuss-phase` | Gather phase context through adaptive questioning before planning. |
+| `gsd-docs-update` | Generate or update project documentation verified against the codebase |
+| `gsd-eval-review` | Audit an executed AI phase's evaluation coverage and produce an EVAL-REVIEW.md remediation plan. |
+| `gsd-execute-phase` | SDD phase execution — execute all plans in a phase with dependency-aware wave parallelization |
+| `gsd-explore` | Socratic ideation and idea routing — think through ideas before committing to plans |
+| `gsd-extract-learnings` | Extract decisions, lessons, patterns, and surprises from completed phase artifacts |
+| `gsd-fast` | Execute a trivial task inline — no subagents, no planning overhead |
+| `gsd-forensics` | Post-mortem investigation for failed GSD workflows — diagnoses what went wrong. |
+| `gsd-graphify` | Build, query, and inspect the project knowledge graph in .planning/graphs/ |
+| `gsd-health` | Diagnose planning directory health and optionally repair issues |
+| `gsd-help` | Show available GSD commands and usage guide |
+| `gsd-import` | Ingest external plans with conflict detection against project decisions before writing anything. |
+| `gsd-inbox` | Triage and review open GitHub issues and PRs against project templates and contribution guidelines. |
+| `gsd-ingest-docs` | Bootstrap or merge a .planning/ setup from existing ADRs, PRDs, SPECs, and docs in a repo. |
+| `gsd-manager` | Interactive command center for managing multiple phases from one terminal |
+| `gsd-map-codebase` | Analyze codebase with parallel mapper agents to produce .planning/codebase/ documents |
+| `gsd-mempalace-capture` | File a phase artifact into MemPalace; mirror decision facts into its temporal KG |
+| `gsd-mempalace-recall` | Recall decisions, patterns, and surprises from MemPalace before planning |
+| `gsd-milestone-summary` | Generate a comprehensive project summary from milestone artifacts for team onboarding and review |
+| `gsd-mvp-phase` | Plan a phase as a vertical MVP slice — user story, SPIDR splitting, then plan-phase |
+| `gsd-new-milestone` | Start a new milestone cycle — update PROJECT.md and route to requirements |
+| `gsd-new-project` | Initialize a new project with deep context gathering and PROJECT.md |
+| `gsd-next` | Smart entry — detect project state and route to the right next GSD action. |
+| `gsd-ns-context` | codebase intel \| map graphify docs learnings mempalace |
+| `gsd-ns-ideate` | exploration capture \| explore sketch spike spec capture |
+| `gsd-ns-manage` | config workspace \| workstreams thread update ship inbox |
+| `gsd-ns-project` | project lifecycle \| milestones audits summary |
+| `gsd-ns-review` | quality gates \| code review debug audit security eval ui |
+| `gsd-ns-workflow` | workflow \| discuss plan execute verify phase progress |
+| `gsd-onboard` | Guide existing codebase onboarding through mapping, doc ingest, and planning setup |
+| `gsd-pause-work` | Create context handoff when pausing work mid-phase |
+| `gsd-phase` | Multi-phase management — add, insert, remove, or edit phases in ROADMAP.md (roadmap phase CRUD) |
+| `gsd-plan-phase` | Create detailed phase plan (PLAN.md) with verification loop |
+| `gsd-plan-review-convergence` | Cross-AI plan convergence - replan until review concerns are resolved. |
+| `gsd-pr-branch` | Create a clean PR branch by filtering out .planning/ commits — ready for code review |
+| `gsd-profile-user` | Generate developer behavioral profile and create Claude-discoverable artifacts |
+| `gsd-progress` | Check progress, advance workflow, or dispatch freeform intent — the unified GSD situational command |
+| `gsd-quick` | Execute a quick task with GSD guarantees (atomic commits, state tracking) but skip optional agents |
+| `gsd-quick-batch` | Batch several `/skill:gsd-quick`-shaped tasks together — planned, dispatched, and merged as one run |
+| `gsd-resume-work` | Resume work from previous session with full context restoration |
+| `gsd-review` | Request cross-AI peer review of phase plans from external AI CLIs |
+| `gsd-review-backlog` | Review and promote backlog items to active milestone |
+| `gsd-secure-phase` | Retroactively verify threat mitigations for a completed phase |
+| `gsd-settings` | Configure GSD workflow toggles and model profile |
+| `gsd-ship` | Create PR, run review, and prepare for merge after verification passes |
+| `gsd-sketch` | Sketch UI/design ideas with throwaway HTML mockups, or propose what to sketch next (frontier mode) |
+| `gsd-spec-phase` | Clarify WHAT a phase delivers with ambiguity scoring; produces a SPEC.md before discuss-phase. |
+| `gsd-spike` | Spike an idea through experiential exploration, or propose what to spike next (frontier mode) |
+| `gsd-stats` | Display project statistics — phases, plans, requirements, git metrics, and timeline |
+| `gsd-surface` | Toggle which skills are surfaced — apply a profile, list, or disable a cluster without reinstall |
+| `gsd-thread` | Manage persistent context threads for cross-session work |
+| `gsd-ui-phase` | Generate UI design contract (UI-SPEC.md) for frontend phases |
+| `gsd-ui-review` | Retroactive 6-pillar visual audit of implemented frontend code |
+| `gsd-ultraplan-phase` | [BETA] Offload plan phase to Claude Code's ultraplan cloud; review in browser and import back. |
+| `gsd-undo` | Safe git revert. Roll back phase or plan commits using the phase manifest with dependency checks. |
+| `gsd-update` | Update GSD to latest version with changelog display |
+| `gsd-validate-phase` | Retroactively audit and fill Nyquist validation gaps for a completed phase |
+| `gsd-verify-work` | Validate built features through conversational UAT |
+| `gsd-workspace` | Manage GSD workspaces — create, list, or remove isolated workspace environments |
+| `gsd-workstreams` | Manage parallel workstreams — list, create, switch, status, progress, complete, and resume |
 
-## agent-dev (62)
+## agent-dev (100)
 
 Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.
 
@@ -420,6 +508,44 @@ Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budge
 | `cowork-plugin-customizer` | Customize a Claude Code plugin for a specific organization's tools and workflows. Use when: customize plugin, set up plugin, configure plugin, tailor plugin, adjust plugin settings, customize plugin c… |
 | `create-cowork-plugin` | Guide users through creating a new plugin from scratch in a cowork session. Use when users want to create a plugin, build a plugin, make a new plugin, develop a plugin, scaffold a plugin, start a plug… |
 | `mcp-builder` | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through well-designed tools. Use when building MCP servers to integrate externa… |
+| `cavecrew` | When to delegate to `cavecrew-investigator` (locate code), `cavecrew-builder` (1-2 file edit) or `cavecrew-reviewer` (diff review) instead of working inline or using `Explore`. Their output is compres… |
+| `caveman` | Terse caveman voice: answer first, fluff gone, every technical fact kept. Use for /caveman, "caveman mode", "talk like caveman", "be brief", "less tokens". Stays on until "stop caveman" or "normal mod… |
+| `caveman-commit` | Write a Conventional Commits message compressed to intent only. Use for "write a commit", "commit message", /commit or /caveman-commit. |
+| `caveman-compress` | Compress a memory file such as CLAUDE.md or a todo list into caveman format to save input tokens, keeping a readable backup. Sends the file's text to the configured model provider. Trigger: /caveman-c… |
+| `caveman-discover` | Find and label every LLM workflow in the repository so Caveman Cloud groups spend by workflow instead of one bucket. Use for "discover workflows" or breaking LLM spend down by workflow. |
+| `caveman-evidence-review` | Read-only review of Caveman Cloud evidence: cost, Cave Score, workflows, traces, latency, errors, routing, savings. Use when asked what Caveman found or where LLM spend goes. |
+| `caveman-explore` | Read-only repository explorer for cold-start orientation, broad cross-file localization, or when a direct search failed. Skip it when the exact file or symbol is already named. Returns path:line citat… |
+| `caveman-help` | Quick-reference card for the three caveman skills and their commands. Trigger: /caveman-help or "caveman help". |
+| `caveman-learn` | Act on a Caveman learn report - review the ranked token sinks, apply cost-lowering fixes with per-edit consent, and report what those fixes returned. Use when asked to lower an agent's token cost, wha… |
+| `caveman-manage` | Inspect Caveman Cloud's experiment lifecycle and block unsafe execution. Use when asked to start, approve, cancel, promote or roll back a Caveman experiment. |
+| `caveman-optimize` | Turn a Caveman optimization observation into an operator-chosen candidate with a paired baseline evaluation. Use when asked to inspect or evaluate a Caveman optimization report. Needs explicit approva… |
+| `caveman-review` | Compressed code review - one line per finding with location, problem and fix. Use for /caveman-review, "review this PR", or "review the diff". |
+| `caveman-setup` | Wire a repository through the Caveman Cloud gateway so every LLM request is measured, with no behavior change. Use for "set up caveman" or adding LLM spend observability. |
+| `caveman-stats` | Show recorded output and cache-read token usage and mode attribution for the current Claude Code session, or locate the host's native usage report. Trigger: /caveman-stats. |
+| `investigate-first` | Diagnose ambiguous failures before editing. Use for unknown causes, intermittent behavior, performance regressions, or investigations needing evidence-ranked hypotheses. |
+| `lean-build` | Build feature work with high overbuilding risk. Use for new behavior, product slices, or integrations where repository reuse, strict scope, and an explicit stop condition matter. |
+| `megacave` | Caveman in Classical Chinese: 文言文 register, far fewer characters, technical terms verbatim. Invoke only with /megacave or /caveman wenyan. Stays on until "stop caveman" or "normal mode". |
+| `migration` | Implement reversible compatibility-safe transitions. Use for schema, data, API, protocol, configuration, or dependency migrations requiring rollback and preservation proof. |
+| `safe-refactor` | Restructure code while preserving behavior. Use for extraction, consolidation, ownership moves, or cleanup where verification must bracket structural edits. |
+| `surgical-patch` | Fix bugs and small behavior changes at the narrowest responsible layer. Use when regression proof, preserved surrounding behavior, and task-relevant tests matter. |
+| `ultracave` | Caveman at maximum compression: fragments, one word when one word is enough, each fact once. Invoke only with /ultracave or /caveman ultra. Stays on until "stop caveman" or "normal mode". |
+| `verify-and-stop` | Prove existing work meets acceptance conditions without expanding scope. Use for validation-only tasks, completion checks, focused gate runs, and last-mile proof. |
+| `toon` | Token-Oriented Object Notation (TOON) for passing structured data to LLMs with 30-60% reduced token costs and improved reliability compared to JSON/YAML. Use when formatting prompt payloads, structure… |
+| `n8n-agents` | Design n8n AI agents the right way. Use when building or editing any @n8n/n8n-nodes-langchain.* AI node — an AI Agent, LLM chain, Text Classifier, or Information Extractor — and whenever the user ment… |
+| `n8n-binary-and-data` | Handle files and binary data in n8n correctly. Use when working with files, images, PDFs, attachments, uploads or downloads, base64, vision/multimodal input, or when an AI agent needs a file as tool i… |
+| `n8n-code-javascript` | Write JavaScript code in n8n Code nodes. Use when writing JavaScript in n8n, using $input/$json/$node syntax, making HTTP requests with this.helpers / the $helpers global, working with dates using Dat… |
+| `n8n-code-python` | Write Python code in n8n Code nodes. Use when writing Python in n8n, using _input/_json/_node syntax, working with standard library, or need to understand Python limitations in n8n Code nodes. Use thi… |
+| `n8n-code-tool` | Write JavaScript or Python for the n8n Custom Code Tool (@n8n/n8n-nodes-langchain.toolCode) — the AI-agent-callable tool, NOT the workflow Code node. Use when building a Code Tool attached to an AI Ag… |
+| `n8n-error-handling` | Wire n8n error handling so failures are loud, structured, and recoverable. Use when building any webhook/API workflow, a scheduled or unattended workflow, or any path where a silent failure would drop… |
+| `n8n-expression-syntax` | Validate n8n expression syntax and fix common errors. Use when writing n8n expressions, using {{}} syntax, accessing $json/$node variables, troubleshooting expression errors, mapping data between node… |
+| `n8n-mcp-tools-expert` | Expert guide for using n8n-mcp MCP tools effectively. Use when searching for nodes, validating configurations, accessing templates, managing workflows, organizing workflows into folders, managing cred… |
+| `n8n-multi-instance` | Use when an n8n-mcp account targets more than one n8n instance — i.e. the `n8n_instances` tool is available, the user mentions multiple n8n instances or environments (prod vs staging, several teams or… |
+| `n8n-node-configuration` | Operation-aware node configuration guidance. Use when configuring nodes, understanding property dependencies, determining required fields, choosing between get_node detail levels, or learning common c… |
+| `n8n-self-hosting` | Deploy a production self-hosted n8n end-to-end to a fresh Linux VM over SSH, using Docker Compose behind a Caddy reverse proxy with automatic HTTPS. Use whenever the user wants to self-host, install, … |
+| `n8n-subworkflows` | Build reusable, composable n8n sub-workflows. Use when extracting shared logic, building anything multi-step or reused across workflows, or any workflow over ~10 nodes — and whenever the user mentions… |
+| `n8n-validation-expert` | Interpret validation errors and guide fixing them. Use when encountering validation errors, validation warnings, false positives, operator structure issues, or need help understanding validation resul… |
+| `n8n-workflow-patterns` | Proven workflow architectural patterns from real n8n workflows. Use when building new workflows, designing workflow structure, choosing workflow patterns, planning workflow architecture, or asking abo… |
+| `using-n8n-mcp-skills` | Use when building, editing, validating, testing, or debugging an n8n workflow through the n8n-mcp MCP server — designing a flow, configuring a node, writing an expression or Code node, wiring credenti… |
 
 ## ai-ml (10)
 
@@ -496,7 +622,7 @@ About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platf
 
 | Skill | What it does |
 |---|---|
-| `agent-reach` | MUST USE when user wants to 调研/research/搜索/search/查/找/look up anything on the internet — e.g. 全网调研 X / 帮我调研一下 X / 查一下 X / 搜搜 X / 看看大家怎么评价 X / X 上有什么讨论 / research this topic。 Also MUST USE when user me… |
+| `agent-reach` | 只读读取各平台内容：搜索、读帖、看评论、取字幕、查行情和职位。 Use when 用户提到或贴出链接：小红书/xiaohongshu、B站/bilibili、Twitter/X、Reddit、 YouTube（字幕、转录）、GitHub、V2EX、雪球/股票行情、LinkedIn/Boss直聘 职位、 Instagram、Facebook、小宇宙播客；或说"帮我搜/看看/读一下这个链接"而自带网页… |
 | `public-apis` | Find a free public API for any need from a bundled list of about 2,100 APIs in 51 categories (animals, books, finance, geocoding, government, health, machine learning, music, news, open data, science,… |
 | `data-scraper-agent` | Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anything. Runs on a schedule, enriches data with a free LLM (Gemini Flash), s… |
 | `exa-search` | Neural search via Exa MCP for web, code, and company research. Use when the user needs web search, code examples, company intel, people lookup, or AI-powered deep research with Exa's neural search eng… |
@@ -504,7 +630,7 @@ About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platf
 | `x-api` | X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants t… |
 | `freellmapi` | Run and use FreeLLMAPI, one OpenAI-compatible /v1 endpoint that stacks the free tiers of 34 LLM providers with automatic routing and failover. Use when the user wants free LLM inference, to point an O… |
 
-## content-media (26)
+## content-media (28)
 
 Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.
 
@@ -536,6 +662,8 @@ Writing, marketing and persuasion audits, SEO, video, slides, social posting, br
 | `brand-guidelines` | Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting… |
 | `canvas-design` | Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create ori… |
 | `slack-gif-creator` | Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like "make me a G… |
+| `huashu-art-motion` | 艺术与视频动画：拆解复刻动画；36种既有实做风格＋16种可迁移研究配方；9种解说动画语法，8种可按口播参数渲片段；含口播整片参考代码及框景检查；人用AI生帧；可选已有录音、系统声音与语音复刻，按需配置。 |
+| `asd-ste100` | Use when English text must be parsed without a human to resolve ambiguity — tool descriptions, error messages, inter-agent instructions, system prompts, status reports — and misreading has a real cost… |
 
 ## business-ops (27)
 
@@ -608,7 +736,7 @@ Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, conf
 | `network-config-validation` | Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, stale references, management-plane risk, and IOS-style security hygiene. … |
 | `network-interface-health` | Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, switches, and Linux hosts. Use when an interface shows errors, drops, CRCs… |
 
-## research-docs (19)
+## research-docs (28)
 
 Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself.
 
@@ -633,10 +761,19 @@ Deep research, scientific databases, literature review, docs, ADRs, a teach-me t
 | `story-lifecycle` | Manage a file-based epic → story → sprint development loop without requiring an external project management tool. Creates and tracks epics, breaks them into user stories, assigns them to sprints, and … |
 | `rederive` | Teaches a codebase by making the user re-derive its design decisions from first principles through Socratic questions, instead of explaining the code. Works on the user's own repo or any open source r… |
 | `teach-me` | Teach adaptively from learner goals or authorized sources, or help educators prepare lessons, in English or simplified Modern Standard Arabic. Use for learning, practice, review, or getting unstuck. |
+| `vibewise-learn` | Activate or resume learning-first development. You lead the design; Claude gives feedback, explains concepts, asks follow-ups, and writes the agreed code. |
+| `vibewise-reset` | Back up this project's learning notes and restart onboarding after confirmation. Does not reset application code. |
+| `defuddle` | Extract clean Markdown from HTML pages with Defuddle CLI. |
+| `json-canvas` | Create and edit JSON Canvas files (.canvas) with nodes, edges, groups, and connections. Use when working with .canvas files, creating visual canvases, mind maps, flowcharts, or when the user mentions … |
+| `knap` | Render Markdown from templates and structured data using Knap CLI. Use when the user asks to apply a Knap template, turn JSON or CSV data into notes, batch-generate Markdown files, or format Defuddle … |
+| `obsidian-bases` | Create and edit Obsidian Bases (.base files) with views, filters, formulas, and summaries. Use when working with .base files, creating database-like views of notes, or when the user mentions Bases, ta… |
+| `obsidian-cli` | Interact with Obsidian vaults using the Obsidian CLI to read, create, search, and manage notes, tasks, properties, and more. Also supports plugin and theme development with commands to reload plugins,… |
+| `obsidian-markdown` | Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, and other Obsidian-specific syntax. Use when working with .md files in Obsidian, or when the user mentions wiki… |
+| `notebooklm` | Install, authenticate, troubleshoot, and operate Gemini Notebook through the notebooklm-py CLI or typed async Python API. Use for notebook and source management, grounded chat and research, and artifa… |
 
 ## web3 (9)
 
-DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security.
+DeFi, EVM, prediction markets, ItÃ´ baskets and compute, and trading-agent security.
 
 | Skill | What it does |
 |---|---|
@@ -650,7 +787,7 @@ DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent secur
 | `prediction-market-oracle-research` | Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligence. Use for source-grounded analysis of market-implied probabilities, c… |
 | `prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and execution risk. Use before any workflow handles venue auth, user portfolio data… |
 
-## engineering (15)
+## engineering (21)
 
 General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.
 
@@ -671,8 +808,14 @@ General engineering practice: architecture, standards, error handling, performan
 | `search-first` | Research-before-coding workflow: search npm/PyPI, MCP servers, skills, and GitHub for existing tools before writing custom code, then adopt, extend, or build. Launches the researcher agent for non-tri… |
 | `ecc-conventions` | Development conventions and patterns for ECC. JavaScript project with conventional commits. |
 | `ponytail` | External agent skill (MIT, github.com/DietrichGebert/ponytail). Forces the laziest solution that actually works: question whether the task needs to exist at all (YAGNI), reuse what is already in the c… |
+| `rea-analysis-optimization` | Optimize REA providers and shared analysis workflows for agent context, latency, CPU, and memory while preserving correctness and Evidence. Use for analysis bottlenecks and cache or query design; CI/t… |
+| `rea-changelog-update` | Prepare or rewrite REA release changelogs and GitHub release notes from pinned Git history, with verified contributor thanks and Release Please synchronization. |
+| `rea-tool-design` | Design or change REA investigation tools, CLI/MCP contracts, provider capabilities, and Evidence semantics. |
+| `unlazy` | Anti-laziness execution discipline for substantial tasks. Use when work keeps coming back half done, when an agent reports done before it is done, when output must be exhaustive rather than fast, on l… |
+| `karpathy-guidelines` | Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiabl… |
+| `graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question should be treated as a graphify query first. … |
 
-## science-hardware (6)
+## science-hardware (116)
 
 Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 
@@ -684,6 +827,116 @@ Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 | `siege` | Work on one hard mathematics problem in rounds: each round a judge writes a few self-contained questions, independent workers answer them, and the judge keeps a ledger of what is proved, refuted and o… |
 | `solo` | Work on one hard mathematics problem in this session yourself, with no sub-agents: reason in stages, record each settled step in a notes file so that nothing written is lost if a response is cut off, … |
 | `blender-motion-state-inspection` | Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model-vs-motion alignment where screenshots alone are not enough. |
+| `blender-toolkit` | Automate Blender tasks like creating 3D shapes, managing materials, and retargeting Mixamo animations with real-time control. |
+| `crane-shot` | Camera starts low and rises up to reveal the full product. Great for dramatic product reveals on a pedestal. |
+| `dolly-rotate` | Camera moves forward while rotating around the product. More dynamic than a straight zoom. |
+| `dynamic-full-loop` | Dynamic camera loop with speed ramping - slow reveals on each face, fast whips between. Shows all sides including top and bottom. |
+| `image-to-3d` | Convert a photo into a 3D model using Meshy API and import it into Blender via MCP. |
+| `multi-image-to-3d` | Convert multiple photos (1-4 angles) of the same object into a high-accuracy 3D model using Meshy API and import into Blender. |
+| `perfect-loop` | Seamless looping 360-degree turntable. First and last frames match perfectly for infinite loop playback. |
+| `polyhaven-hdri-showcase` | Render the same product across multiple HDRI environments and output a comparison grid. Trigger when asked to compare lighting setups, test different environments, show product in multiple settings, o… |
+| `polyhaven-material-swap` | Cycle through multiple PolyHaven materials on a product and render each variant. Great for showing color/finish options. Trigger when asked to show material variants, swap textures, create color optio… |
+| `polyhaven-scene-builder` | Build complete product scenes using PolyHaven assets — HDRI environment, textured ground/pedestal, and optional props from the 3D model library. Trigger when asked to build a product scene, create a s… |
+| `polyhaven-studio-setup` | Set up a professional product photography studio in Blender using PolyHaven HDRIs and PBR ground materials. Trigger when asked to create a studio setup, add HDRI lighting, set up product photography, … |
+| `polyhaven-texture-apply` | Apply realistic PBR textures from PolyHaven to any Blender object. Supports metals, wood, concrete, fabric, and more. Trigger when asked to texture an object, apply a material from PolyHaven, make som… |
+| `blender-product-polish` | Import a 3D model (GLB/GLTF) into Blender and apply a sleek, glossy product-shot finish with studio lighting. Trigger when asked to polish a 3D model, make a Meshy AI model look shiny, apply product l… |
+| `slow-zoom` | Cinematic slow push-in zoom toward a hero detail on the product. Creates a reveal effect. |
+| `blender-threejs-export` | Export the current Blender scene as a GLB and generate a ready-to-use Three.js HTML viewer with orbit controls, lighting, and auto-rotation. Trigger when asked to export for web, create a Three.js vie… |
+| `turntable` | 360-degree turntable camera orbit around a 3D product. Classic product showcase animation. |
+| `blend-analog-found-footage-horror` | Analog, VHS, CRT, and found-footage horror aesthetics for Blender shots including camera imperfections and documentary framing. |
+| `blend-animation` | Game-ready animation in Blender including walk/run/idle cycles, combat, mechanical animation, camera animation, constraints, Graph Editor, and NLA workflows via MCP. |
+| `blend-anime-style` | Anime and cel-shaded art direction for Blender with hard color breaks, toon shaders, clean silhouettes, and anime proportion language. |
+| `blend-apocalypse-worlds` | Apocalyptic and dystopian world art direction for Blender including post-apocalyptic, zombie, alien invasion, post-human, dystopian, and utopian contrast sets. |
+| `blend-archviz` | Architectural visualization in Blender for interiors/exteriors with real-world scale, camera composition, PBR materials, and still/animation delivery via MCP. |
+| `blend-asset-optimization` | Validates and optimizes Blender assets for polycount, topology, UV efficiency, material count, naming, collections, and game-ready performance. Use before export on all production assets via MCP. |
+| `blend-biome-worlds` | Biome and setting art direction for Blender covering underwater, desert, arctic, jungle, underground, and floating-island environments. |
+| `blender-director` | Use when starting any Blender asset task, planning a production pipeline, coordinating multiple disciplines, or matching a reference photo/concept art. Invoke for game-ready assets, hard surface, envi… |
+| `blender-modeler` | Core Blender modeling specialist for Edit Mode, modifiers, collections, precision modeling, and scene organization. Use for general 3D modeling, blockouts, cleanup, non-destructive workflows, and scen… |
+| `blend-body-horror-style` | Body horror art direction for Blender focusing on flesh wrongness, mutation, fusion, and visceral material storytelling. |
+| `blend-brutalist-mood` | Brutalist and concrete-monument mood direction for Blender architecture and scenes with raw concrete, monumental scale, and austere composition. |
+| `blend-camera-cinematography` | Cinematic camera work in Blender including framing, lenses, composition, camera animation, and shot language beyond basic rendering setup via MCP. |
+| `blend-cartoon-style` | Cartoon art direction for Blender with squash-stretch readable shapes, bold colors, and graphic silhouettes for games and animation. |
+| `blend-character-archetypes` | Character archetype art direction for Blender covering fantasy races, horror creatures, roles (knight, assassin, detective), and body types (mecha, android, chibi, etc.). |
+| `blend-character-artist` | AAA character modeling for human anatomy, stylization, facial topology, clothing, hair, and animation-ready meshes. Use for game characters, facial expressions, and production character assets in Blen… |
+| `blend-chibi-style` | Chibi and SD proportion art direction for Blender characters with oversized heads, simplified anatomy, and cute silhouette rules. |
+| `blend-cloth-sim` | Garment blockout, cloth simulation, pin groups, and bake to shape keys or caches for characters and props in Blender via MCP. |
+| `blend-collision-proxy` | Collision proxy authoring for games including UCX/UHX naming, convex hulls, capsules, and simple collider meshes in Blender via MCP. |
+| `blend-comic-book-style` | Comic book and graphic-novel art direction for Blender with ink-line emphasis, halftone cues, and high-contrast framing. |
+| `blend-compositing` | Blender compositor workflows for beauty stacks, render passes, color grade, glare, and delivery outputs via MCP. |
+| `blend-cosmic-eldritch-horror` | Cosmic, eldritch, and Lovecraftian horror art direction for Blender with non-Euclidean cues, impossible scale, and incomprehensible forms. |
+| `blend-cozy-wholesome-mood` | Cozy, cute, wholesome, relaxing, and peaceful mood direction for Blender assets and scenes. |
+| `blend-creature-artist` | AAA creature modeling for fantasy, aliens, monsters, and organic creature design with believable anatomy and movement. Use for creature blockouts, muscle flow, bone structure, and animation-ready crea… |
+| `blend-dark-gritty-mood` | Dark, grim, gritty, rusty, abandoned, decayed, industrial, lonely, and melancholic mood direction for Blender. |
+| `blend-dream-surreal-mood` | Dreamlike, surreal, mysterious, mystical, hopeful, and chaotic mood direction for Blender scenes. |
+| `blend-dream-weirdcore-style` | Dreamcore, weirdcore, and traumacore-inspired art direction for Blender with nostalgic wrongness, liminal nostalgia, and surreal childhood spaces. |
+| `blend-environment-artist` | AAA environment art for modular kits, buildings, terrain, vegetation, architecture, and scene composition. Use for game-optimized environments, storytelling through space, and modular asset pipelines … |
+| `blend-export-pipeline` | Production export from Blender to FBX, GLTF, OBJ, USD, and Alembic with scale, pivot, rotation, normals, materials, animation, and collision verification via MCP. |
+| `blend-fantasy-worlds` | Fantasy world-building art direction for Blender covering medieval, high fantasy, dark fantasy, and urban fantasy asset language. |
+| `blend-folk-horror-style` | Folk horror art direction for Blender with rural ritual uncanny, pastoral daylight dread, and community-wrongness storytelling. |
+| `blend-frutiger-aero-style` | Frutiger Aero art direction for Blender with glossy skeuomorphism, aqua UI cues, nature-tech optimism, and mid-2000s futurism. |
+| `blend-genre-action-combat` | Art direction for action, hack-and-slash, beat 'em up, and fighting-game readable combat spaces and prop language in Blender. |
+| `blend-genre-card-party-idle` | Art direction for card games, deck builders, party games, idle/incremental, educational, and rhythm game presentational spaces in Blender. |
+| `blend-genre-metroidvania-roguelike` | Art direction for metroidvania, roguelike, and roguelite games in Blender with biome gates, room modules, and run-readable props. |
+| `blend-genre-narrative-vn` | Art direction for visual novel, interactive movie, walking simulator, and story-driven presentation spaces in Blender. |
+| `blend-genre-open-world-sandbox` | Art direction for open world and sandbox games in Blender with biome landmarks, traversable scale, and discovery props. |
+| `blend-genre-puzzle-platformer` | Art direction for puzzle and platformer games in Blender with readable interactables, jump volumes, and clear hazard language. |
+| `blend-genre-racing-sports` | Art direction for racing and sports games in Blender with track landmarks, stadium kits, and high-speed readability. |
+| `blend-genre-rpg` | Art direction for RPG, JRPG, CRPG, ARPG, and MMORPG worlds in Blender including loot rarity reads and region identity. |
+| `blend-genre-shooter` | Art direction for FPS, TPS, shooter, battle royale, and extraction-shooter maps and props in Blender with sightline and cover language. |
+| `blend-genre-soulslike` | Art direction for soulslike games in Blender with monumental melancholy spaces, fog gates, bonfire landmarks, and lethal readability. |
+| `blend-genre-stealth` | Art direction for stealth-game spaces in Blender with shadow volumes, patrol-friendly layouts, and concealment materials. |
+| `blend-genre-strategy-sim` | Art direction for strategy, RTS, turn-based strategy, tower defense, MOBA, city builder, colony sim, and simulation games in Blender. |
+| `blend-genre-survival` | Art direction for survival and survival-horror gameplay spaces in Blender emphasizing resource props, crafting readability, and tension routes. |
+| `blend-geometry-nodes` | Blender Geometry Nodes for procedural modeling, scatter systems, vegetation, buildings, pipes, cables, and reusable node groups. Use for procedural asset generation and instancing pipelines via MCP. |
+| `blend-godot-export` | Godot-specific Blender export favoring GLTF/GLB with correct scale, materials, animation clips, and collision shapes via MCP. |
+| `blend-hair-groom` | Hair and fur grooming in Blender using curves, particle hair, geometry nodes, and game hair-card workflows. Use for characters, creatures, and real-time hair cards via MCP. |
+| `blend-hand-painted-style` | Hand-painted texture art direction for Blender with brushwork albedo, soft value transitions, and stylized PBR restraint. |
+| `blend-hard-surface` | AAA hard surface modeling for sci-fi, industrial, military, vehicles, weapons, robotics, and mechanical props. Use for boolean/bevel workflows, panel lines, greebles, chamfers, and manufacturing-accur… |
+| `blend-hd-2d-style` | HD-2D art direction combining pixel characters/sprites with 3D environments, depth of field, and theatrical lighting. |
+| `blend-historical-worlds` | Historical and period world art direction for Blender including Western, pirate, samurai/ninja, Viking, ancient Egypt/Greece/Rome, Victorian, modern, and military eras. |
+| `blend-horror-style` | Psychological horror art direction for Blender assets inspired by Silent Hill, Resident Evil, Chilla's Art, Fear to Fathom, and Iron Lung. Use for sparse industrial environments, analog aesthetics, an… |
+| `blend-indie-horror-aesthetics` | Indie horror aesthetic pack for Blender covering Silent Hill, Fear to Fathom, Puppet Combo, corporate horror, cabin/forest/hospital horror, and related looks. |
+| `blend-isometric-style` | Isometric and strategy-game art direction for Blender including diorama framing, true-iso camera setup, readable silhouettes, and tile asset rules. |
+| `blend-lighting` | Cinematic and game lighting in Blender including three-point lighting, HDRI, horror lighting, volumetrics, rim lighting, and mood-driven illumination. Use for look development and scene atmosphere via… |
+| `blend-liminal-space-style` | Liminal space and Backrooms art direction for Blender with empty transitional architecture, wrong familiarity, and endless repetition. |
+| `blend-lod-pipeline` | Dedicated LOD generation, naming, screen-size targets, and validation for game meshes in Blender via MCP. |
+| `blend-lookdev` | Look development loop for Blender assets combining materials, lighting, camera, and screenshot comparison until shading reads correctly via MCP. |
+| `blend-lowpoly-style` | Low-poly art direction for Blender inspired by PS1/PS2, Lethal Company, Mouthwashing, and Fear to Fathom. Use for readable silhouettes, minimal polygons, simple materials, and strong atmosphere. |
+| `blend-manga-style` | Manga-inspired art direction for Blender emphasizing monochrome value design, speed lines, screentone feel, and manga panel staging. |
+| `blend-mascot-puppet-horror` | Mascot and puppet horror art direction for Blender with cheerful brand characters made wrong, felt/foam materials, and uncanny performance. |
+| `blend-materials` | Blender PBR and stylized material creation for metal, wood, concrete, fabric, glass, dirt, rust, and procedural shaders. Use for look development, material reuse, and production shading in Blender via… |
+| `blend-minimalist-style` | Minimalist and abstract-leaning art direction for Blender with reduced forms, limited palettes, and negative space. |
+| `blend-neon-retrofuturism` | Neon, vaporwave, synthwave, and retrofuturistic mood/art direction for Blender with grid horizons, chrome, and dusk palettes. |
+| `blend-noir-style` | Noir art direction for Blender with high-contrast lighting, wet streets, silhouettes, and monochrome or limited-color grading. |
+| `blend-painterly-style` | Painterly art direction spanning watercolor and oil-painting looks for Blender using soft edges, pigment texture, and illustrative lighting. |
+| `blend-physics-sim` | Rigid body, soft body, and destruction setups in Blender including constraints, cell fracture debris, and baked caches via MCP. |
+| `blend-pixel-art-style` | Pixel-art and texel-constrained art direction for Blender assets destined for pixel rendering, low-res textures, or HD-2D-adjacent pixel reads. |
+| `blend-procedural-modeling` | Procedural asset creation for rocks, buildings, vegetation, roads, terrain, pipes, cables, and sci-fi panels using Geometry Nodes and modifier-based workflows in Blender via MCP. |
+| `blend-prop-artist` | Everyday and hero prop modeling for furniture, tools, household objects, kitbash parts, and readable game props. Use when hard-surface is too sci-fi/mechanical and the asset is a grounded prop. |
+| `blend-psx-horror-style` | PS1/PSX-era horror art direction combining low-poly affine textures, limited color depth, fog, and psychological horror staging for Blender assets. |
+| `blend-qa-review` | Production QA gate for Blender assets using viewport screenshots, validation checklists, naming audits, and ship/no-ship verdicts via MCP. |
+| `blend-realistic-style` | Photorealistic AAA art direction for Blender including photogrammetry cleanup, real-world scale, high-poly workflows, PBR accuracy, and scan optimization. Use for cinematic and AAA game realism. |
+| `blend-rendering` | Blender rendering with Cycles and Eevee including sampling, denoising, camera setup, render passes, color management, and render optimization. Use for final output and look validation via MCP. |
+| `blend-retopology` | Production retopology for animation-ready, low-poly, quad-dominant meshes with proper edge loops and efficient polygon flow. Use after sculpting or high-poly modeling before rigging and UV work in Ble… |
+| `blend-retro-16bit-style` | Retro 16-bit art direction for Blender-assisted SNES/Genesis-era color richness, dither cues, and sprite-like clarity. |
+| `blend-retro-8bit-style` | Retro 8-bit art direction for Blender-assisted pixel/low-res aesthetics inspired by NES-era constraints. |
+| `blend-rigging` | Production rigging in Blender with armatures, IK/FK, constraints, weight painting, mechanical rigs, facial rigs, and drivers. Use before animation on deforming assets via MCP. |
+| `blend-scene-assembly` | Large scene layout in Blender with collections, linking, overrides, streaming-friendly organization, and set assembly via MCP. |
+| `blend-sci-fi-punk-worlds` | Sci-fi and punk world art direction for Blender including hard sci-fi, space, cyberpunk, steampunk, dieselpunk, atompunk, solarpunk, biopunk, and clockpunk. |
+| `blend-sculpting` | Blender sculpting for organic and hard surface detail using Dyntopo, multiresolution, brushes, alpha workflow, wrinkles, and damage. Use when high-frequency surface detail is needed before retopology … |
+| `blend-set-dressing` | Set dressing and environmental storytelling placement for interiors and exteriors using prop density, narrative clusters, and readability rules via MCP. |
+| `blend-stop-motion-craft-style` | Stop-motion and craft aesthetics for Blender including claymation, paper craft, and handmade physical-material cues. |
+| `blend-stylized-style` | Stylized art direction for Blender with shape language, exaggeration, color harmony, NPR rendering, and hand-painted asset workflows. Use for non-photorealistic game and animation projects. |
+| `blend-texture-workflow` | Production texture workflow for atlases, baking AO/curvature/normal/roughness maps, decals, and texture memory optimization. Use for game-ready texture pipelines in Blender via MCP. |
+| `blend-unity-export` | Unity-specific Blender export for scale, axis, materials, humanoid/generic rigs, LODs, and collision import via MCP. |
+| `blend-unreal-export` | Unreal Engine-specific Blender export for FBX scale, LODs, UCX collision, sockets, materials, and skeletal mesh workflows via MCP. |
+| `blend-uv-workflow` | Production UV unwrapping for seam placement, UV packing, texel density, UDIM, lightmap UVs, and modular UV layouts. Use when preparing meshes for texturing and engine export in Blender via MCP. |
+| `blend-vector-style` | Vector-clean art direction for Blender with flat fills, sharp silhouettes, and UI-like graphic clarity. |
+| `blend-vegetation-artist` | Vegetation and foliage authoring for Blender including trees, plants, grass cards, canopy LODs, and game-friendly leaf atlases via MCP. |
+| `blend-vehicle-artist` | Dedicated vehicle modeling for cars, trucks, aircraft, ships, boats, mechs, and transit assets with proportion, panel flow, and game LOD awareness in Blender via MCP. |
+| `blend-vfx-fx` | Cinematic and game VFX in Blender including smoke, fire, particles, trails, and Geometry Nodes FX setups via MCP. |
+| `blend-visual-console-eras` | Visual era art direction for Blender covering PS1–PS5 stylistic cues, retro arcade, DOS, CRT, VHS, and film-grain presentation. |
+| `blend-voxel-style` | Voxel and Minecraft-adjacent art direction for Blender with block grid modeling, limited palettes, and chunk-friendly assets. |
 
 ## career (1)
 

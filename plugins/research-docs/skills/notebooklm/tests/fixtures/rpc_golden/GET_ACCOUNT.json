@@ -1,0 +1,43 @@
+{
+  "method_name": "GET_ACCOUNT",
+  "method_id": "SatQRc",
+  "description": "Read the account compute-meter eligibility bit.",
+  "request": {
+    "params": [],
+    "expected_f_req": [
+      [
+        [
+          "SatQRc",
+          "[]",
+          null,
+          "generic"
+        ]
+      ]
+    ]
+  },
+  "response": {
+    "chunks": [
+      [
+        [
+          "wrb.fr",
+          "SatQRc",
+          "[[null,null,null,null,[null,null,null,null,null,null,true]] ]",
+          null,
+          null,
+          null,
+          "generic"
+        ]
+      ]
+    ],
+    "allow_null": false,
+    "expected_decoded": [
+      [
+        null,
+        null,
+        null,
+        null,
+        [null, null, null, null, null, null, true]
+      ]
+    ]
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Root Client Resource Lifecycle",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1080, 566],
+    "views": [
+      {"id": "generation-rail", "label": "Generation rail", "focus": ["closed", "opening", "open", "closing", "reclosed"], "note": "ClientLifecycle alone allocates an epoch and moves the already-assembled graph through a resource generation."},
+      {"id": "graceful-shutdown", "label": "Graceful shutdown", "focus": ["open", "draining", "closing", "reclosed"], "note": "Drain rejects new top-level work, waits for admitted workflows, then close tears down frozen participants."},
+      {"id": "recovery-reopen", "label": "Rollback and reopen", "focus": ["opening", "rollback", "reclosed"], "note": "Failed open rolls every participant back; a later open allocates a fresh epoch and rebinds lazy loop state."}
+    ]
+  },
+  "lanes": [
+    {"id": "main", "label": "ClientLifecycle generation"},
+    {"id": "coordination", "label": "Admission and rollback"}
+  ],
+  "states": [
+    {"id": "closed", "type": "start", "label": "CLOSED", "sublabel": "assembled, no active epoch", "lane": "main", "col": 0, "step": "01", "tag": "reopenable"},
+    {"id": "opening", "type": "active", "label": "OPENING", "sublabel": "bind loop · prepare · open", "lane": "main", "col": 1, "step": "02", "tag": "coalesced wave"},
+    {"id": "open", "type": "active", "label": "OPEN", "sublabel": "selected graph admits work", "lane": "main", "col": 2, "step": "03", "tag": "generation active"},
+    {"id": "closing", "type": "active", "label": "CLOSING", "sublabel": "prepare · hooks · teardown", "lane": "main", "col": 3, "step": "04", "tag": "retained wave"},
+    {"id": "reclosed", "type": "success", "label": "CLOSED", "sublabel": "generation retired", "lane": "main", "col": 4, "step": "05", "tag": "may reopen"},
+    {"id": "rollback", "type": "failure", "label": "Open Rollback", "sublabel": "clean prepared resources", "lane": "coordination", "col": 0, "tag": "recoverable"},
+    {"id": "draining", "type": "waiting", "label": "DRAINING", "sublabel": "reject new work · await idle", "lane": "coordination", "col": 1, "tag": "resources stay open"}
+  ],
+  "transitions": [
+    {"id": "opening-rollback", "from": "opening", "to": "rollback", "label": "open failed", "variant": "security", "route": "drop", "labelAt": [325, 224]},
+    {"id": "rollback-reclosed", "from": "rollback", "to": "reclosed", "label": "cleanup settled", "variant": "emphasis", "route": "bottom-channel", "labelAt": [650, 376]},
+    {"id": "open-draining", "from": "open", "to": "draining", "label": "graceful close", "route": "drop", "labelAt": [480, 224]},
+    {"id": "draining-closing", "from": "draining", "to": "closing", "label": "idle or timeout", "variant": "emphasis", "route": "straight", "fromSide": "top", "toSide": "bottom", "labelAt": [555, 244]},
+    {"id": "reopen", "from": "reclosed", "to": "opening", "label": "fresh epoch", "variant": "dashed", "route": "top-channel"}
+  ],
+  "cards": [
+    {"dot": "cyan", "title": "Scope boundary", "items": ["Diagram 35 hands off a complete graph in CLOSED; ClientLifecycle does not construct or install services", "This diagram owns resource epochs, admission, rollback, drain, and teardown order"]},
+    {"dot": "rose", "title": "Lifecycle evidence", "items": ["Open, drain, close, rollback, and reopen: src/notebooklm/_runtime/lifecycle.py:178-634", "https://github.com/teng-lin/notebooklm-py @ 719378b8af7023b8eca0c33d2de6d44d35db3434"]}
+  ]
+}

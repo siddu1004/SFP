@@ -1,0 +1,438 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "MCP Adapter Subsystem",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/teng-lin/notebooklm-py",
+      "revision": "719378b8af7023b8eca0c33d2de6d44d35db3434"
+    },
+    "views": [
+      {
+        "id": "tool-call",
+        "label": "Tool call path",
+        "focus": [
+          "host",
+          "server",
+          "tools",
+          "app",
+          "client"
+        ],
+        "note": "Tools build typed neutral requests, call the selected client, then own the MCP wire projection."
+      },
+      {
+        "id": "guards",
+        "label": "Guards",
+        "focus": [
+          "server",
+          "guards",
+          "confirm"
+        ],
+        "note": "Preview returns canonical resource IDs, or a notebook ID plus sharing operands; confirm=true executes independently."
+      },
+      {
+        "id": "files",
+        "label": "File transfer",
+        "focus": [
+          "tools",
+          "filelink",
+          "fileroutes"
+        ],
+        "note": "Signed short links move artifact bytes outside the tool result."
+      },
+      {
+        "id": "detached-chat",
+        "label": "Detached chat",
+        "focus": [
+          "tools",
+          "chattasks",
+          "client"
+        ],
+        "note": "chat_start survives request watchdog cancellation and remains pollable through chat_status."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "guards",
+      "type": "security",
+      "label": "HTTP Guards",
+      "sublabel": "loopback · OAuth",
+      "tag": "HTTP mode only",
+      "pos": [
+        282,
+        60
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "confirm",
+      "type": "security",
+      "label": "Confirm Gate",
+      "sublabel": "canonical IDs · operands",
+      "tag": "no cross-call lease",
+      "sources": [
+        {
+          "path": "src/notebooklm/mcp/_confirm.py",
+          "line": 45,
+          "label": "preview envelope"
+        },
+        {
+          "path": "src/notebooklm/mcp/tools/sources.py",
+          "line": 403,
+          "label": "strict IDs"
+        }
+      ],
+      "pos": [
+        544,
+        60
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "host",
+      "type": "external",
+      "label": "MCP Host",
+      "sublabel": "Claude · Cursor",
+      "pos": [
+        30,
+        260
+      ],
+      "size": [
+        160,
+        90
+      ]
+    },
+    {
+      "id": "server",
+      "type": "frontend",
+      "label": "FastMCP Server",
+      "sublabel": "create_server()",
+      "tag": "stdio or HTTP",
+      "pos": [
+        282,
+        260
+      ],
+      "size": [
+        170,
+        90
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "frontend",
+      "label": "MCP Tools",
+      "sublabel": "typed request · wire result",
+      "tag": "source · Studio · sharing",
+      "sources": [
+        {
+          "path": "src/notebooklm/mcp/tools/studio.py",
+          "line": 6,
+          "label": "generation requests"
+        },
+        {
+          "path": "src/notebooklm/mcp/tools/sources.py",
+          "line": 8,
+          "label": "batch adapter"
+        },
+        {
+          "path": "src/notebooklm/mcp/tools/sharing.py",
+          "line": 86,
+          "label": "sharing gates"
+        }
+      ],
+      "pos": [
+        544,
+        260
+      ],
+      "size": [
+        170,
+        90
+      ]
+    },
+    {
+      "id": "app",
+      "type": "backend",
+      "label": "Neutral Operations",
+      "sublabel": "requests · events · outcomes",
+      "sources": [
+        {
+          "path": "src/notebooklm/_app/generation_requests.py",
+          "line": 531,
+          "label": "11-kind union"
+        },
+        {
+          "path": "src/notebooklm/_app/source_batch.py",
+          "line": 1,
+          "label": "commit policy"
+        }
+      ],
+      "pos": [
+        806,
+        260
+      ],
+      "size": [
+        165,
+        90
+      ]
+    },
+    {
+      "id": "client",
+      "type": "backend",
+      "label": "NotebookLMClient",
+      "sublabel": "one long-lived",
+      "sources": [
+        {
+          "path": "src/notebooklm/mcp/_context.py",
+          "line": 129,
+          "label": "per-call access"
+        }
+      ],
+      "pos": [
+        1063,
+        260
+      ],
+      "size": [
+        155,
+        90
+      ]
+    },
+    {
+      "id": "installer",
+      "type": "backend",
+      "label": "mcp install",
+      "sublabel": "config + .mcpb",
+      "pos": [
+        30,
+        460
+      ],
+      "size": [
+        160,
+        84
+      ]
+    },
+    {
+      "id": "errors",
+      "type": "backend",
+      "label": "MCP Projection",
+      "sublabel": "code · message · hint",
+      "sources": [
+        {
+          "path": "src/notebooklm/mcp/_errors.py",
+          "line": 102,
+          "label": "error envelope"
+        },
+        {
+          "path": "src/notebooklm/mcp/_batch.py",
+          "line": 12,
+          "label": "batch envelope"
+        }
+      ],
+      "pos": [
+        282,
+        460
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "filelink",
+      "type": "security",
+      "label": "File Link Signer",
+      "sublabel": "scoped signed tokens",
+      "pos": [
+        544,
+        460
+      ],
+      "size": [
+        170,
+        84
+      ]
+    },
+    {
+      "id": "fileroutes",
+      "type": "frontend",
+      "label": "File Routes",
+      "sublabel": "short-link fetch",
+      "pos": [
+        806,
+        460
+      ],
+      "size": [
+        165,
+        84
+      ]
+    },
+    {
+      "id": "chattasks",
+      "type": "messagebus",
+      "label": "ChatTaskRegistry",
+      "sublabel": "bounded · detached · FIFO",
+      "tag": "process lifetime",
+      "pos": [
+        1063,
+        460
+      ],
+      "size": [
+        155,
+        84
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "host-server",
+      "from": "host",
+      "to": "server",
+      "label": "MCP protocol",
+      "variant": "emphasis"
+    },
+    {
+      "id": "server-tools",
+      "from": "server",
+      "to": "tools",
+      "label": "registers",
+      "variant": "emphasis"
+    },
+    {
+      "id": "tools-app",
+      "from": "tools",
+      "to": "app",
+      "label": "typed contract",
+      "variant": "emphasis"
+    },
+    {
+      "id": "app-client",
+      "from": "app",
+      "to": "client",
+      "label": "selected client",
+      "variant": "emphasis"
+    },
+    {
+      "id": "server-guards",
+      "from": "server",
+      "to": "guards",
+      "label": "HTTP mode",
+      "variant": "security",
+      "labelAt": [
+        367,
+        202
+      ]
+    },
+    {
+      "id": "tools-confirm",
+      "from": "tools",
+      "to": "confirm",
+      "label": "prepare / confirm",
+      "variant": "security",
+      "labelAt": [
+        629,
+        202
+      ]
+    },
+    {
+      "id": "server-errors",
+      "from": "server",
+      "to": "errors",
+      "label": "classify",
+      "labelAt": [
+        367,
+        398
+      ]
+    },
+    {
+      "id": "tools-filelink",
+      "from": "tools",
+      "to": "filelink",
+      "label": "sign link",
+      "labelAt": [
+        680,
+        398
+      ]
+    },
+    {
+      "id": "filelink-fileroutes",
+      "from": "filelink",
+      "to": "fileroutes",
+      "label": "short link"
+    },
+    {
+      "id": "installer-host",
+      "from": "installer",
+      "to": "host",
+      "label": "writes config",
+      "variant": "dashed",
+      "labelAt": [
+        110,
+        398
+      ]
+    },
+    {
+      "id": "tools-chattasks",
+      "from": "tools",
+      "to": "chattasks",
+      "label": "start · poll · cancel",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "left",
+      "via": [
+        [
+          629,
+          407
+        ],
+        [
+          1020,
+          407
+        ],
+        [
+          1020,
+          502
+        ]
+      ],
+      "labelAt": [
+        824,
+        407
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Same cores",
+      "items": [
+        "Studio generation uses the exact 11-kind request union and one shared validation table",
+        "Source batches retain four commit states; inputs and titles are redacted before projection",
+        "One long-lived client serves every tool call in the process",
+        "MCP owns its wire projection and imports no click, rich, or cli"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Safety gates",
+      "items": [
+        "Deletes, user grants/regrades, and public-access widening require confirm=true",
+        "Resource previews return canonical parent/target IDs; sharing keeps email/access operands",
+        "A separate confirmed call reacquires request access; no lease spans human delay"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "File transfer",
+      "items": [
+        "Remote FileTransferConfig returns signed links; local configurations retain paths",
+        "Remote upload links are single-use; remote downloads remain reusable for Range and resume",
+        "notebooklm mcp install wires Claude Desktop, Claude Code, Cursor or Windsurf"
+      ]
+    }
+  ]
+}

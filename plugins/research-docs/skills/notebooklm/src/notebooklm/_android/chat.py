@@ -1,0 +1,633 @@
+"""Android implementation of the public notebook chat contract."""
+
+from __future__ import annotations
+
+import logging
+from collections.abc import AsyncIterator, Callable
+from contextlib import asynccontextmanager
+from typing import Any, cast
+from uuid import uuid4
+
+from .._chat import (
+    ChatAPI,
+    _ChatSettingsRead,
+    _ConfigureAttemptLogPolicy,
+    _PostedAsk,
+    _TurnRoleSnapshot,
+)
+from .._conversation_cache import ConversationCache
+from .._idempotency import (
+    OperationJournal,
+    attach_journal_entry,
+    bind_operation_journal_entries,
+    mark_unconfirmed,
+)
+from .._notebook_metadata import CreatedChatSessionProvider, NotebookSourceIdProvider
+from .._runtime.call_supervisor import OperationLease
+from .._runtime.config import (
+    DEFAULT_CHAT_RESPONSE_MAX_BYTES,
+    DEFAULT_CHAT_TIMEOUT,
+    validate_read_timeout_kwarg,
+)
+from .._runtime.contracts import LoopGuard
+from .._types.enums import ChatGoal, ChatResponseLength
+from ..exceptions import (
+    ChatError,
+    ChatResponseParseError,
+    NotebookLMError,
+    UnknownRPCMethodError,
+)
+from ..types import (
+    ChatReference,
+    ChatSessionStatus,
+    ConversationTurn,
+    NextStepSuggestion,
+    Note,
+)
+from .codecs.chat import decode_document, decode_history, decode_references, decode_turn_key
+from .codecs.notebooks import validate_project_identity
+from .epoch import bind_workflow_epoch, reset_workflow_epoch
+from .notes import SAVED_RESPONSE_NOTE_TYPE, create_note
+from .session import AndroidSession
+
+logger = logging.getLogger("notebooklm._chat.api")
+_SERVICE = "google.internal.labs.tailwind.orchestration.v1.LabsTailwindOrchestrationService"
+LIST_CHAT_SESSIONS_METHOD = f"/{_SERVICE}/ListChatSessions"
+GET_CHAT_SESSION_STATUS_METHOD = f"/{_SERVICE}/GetChatSessionStatus"
+CANCEL_GENERATION_METHOD = f"/{_SERVICE}/CancelGeneration"
+LIST_CHAT_TURNS_METHOD = f"/{_SERVICE}/ListChatTurns"
+DELETE_CHAT_TURNS_METHOD = f"/{_SERVICE}/DeleteChatTurns"
+GENERATE_FREE_FORM_STREAMED_METHOD = f"/{_SERVICE}/GenerateFreeFormStreamed"
+GET_PROJECT_METHOD = f"/{_SERVICE}/GetProject"
+MUTATE_PROJECT_METHOD = f"/{_SERVICE}/MutateProject"
+
+
+def _proto() -> Any:
+    from .proto.google.internal.labs.tailwind.orchestration.v1 import chat_pb2
+
+    return cast(Any, chat_pb2)
+
+
+def _read_proto() -> Any:
+    from .proto.google.internal.labs.tailwind.orchestration.v1 import read_pb2
+
+    return cast(Any, read_pb2)
+
+
+def _sources_proto() -> Any:
+    from .proto.google.internal.labs.tailwind.orchestration.v1 import sources_pb2
+
+    return cast(Any, sources_pb2)
+
+
+def _wire_proto() -> Any:
+    from .proto.notebooklm.internal.android.wire.v1 import notebooks_pb2
+
+    return cast(Any, notebooks_pb2)
+
+
+def _empty_type() -> Any:
+    from google.protobuf.empty_pb2 import Empty
+
+    return Empty
+
+
+def _new_turn_id() -> str:
+    return str(uuid4())
+
+
+def _is_final_chat_response(response: Any) -> bool:
+    """Stop the native stream once its protocol-level final snapshot arrives."""
+
+    return bool(response.is_final_response)
+
+
+def _cancellable_chat_request_context() -> Any:
+    """Return the Android metadata envelope with Web chat semantics.
+
+    Google's cancel endpoint only stops generations whose originating request
+    carries ``clientType=WEB``. The rest of the captured Android metadata and
+    provenance stay unchanged.
+    """
+    from .upload import android_request_context
+
+    context = android_request_context()
+    context.client_type = 2  # labs.language.tailwind.common.protos.WEB
+    return context
+
+
+class AndroidChatAPI(ChatAPI):
+    """Android chat adapter installed by public Android backend selection."""
+
+    _configure_attempt_log_policy: _ConfigureAttemptLogPolicy = "silent"
+
+    @asynccontextmanager
+    async def _operation_scope(self, label: str) -> AsyncIterator[OperationLease]:
+        async with self._transport.operation_scope(label) as lease:
+            token = bind_workflow_epoch(self._transport, lease.epoch)
+            try:
+                yield lease
+            finally:
+                reset_workflow_epoch(token)
+
+    def __init__(
+        self,
+        *,
+        session: AndroidSession,
+        loop_guard: LoopGuard,
+        notebooks: NotebookSourceIdProvider,
+        chat_timeout: float | None = DEFAULT_CHAT_TIMEOUT,
+        chat_response_max_bytes: int | None = DEFAULT_CHAT_RESPONSE_MAX_BYTES,
+        turn_id_factory: Callable[[], str] = _new_turn_id,
+        conversation_cache: ConversationCache | None = None,
+        created_chat_sessions: CreatedChatSessionProvider | None = None,
+    ) -> None:
+        self._transport = session
+        self._chat_timeout = validate_read_timeout_kwarg(chat_timeout, name="chat_timeout")
+        self._chat_response_max_bytes = chat_response_max_bytes
+        self._turn_id_factory = turn_id_factory
+        super().__init__(
+            loop_guard=loop_guard,
+            notebooks=notebooks,
+            conversation_cache=conversation_cache,
+            created_chat_sessions=created_chat_sessions,
+        )
+
+    async def get_conversation_id(self, notebook_id: str) -> str | None:
+        """Return the first (current) chat session volunteered for a project."""
+        proto = _proto()
+        response = await self._transport.unary(
+            LIST_CHAT_SESSIONS_METHOD,
+            proto.ListChatSessionsRequest(project_id=notebook_id),
+            replay_safe=True,
+            response_type=proto.ListChatSessionsResponse,
+        )
+        if not response.sessions:
+            return None
+        return response.sessions[0].chat_session_id or None
+
+    async def _get_session_status(
+        self,
+        notebook_id: str,
+        conversation_id: str,
+    ) -> ChatSessionStatus:
+        del notebook_id  # the native request is keyed only by chat session id
+        proto = _proto()
+        response = await self._transport.unary(
+            GET_CHAT_SESSION_STATUS_METHOD,
+            proto.GetChatSessionStatusRequest(
+                request_context=_cancellable_chat_request_context(),
+                chat_session_id=conversation_id,
+            ),
+            replay_safe=True,
+            response_type=proto.GetChatSessionStatusResponse,
+        )
+        token = response.generation_token or None
+        if response.status == 1 and token is None:
+            return ChatSessionStatus(generating=False)
+        if response.status == 2 and token is not None:
+            return ChatSessionStatus(generating=True, token=token)
+        raise UnknownRPCMethodError(
+            "Android GetChatSessionStatus returned an unknown status/token combination.",
+            method_id=GET_CHAT_SESSION_STATUS_METHOD,
+            path=(2,),
+            source="AndroidChatAPI.session_status",
+            data_at_failure=(response.status, token),
+        )
+
+    async def _cancel_generation(
+        self,
+        notebook_id: str,
+        conversation_id: str,
+    ) -> None:
+        del notebook_id  # the native request is keyed only by chat session id
+        proto = _proto()
+        await self._transport.unary(
+            CANCEL_GENERATION_METHOD,
+            proto.CancelGenerationRequest(
+                request_context=_cancellable_chat_request_context(),
+                chat_session_id=conversation_id,
+            ),
+            replay_safe=True,
+            response_type=proto.CancelGenerationResponse,
+        )
+
+    async def _require_owned_conversation(
+        self,
+        notebook_id: str,
+        conversation_id: str,
+        *,
+        expected_epoch: int,
+    ) -> None:
+        proto = _proto()
+        response = await self._transport.unary(
+            LIST_CHAT_SESSIONS_METHOD,
+            proto.ListChatSessionsRequest(project_id=notebook_id),
+            replay_safe=True,
+            response_type=proto.ListChatSessionsResponse,
+            expected_epoch=expected_epoch,
+        )
+        if not any(session.chat_session_id == conversation_id for session in response.sessions):
+            raise ChatError(
+                f"Conversation {conversation_id!r} was not found in notebook {notebook_id!r}."
+            )
+
+    async def get_conversation_turns(
+        self,
+        notebook_id: str,
+        conversation_id: str,
+        limit: int = 2,
+    ) -> Any:
+        """Return at most ``limit`` newest turns across exact token pages."""
+        proto = _proto()
+        bounded_limit = max(0, limit)
+        if bounded_limit == 0:
+            return proto.ListChatTurnsResponse()
+
+        async with self._transport.operation_scope("chat.get_conversation_turns") as lease:
+            await self._require_owned_conversation(
+                notebook_id,
+                conversation_id,
+                expected_epoch=lease.epoch,
+            )
+            turns: list[Any] = []
+            page_token = ""
+            seen_tokens: set[str] = set()
+            next_page_token = ""
+            while len(turns) < bounded_limit:
+                response = await self._transport.unary(
+                    LIST_CHAT_TURNS_METHOD,
+                    proto.ListChatTurnsRequest(
+                        chat_session_id=conversation_id,
+                        page_token=page_token,
+                    ),
+                    replay_safe=True,
+                    response_type=proto.ListChatTurnsResponse,
+                    expected_epoch=lease.epoch,
+                )
+                remaining = bounded_limit - len(turns)
+                turns.extend(response.chat_turns[:remaining])
+                next_page_token = response.next_page_token
+                if len(turns) >= bounded_limit or not next_page_token:
+                    break
+                if next_page_token in seen_tokens:
+                    raise UnknownRPCMethodError(
+                        "Android ListChatTurns repeated a pagination token.",
+                        method_id=LIST_CHAT_TURNS_METHOD,
+                        path=(1,),
+                        source="AndroidChatAPI.get_conversation_turns",
+                    )
+                seen_tokens.add(next_page_token)
+                page_token = next_page_token
+
+        return proto.ListChatTurnsResponse(
+            chat_turns=turns,
+            next_page_token=next_page_token,
+        )
+
+    async def get_history(
+        self,
+        notebook_id: str,
+        limit: int = 100,
+        conversation_id: str | None = None,
+    ) -> list[tuple[str, str]]:
+        """Return captured newest-first Android history as oldest-first pairs.
+
+        Empty means no conversation, no turns, or a non-positive limit; fetch failures raise.
+        """
+        bounded_limit = max(0, limit)
+        if bounded_limit == 0:
+            return []
+        async with self._operation_scope("chat.get_history"):
+            resolved_id = conversation_id or await self.get_conversation_id(notebook_id)
+            if not resolved_id:
+                return []
+            response = await self.get_conversation_turns(
+                notebook_id,
+                resolved_id,
+                # Android exposes separate generated-response and user-query rows,
+                # while the public limit counts completed Q&A pairs.
+                limit=bounded_limit * 2,
+            )
+            return decode_history(response, limit=bounded_limit)
+
+    async def _list_turn_roles(
+        self,
+        notebook_id: str,
+        conversation_id: str,
+        limit: int,
+    ) -> _TurnRoleSnapshot:
+        response = await self.get_conversation_turns(
+            notebook_id,
+            conversation_id,
+            limit=limit,
+        )
+        roles = tuple(turn.observed_event_type for turn in response.chat_turns[: max(0, limit)])
+        return _TurnRoleSnapshot(
+            roles=roles,
+            exhausted=len(roles) < limit or not response.next_page_token,
+        )
+
+    @staticmethod
+    def _conversation_history(cached_turns: list[ConversationTurn]) -> list[Any]:
+        proto = _proto()
+        events: list[Any] = []
+        for turn in cached_turns:
+            events.extend(
+                (
+                    proto.ConversationEvent(
+                        text=turn.answer,
+                        type=proto.ConversationEvent.GENERATED_RESPONSE,
+                    ),
+                    proto.ConversationEvent(
+                        text=turn.query,
+                        type=proto.ConversationEvent.USER_QUERY,
+                    ),
+                )
+            )
+        return events
+
+    async def _stream_answer(
+        self,
+        *,
+        notebook_id: str,
+        question: str,
+        source_ids: list[str],
+        cached_turns: list[ConversationTurn],
+        conversation_id: str | None,
+    ) -> _PostedAsk:
+        turn_id = self._turn_id_factory()
+        if not isinstance(turn_id, str) or not turn_id:
+            raise ValueError("turn_id_factory must return a non-empty string")
+
+        proto = _proto()
+        read_proto = _read_proto()
+        sources_proto = _sources_proto()
+        request = proto.GenerateFreeFormStreamedRequest(
+            sources=[
+                sources_proto.InputSource(source_id=read_proto.SourceId(id=source_id))
+                for source_id in source_ids
+            ],
+            user_query=question,
+            conversation_history=self._conversation_history(cached_turns),
+            # CancelGeneration ignores ANDROID_APP-originated streams. WEB is
+            # required here for the public cancel() contract to be truthful.
+            request_context=_cancellable_chat_request_context(),
+            chat_session_id=conversation_id or "",
+            user_message_id=turn_id,
+            project_id=notebook_id,
+            origin=proto.QUERY_ORIGIN_CHAT_TEXT_BOX,
+        )
+
+        final_response = None
+        next_steps: list[NextStepSuggestion] = []
+        journal_entry = OperationJournal("chat").new_entry(
+            method=GENERATE_FREE_FORM_STREAMED_METHOD
+        )
+        try:
+            with bind_operation_journal_entries(journal_entry):
+                async for response in self._transport.stream(
+                    GENERATE_FREE_FORM_STREAMED_METHOD,
+                    request,
+                    replay_safe=False,
+                    timeout=self._chat_timeout,
+                    response_type=proto.GenerateFreeFormStreamedResponse,
+                    telemetry_method="chat.ask",
+                    max_response_bytes=self._chat_response_max_bytes,
+                    stop_after=_is_final_chat_response,
+                ):
+                    if response.HasField("next_step_suggestions"):
+                        decoded_next_steps = [
+                            NextStepSuggestion(
+                                question=next_step.suggestion,
+                                type_code=int(next_step.suggestion_type),
+                            )
+                            for next_step in response.next_step_suggestions.next_steps
+                            if next_step.suggestion
+                        ]
+                        if decoded_next_steps:
+                            next_steps = decoded_next_steps
+                    if response.is_final_response:
+                        final_response = response
+        except NotebookLMError as exc:
+            # Android status mapping already supplies UNKNOWN for this
+            # non-replayable stream. Add the feature identity at the boundary
+            # that knows it was a chat turn so every adapter gives the caller
+            # conversation-history guidance.
+            if getattr(exc, "unconfirmed", False):
+                mark_unconfirmed(exc, operation="chat")
+            attach_journal_entry(exc, journal_entry)
+            raise
+
+        if final_response is None:
+            error = mark_unconfirmed(
+                ChatResponseParseError(
+                    "Android GenerateFreeFormStreamed ended before response field 5 "
+                    "declared a final snapshot."
+                ),
+                operation="chat",
+            )
+            raise attach_journal_entry(error, journal_entry)
+
+        answer = final_response.answer
+        try:
+            answer_document = decode_document(answer.response_doc)
+            references = decode_references(answer.response_doc, answer_document)
+        except NotebookLMError as exc:
+            mark_unconfirmed(exc, operation="chat")
+            attach_journal_entry(exc, journal_entry)
+            raise
+        except Exception as exc:
+            error = mark_unconfirmed(
+                ChatResponseParseError(
+                    f"Failed to decode Android chat response: {type(exc).__name__}"
+                ),
+                operation="chat",
+            )
+            raise attach_journal_entry(error, journal_entry) from exc
+        from google.protobuf.json_format import MessageToJson
+
+        return _PostedAsk(
+            answer=answer.response,
+            references=references,
+            conversation_id=conversation_id,
+            raw_response=MessageToJson(
+                final_response,
+                preserving_proto_field_name=True,
+                indent=None,
+                sort_keys=True,
+            ),
+            answer_document=answer_document,
+            turn_key=decode_turn_key(answer),
+            next_steps=next_steps,
+        )
+
+    async def _send_delete_conversation(
+        self,
+        notebook_id: str,
+        conversation_id: str,
+    ) -> None:
+        proto = _proto()
+        async with self._transport.operation_scope("chat.delete_conversation") as lease:
+            await self._require_owned_conversation(
+                notebook_id,
+                conversation_id,
+                expected_epoch=lease.epoch,
+            )
+            await self._transport.unary(
+                DELETE_CHAT_TURNS_METHOD,
+                proto.DeleteChatTurnsRequest(
+                    chat_session_id=conversation_id,
+                    delete_all_history=True,
+                ),
+                replay_safe=False,
+                response_type=_empty_type(),
+                expected_epoch=lease.epoch,
+            )
+
+    async def _send_configure(
+        self,
+        notebook_id: str,
+        goal: ChatGoal,
+        response_length: ChatResponseLength,
+        custom_prompt: str | None,
+    ) -> None:
+        """Send one Android whole-settings mutation."""
+        active_prompt = custom_prompt if goal == ChatGoal.CUSTOM else ""
+
+        from .upload import android_request_context
+
+        wire = _wire_proto()
+        read_proto = _read_proto()
+        response = await self._transport.unary(
+            MUTATE_PROJECT_METHOD,
+            wire.WireMutateProjectRequest(
+                project_id=notebook_id,
+                mutations=[
+                    wire.WireProjectMutation(
+                        advanced_settings=wire.WireProjectAdvancedSettings(
+                            goal_settings=wire.WireProjectGoalSettings(
+                                goal=goal.value,
+                                custom_prompt=active_prompt,
+                            ),
+                            response_style_settings=wire.WireProjectResponseStyleSettings(
+                                response_length=response_length.value,
+                            ),
+                        )
+                    )
+                ],
+                request_context=android_request_context(),
+            ),
+            replay_safe=False,
+            response_type=read_proto.Project,
+        )
+        validate_project_identity(response, notebook_id, method_id=MUTATE_PROJECT_METHOD)
+
+    async def _read_settings(self, notebook_id: str) -> _ChatSettingsRead:
+        """Read and validate Android chat settings."""
+        read_proto = _read_proto()
+        wire = _wire_proto()
+        response = await self._transport.unary(
+            GET_PROJECT_METHOD,
+            read_proto.GetProjectRequest(
+                project_id=notebook_id,
+                include_audio_overview_ids=True,
+            ),
+            replay_safe=True,
+            response_type=wire.WireGetProjectResponse,
+        )
+        if not response.HasField("project"):
+            raise UnknownRPCMethodError(
+                "Android GetProject response omitted its project",
+                method_id=GET_PROJECT_METHOD,
+                path=(0,),
+                source="AndroidChatAPI.get_settings",
+            )
+        project = response.project
+        validate_project_identity(project, notebook_id, method_id=GET_PROJECT_METHOD)
+        if not project.HasField("advanced_settings"):
+            return _ChatSettingsRead(
+                goal=ChatGoal.DEFAULT,
+                response_length=ChatResponseLength.DEFAULT,
+                custom_prompt=None,
+            )
+
+        settings = project.advanced_settings
+        if not settings.HasField("goal_settings") or not settings.HasField(
+            "response_style_settings"
+        ):
+            raise UnknownRPCMethodError(
+                "Android GetProject returned a partial chat-settings block",
+                method_id=GET_PROJECT_METHOD,
+                path=(0, 7),
+                source="AndroidChatAPI.get_settings",
+            )
+        goal_code = settings.goal_settings.goal
+        response_length_code = settings.response_style_settings.response_length
+        try:
+            goal = ChatGoal(goal_code)
+            response_length = ChatResponseLength(response_length_code)
+        except ValueError as exc:
+            raise UnknownRPCMethodError(
+                "unknown Android chat-settings enum code "
+                f"(goal={goal_code!r}, response_length={response_length_code!r})",
+                method_id=GET_PROJECT_METHOD,
+                path=(0, 7),
+                source="AndroidChatAPI.get_settings",
+                data_at_failure=(goal_code, response_length_code),
+            ) from exc
+        custom_prompt = settings.goal_settings.custom_prompt or None
+        if goal == ChatGoal.CUSTOM and custom_prompt is None:
+            raise UnknownRPCMethodError(
+                "Android GetProject returned CUSTOM chat settings without a prompt",
+                method_id=GET_PROJECT_METHOD,
+                path=(0, 7, 0, 1),
+                source="AndroidChatAPI.get_settings",
+            )
+        if goal != ChatGoal.CUSTOM:
+            custom_prompt = None
+        return _ChatSettingsRead(
+            goal=goal,
+            response_length=response_length,
+            custom_prompt=custom_prompt,
+        )
+
+    async def _send_note(
+        self,
+        *,
+        notebook_id: str,
+        answer_text: str,
+        references: list[ChatReference],
+        title: str,
+        clean_answer: str,
+        citation_anchors: list[tuple[ChatReference, int]],
+    ) -> Note:
+        from .codecs.notes import build_saved_response_payload
+
+        source_passages, rich_content = build_saved_response_payload(
+            clean_answer,
+            references,
+            citation_anchors,
+        )
+        return await create_note(
+            self._transport,
+            notebook_id,
+            title=title,
+            content=answer_text,
+            note_type=SAVED_RESPONSE_NOTE_TYPE,
+            source_passages=source_passages,
+            tailwind_doc_content=rich_content,
+        )
+
+
+__all__ = [
+    "AndroidChatAPI",
+    "CANCEL_GENERATION_METHOD",
+    "DELETE_CHAT_TURNS_METHOD",
+    "GENERATE_FREE_FORM_STREAMED_METHOD",
+    "GET_PROJECT_METHOD",
+    "GET_CHAT_SESSION_STATUS_METHOD",
+    "LIST_CHAT_SESSIONS_METHOD",
+    "LIST_CHAT_TURNS_METHOD",
+    "MUTATE_PROJECT_METHOD",
+]

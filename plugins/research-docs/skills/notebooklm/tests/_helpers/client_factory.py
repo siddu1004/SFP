@@ -1,0 +1,136 @@
+"""Canonical :class:`NotebookLMClient` shell construction helper for tests."""
+
+from __future__ import annotations
+
+from collections.abc import Awaitable, Callable
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
+
+import httpx
+
+from notebooklm._client_assembly import BackendName, _assemble_client
+from notebooklm._client_contracts import CookieRotator, CookieSaver
+from notebooklm._client_options import normalize_legacy_client_options
+from notebooklm._runtime.config import (
+    DEFAULT_CHAT_RESPONSE_MAX_BYTES,
+    DEFAULT_CONNECT_TIMEOUT,
+    DEFAULT_KEEPALIVE_MIN_INTERVAL,
+    DEFAULT_MAX_CONCURRENT_RPCS,
+    DEFAULT_MAX_CONCURRENT_UPLOADS,
+    DEFAULT_TIMEOUT,
+)
+from notebooklm.auth import AuthTokens
+from notebooklm.client import NotebookLMClient
+from notebooklm.types import RpcTelemetryEvent
+
+if TYPE_CHECKING:
+    from notebooklm._android.auth import MasterTokenReader, OAuthMinter
+    from notebooklm._http_client_factory import HttpClientFactories
+    from notebooklm.types import ConnectionLimits
+
+
+def build_client_shell_for_tests(
+    auth: AuthTokens,
+    timeout: float = DEFAULT_TIMEOUT,
+    connect_timeout: float = DEFAULT_CONNECT_TIMEOUT,
+    refresh_callback: Callable[[int], Awaitable[AuthTokens]] | None = None,
+    refresh_retry_delay: float = 0.2,
+    keepalive: float | None = None,
+    keepalive_min_interval: float = DEFAULT_KEEPALIVE_MIN_INTERVAL,
+    keepalive_storage_path: Path | None = None,
+    rate_limit_max_retries: int = 3,
+    server_error_max_retries: int = 3,
+    limits: ConnectionLimits | None = None,
+    max_concurrent_uploads: int | None = DEFAULT_MAX_CONCURRENT_UPLOADS,
+    max_concurrent_rpcs: int | None = DEFAULT_MAX_CONCURRENT_RPCS,
+    upload_timeout: httpx.Timeout | None = None,
+    on_rpc_event: Callable[[RpcTelemetryEvent], object] | None = None,
+    cookie_saver: CookieSaver | None = None,
+    cookie_rotator: CookieRotator | None = None,
+    chat_response_max_bytes: int | None = DEFAULT_CHAT_RESPONSE_MAX_BYTES,
+    *,
+    backend: BackendName | None = None,
+    decode_response: Callable[..., Any] | None = None,
+    sleep: Callable[[float], Awaitable[Any]] | None = None,
+    is_auth_error: Callable[[Exception], bool] | None = None,
+    async_client_factory: Callable[..., httpx.AsyncClient] | None = None,
+    http_client_factories: HttpClientFactories | None = None,
+    master_token_reader: MasterTokenReader | None = None,
+    oauth_minter: OAuthMinter | None = None,
+) -> NotebookLMClient:
+    """Build a client shell through the production assembly seam.
+
+    The helper preserves the historical test-only seam kwargs without adding
+    them to :class:`NotebookLMClient`'s public constructor: it creates an
+    uninitialized instance and runs the same
+    :func:`notebooklm._client_assembly._assemble_client` function that
+    ``NotebookLMClient.__init__`` delegates to, forwarding the seam kwargs
+    that only exist on the assembly function.
+
+    Because the wiring is the production function itself, a constructor
+    refactor can no longer strand this factory the way issues #1196
+    (open-time upload-semaphore loop reset needed ``_source_uploader``)
+    and #1225 (open-time ChatAPI conversation-lock reset needed ``chat``)
+    did when this helper still hand-wired private attributes against
+    ``NotebookLMClient.__new__``. The shell therefore carries the full
+    production attribute surface (feature APIs included) — pinned by
+    ``tests/_guardrails/test_client_factory_parity.py``.
+
+    Shell-specific defaults (unchanged from the historical helper):
+
+    - ``refresh_callback=None`` — no auth-refresh coordination unless a
+      test injects one (production binds the Web-owned session refresh
+      operation).
+    - ``keepalive_storage_path`` — passed through verbatim, bypassing the
+      production canonicalization (``expanduser().resolve()``) of
+      ``auth.storage_path``; an explicit ``None`` still falls through to
+      ``compose_client_internals``' own raw ``auth.storage_path``
+      fallback, as it always did.
+    - Web-only decoder/classifier overrides resolve into ``ClientSeams`` for a
+      Web shell. An Android shell retains the raw override values without
+      importing Web code and resolves them only if its deprecated sidecar is
+      materialized.
+    - Android-only master-token reader/minter overrides replace the concrete
+      ``ProfileStore`` / ``MintService`` pair at the same production assembly
+      boundary; neither capability is invoked until the shell is opened.
+    - The client is returned **unopened**: loop binding still happens at
+      ``open()`` time (via ``__aenter__``), exactly as in production.
+    """
+    client = NotebookLMClient.__new__(NotebookLMClient)
+    normalized = normalize_legacy_client_options(
+        timeout=timeout,
+        keepalive=keepalive,
+        keepalive_min_interval=keepalive_min_interval,
+        rate_limit_max_retries=rate_limit_max_retries,
+        server_error_max_retries=server_error_max_retries,
+        limits=limits,
+        max_concurrent_uploads=max_concurrent_uploads,
+        max_concurrent_rpcs=max_concurrent_rpcs,
+        upload_timeout=upload_timeout,
+        on_rpc_event=on_rpc_event,
+        cookie_saver=cookie_saver,
+        cookie_rotator=cookie_rotator,
+        chat_response_max_bytes=chat_response_max_bytes,
+        backend=backend,
+    )
+    extra_android_credentials: dict[str, Any] = {}
+    if master_token_reader is not None:
+        extra_android_credentials["master_token_reader"] = master_token_reader
+    if oauth_minter is not None:
+        extra_android_credentials["oauth_minter"] = oauth_minter
+    _assemble_client(
+        client,
+        auth=auth,
+        options=normalized,
+        refresh_callback=refresh_callback,
+        refresh_retry_delay=refresh_retry_delay,
+        keepalive_storage_path=keepalive_storage_path,
+        connect_timeout=connect_timeout,
+        decode_response=decode_response,
+        sleep=sleep,
+        is_auth_error=is_auth_error,
+        async_client_factory=async_client_factory,
+        http_client_factories=http_client_factories,
+        **extra_android_credentials,
+    )
+    return client

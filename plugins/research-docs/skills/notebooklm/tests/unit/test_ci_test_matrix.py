@@ -1,0 +1,929 @@
+"""Regression tests for the independent GitHub Actions test matrix."""
+
+from __future__ import annotations
+
+import ast
+import os
+import subprocess
+from pathlib import Path
+
+import pytest
+import yaml
+
+pytestmark = pytest.mark.repo_lint
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+WORKFLOW = PROJECT_ROOT / ".github" / "workflows" / "test.yml"
+AUTH_PATCH_AUDIT_WORKFLOW = PROJECT_ROOT / ".github" / "workflows" / "auth-patch-audit.yml"
+NIGHTLY_WORKFLOW = PROJECT_ROOT / ".github" / "workflows" / "nightly.yml"
+NIGHTLY_CHECKS_WORKFLOW = PROJECT_ROOT / ".github" / "workflows" / "nightly-checks.yml"
+VERIFY_PACKAGE_WORKFLOW = PROJECT_ROOT / ".github" / "workflows" / "verify-package.yml"
+PYPROJECT = PROJECT_ROOT / "pyproject.toml"
+REFACTOR_QUALIFICATION_FILES = {
+    PROJECT_ROOT / "tests" / "unit" / "test_client_lifecycle_waves.py",
+    PROJECT_ROOT / "tests" / "_guardrails" / "test_backend_coupling_observability.py",
+}
+PR_LIFECYCLE_CONTRACTS = {
+    PROJECT_ROOT / "tests" / "unit" / "test_client_lifecycle_waves.py": (
+        "test_open_is_transactional_and_concurrent_callers_coalesce",
+        "test_open_failure_rolls_back_every_transport_and_preserves_original",
+        "test_cancelling_non_owner_open_does_not_abort_owner",
+        "test_cancelled_close_aborts_hung_graceful_wait_but_finishes_teardown",
+        "test_close_reopen_allocates_a_new_resource_epoch",
+        "test_registered_child_self_close_fails_fast_without_leaking_admission",
+        "test_poll_callback_self_close_fails_fast_and_poll_settles_once",
+    ),
+    PROJECT_ROOT / "tests" / "unit" / "test_runtime_lifecycle.py": (
+        "test_root_open_is_idempotent_and_preserves_transport_generation",
+        "test_root_close_runs_hooks_before_transport_resource_teardown",
+        "test_root_construction_is_loop_agnostic_and_freezes_ownership_graph",
+    ),
+    PROJECT_ROOT / "tests" / "unit" / "test_session_close.py": (
+        "test_client_close_default_drain_is_true",
+        "test_client_close_drain_false_skips_drain",
+    ),
+    PROJECT_ROOT / "tests" / "unit" / "test_call_supervisor.py": (
+        "test_record_started_keeps_phase_a_counting_before_drain_rejection",
+        "test_lifecycle_transitions_gate_top_level_nested_and_child_work",
+    ),
+    PROJECT_ROOT / "tests" / "unit" / "test_backend_selection.py": (
+        "test_selection_construction_reads_no_files_tokens_or_network",
+    ),
+}
+PUBLISH_WORKFLOW = PROJECT_ROOT / ".github" / "workflows" / "publish.yml"
+TESTPYPI_PUBLISH_WORKFLOW = PROJECT_ROOT / ".github" / "workflows" / "testpypi-publish.yml"
+SUPPORTED_OSES = ["ubuntu-latest", "macos-latest", "windows-latest"]
+SUPPORTED_PYTHONS = ["3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+GENERATION_E2E = Path(__file__).resolve().parents[1] / "e2e" / "test_generation.py"
+E2E_DIR = Path(__file__).resolve().parents[1] / "e2e"
+
+
+def _step(job: dict[str, object], name: str) -> dict[str, object]:
+    steps = job["steps"]
+    assert isinstance(steps, list)
+    return next(step for step in steps if isinstance(step, dict) and step.get("name") == name)
+
+
+def test_cinematic_video_is_opt_in_but_one_ordinary_video_remains_default() -> None:
+    tree = ast.parse(GENERATION_E2E.read_text(encoding="utf-8"))
+    classes = {node.name: node for node in tree.body if isinstance(node, ast.ClassDef)}
+
+    cinematic = classes["TestCinematicVideoGeneration"]
+    assert "pytest.mark.variants" in {ast.unparse(node) for node in cinematic.decorator_list}
+
+    ordinary = classes["TestVideoGeneration"]
+    assert "pytest.mark.variants" not in {ast.unparse(node) for node in ordinary.decorator_list}
+    default = next(
+        node
+        for node in ordinary.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and node.name == "test_generate_video_default"
+    )
+    assert "pytest.mark.variants" not in {ast.unparse(node) for node in default.decorator_list}
+
+
+def test_readonly_e2e_tests_never_request_mutating_managed_role_fixtures() -> None:
+    offenders: list[str] = []
+
+    def inspect(
+        path: Path,
+        node: ast.FunctionDef | ast.AsyncFunctionDef,
+        *,
+        inherited_readonly: bool = False,
+    ) -> None:
+        decorators = {ast.unparse(decorator) for decorator in node.decorator_list}
+        if not inherited_readonly and "pytest.mark.readonly" not in decorators:
+            return
+        fixtures = {argument.arg for argument in (*node.args.posonlyargs, *node.args.args)}
+        forbidden = fixtures & {"generation_notebook_id", "multi_source_notebook_id"}
+        if forbidden:
+            offenders.append(f"{path.name}::{node.name}: {sorted(forbidden)}")
+
+    for path in sorted(E2E_DIR.glob("test_*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        for node in tree.body:
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                inspect(path, node)
+            elif isinstance(node, ast.ClassDef):
+                inherited = "pytest.mark.readonly" in {
+                    ast.unparse(decorator) for decorator in node.decorator_list
+                }
+                for member in node.body:
+                    if isinstance(member, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                        inspect(path, member, inherited_readonly=inherited)
+    assert offenders == []
+
+
+def test_test_matrix_is_independent_and_preserves_ci_contract() -> None:
+    """PRs use three full routine cells plus two conservative focused-OS cells."""
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    jobs = workflow["jobs"]
+
+    assert {"quality", "test", "repo-lint"} <= set(jobs)
+    assert "auth-patch-coverage-delta" not in jobs
+    assert jobs["quality"]["name"] == "Code Quality"
+    assert jobs["test"]["name"] == "Test (${{ matrix.os }}, Python ${{ matrix.python-version }})"
+    assert "needs" not in jobs["test"]
+    assert jobs["test"]["strategy"]["fail-fast"] is False
+
+    matrix = jobs["test"]["strategy"]["matrix"]
+    # The full 3-OS by 5-Python product is nightly's job (see
+    # ``test_nightly_runs_full_sha_pinned_compatibility_matrix``). PRs retain
+    # oldest/canonical/newest full Linux runs and two audited OS smoke cells.
+    assert set(matrix) == {"include"}
+    assert matrix["include"] == [
+        {
+            "os": "ubuntu-latest",
+            "python-version": "3.10",
+            "canonical": False,
+            "windows_playwright": False,
+            "selection": "full",
+        },
+        {
+            "os": "ubuntu-latest",
+            "python-version": "3.12",
+            "canonical": True,
+            "windows_playwright": False,
+            "selection": "full",
+        },
+        {
+            "os": "ubuntu-latest",
+            "python-version": "3.15",
+            "canonical": False,
+            "windows_playwright": False,
+            "selection": "full",
+        },
+        {
+            "os": "macos-latest",
+            "python-version": "3.12",
+            "canonical": False,
+            "windows_playwright": False,
+            "selection": "platform",
+        },
+        {
+            "os": "windows-latest",
+            "python-version": "3.12",
+            "canonical": False,
+            "windows_playwright": True,
+            "selection": "platform",
+        },
+    ]
+    assert {cell["os"] for cell in matrix["include"]} == set(SUPPORTED_OSES)
+
+
+def test_pr_matrix_runs_once_without_coverage_and_canonical_owns_reality() -> None:
+    """Every cell runs one resolved routine suite; canonical owns browser contracts."""
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    test_job = workflow["jobs"]["test"]
+
+    suite_step = _step(test_job, "Run tests without coverage")
+    suite_command = str(suite_step["run"])
+    assert "if" not in suite_step
+    assert '-m "$TEST_SELECTION"' in suite_command
+    assert suite_step["env"]["TEST_SELECTION"] == "${{ steps.routine-selection.outputs.selection }}"
+    assert suite_step["shell"] == "bash"
+    assert "-n auto" in suite_command
+    assert "--dist loadgroup" in suite_command
+    assert "--no-cov" in suite_command
+
+    resolver = _step(test_job, "Resolve routine selection")
+    assert resolver["id"] == "routine-selection"
+    resolver_command = str(resolver["run"])
+    assert "compat_smoke" in resolver_command
+    assert "high-risk runtime" in resolver_command
+    assert "git diff --name-only" in resolver_command
+    assert resolver["env"]["PLATFORM_ROLLOUT_READY"] == "${{ vars.CI_PLATFORM_SELECTION_READY }}"
+    assert "src/notebooklm/" in resolver_command
+
+    manifest = _step(test_job, "Validate focused-platform manifest")
+    assert manifest["id"] == "platform-manifest"
+    manifest_command = str(manifest["run"])
+    assert "ci-platform-selection.json" in manifest_command
+    assert "paths must be a non-empty list" in manifest_command
+    assert "missing manifest path" in manifest_command
+
+    # The ordinary PR workflow stays coverage-free. The release/manual auth
+    # delta runs in its own workflow.
+    assert "--cov" not in str(test_job)
+    step_names = {step.get("name") for step in test_job["steps"]}
+    assert "Run tests with coverage" not in step_names
+    assert "Run compatibility tests without coverage" not in step_names
+    assert "Assert per-file coverage floors" not in step_names
+
+    canonical_steps = {
+        "Get Playwright version",
+        "Cache Playwright browsers",
+        "Install Playwright browsers",
+        "Install Playwright system dependencies (Linux)",
+        "Run required external-reality probes",
+        "Run Playwright-dependent unit tests serially",
+        "Run critical contract guards",
+        "Run PR contract suites",
+    }
+    for name in canonical_steps:
+        assert _step(test_job, name)["if"] == "matrix.canonical"
+
+    reality_command = str(_step(test_job, "Run required external-reality probes")["run"])
+    assert "-m reality" in reality_command
+    assert "--require-reality" in reality_command
+
+    playwright_command = str(_step(test_job, "Run Playwright-dependent unit tests serially")["run"])
+    assert "tests/unit" in playwright_command
+    assert (
+        "(requires_playwright or requires_chromium) and not reality and not refactor_qualification"
+    ) in playwright_command
+    assert "-n 0" in playwright_command
+    assert "--no-cov" in playwright_command
+
+    critical_command = str(_step(test_job, "Run critical contract guards")["run"])
+    assert "-n auto" in critical_command
+    assert "--timeout=180" in critical_command
+    assert "--no-cov" in critical_command
+    assert "test_baseline_registry_is_non_trivial" in critical_command
+    assert "test_baseline_matches_committed_file" in critical_command
+    assert "test_no_flat_cookie_projection_reaches_an_http_request" in critical_command
+    assert "test_no_cli_module_imports_minting_primitives" in critical_command
+    assert "test_no_bare_master_token_derivation_outside_paths_module" in critical_command
+    assert "test_raw_sync_playwright_is_confined_to_policy_gateway" in critical_command
+    assert "test_wire_contract.py::test_every_adapter_constant_is_declared" in critical_command
+    assert (
+        "test_builtin_shadowed_annotations.py::"
+        "test_class_body_annotations_do_not_name_a_shadowed_builtin"
+    ) in critical_command
+    assert "tests/unit/test_ci_test_matrix.py" in critical_command
+
+    pr_contract_command = str(_step(test_job, "Run PR contract suites")["run"])
+    assert "-m" in pr_contract_command
+    assert "pr_contract" in pr_contract_command
+    assert "--no-cov" in pr_contract_command
+
+    smoke = _step(test_job, "Run Windows Playwright compatibility smoke serially")
+    assert smoke["if"] == "matrix.windows_playwright"
+    smoke_command = str(smoke["run"])
+    assert (
+        "tests/unit/test_windows_compatibility.py::TestPlaywrightSmokeTest::"
+        "test_playwright_initializes_with_context_manager"
+    ) in smoke_command
+    assert (
+        "tests/unit/test_windows_compatibility.py::TestPlaywrightSmokeTest::"
+        "test_playwright_initializes_after_selector_opt_in"
+    ) in smoke_command
+    assert "-m requires_playwright" in smoke_command
+    assert "-n 0" in smoke_command
+    assert "--no-cov" in smoke_command
+
+
+def test_refactor_qualification_is_out_of_prs_and_in_manual_nightly_release_lanes() -> None:
+    """Exhaustive migration tests run once per supported Python, not in every PR cell."""
+    assert '"refactor_qualification:' in PYPROJECT.read_text(encoding="utf-8")
+    for path in REFACTOR_QUALIFICATION_FILES:
+        assert "pytest.mark.refactor_qualification" in path.read_text(encoding="utf-8")
+    for path, contract_names in PR_LIFECYCLE_CONTRACTS.items():
+        source = path.read_text(encoding="utf-8")
+        tree = ast.parse(source)
+        for stmt in tree.body:
+            if isinstance(stmt, ast.Assign):
+                for target in stmt.targets:
+                    if isinstance(target, ast.Name) and target.id == "pytestmark":
+                        assigned_repr = ast.unparse(stmt.value)
+                        assert "refactor_qualification" not in assigned_repr
+                        assert "repo_lint" not in assigned_repr
+
+        functions = {
+            node.name: node
+            for node in tree.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        }
+        for contract_name in contract_names:
+            assert contract_name in functions, f"Expected {contract_name} in {path}"
+            fn = functions[contract_name]
+            decorator_names = [ast.unparse(d) for d in fn.decorator_list]
+            assert not any("refactor_qualification" in d for d in decorator_names), (
+                f"{contract_name} in {path} must not be decorated with refactor_qualification"
+            )
+
+    pr = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    pr_test = pr["jobs"]["test"]
+    ordinary_pr = str(_step(pr_test, "Run tests without coverage")["run"])
+    routine_selector = str(_step(pr_test, "Resolve routine selection")["run"])
+    playwright_pr = str(_step(pr_test, "Run Playwright-dependent unit tests serially")["run"])
+    assert '"$TEST_SELECTION"' in ordinary_pr
+    assert "not refactor_qualification" in routine_selector
+    assert "not refactor_qualification" in playwright_pr
+
+    manual = pr["jobs"]["repo-lint"]
+    assert manual["if"] == "github.event_name == 'workflow_dispatch'"
+    manual_command = str(_step(manual, "Run refactor qualification tests")["run"])
+    assert "-m refactor_qualification" in manual_command
+    assert "--no-cov" in manual_command
+    historical_command = str(_step(manual, "Run historical qualification tests")["run"])
+    assert "--run-historical" in historical_command
+    assert "-m historical" in historical_command
+    assert "--no-cov" in historical_command
+
+    nightly = yaml.safe_load(NIGHTLY_CHECKS_WORKFLOW.read_text(encoding="utf-8"))
+    compatibility = nightly["jobs"]["compatibility"]
+    ordinary_nightly = str(_step(compatibility, "Run compatibility tests without coverage")["run"])
+    assert "not refactor_qualification" in ordinary_nightly
+    qualifier = _step(compatibility, "Run refactor qualification on every supported Python")
+    assert qualifier["if"] == "matrix.os == 'ubuntu-latest'"
+    assert "-m refactor_qualification" in str(qualifier["run"])
+    assert compatibility["strategy"]["matrix"]["python-version"] == SUPPORTED_PYTHONS
+
+    coverage = nightly["jobs"]["coverage"]
+    assert "not refactor_qualification" in str(
+        _step(coverage, "Run ordinary tests with coverage")["run"]
+    )
+    assert "not refactor_qualification" in str(
+        _step(coverage, "Append Playwright-dependent unit coverage")["run"]
+    )
+    assert "not refactor_qualification" in str(
+        _step(nightly["jobs"]["repo-lint"], "Run repository lint tests")["run"]
+    )
+
+    qualification = yaml.safe_load(
+        (PROJECT_ROOT / ".github" / "workflows" / "offline-qualification.yml").read_text(
+            encoding="utf-8"
+        )
+    )
+    candidate = qualification["jobs"]["candidate-wheel"]
+    assert candidate["strategy"]["matrix"]["os"] == SUPPORTED_OSES
+    assert candidate["strategy"]["matrix"]["python-version"] == SUPPORTED_PYTHONS
+    install = str(
+        _step(candidate, "Install exact candidate wheel and qualification dependencies")["run"]
+    )
+    assert "mcp" in install
+    assert "server" in install
+    routine = str(
+        _step(candidate, "Run routine unit, integration, server, MCP, and REST qualification")[
+            "run"
+        ]
+    )
+    assert "tests/unit tests/integration tests/server" in routine
+    assert "not refactor_qualification" in routine
+    assert "-m refactor_qualification" in str(
+        _step(candidate, "Run active extended qualification once")["run"]
+    )
+
+    for release_path in (PUBLISH_WORKFLOW, TESTPYPI_PUBLISH_WORKFLOW):
+        release = yaml.safe_load(release_path.read_text(encoding="utf-8"))
+        build = release["jobs"]["build-and-test"]
+        assert build["outputs"]["candidate_sha"] == "${{ steps.candidate.outputs.sha }}"
+        resolved = str(_step(build, "Resolve candidate commit")["run"])
+        if release_path == PUBLISH_WORKFLOW:
+            assert "git rev-parse HEAD" in resolved
+            assert build["steps"][0]["with"]["ref"] == ("${{ needs.resolve-release.outputs.sha }}")
+        else:
+            assert "${GITHUB_SHA}^{commit}" in resolved
+        release_qualification = release["jobs"]["offline-qualification"]
+        assert release_qualification["uses"] == "./.github/workflows/offline-qualification.yml"
+        assert release_qualification["needs"] == "build-and-test"
+        assert release_qualification["with"]["candidate_sha"] == (
+            "${{ needs.build-and-test.outputs.candidate_sha }}"
+        )
+
+    verify = yaml.safe_load(VERIFY_PACKAGE_WORKFLOW.read_text(encoding="utf-8"))["jobs"]["verify"]
+    assert "not refactor_qualification" in str(_step(verify, "Run routine unit tests")["run"])
+    assert "-m refactor_qualification" in str(_step(verify, "Run refactor qualification")["run"])
+
+
+def test_auth_patch_coverage_delta_is_release_gated_and_manually_dispatchable() -> None:
+    workflow = yaml.safe_load(AUTH_PATCH_AUDIT_WORKFLOW.read_text(encoding="utf-8"))
+    triggers = workflow.get("on", workflow.get(True))
+    assert set(triggers) == {"workflow_call", "workflow_dispatch"}
+    assert set(triggers["workflow_call"]["inputs"]) == {
+        "custom_branch",
+        "base_ref",
+        "release_audit",
+        "release_allowances_json",
+    }
+    assert set(triggers["workflow_dispatch"]["inputs"]) == {"custom_branch", "base_ref"}
+    for trigger in triggers.values():
+        assert trigger["inputs"]["custom_branch"]["default"] == ""
+        assert trigger["inputs"]["base_ref"]["default"] == ""
+
+    job = workflow["jobs"]["auth-patch-coverage-delta"]
+    assert job["name"] == "auth-patch-coverage-delta"
+    assert job["runs-on"] == "ubuntu-latest"
+    assert "if" not in job
+    checkout = next(step for step in job["steps"] if "actions/checkout@" in str(step.get("uses")))
+    assert checkout["with"]["ref"] == "${{ inputs.custom_branch || github.ref }}"
+    assert checkout["with"]["fetch-depth"] == 0
+
+    base_resolution = _step(job, "Resolve comparison base")
+    assert base_resolution["id"] == "base"
+    assert base_resolution["env"] == {
+        "REQUESTED_BASE": "${{ inputs.base_ref }}",
+        "RELEASE_AUDIT": "${{ inputs.release_audit }}",
+    }
+    base_command = str(base_resolution["run"])
+    assert 'if [ -n "$REQUESTED_BASE" ]' in base_command
+    assert 'elif [ "$GITHUB_REF_TYPE" = "tag" ]' in base_command
+    assert "git tag --sort=-version:refname" in base_command
+    assert "git merge-base HEAD origin/main" in base_command
+    assert 'echo "base=$base"' in base_command
+
+    base = _step(job, "Run base coverage sequence")
+    head = _step(job, "Run head coverage sequence")
+    for step, filename in ((base, "coverage-base.json"), (head, "coverage-head.json")):
+        assert "if" not in step
+        command = str(step["run"])
+        assert "--dist loadgroup" in command
+        assert "not repo_lint and not reality" in command
+        assert "find tests/unit -maxdepth 1" in command
+        assert "find tests/unit/cli -maxdepth 1" in command
+        assert "tests/integration" not in command
+        assert "tests/server" not in command
+        assert "--cov=src/notebooklm" in command
+        assert f"json:$RUNNER_TEMP/{filename}" in command
+        assert "--cov-fail-under=0" in command
+        assert "scripts/check_coverage_thresholds.py" not in command
+        assert "playwright install" not in command
+
+    collection = str(_step(job, "Collect base and head scenario nodes")["run"])
+    assert "collection-base.json" in collection
+    assert "collection-head.json" in collection
+    validation = str(_step(job, "Validate auth behavior and coverage delta")["run"])
+    assert "--base-collection" in validation and "--head-collection" in validation
+    assert "scripts/check_auth_coverage_delta.py" in validation
+    assert "--base-workspace" in validation and "--head-workspace" in validation
+    assert "test_audit_auth_patch_sites.py" in validation
+    assert "test_audit_auth_shared_mutations.py" in validation
+    assert "test_auth_behavior_scenario_policy.py" in validation
+    assert "test_auth_coverage_allowance_policy.py" in validation
+    assert "test_auth_lifecycle_cleanup_policy.py" in validation
+    assert "test_check_auth_coverage_delta.py" in validation
+    assert "--timeout=180" in validation
+    assert "scripts/check_auth_lifecycle_cleanup_policy.py" in validation
+    assert "--head-collection" in validation
+
+    upload = _step(job, "Upload auth patch coverage evidence on failure")
+    assert upload["if"] == "failure()"
+    assert "coverage-base.json" in str(upload["with"]["path"])
+    assert "coverage-head.json" in str(upload["with"]["path"])
+
+    publish = yaml.safe_load(PUBLISH_WORKFLOW.read_text(encoding="utf-8"))
+    release_gate = publish["jobs"]["auth-patch-audit"]
+    assert release_gate["uses"] == "./.github/workflows/auth-patch-audit.yml"
+    assert set(publish["jobs"]["build-and-test"]["needs"]) == {
+        "resolve-release",
+        "auth-patch-audit",
+    }
+    assert release_gate["with"]["release_audit"] is True
+    assert set(publish["jobs"]["publish"]["needs"]) == {"build-and-test", "offline-qualification"}
+
+
+@pytest.mark.parametrize(
+    ("dispatch_ref", "requested_tag", "succeeds"),
+    [
+        ("refs/heads/main", "v0.1.0", True),
+        ("refs/heads/feature", "v0.1.0", False),
+        ("refs/heads/main", "v0.2.0", False),
+        ("refs/heads/main", "v0.1.0;echo injected", False),
+    ],
+)
+def test_release_recovery_resolves_only_existing_tags_from_main(
+    tmp_path: Path, dispatch_ref: str, requested_tag: str, succeeds: bool
+) -> None:
+    workflow = yaml.safe_load(PUBLISH_WORKFLOW.read_text(encoding="utf-8"))
+    script = _step(workflow["jobs"]["resolve-release"], "Validate release target")["run"]
+
+    def git(*args: str) -> str:
+        return subprocess.check_output(["git", *args], cwd=tmp_path, text=True).strip()
+
+    git("init", "--initial-branch=main")
+    git(
+        "-c",
+        "user.name=Test",
+        "-c",
+        "user.email=test@example.com",
+        "commit",
+        "--allow-empty",
+        "-m",
+        "candidate",
+    )
+    candidate = git("rev-parse", "HEAD")
+    git("tag", "v0.1.0")
+    git(
+        "-c",
+        "user.name=Test",
+        "-c",
+        "user.email=test@example.com",
+        "commit",
+        "--allow-empty",
+        "-m",
+        "workflow fix",
+    )
+    git("update-ref", "refs/remotes/origin/main", "HEAD")
+    output = tmp_path / "output"
+    result = subprocess.run(
+        ["bash", "-c", script],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        env={
+            **os.environ,
+            "GITHUB_EVENT_NAME": "workflow_dispatch",
+            "GITHUB_REF": dispatch_ref,
+            "REQUESTED_TAG": requested_tag,
+            "GITHUB_OUTPUT": str(output),
+        },
+    )
+    assert (result.returncode == 0) is succeeds, result.stderr
+    if succeeds:
+        assert output.read_text() == f"release_tag=v0.1.0\nsha={candidate}\n"
+    else:
+        assert not output.exists()
+
+
+def test_nightly_runs_full_sha_pinned_compatibility_matrix() -> None:
+    """Nightly owns the full 3-OS by 5-Python ordinary test matrix (PRs run a reduced one)."""
+    workflow = yaml.safe_load(NIGHTLY_CHECKS_WORKFLOW.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["compatibility"]
+
+    assert job["needs"] == "resolve-target"
+    assert "if" not in job
+    assert job["runs-on"] == "${{ matrix.os }}"
+    assert job["strategy"] == {
+        "fail-fast": False,
+        "matrix": {
+            "os": SUPPORTED_OSES,
+            "python-version": SUPPORTED_PYTHONS,
+        },
+    }
+
+    assert "environment" not in job
+    assert "secrets." not in str(job)
+
+    triggers = workflow.get("on", workflow.get(True))
+    assert set(triggers) == {"schedule", "workflow_dispatch"}
+    assert set(triggers["workflow_dispatch"]["inputs"]) == {"custom_branch"}
+    e2e = yaml.safe_load(NIGHTLY_WORKFLOW.read_text(encoding="utf-8"))
+    assert set(e2e["jobs"]) == {"resolve-target", "plan-live-lanes", "e2e", "e2e-readonly"}
+    e2e_triggers = e2e.get("on", e2e.get(True))
+    assert "run_compatibility" not in e2e_triggers["workflow_dispatch"]["inputs"]
+
+    checkout = next(
+        step for step in job["steps"] if str(step.get("uses", "")).startswith("actions/checkout@")
+    )
+    assert checkout["with"] == {
+        "ref": "${{ needs.resolve-target.outputs.sha }}",
+        "fetch-depth": 1,
+        "persist-credentials": False,
+    }
+
+    setup_python = _step(job, "Set up Python ${{ matrix.python-version }}")
+    assert setup_python["with"]["python-version"] == "${{ matrix.python-version }}"
+
+    install_command = str(_step(job, "Install compatibility dependencies")["run"])
+    assert "uv sync --frozen" in install_command
+    for extra in {"browser", "dev", "markdown", "mcp", "server", "impersonate", "cookies"}:
+        assert f"--extra {extra}" in install_command
+
+    import_command = str(_step(job, "Assert native optional dependencies import")["run"])
+    assert "import curl_cffi, rookie_cookies" in import_command
+    assert "callable(rookie_cookies.load)" in import_command
+    assert "callable(rookie_cookies.any_browser)" in import_command
+
+    suite_command = str(_step(job, "Run compatibility tests without coverage")["run"])
+    assert "-n auto" in suite_command
+    assert "--dist loadgroup" in suite_command
+    assert (
+        "not repo_lint and not refactor_qualification and not requires_playwright "
+        "and not requires_chromium"
+    ) in suite_command
+    assert "--no-cov" in suite_command
+
+
+def test_phase_six_keeps_daily_depth_until_observation_gate_is_proven() -> None:
+    """Do not silently trade the daily full product or stress floor for a weekly run."""
+    nightly = yaml.safe_load(NIGHTLY_CHECKS_WORKFLOW.read_text(encoding="utf-8"))
+    triggers = nightly.get("on", nightly.get(True))
+    assert {"cron": "0 6 * * *"} in triggers["schedule"]
+
+    compatibility = nightly["jobs"]["compatibility"]
+    assert compatibility["strategy"]["matrix"]["os"] == SUPPORTED_OSES
+    assert compatibility["strategy"]["matrix"]["python-version"] == SUPPORTED_PYTHONS
+
+    stress = yaml.safe_load(
+        (PROJECT_ROOT / ".github" / "workflows" / "fault-stress.yml").read_text(encoding="utf-8")
+    )
+    stress_triggers = stress.get("on", stress.get(True))
+    assert "pull_request" in stress_triggers
+    assert stress_triggers["schedule"], "Daily stress coverage must remain scheduled"
+
+
+def test_nightly_coverage_is_sha_pinned_secret_free_and_enforces_floors() -> None:
+    """Scheduled/manual nightly owns global and per-file coverage enforcement."""
+    workflow = yaml.safe_load(NIGHTLY_CHECKS_WORKFLOW.read_text(encoding="utf-8"))
+    triggers = workflow.get("on", workflow.get(True))
+    assert set(triggers) == {"schedule", "workflow_dispatch"}
+
+    resolve_job = workflow["jobs"]["resolve-target"]
+    resolve_checkout = next(
+        step
+        for step in resolve_job["steps"]
+        if str(step.get("uses", "")).startswith("actions/checkout@")
+    )
+    assert resolve_checkout["with"] == {
+        "ref": "${{ inputs.custom_branch || github.sha }}",
+        "fetch-depth": 1,
+        "persist-credentials": False,
+    }
+
+    job = workflow["jobs"]["coverage"]
+    assert job["needs"] == "resolve-target"
+    assert "if" not in job
+    assert job["runs-on"] == "ubuntu-latest"
+    assert "environment" not in job
+    assert "secrets." not in str(job)
+
+    checkout = next(
+        step for step in job["steps"] if str(step.get("uses", "")).startswith("actions/checkout@")
+    )
+    assert checkout["uses"] == "actions/checkout@v7"
+    assert checkout["with"] == {
+        "ref": "${{ needs.resolve-target.outputs.sha }}",
+        "fetch-depth": 1,
+        "persist-credentials": False,
+    }
+
+    setup_python = _step(job, "Set up Python")
+    assert setup_python["uses"] == "actions/setup-python@v7"
+    assert setup_python["with"]["python-version"] == "3.12"
+    assert _step(job, "Install uv")["uses"] == (
+        "astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78"
+    )
+
+    install_command = str(_step(job, "Install dependencies")["run"])
+    assert "uv sync --frozen" in install_command
+    for extra in {"browser", "dev", "markdown", "mcp", "server", "impersonate", "cookies"}:
+        assert f"--extra {extra}" in install_command
+
+    assert _step(job, "Install Playwright browsers")["run"] == (
+        "uv run playwright install chromium"
+    )
+    assert _step(job, "Install Playwright system dependencies (Linux)")["run"] == (
+        "uv run playwright install-deps chromium"
+    )
+
+    ordinary_step = _step(job, "Run ordinary tests with coverage")
+    ordinary_command = str(ordinary_step["run"])
+    assert "-n auto" in ordinary_command
+    assert "--dist loadgroup" in ordinary_command
+    assert (
+        "not repo_lint and not refactor_qualification and not requires_playwright "
+        "and not requires_chromium"
+    ) in ordinary_command
+    assert "--cov=src/notebooklm" in ordinary_command
+    assert "--cov-report=" in ordinary_command
+    assert "--cov-fail-under=0" in ordinary_command
+
+    playwright_step = _step(job, "Append Playwright-dependent unit coverage")
+    playwright_command = str(playwright_step["run"])
+    assert "tests/unit" in playwright_command
+    assert (
+        "(requires_playwright or requires_chromium) and not reality and not refactor_qualification"
+    ) in playwright_command
+    assert "-n 0" in playwright_command
+    assert "--cov=src/notebooklm" in playwright_command
+    assert "--cov-append" in playwright_command
+    assert "--cov-report=json:coverage.json" in playwright_command
+    assert "--cov-fail-under=90" in playwright_command
+
+    floor_step = _step(job, "Assert per-file coverage floors")
+    assert floor_step["run"] == (
+        "uv run python scripts/check_coverage_thresholds.py --coverage-json coverage.json"
+    )
+    assert job["steps"].index(ordinary_step) < job["steps"].index(playwright_step)
+    assert job["steps"].index(playwright_step) < job["steps"].index(floor_step)
+
+
+def test_nightly_e2e_maps_backends_and_suites_to_designated_runners() -> None:
+    """Full Web runs on Ubuntu, full Android on macOS, and read-only Web on Windows."""
+    workflow = yaml.safe_load(NIGHTLY_WORKFLOW.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["e2e"]
+    planner = workflow["jobs"]["plan-live-lanes"]
+
+    assert job["strategy"]["matrix"] == "${{ fromJSON(needs.plan-live-lanes.outputs.full_matrix) }}"
+    assert job["env"]["NOTEBOOKLM_BACKEND"] == "${{ matrix.backend }}"
+    assert job["concurrency"] == {
+        "group": "notebooklm-account-${{ matrix.account_slot }}",
+        "queue": "max",
+        "cancel-in-progress": False,
+    }
+    assert job["environment"] == "protected-readonly"
+    assert job["timeout-minutes"] == 360
+
+    planner_run = str(_step(planner, "Select live account slots")["run"])
+    assert "--lane nightly-web-ubuntu" in planner_run
+    assert "--lane nightly-android-macos" in planner_run
+    assert "--lane nightly-readonly-windows" in planner_run
+    assert planner_run.count('"os": "ubuntu-latest"') == 1
+    assert planner_run.count('"os": "macos-latest"') == 1
+    assert planner_run.count('"os": "windows-latest"') == 1
+    assert planner_run.count('"backend": "web"') == 2
+    assert planner_run.count('"backend": "android"') == 1
+    assert planner_run.count('"mode": "full"') == 2
+    assert planner_run.count('"mode": "readonly"') == 1
+    assert '"selection": "readonly and not variants"' in planner_run
+    assert 'selected_lane in {"all", "web"}' in planner_run
+    assert 'selected_lane in {"all", "android"}' in planner_run
+    assert (
+        'selected_lane == "readonly" or (selected_lane == "all" and not test_filter)' in planner_run
+    )
+
+    triggers = workflow.get("on", workflow.get(True))
+    inputs = triggers["workflow_dispatch"]["inputs"]
+    assert inputs["qualification_pr"]["type"] == "string"
+    assert inputs["qualification_pr"]["default"] == ""
+    assert inputs["e2e_lane"]["options"] == ["all", "web", "android", "readonly"]
+
+    install = str(_step(job, "Install dependencies")["run"])
+    assert "uv sync --frozen" in install
+    assert "--extra android" in install
+
+    auth = _step(job, "Materialize selected account")
+    assert auth["env"] == {
+        "NOTEBOOKLM_MASTER_TOKEN_JSON": "${{ secrets[matrix.master_token_secret_name] }}"
+    }
+    assert "materialize_ci_auth.py" in str(auth["run"])
+
+    provision = _step(job, "Provision managed role copies")
+    assert provision["if"] == "steps.auth.outcome == 'success' && steps.sweep.outcome == 'success'"
+    provision_command = str(provision["run"])
+    assert "manage_ci_e2e_notebooks.py provision" in provision_command
+    assert '--mode "${{ matrix.mode }}"' in provision_command
+    assert "--github-env" in provision_command
+
+    preflight = _step(job, "Backend preflight")
+    assert preflight["if"] == "steps.provision.outcome == 'success'"
+    preflight_command = str(preflight["run"])
+    assert "import grpc" in preflight_command
+    assert "import gpsoauth" in preflight_command
+    assert "client.notebooks.get(notebook_id)" in preflight_command
+
+    journal = _step(job, "Configure generation journal policy")
+    journal_command = str(journal["run"])
+    assert "NOTEBOOKLM_E2E_GENERATION_JOURNAL_MODE=required" in journal_command
+    assert "NOTEBOOKLM_E2E_GENERATION_JOURNAL_MODE=off" in journal_command
+
+    primary = _step(job, "Run primary E2E tests")
+    retry = _step(job, "Retry failed E2E tests after 10-min cool-down")
+    assert retry["env"]["TEST_FILTER"] == "${{ inputs.test_filter }}"
+    retry_command = str(retry["run"])
+    assert 'if [ -n "$TEST_FILTER" ]' in retry_command
+    assert "unset E2E_ENFORCE_COVERAGE_FLOOR" in retry_command
+    assert "tests/e2e --last-failed --last-failed-no-failures=none" in retry_command
+
+    primary_command = str(primary["run"])
+    assert '-m "${{ matrix.selection }}"' in primary_command
+    filtered_branch = primary_command.split("else", 1)[0]
+    assert '-m "${{ matrix.selection }}"' in filtered_branch
+
+    curl_smoke = _step(job, "curl_cffi transport smoke")
+    assert "matrix.lane == 'nightly-web-ubuntu'" in str(curl_smoke["if"])
+
+    verifier = _step(job, "Verify generation operation journal")
+    assert "--mode journal" in str(verifier["run"])
+    assert job["steps"].index(verifier) < job["steps"].index(
+        _step(job, "Cleanup managed role copies")
+    )
+    assert _step(job, "Cleanup managed role copies")["if"] == "always()"
+    assert _step(job, "Purge local credentials and handles")["if"] == "always()"
+
+
+def test_verify_package_live_checks_published_wheel_android_and_keeps_web_e2e() -> None:
+    """Package verification proves Android deps/protos/live GetProject without replacing Web."""
+    workflow = yaml.safe_load(VERIFY_PACKAGE_WORKFLOW.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["verify"]
+
+    install = str(_step(job, "Sync locked deps + non-cookies extras")["run"])
+    assert "--extra android" in install
+
+    android = _step(job, "Validate published wheel Android backend")
+    assert "github.repository == 'teng-lin/notebooklm-py'" in android["if"]
+    assert "steps.provision.outcome == 'success'" in android["if"]
+    command = str(android["run"])
+    assert "import grpc" in command
+    assert "import gpsoauth" in command
+    assert "read_pb2.GetProjectRequest.DESCRIPTOR.full_name" in command
+    assert 'NotebookLMClient.from_storage(backend="android")' in command
+    assert 'set(client.backends.values()) != {"android"}' in command
+    assert "client.notebooks.get(notebook_id)" in command
+
+    steps = job["steps"]
+    assert steps.index(android) > steps.index(_step(job, "Materialize selected account"))
+    assert steps.index(android) > steps.index(
+        _step(job, "Install published wheel from TestPyPI (--no-deps)")
+    )
+
+    web_e2e = _step(job, "Run primary E2E tests")
+    assert "NOTEBOOKLM_BACKEND" not in job.get("env", {})
+    assert 'pytest tests/e2e -m "not variants"' in str(web_e2e["run"])
+
+
+def test_release_qualification_uses_exact_candidate_wheel_on_full_platform_matrix() -> None:
+    """Publication is blocked on the reusable, installed-wheel qualification workflow."""
+    workflow_path = PROJECT_ROOT / ".github" / "workflows" / "offline-qualification.yml"
+    workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["candidate-wheel"]
+    assert job["strategy"]["matrix"]["os"] == SUPPORTED_OSES
+    assert job["strategy"]["matrix"]["python-version"] == SUPPORTED_PYTHONS
+    provenance = str(_step(job, "Prove runtime imports the candidate wheel")["run"])
+    assert "candidate-venv" in provenance
+    assert '"src" not in package_path.parts' in provenance
+    routine = str(
+        _step(job, "Run routine unit, integration, server, MCP, and REST qualification")["run"]
+    )
+    assert "tests/unit tests/integration tests/server" in routine
+    assert "not requires_playwright" in routine
+    assert "not requires_chromium" in routine
+    browser = str(_step(job, "Run browser-dependent candidate-wheel qualification")["run"])
+    assert "requires_playwright" in browser
+    assert "-n 0" in browser
+    assert _step(job, "Install Playwright browser for candidate qualification")
+
+
+def test_pr_and_release_workflows_verify_clean_base_wheel() -> None:
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    quality = workflow["jobs"]["quality"]
+    pr_smoke = str(_step(quality, "Verify built base wheel without browser extra")["run"])
+    assert "uv build --wheel" in pr_smoke
+    assert "scripts/check_base_wheel.py" in pr_smoke
+
+    for workflow_path in (PUBLISH_WORKFLOW, TESTPYPI_PUBLISH_WORKFLOW):
+        release = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+        job = release["jobs"]["build-and-test"]
+        smoke = _step(job, "Verify built base wheel without browser extra")
+        assert "scripts/check_base_wheel.py" in str(smoke["run"])
+        assert job["steps"].index(smoke) > job["steps"].index(
+            _step(job, "Upload distribution artifacts")
+        )
+
+
+def test_verify_package_downloads_exact_wheel_before_clean_base_smoke() -> None:
+    workflow = yaml.safe_load(VERIFY_PACKAGE_WORKFLOW.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["verify"]
+    download = _step(job, "Download exact published wheel for base-install smoke")
+    smoke = _step(job, "Verify published base wheel without browser extra")
+
+    assert "pip download" in str(download["run"])
+    assert "--no-deps" in str(download["run"])
+    assert "--only-binary=:all:" in str(download["run"])
+    assert "published-dist/notebooklm_py-*.whl" in str(smoke["run"])
+    assert "scripts/check_base_wheel.py" in str(smoke["run"])
+    assert job["steps"].index(smoke) < job["steps"].index(
+        _step(job, "Sync locked deps + non-cookies extras")
+    )
+
+
+def test_repository_lint_is_a_bounded_manual_only_job() -> None:
+    """Deep repo audits have one manual lane, not one per compatibility cell."""
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["repo-lint"]
+
+    assert job["name"] == "Repository Lint (manual)"
+    assert job["if"] == "github.event_name == 'workflow_dispatch'"
+    assert "needs" not in job
+
+    command = str(_step(job, "Run repository lint tests")["run"])
+    assert '-m "repo_lint and not refactor_qualification"' in command
+    assert "-n auto" in command
+    assert "--timeout=180" in command
+    assert "--no-cov" in command
+    assert "--cov=" not in command
+
+
+def test_repository_lint_is_scheduled_once_in_nightly() -> None:
+    """AST-heavy audits run automatically once against the resolved nightly SHA."""
+    workflow = yaml.safe_load(NIGHTLY_CHECKS_WORKFLOW.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["repo-lint"]
+
+    assert job["needs"] == "resolve-target"
+    assert "if" not in job
+    assert job["runs-on"] == "ubuntu-latest"
+    assert "environment" not in job
+    assert "secrets." not in str(job)
+
+    checkout = next(
+        step for step in job["steps"] if str(step.get("uses", "")).startswith("actions/checkout@")
+    )
+    assert checkout["with"]["ref"] == "${{ needs.resolve-target.outputs.sha }}"
+
+    command = str(_step(job, "Run repository lint tests")["run"])
+    assert '-m "repo_lint and not refactor_qualification"' in command
+    assert "-n auto" in command
+    assert "--timeout=180" in command
+    assert "--no-cov" in command
+
+
+def test_cassette_and_fixture_scans_run_once_in_quality() -> None:
+    """Portable secret scans are not repeated across compatibility cells."""
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    quality_names = {step.get("name") for step in workflow["jobs"]["quality"]["steps"]}
+    test_names = {step.get("name") for step in workflow["jobs"]["test"]["steps"]}
+    scans = {"Assert cassettes are sanitized", "Check fixtures for credential leaks"}
+
+    assert scans <= quality_names
+    assert scans.isdisjoint(test_names)

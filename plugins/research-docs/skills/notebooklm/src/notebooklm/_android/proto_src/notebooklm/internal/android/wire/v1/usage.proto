@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package notebooklm.internal.android.wire.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/internal/labs/tailwind/metering/v1/metering.proto";
+
+// Presence-aware wire overlay for the exact remote
+// google.internal.labs.tailwind.metering.v1.ListQuotaSummaryResponse. Scalar
+message WireQuotaSummaryEntry {
+  optional .google.internal.labs.tailwind.metering.v1.QuotaSummaryEntry.QuotaRefreshWindow window = 5;
+  google.protobuf.Timestamp next_refresh_time = 6;
+  optional double used_micros_percent = 7;
+  optional double remaining_micros_percent = 8;
+}
+
+message WireUserActionQuotaSummary {
+  optional .google.internal.labs.tailwind.metering.v1.UserAction action = 1;
+  optional bool has_sufficient_quota = 2;
+  optional int32 remaining_deferred_artifact_generations = 3;
+  optional .google.internal.labs.tailwind.metering.v1.ActionCostTier cost_tier = 4;
+  optional int32 action_priority = 5;
+  optional double estimated_cost_pct_of_budget = 6;
+}
+
+message WireListQuotaSummaryResponse {
+  optional .google.internal.labs.tailwind.metering.v1.ListQuotaSummaryResponse.Status status = 1;
+  repeated WireQuotaSummaryEntry summaries = 2;
+  repeated .google.internal.labs.tailwind.metering.v1.UserAction out_of_quota_actions = 3;
+  repeated WireUserActionQuotaSummary action_quota_summaries = 4;
+}

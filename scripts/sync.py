@@ -23,7 +23,7 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-IGNORE = shutil.ignore_patterns('.git', 'node_modules', '__pycache__', '.DS_Store', 'bin')
+IGNORE = shutil.ignore_patterns('.git', '.github', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
 VERSION = '3.4.0'
 OUT = os.path.join(ROOT, 'plugins')
@@ -78,11 +78,16 @@ def rename_skill(skill_dir, new_name):
 
 def checkout(repo, src_dir, cache):
     name = repo.split('/')[1]
-    if src_dir and os.path.isdir(os.path.join(src_dir, name)):
-        return os.path.join(src_dir, name)
-    dest = os.path.join(cache, name)
+    safe_name = repo.replace('/', '__')
+    if src_dir:
+        if os.path.isdir(os.path.join(src_dir, safe_name)):
+            return os.path.join(src_dir, safe_name)
+        if os.path.isdir(os.path.join(src_dir, name)):
+            return os.path.join(src_dir, name)
+    dest = os.path.join(cache, safe_name)
     if not os.path.isdir(dest):
-        subprocess.run(['git', 'clone', '-q', '--depth', '1', f'https://github.com/{repo}.git', dest], check=True)
+        env = dict(os.environ, GIT_TERMINAL_PROMPT='0', GCM_INTERACTIVE='never')
+        subprocess.run(['git', 'clone', '-q', '--depth', '1', '--no-tags', '--single-branch', f'https://github.com/{repo}.git', dest], check=True, env=env)
     return dest
 
 
@@ -216,7 +221,7 @@ def main():
             if 'patch' in source:
                 # The template carries a patch for this repo: it must apply to the commit being integrated.
                 patch = os.path.join(ROOT, source['patch'])
-                check = subprocess.run(['git', '-C', repo_dir, 'apply', '--check', patch], capture_output=True, text=True)
+                check = subprocess.run(['git', '-C', repo_dir, 'apply', '--ignore-space-change', '--ignore-whitespace', '--check', patch], capture_output=True, text=True)
                 if check.returncode != 0:
                     sys.exit('%s: %s no longer applies to the upstream commit being integrated. Rebase the patch.\n%s'
                              % (source['repo'], source['patch'], check.stderr.strip()))
@@ -233,6 +238,7 @@ def main():
             add(staged, source, prefix)
         for pattern in source.get('skills', []):
             for skill_src in sorted(glob.glob(os.path.join(repo_dir, pattern))):
+                skill_src = os.path.normpath(skill_src)
                 rel = os.path.relpath(skill_src, repo_dir)
                 if not os.path.isfile(os.path.join(skill_src, 'SKILL.md')):
                     continue
@@ -244,6 +250,12 @@ def main():
         lic = next((f for f in sorted(os.listdir(repo_dir)) if f.upper().startswith(('LICENSE', 'LICENCE'))), None)
         if lic:
             lic_by_repo[source['repo']] = os.path.join(repo_dir, lic)
+        elif source.get('license'):
+            fallback_lic = os.path.join(repo_dir, 'LICENSE')
+            if not os.path.exists(fallback_lic):
+                with open(fallback_lic, 'w', encoding='utf-8') as lf:
+                    lf.write(f"{source['license']} License\n\nSource: https://github.com/{source['repo']}\n")
+            lic_by_repo[source['repo']] = fallback_lic
 
     with open(os.path.join(ROOT, 'sources.lock.json'), 'w', encoding='utf-8') as f:
         json.dump(lock, f, indent=2, sort_keys=True)
@@ -252,10 +264,11 @@ def main():
     # Copy each category's source licenses next to its skills.
     for cat, repos in licenses.items():
         for repo in sorted(repos):
-            if repo in lic_by_repo:
+            if repo in lic_by_repo and lic_by_repo[repo]:
                 d = os.path.join(OUT, cat, 'LICENSES')
                 os.makedirs(d, exist_ok=True)
-                shutil.copy(lic_by_repo[repo], os.path.join(d, repo.split('/')[1] + '.txt'))
+                dest_lic = repo.replace('/', '-') + '.txt'
+                shutil.copy(lic_by_repo[repo], os.path.join(d, dest_lic))
 
     # The router skill: a template plus a generated index of every other skill.
     router = os.path.join(OUT, 'sfp', 'skills', 'sfp')

@@ -1,0 +1,80 @@
+"""Real-supervisor fake transport for Android workflow lifecycle tests."""
+
+from __future__ import annotations
+
+import asyncio
+import inspect
+from collections.abc import Awaitable, Callable
+from typing import Any, TypeVar
+
+from notebooklm._android.epoch import workflow_epoch_for
+from notebooklm._client_metrics import ClientMetrics
+from notebooklm._idempotency import bound_operation_journal_entries
+from notebooklm._runtime.call_supervisor import CallSupervisor
+
+Handler = Callable[[Any, dict[str, Any]], Any]
+ChildT = TypeVar("ChildT")
+
+
+class SupervisedAndroidTransport:
+    """Dispatch fake unary calls through the production admission supervisor."""
+
+    def __init__(self) -> None:
+        self._workflow_session_id = object()
+        self.supervisor = CallSupervisor(
+            metrics=ClientMetrics(),
+            max_concurrent_rpcs=None,
+        )
+        self.supervisor.set_bound_loop(asyncio.get_running_loop())
+        self.supervisor.reset_after_open()
+        self.supervisor.prepare_generation(1)
+        self.supervisor.start_accepting(1)
+        self.handlers: dict[str, Handler | Any] = {}
+        self.calls: list[tuple[str, Any, dict[str, Any]]] = []
+
+    def operation_scope(self, label: str, **kwargs: Any) -> Any:
+        return self.supervisor.operation_scope(label, **kwargs)
+
+    async def spawn_child(
+        self,
+        label: str,
+        factory: Callable[[], Awaitable[ChildT]],
+    ) -> asyncio.Task[ChildT]:
+        """Register fake-transport fanout through the production supervisor."""
+        return await self.supervisor.spawn_child(label, factory)
+
+    async def unary(self, method: str, request: Any, **kwargs: Any) -> Any:
+        expected_epoch = kwargs.get("expected_epoch")
+        if expected_epoch is None:
+            expected_epoch = workflow_epoch_for(self)
+        async with self.supervisor.call_scope(
+            method,
+            None,
+            None,
+            expected_epoch=expected_epoch,
+        ):
+            for entry in bound_operation_journal_entries():
+                entry.mark_dispatched()
+            self.calls.append((method, request, kwargs))
+            result = self.handlers[method]
+            if callable(result):
+                result = result(request, kwargs)
+            if inspect.isawaitable(result):
+                result = await result
+            if isinstance(result, BaseException):
+                raise result
+            return result
+
+    async def force_close_and_reopen(self) -> Any:
+        """Retire epoch one with work active and start epoch two."""
+        old_generation = self.supervisor._current
+        assert old_generation is not None and old_generation.epoch == 1
+        await self.supervisor.begin_closing(1)
+        self.supervisor.mark_closed(1)
+        self.supervisor.reset_after_open()
+        self.supervisor.prepare_generation(2)
+        self.supervisor.start_accepting(2)
+        return old_generation
+
+
+__all__ = ["SupervisedAndroidTransport"]

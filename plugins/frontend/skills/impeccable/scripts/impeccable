@@ -18,7 +18,8 @@ set -eu
 # then skips its own probes and refuses to download, so probing stays cheap
 # and can never loop.
 probe_ok() {
-  case "$(IMPECCABLE_LAUNCHER_PROBE=1 "$1" engine-probe 2>/dev/null || true)" in
+  probe_out=$(IMPECCABLE_LAUNCHER_PROBE=1 "$1" engine-probe 2>/dev/null) || return 1
+  case "$probe_out" in
     impeccable-engine*) return 0 ;;
   esac
   return 1

@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "Transfer Security Boundaries",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1250,
+      540
+    ],
+    "views": [
+      {
+        "id": "upload",
+        "label": "Source upload",
+        "focus": [
+          "localfile",
+          "uploadpolicy",
+          "uploadcreds",
+          "scotty",
+          "source"
+        ],
+        "note": "Upload clients are lifecycle-owned, redirect-disabled, and attach live credentials only after validating the server-named session URL."
+      },
+      {
+        "id": "web-download",
+        "label": "Web download",
+        "focus": [
+          "webasseturl",
+          "webredirect",
+          "webcookies",
+          "webresponse",
+          "webverify"
+        ],
+        "note": "AssetDownloadService uses _redirect_guard or httpx hooks to revalidate each hop before attaching cookie credentials."
+      },
+      {
+        "id": "android-download",
+        "label": "Android download",
+        "focus": [
+          "asseturl",
+          "hoppolicy",
+          "downloadcreds",
+          "response",
+          "verify"
+        ],
+        "note": "Android guarded_transfer keeps one sticky bearer policy per URL; a mid-chain 401 invalidates the observed generation."
+      }
+    ]
+  },
+  "stages": [
+    {
+      "label": "Input"
+    },
+    {
+      "label": "Policy"
+    },
+    {
+      "label": "Credential"
+    },
+    {
+      "label": "Transfer"
+    },
+    {
+      "label": "Verify / publish"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "localfile",
+      "type": "frontend",
+      "label": "Local File",
+      "stage": 0,
+      "row": 0
+    },
+    {
+      "id": "uploadpolicy",
+      "type": "security",
+      "label": "Upload Policy",
+      "stage": 1,
+      "row": 0,
+      "tag": "no redirects"
+    },
+    {
+      "id": "uploadcreds",
+      "type": "security",
+      "label": "Live Credential",
+      "stage": 2,
+      "row": 0,
+      "tag": "epoch fenced"
+    },
+    {
+      "id": "scotty",
+      "type": "cloud",
+      "label": "Scotty Session",
+      "stage": 3,
+      "row": 0
+    },
+    {
+      "id": "source",
+      "type": "database",
+      "label": "Source Row",
+      "stage": 4,
+      "row": 0
+    },
+    {
+      "id": "webasseturl",
+      "type": "frontend",
+      "label": "Web Asset URL",
+      "stage": 0,
+      "row": 1
+    },
+    {
+      "id": "webredirect",
+      "type": "security",
+      "label": "Web Redirect Guard",
+      "stage": 1,
+      "row": 1,
+      "tag": "every redirect"
+    },
+    {
+      "id": "webcookies",
+      "type": "security",
+      "label": "Cookie Policy",
+      "stage": 2,
+      "row": 1,
+      "tag": "per URL"
+    },
+    {
+      "id": "webresponse",
+      "type": "cloud",
+      "label": "Web Download Client",
+      "stage": 3,
+      "row": 1
+    },
+    {
+      "id": "webverify",
+      "type": "backend",
+      "label": "Asset Download",
+      "stage": 4,
+      "row": 1,
+      "tag": "staging · atomic replace"
+    },
+    {
+      "id": "asseturl",
+      "type": "frontend",
+      "label": "Android Asset URL",
+      "stage": 0,
+      "row": 2
+    },
+    {
+      "id": "hoppolicy",
+      "type": "security",
+      "label": "Android URL Policy",
+      "stage": 1,
+      "row": 2,
+      "tag": "every redirect"
+    },
+    {
+      "id": "downloadcreds",
+      "type": "security",
+      "label": "_StickyBearerPolicy",
+      "stage": 2,
+      "row": 2,
+      "tag": "per URL · generation"
+    },
+    {
+      "id": "response",
+      "type": "cloud",
+      "label": "Guarded Response",
+      "stage": 3,
+      "row": 2
+    },
+    {
+      "id": "verify",
+      "type": "backend",
+      "label": "guarded_transfer",
+      "stage": 4,
+      "row": 2,
+      "tag": "same-dir staging"
+    }
+  ],
+  "flows": [
+    {
+      "id": "file-policy",
+      "from": "localfile",
+      "to": "uploadpolicy",
+      "label": "admit",
+      "classification": "selected backend",
+      "variant": "emphasis"
+    },
+    {
+      "id": "policy-upload-creds",
+      "from": "uploadpolicy",
+      "to": "uploadcreds",
+      "label": "validated URL",
+      "classification": "credential boundary",
+      "variant": "security"
+    },
+    {
+      "id": "upload-transfer",
+      "from": "uploadcreds",
+      "to": "scotty",
+      "label": "authorized bytes",
+      "classification": "dedicated client",
+      "variant": "emphasis"
+    },
+    {
+      "id": "upload-source",
+      "from": "scotty",
+      "to": "source",
+      "label": "finalize",
+      "classification": "server indexes",
+      "variant": "dashed"
+    },
+    {
+      "id": "web-url-policy",
+      "from": "webasseturl",
+      "to": "webredirect",
+      "label": "validate hop",
+      "classification": "_redirect_guard · hooks",
+      "labelAt": [
+        208,
+        314
+      ],
+      "route": "straight",
+      "variant": "security"
+    },
+    {
+      "id": "web-policy-creds",
+      "from": "webredirect",
+      "to": "webcookies",
+      "label": "select cookies",
+      "classification": "CredentialPolicy",
+      "route": "straight",
+      "variant": "security"
+    },
+    {
+      "id": "web-creds-response",
+      "from": "webcookies",
+      "to": "webresponse",
+      "label": "GET",
+      "classification": "credential scoped",
+      "route": "straight"
+    },
+    {
+      "id": "web-response-verify",
+      "from": "webresponse",
+      "to": "webverify",
+      "label": "receive + verify",
+      "classification": "buffered or streamed",
+      "labelAt": [
+        853,
+        205
+      ],
+      "route": "straight"
+    },
+    {
+      "id": "url-policy",
+      "from": "asseturl",
+      "to": "hoppolicy",
+      "label": "enter fence",
+      "classification": "guarded_transfer",
+      "labelAt": [
+        208,
+        428
+      ],
+      "route": "straight",
+      "variant": "security"
+    },
+    {
+      "id": "policy-download-creds",
+      "from": "hoppolicy",
+      "to": "downloadcreds",
+      "label": "await policy",
+      "classification": "sticky per URL",
+      "labelDy": -23,
+      "route": "straight",
+      "variant": "security"
+    },
+    {
+      "id": "creds-response",
+      "from": "downloadcreds",
+      "to": "response",
+      "label": "GET",
+      "classification": "credential scoped",
+      "labelDy": -23,
+      "route": "straight"
+    },
+    {
+      "id": "response-verify",
+      "from": "response",
+      "to": "verify",
+      "label": "stream + cleanup",
+      "classification": "bounded · exit precise",
+      "labelAt": [
+        853,
+        428
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Backend-selected download planes",
+      "items": [
+        "Web AssetDownloadService uses _make_download_client plus redirect guards and hooks",
+        "AndroidAssetDownloadService wraps shared guarded_transfer with a sticky bearer policy"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "No credential drift",
+      "items": [
+        "Both paths validate each redirect before attaching credentials",
+        "Android 401 or 403 raises AuthError and invalidates the observed bearer generation"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Cleanup and publication",
+      "items": [
+        "Shared _await_advisory_cleanup shields response exit, per-URL close, and batch cleanup",
+        "Exit precedence is process exit, pending cancellation, current cancellation, then cleanup cancellation",
+        "Single-file downloads replace same-directory staging only after a complete transfer"
+      ]
+    }
+  ]
+}

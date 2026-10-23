@@ -1,0 +1,46 @@
+{
+  "method_name": "LIST_QUOTA_SUMMARY",
+  "method_id": "EylDcb",
+  "description": "Read the live compute-meter windows and action rows.",
+  "request": {
+    "params": [null],
+    "expected_f_req": [
+      [
+        [
+          "EylDcb",
+          "[null]",
+          null,
+          "generic"
+        ]
+      ]
+    ]
+  },
+  "response": {
+    "chunks": [
+      [
+        [
+          "wrb.fr",
+          "EylDcb",
+          "[1,[[null,null,null,null,1,[1700000000,0],1.25,98.75],[null,null,null,null,2,[1700604800,0],0.1,99.9]],null,[[9,true,3,2,null,1.8666666667],[15,true,null,4,null,15.7]]]",
+          null,
+          null,
+          null,
+          "generic"
+        ]
+      ]
+    ],
+    "allow_null": false,
+    "expected_decoded": [
+      1,
+      [
+        [null, null, null, null, 1, [1700000000, 0], 1.25, 98.75],
+        [null, null, null, null, 2, [1700604800, 0], 0.1, 99.9]
+      ],
+      null,
+      [
+        [9, true, 3, 2, null, 1.8666666667],
+        [15, true, null, 4, null, 15.7]
+      ]
+    ]
+  }
+}

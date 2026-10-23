@@ -265,6 +265,192 @@
       "fixed": true,
       "template": "templates/career",
       "patch": "templates/career/patches/data-root.patch"
+    },
+    {
+      "repo": "alchaincyf/huashu-art-motion",
+      "license": "MIT",
+      "default": "content-media",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "alchaincyf/huashu-design",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "juliobsz/skills",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "*"
+      ]
+    },
+    {
+      "repo": "morluto/rea",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        ".agents/skills/*"
+      ]
+    },
+    {
+      "repo": "nykooi1/vibe-wise",
+      "license": "MIT",
+      "default": "research-docs",
+      "name_prefix": "vibewise-",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "VibeWithClaude/unlazy-claude-skill",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "multica-ai/andrej-karpathy-skills",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "microsoft/playwright-cli",
+      "license": "Apache-2.0",
+      "default": "testing-quality",
+      "skills": [
+        "skills/playwright-cli"
+      ]
+    },
+    {
+      "repo": "grx7/framer-motion",
+      "license": "MIT",
+      "default": "frontend",
+      "template": "templates/framer-motion"
+    },
+    {
+      "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "license": "MIT",
+      "default": "frontend",
+      "name_prefix": "uimax-",
+      "name_prefix_skip": [
+        "ui-ux-pro-max",
+        "uimax"
+      ],
+      "skills": [
+        ".claude/skills/*"
+      ]
+    },
+    {
+      "repo": "greensock/GSAP",
+      "license": "Standard",
+      "default": "frontend",
+      "template": "templates/gsap"
+    },
+    {
+      "repo": "DavidHDev/react-bits",
+      "license": "MIT",
+      "default": "frontend",
+      "template": "templates/react-bits"
+    },
+    {
+      "repo": "danyuchn/asd-ste100-skill",
+      "license": "MIT",
+      "default": "content-media",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "JuliusBrussee/caveman",
+      "license": "Apache-2.0",
+      "default": "agent-dev",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "toon-format/toon",
+      "license": "MIT",
+      "default": "agent-dev",
+      "template": "templates/toon"
+    },
+    {
+      "repo": "kevinbadi/blender-skills",
+      "license": "MIT",
+      "default": "science-hardware",
+      "skills": [
+        "*"
+      ]
+    },
+    {
+      "repo": "arjun988/blender-skills",
+      "license": "MIT",
+      "default": "science-hardware",
+      "name_prefix": "blend-",
+      "name_prefix_skip": [
+        "blender-",
+        "blend-"
+      ],
+      "skills": [
+        ".claude/skills/*"
+      ]
+    },
+    {
+      "repo": "headroomlabs-ai/headroom",
+      "local": "vendor/headroom",
+      "license": "Apache-2.0",
+      "default": "agent-dev",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "kepano/obsidian-skills",
+      "license": "MIT",
+      "default": "research-docs",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "teng-lin/notebooklm-py",
+      "license": "MIT",
+      "default": "research-docs",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "czlonkowski/n8n-mcp",
+      "license": "MIT",
+      "default": "agent-dev",
+      "skills": [
+        "data/skills/*"
+      ]
+    },
+    {
+      "repo": "open-gsd/gsd-core",
+      "license": "MIT",
+      "default": "agents",
+      "skills": [
+        "pi/package-skills/*"
+      ]
+    },
+    {
+      "repo": "Graphify-Labs/graphify",
+      "license": "MIT",
+      "default": "engineering",
+      "template": "templates/graphify"
     }
   ],
   "externals": {
