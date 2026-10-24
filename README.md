@@ -141,9 +141,9 @@ Everything here is computed from this repository when the README is rebuilt. Run
 | `agent-builder` preset | 298 | about 19,876 tokens | 9.9% |
 | `everything` | 819 | about 58,363 tokens | 29.2% |
 
-With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,212 tokens, and 90% are under 4,299. A selection averages 1.9 skills when there is no project.
+With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,197 tokens, and 90% are under 4,295. A selection averages 1.9 skills when there is no project.
 
-**How fast is it?** About 10 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
+**How fast is it?** About 2 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost, choice and learning, not quality of results. Learning is measured on a simulated user, not on real long-run use. The tasks and their correct answers were written by one person. The hive's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the held-out set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
 
@@ -353,7 +353,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 
 ## Questions
 
-**Does selection slow my agent down?** No. A decision takes about 10 ms and happens once per phase of work. It also loads fewer skills: 1.9 on average with no project.
+**Does selection slow my agent down?** No. A decision takes about 2 ms and happens once per phase of work. It also loads fewer skills: 1.9 on average with no project.
 
 **Does it always pick right?** No. The right skill was in the selection 86% of the time on held-out tasks, and the misses are listed in [docs/HIVE.md](docs/HIVE.md#where-it-fails). When it misses, tell it with feedback, name the skill, or ask for a category.
 
@@ -410,7 +410,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 | `industry` | 13 | Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy. |
 | `networking` | 10 | Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, config validation. |
 | `research-docs` | 29 | Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project). |
-| `web3` | 9 | DeFi, EVM, prediction markets, ItÃ´ baskets and compute, and trading-agent security. |
+| `web3` | 9 | DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security. |
 | `engineering` | 21 | General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring. |
 | `science-hardware` | 116 | Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware. |
 | `career` | 1 | AI job search: evaluate offers, tailor CVs, scan portals, track applications. |
