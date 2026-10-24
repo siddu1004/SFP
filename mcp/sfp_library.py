@@ -184,6 +184,45 @@ def remove_user_bundle(name):
 
 # ------------------------------------------------------------------ the payload for the editor
 
+FAMILIES_FILE = os.path.join(os.path.dirname(HERE), 'families.json')
+
+
+def families_rules():
+    return _read(FAMILIES_FILE, {'families': []})['families']
+
+
+def family_of_cluster(cluster_id, fam=None):
+    """The family a cluster belongs to; clusters of your own and unknown ones go to the family of their skills' category."""
+    fam = fam or families_rules()
+    for f in fam:
+        if cluster_id in f['clusters']:
+            return f['id']
+    if cluster_id.startswith('other-'):
+        cat = cluster_id[len('other-'):]
+        for f in fam:
+            if cat in f.get('categories', []):
+                return f['id']
+    return None
+
+
+def family_of_bundle(b, skill_family, fam=None):
+    """The family most of a bundle's skills are in; the bundle's purpose decides a tie or an empty bundle."""
+    fam = fam or families_rules()
+    counts = {}
+    for n in b['skills']:
+        f = skill_family.get(n)
+        if f:
+            counts[f] = counts.get(f, 0) + 1
+    by_purpose = next((f['id'] for f in fam if b.get('purpose') in f.get('purpose', [])), fam[0]['id'] if fam else None)
+    if not counts:
+        return by_purpose
+    top = max(counts.values())
+    leaders = [f for f, n in counts.items() if n == top]
+    if by_purpose in leaders:
+        return by_purpose
+    return min(leaders, key=[x['id'] for x in fam].index)
+
+
 def library():
     """Everything the sidebar needs, in one object: purposes, clusters, bundles and every skill with its
     search terms. Usage comes from the hive's logs."""
@@ -207,16 +246,74 @@ def library():
         if s.get('app'):
             row['app'] = s['app']
         skills[n] = row
+    fam = families_rules()
+    skill_family = {}
+    for c in cl:
+        fid = family_of_cluster(c['id'], fam) if not c['mine'] else None
+        for sk in c['skills']:
+            if fid and sk['name'] not in skill_family:
+                skill_family[sk['name']] = fid
+    for n, row in skills.items():
+        row['family'] = skill_family.get(n) or family_of_cluster('other-' + row['category'], fam) or fam[-1]['id']
+        skill_family[n] = row['family']
+    bl = bundles()
+    for b in bl:
+        b['family'] = family_of_bundle(b, skill_family, fam)
+    cl_out = [{'id': c['id'], 'name': c['name'], 'description': c['description'], 'mine': c['mine'], 'count': c['count'],
+               'used': c.get('used', 0), 'skills': [s['name'] for s in c['skills']],
+               'family': family_of_cluster(c['id'], fam) if not c['mine'] else 'mine'} for c in cl]
+    families = []
+    for f in fam:
+        members = [n for n, row in skills.items() if row['family'] == f['id']]
+        families.append({'id': f['id'], 'name': f['name'], 'icon': f['icon'], 'blurb': f['blurb'], 'count': len(members),
+                         'used': sum(1 for m in members if used.get(m, {}).get('chosen')),
+                         'clusters': [c['id'] for c in cl_out if c['family'] == f['id']],
+                         'bundles': [b['id'] for b in bl if b['family'] == f['id']]})
     purposes = []
     for p in r['purposes']:
         members = [n for n, v in assigned.items() if v['purpose'] == p['id']]
         purposes.append(dict(p, count=len(members), used=sum(1 for m in members if used.get(m, {}).get('chosen'))))
     return {
         'version': 1,
-        'counts': {'skills': len(skills), 'purposes': len(purposes), 'clusters': len(cl), 'bundles': len(bundles())},
+        'counts': {'skills': len(skills), 'families': len(families), 'purposes': len(purposes), 'clusters': len(cl), 'bundles': len(bl)},
+        'families': families,
         'purposes': purposes,
-        'clusters': [{'id': c['id'], 'name': c['name'], 'description': c['description'], 'mine': c['mine'], 'count': c['count'],
-                      'used': c.get('used', 0), 'skills': [s['name'] for s in c['skills']]} for c in cl],
-        'bundles': bundles(),
+        'clusters': cl_out,
+        'bundles': bl,
         'skills': skills,
     }
+
+
+def skill_detail(ident):
+    """Everything the detail window shows about one skill. Raises KeyError for an unknown name."""
+    name = core.resolve_name(ident)
+    if not name:
+        raise KeyError(ident)
+    s = core.SKILLS[name]
+    r = rules()
+    home = sfp_clusters.assign()
+    assigned = assignments(home)
+    fam = families_rules()
+    cl = {c['id']: c for c in sfp_clusters.clusters(home=home)}
+    cid = home[name][0]
+    cluster = cl.get(cid, {'id': cid, 'name': cid, 'skills': []})
+    fid = family_of_cluster(cid, fam) or family_of_cluster('other-' + s['category'], fam) or fam[-1]['id']
+    pname = {p['id']: p['name'] for p in r['purposes']}
+    desc = ' '.join(s['description'].split())
+    m = re.search(r'\b(Use (?:this skill )?(?:when|for|to)\b.*)$', desc, re.I)
+    peers = [x['name'] for x in cluster['skills'] if x['name'] != name]
+    peers.sort(key=lambda n: -v1.similarity(name, n))
+    skill_family = {name: fid}
+    mine = [{'id': b['id'], 'name': b['name']} for b in bundles() if name in b['skills']]
+    out = {'name': name, 'description': desc, 'use_when': m.group(1) if m else '', 'category': s['category'],
+           'family': {'id': fid, 'name': next(f['name'] for f in fam if f['id'] == fid)},
+           'cluster': {'id': cid, 'name': cluster['name']},
+           'purpose': {'id': assigned[name]['purpose'], 'name': pname.get(assigned[name]['purpose'], assigned[name]['purpose'])},
+           'also': [{'id': p, 'name': pname.get(p, p)} for p in assigned[name]['also']],
+           'bundles': mine, 'similar': peers[:6], 'tokens': v1.body_tokens(name), 'path': s['path'].replace('\\', '/')}
+    u = sfp_clusters.usage().get(name)
+    if u:
+        out['usage'] = u
+    if s.get('app'):
+        out['app'] = s['app']
+    return out

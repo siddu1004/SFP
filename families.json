@@ -1,0 +1,213 @@
+{
+ "_note": "Families are the top level of the library: ten areas a person looks in (UI, prompting, security...). Every cluster belongs to one family, and a bundle to the family most of its skills are in (its purpose decides a tie). `categories` places the clusters that have no rule of their own ('other-<category>'). Order is the order shown.",
+ "families": [
+  {
+   "id": "design",
+   "name": "Design and UI",
+   "icon": "symbol-color",
+   "blurb": "Interfaces that look and feel right: components, styles, motion, accessibility.",
+   "clusters": [
+    "ui",
+    "design-taste",
+    "design-styles",
+    "animation",
+    "accessibility",
+    "ux",
+    "three-d-web",
+    "frontend-other"
+   ],
+   "categories": [
+    "frontend",
+    "design-styles"
+   ],
+   "purpose": [
+    "design"
+   ]
+  },
+  {
+   "id": "build",
+   "name": "Build apps and services",
+   "icon": "tools",
+   "blurb": "Frameworks, APIs, databases, mobile and language know-how for writing the thing.",
+   "clusters": [
+    "web-frameworks",
+    "backend",
+    "databases",
+    "mobile",
+    "languages",
+    "engineering",
+    "hardware"
+   ],
+   "categories": [
+    "backend",
+    "mobile",
+    "languages",
+    "engineering"
+   ],
+   "purpose": [
+    "build",
+    "speed",
+    "plan"
+   ]
+  },
+  {
+   "id": "quality",
+   "name": "Test and quality",
+   "icon": "beaker",
+   "blurb": "Tests, reviews and checks that catch problems before users do.",
+   "clusters": [
+    "testing"
+   ],
+   "categories": [
+    "testing-quality"
+   ],
+   "purpose": [
+    "test",
+    "debug",
+    "review"
+   ]
+  },
+  {
+   "id": "cyber",
+   "name": "Security",
+   "icon": "shield",
+   "blurb": "Find and fix vulnerabilities, harden code, test like an attacker.",
+   "clusters": [
+    "security"
+   ],
+   "categories": [
+    "security"
+   ],
+   "purpose": [
+    "secure"
+   ]
+  },
+  {
+   "id": "ship",
+   "name": "Ship and run",
+   "icon": "rocket",
+   "blurb": "Containers, pipelines, releases, networks and keeping things running.",
+   "clusters": [
+    "devops",
+    "networking"
+   ],
+   "categories": [
+    "devops",
+    "networking"
+   ],
+   "purpose": [
+    "deploy"
+   ]
+  },
+  {
+   "id": "agents",
+   "name": "Prompts and agents",
+   "icon": "sparkle",
+   "blurb": "Work with AI agents: prompting, workflows, memory, evals, skills and tokens.",
+   "clusters": [
+    "sfp",
+    "agent-building",
+    "agent-quality",
+    "agent-workflows",
+    "context",
+    "memory",
+    "caveman",
+    "ai-ml"
+   ],
+   "categories": [
+    "agent-dev",
+    "agents",
+    "memory",
+    "ai-ml",
+    "sfp"
+   ],
+   "purpose": [
+    "agents",
+    "extend"
+   ]
+  },
+  {
+   "id": "models",
+   "name": "Models and gateways",
+   "icon": "plug",
+   "blurb": "Route between models, use free tiers and local ones, find the right API.",
+   "clusters": [
+    "gateway",
+    "data-apis"
+   ],
+   "categories": [
+    "ai-gateway",
+    "data-apis"
+   ],
+   "purpose": []
+  },
+  {
+   "id": "project",
+   "name": "Run a project (GSD)",
+   "icon": "checklist",
+   "blurb": "Get Shit Done: phases, milestones, plans, reviews and shipping as one workflow.",
+   "clusters": [
+    "gsd"
+   ],
+   "categories": [],
+   "purpose": []
+  },
+  {
+   "id": "research",
+   "name": "Research and docs",
+   "icon": "book",
+   "blurb": "Understand a topic or a codebase, then write it down well.",
+   "clusters": [
+    "research-docs",
+    "science"
+   ],
+   "categories": [
+    "research-docs",
+    "science-hardware"
+   ],
+   "purpose": [
+    "research",
+    "document"
+   ]
+  },
+  {
+   "id": "creative",
+   "name": "3D and creative",
+   "icon": "package",
+   "blurb": "Blender scenes, 3D assets, video, writing and marketing content.",
+   "clusters": [
+    "blender",
+    "blender-styles",
+    "content"
+   ],
+   "categories": [
+    "content-media"
+   ],
+   "purpose": [
+    "create"
+   ]
+  },
+  {
+   "id": "business",
+   "name": "Business and automation",
+   "icon": "briefcase",
+   "blurb": "Billing, investors, careers, industries, web3 and n8n automations.",
+   "clusters": [
+    "business",
+    "career",
+    "industry",
+    "web3",
+    "n8n"
+   ],
+   "categories": [
+    "business-ops",
+    "career",
+    "industry",
+    "web3"
+   ],
+   "purpose": [
+    "business"
+   ]
+  }
+ ]
+}
