@@ -326,5 +326,99 @@ test('renderNeedCard renders card with escaping and handles action buttons', () 
   assert.ok(routerHtml.includes('data-action="focusModels"'));
 });
 
+test('routeArgs formats arguments for router subcommands', () => {
+  const argsDiscover = hive.routeArgs('/root', 'discover');
+  assert.deepStrictEqual(argsDiscover, [path.join('/root', 'mcp', 'sfp_route.py'), 'discover']);
+
+  const argsSetup = hive.routeArgs('/root', 'setup', '--policy', 'cheap-first', '--yes');
+  assert.deepStrictEqual(argsSetup, [path.join('/root', 'mcp', 'sfp_route.py'), 'setup', '--policy', 'cheap-first', '--yes']);
+
+  const argsServe = hive.routeArgs('/root', 'serve', '--port', 8787);
+  assert.deepStrictEqual(argsServe, [path.join('/root', 'mcp', 'sfp_route.py'), 'serve', '--port', '8787']);
+
+  const argsPlan = hive.routeArgs('/root', 'plan', 'refactor the billing service');
+  assert.deepStrictEqual(argsPlan, [path.join('/root', 'mcp', 'sfp_route.py'), 'plan', 'refactor the billing service']);
+});
+
+test('parseRouteConfig parses setup json output and rejects invalid format', () => {
+  const sample = `
+{
+ "policy": "local-first",
+ "providers": [
+  {
+   "id": "ollama",
+   "name": "Ollama",
+   "kind": "local",
+   "base_url": "http://127.0.0.1:11434/v1",
+   "api_key_env": "",
+   "models": [
+    {"id": "qwen2.5-coder:7b", "strength": 1, "ctx": 8192, "tools": true}
+   ]
+  }
+ ]
+}
+
+This is what would be written to /path/to/routes.json. Run again with --yes to write it.
+  `;
+  const cfg = hive.parseRouteConfig(sample);
+  assert.strictEqual(cfg.policy, 'local-first');
+  assert.strictEqual(cfg.providers.length, 1);
+  assert.strictEqual(cfg.providers[0].id, 'ollama');
+  assert.strictEqual(cfg.providers[0].models[0].strength, 1);
+
+  assert.throws(() => hive.parseRouteConfig('no json here'));
+  assert.throws(() => hive.parseRouteConfig('{"policy": "local-first"}'));
+});
+
+test('parseRouteStatus parses health status and rejects invalid', () => {
+  const statusSample = JSON.stringify({
+    policy: 'local-first',
+    models: [
+      {
+        model: 'ollama/llama3',
+        kind: 'local',
+        strength: 1,
+        state: 'ready',
+        ok: 5,
+        failed: 0,
+        last_error: '',
+      },
+      {
+        model: 'groq/llama-3.3-70b',
+        kind: 'free',
+        strength: 3,
+        state: 'cooling down 30s: rate limited',
+        ok: 2,
+        failed: 2,
+        last_error: 'rate limited',
+      },
+    ],
+  });
+  const st = hive.parseRouteStatus(statusSample);
+  assert.strictEqual(st.policy, 'local-first');
+  assert.strictEqual(st.models.length, 2);
+  assert.strictEqual(st.models[1].failed, 2);
+
+  assert.throws(() => hive.parseRouteStatus('bad json'));
+  assert.throws(() => hive.parseRouteStatus('{"policy": "local-first"}'));
+});
+
+test('parseRoutePlan parses plan output lines', () => {
+  const planSample = `request: normal (about 1200 tokens)
+1. ollama/llama3  strength 2  local
+2. groq/llama-3.3-70b-versatile  strength 3  free`;
+
+  const plan = hive.parseRoutePlan(planSample);
+  assert.strictEqual(plan.tier, 'normal');
+  assert.strictEqual(plan.tokens, 1200);
+  assert.strictEqual(plan.order.length, 2);
+  assert.strictEqual(plan.order[0].model, 'ollama/llama3');
+  assert.strictEqual(plan.order[0].strength, 2);
+  assert.strictEqual(plan.order[0].kind, 'local');
+  assert.strictEqual(plan.order[1].model, 'groq/llama-3.3-70b-versatile');
+  assert.strictEqual(plan.order[1].strength, 3);
+  assert.strictEqual(plan.order[1].kind, 'free');
+});
+
 
 

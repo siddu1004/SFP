@@ -17,7 +17,8 @@
     "views": {
       "sfpHive": [
         {"type": "webview", "id": "sfpHive.stack", "name": "SFP Hive", "visibility": "collapsed"},
-        {"type": "webview", "id": "sfpHive.library", "name": "Skill Library"}
+        {"type": "webview", "id": "sfpHive.library", "name": "Skill Library"},
+        {"type": "webview", "id": "sfpHive.models", "name": "Models", "visibility": "collapsed"}
       ]
     },
     "chatParticipants": [
@@ -48,7 +49,10 @@
       {"command": "sfpHive.apps", "title": "Set up a program a skill needs (OmniRoute, Strix...)", "category": "SFP Hive"},
       {"command": "sfpHive.clusterAdd", "title": "Create a new skill cluster", "category": "SFP Hive"},
       {"command": "sfpHive.clusterRemove", "title": "Remove a skill cluster of your own", "category": "SFP Hive"},
-      {"command": "sfpHive.focusModels", "title": "Focus models view", "category": "SFP Hive"}
+      {"command": "sfpHive.focusModels", "title": "Focus models view", "category": "SFP Hive"},
+      {"command": "sfpHive.routerStart", "title": "Start model router", "category": "SFP Hive"},
+      {"command": "sfpHive.routerStop", "title": "Stop model router", "category": "SFP Hive"},
+      {"command": "sfpHive.routerSetup", "title": "Set up model router", "category": "SFP Hive"}
     ],
     "menus": {
       "commandPalette": [

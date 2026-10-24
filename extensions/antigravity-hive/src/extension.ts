@@ -1,12 +1,16 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as os from 'os';
+import * as fs from 'fs';
+import * as http from 'http';
+import * as cp from 'child_process';
 import * as hive from './hive';
 import * as library from './library';
 import { LiveSession } from './live';
 
 export let loadedLibrary: library.Library | undefined;
 export let libraryProvider: LibraryViewProvider | undefined;
+export let modelsProvider: ModelsViewProvider | undefined;
 
 let selection: hive.Selection | undefined;
 const verdicts = new Map<string, hive.Verdict>();
@@ -1349,6 +1353,465 @@ function getNonce(): string {
   return text;
 }
 
+let routerProcess: cp.ChildProcess | undefined;
+let routerRunning = false;
+let routerPort = 8787;
+let routerHealthTimer: NodeJS.Timeout | undefined;
+
+export function isRouterRunning(): boolean {
+  return routerRunning;
+}
+
+export function getRouterPort(): number {
+  return routerPort;
+}
+
+export function fetchRouterHealth(port: number = 8787): Promise<hive.RouteStatus | null> {
+  return new Promise((resolve) => {
+    const req = http.get(`http://127.0.0.1:${port}/health`, { timeout: 2500 }, (res) => {
+      if (res.statusCode !== 200) {
+        resolve(null);
+        return;
+      }
+      let data = '';
+      res.on('data', (chunk) => {
+        data += chunk;
+      });
+      res.on('end', () => {
+        try {
+          resolve(hive.parseRouteStatus(data));
+        } catch {
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(null);
+    });
+  });
+}
+
+export function sendRouterTestRequest(
+  port: number = 8787,
+  prompt: string
+): Promise<{ model: string; tier: string; answer: string }> {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      model: 'auto',
+      messages: [{ role: 'user', content: prompt }],
+    });
+    const req = http.request(
+      `http://127.0.0.1:${port}/v1/chat/completions`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(payload),
+        },
+        timeout: 10000,
+      },
+      (res) => {
+        const modelHeader = (res.headers['x-sfp-model'] as string) || '';
+        const tierHeader = (res.headers['x-sfp-tier'] as string) || '';
+        let data = '';
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+        res.on('end', () => {
+          try {
+            const json = JSON.parse(data);
+            const content = json.choices?.[0]?.message?.content || (json.error ? json.error.message : data);
+            resolve({
+              model: modelHeader || json.model || 'auto',
+              tier: tierHeader,
+              answer: content,
+            });
+          } catch {
+            resolve({
+              model: modelHeader || 'unknown',
+              tier: tierHeader,
+              answer: data,
+            });
+          }
+        });
+      }
+    );
+    req.on('error', (err) => reject(err));
+    req.on('timeout', () => {
+      req.destroy();
+      reject(new Error('Router request timed out'));
+    });
+    req.write(payload);
+    req.end();
+  });
+}
+
+export async function startRouter(port: number = 8787): Promise<boolean> {
+  if (routerRunning && routerProcess) return true;
+  const root = sfpRoot();
+  if (!root) return false;
+  const py = hive.pythonCommand(config().opts);
+  routerPort = port;
+
+  return new Promise((resolve) => {
+    let resolved = false;
+    try {
+      const proc = cp.spawn(py, [path.join(root, 'mcp', 'sfp_route.py'), 'serve', '--port', String(port)], {
+        cwd: root,
+        stdio: ['pipe', 'pipe', 'pipe'],
+      });
+      routerProcess = proc;
+
+      proc.stdout?.on('data', (d) => {
+        const text = d.toString();
+        if (text.includes('SFP router on')) {
+          routerRunning = true;
+          startRouterHealthPolling();
+          modelsProvider?.syncState();
+          if (!resolved) {
+            resolved = true;
+            resolve(true);
+          }
+        }
+      });
+
+      proc.on('error', () => {
+        stopRouter();
+        if (!resolved) {
+          resolved = true;
+          resolve(false);
+        }
+      });
+
+      proc.on('exit', () => {
+        stopRouter();
+      });
+
+      setTimeout(async () => {
+        if (!resolved) {
+          const health = await fetchRouterHealth(port);
+          if (health) {
+            routerRunning = true;
+            startRouterHealthPolling();
+            modelsProvider?.syncState();
+            resolved = true;
+            resolve(true);
+          } else {
+            resolved = true;
+            resolve(routerRunning);
+          }
+        }
+      }, 1500);
+    } catch {
+      routerRunning = false;
+      if (!resolved) {
+        resolved = true;
+        resolve(false);
+      }
+    }
+  });
+}
+
+export function stopRouter(): void {
+  if (routerHealthTimer) {
+    clearInterval(routerHealthTimer);
+    routerHealthTimer = undefined;
+  }
+  if (routerProcess) {
+    try {
+      routerProcess.kill();
+    } catch {}
+    routerProcess = undefined;
+  }
+  routerRunning = false;
+  modelsProvider?.syncState();
+}
+
+function startRouterHealthPolling() {
+  if (routerHealthTimer) clearInterval(routerHealthTimer);
+  routerHealthTimer = setInterval(async () => {
+    if (!routerRunning) {
+      if (routerHealthTimer) clearInterval(routerHealthTimer);
+      routerHealthTimer = undefined;
+      return;
+    }
+    const status = await fetchRouterHealth(routerPort);
+    if (status) {
+      modelsProvider?.updateHealth(status);
+    }
+  }, 5000);
+}
+
+export class ModelsViewProvider implements vscode.WebviewViewProvider {
+  public static readonly viewType = 'sfpHive.models';
+  public _view?: vscode.WebviewView;
+  private _config: hive.RouteConfig | null = null;
+  private _status: hive.RouteStatus | null = null;
+  private _policy: string = 'local-first';
+  private _preview: string = '';
+
+  constructor(private readonly extensionPath: string) {}
+
+  public resolveWebviewView(
+    webviewView: vscode.WebviewView,
+    _context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken
+  ) {
+    this._view = webviewView;
+    webviewView.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [vscode.Uri.file(path.join(this.extensionPath, 'media'))],
+    };
+    webviewView.webview.html = this.getHtml(webviewView.webview);
+
+    webviewView.webview.onDidReceiveMessage(async (message) => {
+      switch (message.command) {
+        case 'ready':
+          await this.loadConfig();
+          this.syncState();
+          break;
+        case 'toggleRouter':
+          if (routerRunning) {
+            stopRouter();
+          } else {
+            const ok = await startRouter(routerPort);
+            if (!ok && (!this._config || !this._config.providers.length)) {
+              void vscode.window
+                .showWarningMessage('No models configured for the router. Run Set up first.', 'Set up')
+                .then((pick) => pick && vscode.commands.executeCommand('sfpHive.routerSetup'));
+            }
+          }
+          this.syncState();
+          break;
+        case 'copyUrl':
+          if (message.url) {
+            await vscode.env.clipboard.writeText(message.url);
+            void vscode.window.showInformationMessage('Copied router URL to clipboard.');
+          }
+          break;
+        case 'changePolicy':
+          if (message.policy) {
+            this._policy = message.policy;
+            if (this._config) {
+              this._config.policy = this._policy;
+              this.saveConfig(this._config);
+            }
+          }
+          break;
+        case 'setup': {
+          const root = sfpRoot();
+          if (!root) return;
+          const cfg = config();
+          const policy = message.policy || this._policy || 'local-first';
+          try {
+            if (message.yes) {
+              await hive.run(hive.pythonCommand(cfg.opts), hive.routeArgs(root, 'setup', '--policy', policy, '--yes'));
+              this._preview = '';
+              await this.loadConfig();
+              this.syncState();
+              void vscode.window.showInformationMessage('Model router configuration written.');
+            } else {
+              const preview = await hive.run(hive.pythonCommand(cfg.opts), hive.routeArgs(root, 'setup', '--policy', policy));
+              this._preview = preview;
+              this._view?.webview.postMessage({ type: 'setupPreview', preview });
+            }
+          } catch (err: any) {
+            void vscode.window.showErrorMessage(`Router setup error: ${err.message}`);
+          }
+          break;
+        }
+        case 'updateStrength': {
+          if (this._config && message.providerId && message.modelId && message.strength) {
+            const prov = this._config.providers.find((p) => p.id === message.providerId);
+            if (prov) {
+              const m = prov.models.find((mod) => mod.id === message.modelId);
+              if (m) {
+                m.strength = message.strength;
+                this.saveConfig(this._config);
+                this.syncState();
+              }
+            }
+          }
+          break;
+        }
+        case 'plan': {
+          const root = sfpRoot();
+          if (!root || !message.task) return;
+          const cfg = config();
+          try {
+            const out = await hive.run(hive.pythonCommand(cfg.opts), hive.routeArgs(root, 'plan', message.task));
+            this._view?.webview.postMessage({ type: 'planResult', output: out });
+          } catch (err: any) {
+            this._view?.webview.postMessage({ type: 'planResult', output: `Error: ${err.message}` });
+          }
+          break;
+        }
+        case 'testRequest': {
+          if (!message.prompt) return;
+          if (!routerRunning) {
+            void vscode.window.showWarningMessage('Start the router before sending a test request.');
+            this._view?.webview.postMessage({
+              type: 'testResult',
+              result: { model: 'router stopped', tier: 'none', answer: 'Error: start the router first.' },
+            });
+            return;
+          }
+          try {
+            const res = await sendRouterTestRequest(routerPort, message.prompt);
+            this._view?.webview.postMessage({ type: 'testResult', result: res });
+          } catch (err: any) {
+            this._view?.webview.postMessage({
+              type: 'testResult',
+              result: { model: 'error', tier: 'none', answer: `Request failed: ${err.message}` },
+            });
+          }
+          break;
+        }
+      }
+    });
+  }
+
+  public async loadConfig(): Promise<void> {
+    const home = os.homedir();
+    const routesPath = path.join(process.env.SFP_DATA_DIR || path.join(home, '.sfp'), 'routes.json');
+    try {
+      if (fs.existsSync(routesPath)) {
+        const raw = fs.readFileSync(routesPath, 'utf8');
+        this._config = JSON.parse(raw);
+        if (this._config?.policy) {
+          this._policy = this._config.policy;
+        }
+      } else {
+        const root = sfpRoot();
+        if (root) {
+          const out = await hive.run(hive.pythonCommand(config().opts), hive.routeArgs(root, 'setup'));
+          this._config = hive.parseRouteConfig(out);
+        }
+      }
+    } catch {
+      this._config = null;
+    }
+  }
+
+  public saveConfig(cfg: hive.RouteConfig): void {
+    const home = os.homedir();
+    const dir = process.env.SFP_DATA_DIR || path.join(home, '.sfp');
+    const routesPath = path.join(dir, 'routes.json');
+    try {
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      fs.writeFileSync(routesPath, JSON.stringify(cfg, null, 1), 'utf8');
+    } catch {}
+  }
+
+  public updateHealth(status: hive.RouteStatus): void {
+    this._status = status;
+    this._view?.webview.postMessage({ type: 'healthUpdate', status });
+  }
+
+  public syncState(): void {
+    if (!this._view) return;
+    this._view.webview.postMessage({
+      type: 'updateState',
+      payload: {
+        running: routerRunning,
+        port: routerPort,
+        baseUrl: `http://127.0.0.1:${routerPort}/v1`,
+        config: this._config,
+        status: this._status,
+        policy: this._policy,
+        preview: this._preview,
+      },
+    });
+  }
+
+  public focus(): void {
+    this._view?.show?.(true);
+  }
+
+  public getHtml(webview: vscode.Webview): string {
+    const nonce = getNonce();
+    const styleUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'models.css')));
+    const scriptUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'models.js')));
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Models</title>
+  <link rel="stylesheet" href="${styleUri}">
+</head>
+<body>
+  <div class="models-header">
+    <div class="models-title">
+      <span id="status-dot" class="status-dot" title="Router status"></span>
+      <span>Router: <span id="status-text">Stopped</span></span>
+    </div>
+    <button id="toggle-router-btn" class="btn">Start router</button>
+  </div>
+
+  <div id="server-card" class="server-card hidden">
+    <div class="server-url-bar">
+      <code id="server-url" class="server-url">http://127.0.0.1:8787/v1</code>
+      <button id="copy-url-btn" class="btn btn-secondary btn-small" title="Copy base URL">Copy</button>
+    </div>
+    <div class="server-hint">Set your tool's base URL to this, key anything, model auto</div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Configured Models</div>
+    <div id="providers-container" class="providers-list">
+      <div class="server-hint">Loading models configuration...</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Setup & Policy</div>
+    <div class="setup-form">
+      <div class="form-group">
+        <label for="policy-select" class="form-label">Policy:</label>
+        <select id="policy-select">
+          <option value="local-first">local-first</option>
+          <option value="cheap-first">cheap-first</option>
+          <option value="strong-first">strong-first</option>
+        </select>
+      </div>
+      <div class="setup-actions">
+        <button id="setup-btn" class="btn btn-secondary" style="flex:1;">Set up</button>
+        <button id="write-btn" class="btn" style="flex:1;">Write it</button>
+      </div>
+      <pre id="preview-box" class="config-preview hidden"></pre>
+    </div>
+  </div>
+
+  <div id="status-section" class="section hidden">
+    <div class="section-title">Live Status (every 5s)</div>
+    <div id="status-container" class="status-list"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Try It</div>
+    <div class="try-container">
+      <input type="text" id="try-prompt-input" placeholder="e.g. refactor the billing service" aria-label="Task or prompt">
+      <div class="try-actions">
+        <button id="try-plan-btn" class="btn btn-secondary" style="flex:1;">Plan</button>
+        <button id="try-send-btn" class="btn" style="flex:1;">Test request</button>
+      </div>
+      <div id="try-output" class="try-output hidden"></div>
+    </div>
+  </div>
+
+  <script nonce="${nonce}" src="${scriptUri}"></script>
+</body>
+</html>`;
+  }
+}
+
 export function activate(context: vscode.ExtensionContext) {
   extContext = context;
   sessionStats = context.workspaceState?.get<hive.SessionStats>('sfpHive.sessionStats') || hive.defaultSessionStats();
@@ -1365,13 +1828,15 @@ export function activate(context: vscode.ExtensionContext) {
 
   studioProvider = new StudioViewProvider(context.extensionPath);
   libraryProvider = new LibraryViewProvider(context.extensionPath);
+  modelsProvider = new ModelsViewProvider(context.extensionPath);
 
   const reg = (id: string, fn: (...a: any[]) => unknown) => context.subscriptions.push(vscode.commands.registerCommand(id, fn));
   context.subscriptions.push(
     status,
     rightStatus,
     vscode.window.registerWebviewViewProvider(StudioViewProvider.viewType, studioProvider),
-    vscode.window.registerWebviewViewProvider(LibraryViewProvider.viewType, libraryProvider)
+    vscode.window.registerWebviewViewProvider(LibraryViewProvider.viewType, libraryProvider),
+    vscode.window.registerWebviewViewProvider(ModelsViewProvider.viewType, modelsProvider)
   );
 
   // Wire workspace activity listeners for Now tracking
@@ -1518,10 +1983,35 @@ export function activate(context: vscode.ExtensionContext) {
     }
   });
   reg('sfpHive.focusModels', async () => {
+    const home = os.homedir();
+    const routesFile = path.join(process.env.SFP_DATA_DIR || path.join(home, '.sfp'), 'routes.json');
+    if (!fs.existsSync(routesFile)) {
+      await vscode.commands.executeCommand('sfpHive.routerSetup');
+    }
     try {
+      modelsProvider?.focus();
       await vscode.commands.executeCommand('sfpHive.models.focus');
     } catch {
       // models view might not be registered yet
+    }
+  });
+  reg('sfpHive.routerStart', async () => {
+    await startRouter();
+  });
+  reg('sfpHive.routerStop', () => {
+    stopRouter();
+  });
+  reg('sfpHive.routerSetup', async () => {
+    const root = sfpRoot();
+    if (!root) return;
+    const cfg = config();
+    try {
+      await hive.run(hive.pythonCommand(cfg.opts), hive.routeArgs(root, 'setup', '--yes'));
+      await modelsProvider?.loadConfig();
+      modelsProvider?.syncState();
+      void vscode.window.showInformationMessage('SFP Hive: Model router set up successfully.');
+    } catch (err: any) {
+      void vscode.window.showErrorMessage(`Failed to set up router: ${err.message}`);
     }
   });
 
@@ -1683,4 +2173,6 @@ export function activate(context: vscode.ExtensionContext) {
   }
 }
 
-export function deactivate() {}
+export function deactivate() {
+  stopRouter();
+}

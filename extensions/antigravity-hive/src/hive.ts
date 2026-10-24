@@ -582,4 +582,102 @@ export function renderNeedCard(need: Need): string {
     </div>`.trim();
 }
 
+// ------------------------------------------------------------------ the router
+
+export interface RouteModel {
+  id: string;
+  strength: number;
+  ctx?: number;
+  tools?: boolean;
+}
+
+export interface RouteProvider {
+  id: string;
+  name: string;
+  kind: 'local' | 'free' | 'paid' | string;
+  base_url: string;
+  api_key_env: string;
+  models: RouteModel[];
+}
+
+export interface RouteConfig {
+  policy: 'local-first' | 'cheap-first' | 'strong-first' | string;
+  providers: RouteProvider[];
+}
+
+export interface RouteStatusModel {
+  model: string;
+  kind: string;
+  strength: number;
+  state: string;
+  ok: number;
+  failed: number;
+  last_error: string;
+}
+
+export interface RouteStatus {
+  policy: string;
+  models: RouteStatusModel[];
+}
+
+export interface RoutePlanItem {
+  num: number;
+  model: string;
+  strength: number;
+  kind: string;
+}
+
+export interface RoutePlan {
+  tier: string;
+  tokens: number;
+  order: RoutePlanItem[];
+}
+
+export function routeArgs(root: string, cmd: string, ...extra: (string | number)[]): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_route.py'), cmd];
+  for (const a of extra) {
+    if (a !== undefined && a !== null) args.push(String(a));
+  }
+  return args;
+}
+
+export function parseRouteConfig(raw: string): RouteConfig {
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('no JSON config found in router setup output');
+  const cfg = JSON.parse(match[0]);
+  if (!cfg || !Array.isArray(cfg.providers)) throw new Error('invalid router config format');
+  return cfg as RouteConfig;
+}
+
+export function parseRouteStatus(json: string): RouteStatus {
+  const raw = JSON.parse(json);
+  if (!raw || !Array.isArray(raw.models)) throw new Error('invalid router status format');
+  return raw as RouteStatus;
+}
+
+export function parseRoutePlan(text: string): RoutePlan {
+  const lines = text.trim().split('\n');
+  let tier = 'normal';
+  let tokens = 0;
+  const order: RoutePlanItem[] = [];
+  const reqMatch = lines[0]?.match(/request:\s*(\w+)\s*\(about\s*(\d+)\s*tokens\)/);
+  if (reqMatch) {
+    tier = reqMatch[1];
+    tokens = parseInt(reqMatch[2], 10);
+  }
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    const m = line.match(/^(\d+)\.\s+([^\s]+)\s+strength\s+(\d+)\s+(.*)$/);
+    if (m) {
+      order.push({
+        num: parseInt(m[1], 10),
+        model: m[2],
+        strength: parseInt(m[3], 10),
+        kind: m[4].trim(),
+      });
+    }
+  }
+  return { tier, tokens, order };
+}
+
 

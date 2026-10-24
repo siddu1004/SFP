@@ -451,5 +451,81 @@ test('Stage 2: registers the SFP Hive Library webview provider and commands', as
   assert.ok(commands.has('sfpHive.applyBundle'));
 });
 
+test('Stage 4: registers the Models webview provider and router commands', async () => {
+  const modelsProv = state.webviewProviders['sfpHive.models'];
+  assert.ok(modelsProv, 'sfpHive.models provider must be registered');
+
+  let modelsHtml = '';
+  let modelsMessages = [];
+  let onDidReceiveMessageCb;
+  const webviewView = {
+    webview: {
+      options: {},
+      asWebviewUri: (uri) => uri.fsPath,
+      cspSource: 'vscode-webview:',
+      postMessage: (msg) => { modelsMessages.push(msg); },
+      onDidReceiveMessage: (cb) => { onDidReceiveMessageCb = cb; },
+      set html(val) { modelsHtml = val; },
+    },
+    show: () => {},
+  };
+  modelsProv.resolveWebviewView(webviewView, {}, {});
+
+  // HTML structure & CSP
+  assert.ok(modelsHtml.includes('Content-Security-Policy'), 'Models HTML must have CSP');
+  assert.ok(!modelsHtml.includes("'unsafe-inline'"), 'Models CSP must not have unsafe-inline');
+  assert.ok(modelsHtml.includes('models.css'), 'Models must load models.css');
+  assert.ok(modelsHtml.includes('models.js'), 'Models must load models.js');
+  assert.ok(modelsHtml.includes('id="status-dot"'), 'Models must have status dot');
+  assert.ok(modelsHtml.includes('id="toggle-router-btn"'), 'Models must have toggle router button');
+  assert.ok(modelsHtml.includes('id="server-card"'), 'Models must have server card');
+  assert.ok(modelsHtml.includes('id="server-url"'), 'Models must have server url');
+  assert.ok(modelsHtml.includes('id="copy-url-btn"'), 'Models must have copy url button');
+  assert.ok(modelsHtml.includes('id="providers-container"'), 'Models must have providers container');
+  assert.ok(modelsHtml.includes('id="policy-select"'), 'Models must have policy select');
+  assert.ok(modelsHtml.includes('id="setup-btn"'), 'Models must have setup button');
+  assert.ok(modelsHtml.includes('id="write-btn"'), 'Models must have write button');
+  assert.ok(modelsHtml.includes('id="preview-box"'), 'Models must have preview box');
+  assert.ok(modelsHtml.includes('id="status-container"'), 'Models must have status container');
+  assert.ok(modelsHtml.includes('id="try-prompt-input"'), 'Models must have try prompt input');
+  assert.ok(modelsHtml.includes('id="try-plan-btn"'), 'Models must have try plan button');
+  assert.ok(modelsHtml.includes('id="try-send-btn"'), 'Models must have try send button');
+  assert.ok(modelsHtml.includes('id="try-output"'), 'Models must have try output box');
+
+  // Verify ready message
+  assert.ok(onDidReceiveMessageCb, 'Must register webview message receiver');
+  await onDidReceiveMessageCb({ command: 'ready' });
+  assert.ok(modelsMessages.some((m) => m.type === 'updateState'), 'ready should post updateState');
+
+  // Verify policy change
+  modelsMessages = [];
+  await onDidReceiveMessageCb({ command: 'changePolicy', policy: 'cheap-first' });
+
+  // Verify setup preview (dry run)
+  modelsMessages = [];
+  await onDidReceiveMessageCb({ command: 'setup', policy: 'local-first', yes: false });
+  assert.ok(modelsMessages.some((m) => m.type === 'setupPreview'), 'setup without yes should post setupPreview');
+
+  // Verify plan
+  modelsMessages = [];
+  await onDidReceiveMessageCb({ command: 'plan', task: 'refactor billing' });
+  assert.ok(modelsMessages.some((m) => m.type === 'planResult'), 'plan should post planResult');
+
+  // Verify copyUrl
+  state.clipboard = '';
+  await onDidReceiveMessageCb({ command: 'copyUrl', url: 'http://127.0.0.1:8787/v1' });
+  assert.strictEqual(state.clipboard, 'http://127.0.0.1:8787/v1');
+
+  // Commands testing
+  assert.ok(commands.has('sfpHive.focusModels'), 'sfpHive.focusModels must be registered');
+  assert.ok(commands.has('sfpHive.routerStart'), 'sfpHive.routerStart must be registered');
+  assert.ok(commands.has('sfpHive.routerStop'), 'sfpHive.routerStop must be registered');
+  assert.ok(commands.has('sfpHive.routerSetup'), 'sfpHive.routerSetup must be registered');
+
+  // Test executing router commands
+  await commands.get('sfpHive.routerStop')();
+  await commands.get('sfpHive.focusModels')();
+});
+
 
 
