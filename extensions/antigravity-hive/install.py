@@ -51,6 +51,8 @@ def main():
     done = []
     for name in wanted:
         exe = shutil.which(EDITORS[name])
+        if not exe and name == 'antigravity':
+            exe = shutil.which('antigravity-ide')
         if exe:
             run([exe, '--install-extension', vsix, '--force'])
             done.append(name)

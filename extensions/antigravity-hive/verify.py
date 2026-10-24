@@ -84,7 +84,12 @@ def run_checks(editor=None, home=HOME):
         results.append({'check': name, 'status': status, 'detail': detail})
 
     names = [editor] if editor else sorted(EDITORS)
-    clis = {n: shutil.which(EDITORS[n]) for n in names}
+    clis = {}
+    for n in names:
+        p = shutil.which(EDITORS[n])
+        if not p and n == 'antigravity':
+            p = shutil.which('antigravity-ide')
+        clis[n] = p
     found = {n: p for n, p in clis.items() if p}
     add('editor command on PATH', PASS if found else FAIL,
         ', '.join('%s (%s)' % (n, p) for n, p in found.items()) or 'none of: ' + ', '.join(EDITORS[n] for n in names) +

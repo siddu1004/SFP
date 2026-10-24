@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.5.0'
+VERSION = '3.6.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
@@ -219,7 +219,7 @@ def respond(need, theta):
     return need * need / (need * need + theta * theta) if need > 0 else 0.0
 
 
-def assemble(quality, demand, budget, max_skills):
+def assemble(quality, demand, budget, max_skills, why=None):
     """Choose the stack: overlap suppression, then role allocation.
 
     Take the skill with the most quality left after the penalty for overlap with those already chosen.
@@ -229,7 +229,9 @@ def assemble(quality, demand, budget, max_skills):
     most exceeds its threshold for that job. If no response clears ENGAGE (or the token budget would
     be broken) it stays in reserve. Taking a job uses up WORK_DONE of its need, so a second skill
     joins the same job only if it is strong. The best skill is always taken.
+    `why`, when given, is filled with the reason each skill that was looked at was not taken.
     """
+    why = why if why is not None else {}
     need = {p: BASE_DEMAND + (1 - BASE_DEMAND) * demand.get(p, 0.0) for p in v1.PHASE_ORDER}
     pool = dict(quality)
     chosen, reserve, spent = [], [], 0
@@ -245,6 +247,9 @@ def assemble(quality, demand, budget, max_skills):
             name = max(left, key=cand_key)
         pool.pop(name)
         if left[name] <= 0:
+            why[name] = 'overlaps a chosen skill'
+            for n in pool:
+                why.setdefault(n, 'overlaps a chosen skill')
             break  # everything left overlaps a skill already chosen
         aff = affinity(name)
         best_p, best_r = None, -1.0
@@ -255,10 +260,13 @@ def assemble(quality, demand, budget, max_skills):
         cost = v1.body_tokens(name)
         if chosen and (best_r < ENGAGE or spent + cost > budget):
             reserve.append(name)
+            why[name] = 'over the token budget' if spent + cost > budget else 'no job left that it suits (weak response)'
             continue
         chosen.append((name, best_p, best_r))
         spent += cost
         need[best_p] *= 1 - WORK_DONE * best_r
+    for n in pool:
+        why.setdefault(n, 'not reached: the stack was full (max skills)')
     reserve += sorted(pool, key=lambda n: -pool[n])[:5]
     return chosen, reserve, spent, need
 
@@ -321,14 +329,18 @@ def scan(project):
 
 
 def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, history=None, scan_result=None,
-           model=None, want_signals=False):
+           model=None, want_signals=False, include=(), exclude=(), explain=False):
     """Decide which skills to use for a task, and in what order.
 
     `model` is a learned preference model (sfp_learn.Model); without one, or with one that has seen
     no feedback, the result is the same as the unlearned selection.
+    `exclude` names skills the user ruled out; `include` names skills the user pinned, which join the stack
+    whatever their score. `explain` adds the top candidates, their signal votes and why each was or was not taken.
     """
     t0 = time.time()
     after = [n for n in (core.resolve_name(a) for a in (after or [])) if n]
+    exclude = {n for n in (core.resolve_name(x) for x in (exclude or [])) if n}
+    include = [n for n in (core.resolve_name(x) for x in (include or [])) if n and n not in INTERNAL_SKILLS]
     hist = history if history is not None else History(v1.RECIPES, v1.read_usage())
     sc = scan_result if scan_result is not None else scan(project)
     sit = read_situation(task, goal, sc)
@@ -347,10 +359,23 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             learned[n] = z
         if has_agreement(v) or (z >= RESCUE and v['words'] and v['relation'] != 'mismatch'):
             quality[n] = base_quality(v) * (math.exp(z) if z else 1.0)
+    for n in exclude:
+        quality.pop(n, None)
     if quality:
         top_q = max(quality.values())
         quality = {n: q / top_q for n, q in quality.items()}
-    chosen, reserve, spent, left = assemble(quality, sit['demand'], budget, max_skills)
+    why = {}
+    pinned = [n for n in include if n not in exclude]
+    rest = {n: q for n, q in quality.items() if n not in pinned}
+    chosen, reserve, spent, left = assemble(rest, sit['demand'], budget, max(0, max_skills - len(pinned)), why)
+    for n in pinned:
+        # The user's choice: it takes the job it suits best, and is listed with the others.
+        aff = affinity(n)
+        phase = max(v1.PHASE_ORDER, key=lambda p: aff[p])
+        chosen.append((n, phase, 1.0))
+        spent += v1.body_tokens(n)
+        quality.setdefault(n, 0.0)
+        votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
 
     stack = []
     for name, phase, resp in chosen:
@@ -370,7 +395,10 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             reasons.append('preferred from feedback')
         elif learned.get(name, 0) <= -0.15:
             reasons.append('down-weighted by feedback')
-        reasons.append('backed by: ' + ', '.join(backers(v)))
+        if name in pinned:
+            reasons.insert(0, 'pinned by you')
+        else:
+            reasons.append('backed by: ' + ', '.join(backers(v)))
         stack.append({'name': name, 'phase': phase, 'layer': v1.LAYER[phase], 'category': core.SKILLS[name]['category'],
                       'tokens': v1.body_tokens(name), 'score': round(quality[name], 3), 'support': len(backers(v)),
                       'response': round(resp, 3), 'relevance': round(v['words'], 3),
@@ -418,6 +446,30 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         'considered': len(votes),
         'ms': int((time.time() - t0) * 1000),
     }
+    if pinned or exclude:
+        res['intervention'] = {'pinned': pinned, 'excluded': sorted(exclude)}
+    if explain:
+        taken = {c['name'] for c in stack}
+        agreed = sorted(quality, key=lambda n: -quality[n])[:12]
+        others = sorted((n for n in votes if n not in quality and n not in exclude), key=lambda n: -(votes[n]['words'] or 0))[:6]
+        rows = []
+        for n in list(dict.fromkeys([c['name'] for c in stack] + agreed + others + sorted(exclude & set(votes)))):
+            v = votes.get(n, {})
+            if n in taken:
+                status = 'pinned by you' if n in pinned else 'chosen'
+            elif n in exclude:
+                status = 'excluded by you'
+            elif v.get('relation') == 'mismatch':
+                status = 'dropped: for another technology than the project'
+            elif n not in quality:
+                status = 'dropped: no agreement (task words too weak, and fewer than two signals backed it)'
+            else:
+                status = 'dropped: ' + why.get(n, 'not reached')
+            rows.append({'name': n, 'status': status, 'quality': round(quality.get(n, 0.0), 3),
+                         'signals': {k: (None if v.get(k) is None else round(v[k], 3)) for k in SIGNALS},
+                         'backers': backers(v) if v else [], 'relation': v.get('relation'),
+                         'learned': round(learned.get(n, 0.0), 3), 'tokens': v1.body_tokens(n)})
+        res['explain'] = rows
     if want_signals:
         # What the learner needs to remember about this decision: numbers only, no text from the task.
         res['_record'] = {'tech': tech, 'words': words, 'phases': {p: round(v, 2) for p, v in sit['demand'].items()},
@@ -540,6 +592,9 @@ def main(argv=None):
     r.add_argument('--max', type=int, default=4)
     r.add_argument('--engine', choices=['select', 'v1'], default='select', help='v1 is the earlier weighted-score engine')
     r.add_argument('--no-learning', action='store_true', help='ignore what feedback has taught the model')
+    r.add_argument('--include', default='', help='comma-separated skills to pin into the stack')
+    r.add_argument('--exclude', default='', help='comma-separated skills to rule out')
+    r.add_argument('--explain', action='store_true', help='add each top candidate, its signal votes and why it was or was not taken')
     r.add_argument('--json', action='store_true')
     f = sub.add_parser('feedback', help='tell the hive what helped, what did not, and what was missing')
     f.add_argument('decision', help='the decision id printed by select, or "last"')
@@ -569,7 +624,9 @@ def main(argv=None):
         if a.engine == 'v1':
             res = v1.recommend(a.task, a.project, a.goal, after, a.budget, a.max)
         else:
-            res = sfp_learn.decide(a.task, a.project, a.goal, after, a.budget, a.max, learn=not a.no_learning)
+            res = sfp_learn.decide(a.task, a.project, a.goal, after, a.budget, a.max, learn=not a.no_learning,
+                                   include=[x.strip() for x in a.include.split(',') if x.strip()],
+                                   exclude=[x.strip() for x in a.exclude.split(',') if x.strip()], explain=a.explain)
         print(json.dumps(res, indent=1) if a.json else format_stack(res))
     elif a.cmd == 'feedback':
         helped, bad, ignored, missing = ([x.strip() for x in s.split(',') if x.strip()]

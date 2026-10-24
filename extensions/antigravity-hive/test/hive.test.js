@@ -54,6 +54,34 @@ test('feedback arguments carry the verdict, the skills and the decision', () => 
   assert.deepStrictEqual(hive.feedbackArgs('/r', 'd_1', 'missing', ['a'], 'a task').slice(-2), ['--task', 'a task']);
 });
 
+test('steering adds include, exclude and explain to the command', () => {
+  const args = hive.selectArgs('/r', 't', undefined, 4, { include: ['a', 'b'], exclude: ['c'], explain: true });
+  assert.deepStrictEqual(args.slice(-5), ['--include', 'a,b', '--exclude', 'c', '--explain']);
+  assert.ok(!hive.selectArgs('/r', 't', undefined, 4).includes('--explain'));
+});
+
+test('an intervention becomes feedback: removed is unhelpful, added is missing', () => {
+  const before = { stack: [{ name: 'x' }, { name: 'y' }] };
+  assert.deepStrictEqual(hive.interventionFeedback(before, { exclude: ['x', 'never-chosen'], include: ['z', 'y'] }),
+    [{ verdict: 'unhelpful', skills: ['x'] }, { verdict: 'missing', skills: ['z'] }]);
+  assert.deepStrictEqual(hive.interventionFeedback(before, {}), []);
+});
+
+test('end to end: explain lists candidates with signals, and steering is honoured', async () => {
+  const data = fs.mkdtempSync(path.join(os.tmpdir(), 'hive-steer-'));
+  process.env.SFP_DATA_DIR = data;
+  delete process.env.SFP_NO_USAGE_LOG;
+  const python = hive.pythonCommand();
+  const first = hive.parseSelection(await hive.run(python, hive.selectArgs(REPO, 'write table driven tests for a go parser', undefined, 3, { explain: true }), 120000));
+  assert.ok(first.explain && first.explain.length >= first.stack.length);
+  assert.ok(first.explain.every((c) => 'words' in c.signals && typeof c.status === 'string'));
+  const out = first.stack[0].name;
+  const second = hive.parseSelection(await hive.run(python, hive.selectArgs(REPO, 'write table driven tests for a go parser', undefined, 3, { exclude: [out], include: ['security-review'] }), 120000));
+  const names = second.stack.map((s) => s.name);
+  assert.ok(!names.includes(out) && names.includes('security-review'));
+  assert.deepStrictEqual(second.intervention, { pinned: ['security-review'], excluded: [out] });
+});
+
 test('the task is one argument and never reaches a shell', () => {
   const task = 'x; touch /tmp/oops "quoted" $(whoami)';
   const args = hive.selectArgs('/r', task, '/proj', 3);

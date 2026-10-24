@@ -1,6 +1,6 @@
 {
   "name": "security",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
   "author": {
     "name": "siddu1004"

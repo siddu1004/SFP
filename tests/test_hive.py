@@ -95,6 +95,31 @@ class SelectionRulesTest(unittest.TestCase):
         for p in ('ios', 'ml', 'quarkus'):
             self.assertNotIn('csharp-testing', names[p])
 
+    def test_the_user_can_rule_out_and_pin_skills(self):
+        plain = [c['name'] for c in self.select('write tests for the orders', 'dotnet')['stack']]
+        self.assertTrue(plain)
+        res = self.select('write tests for the orders', 'dotnet', exclude=[plain[0]], include=['security-review'])
+        names = [c['name'] for c in res['stack']]
+        self.assertNotIn(plain[0], names)
+        self.assertIn('security-review', names)
+        pinned = next(c for c in res['stack'] if c['name'] == 'security-review')
+        self.assertEqual(pinned['reasons'][0], 'pinned by you')
+        self.assertEqual(res['intervention'], {'pinned': ['security-review'], 'excluded': [plain[0]]})
+        self.assertLessEqual(len(names), 4)
+
+    def test_explain_says_why_each_candidate_was_or_was_not_taken(self):
+        res = self.select('write tests for the orders', 'dotnet', explain=True)
+        rows = {r['name']: r for r in res['explain']}
+        for c in res['stack']:
+            self.assertEqual(rows[c['name']]['status'], 'chosen')
+        dropped = [r for r in res['explain'] if r['status'].startswith('dropped')]
+        self.assertTrue(dropped)
+        for r in res['explain']:
+            self.assertEqual(set(r['signals']), set(sel.SIGNALS))
+        # Explaining does not change the choice.
+        self.assertEqual([c['name'] for c in res['stack']],
+                         [c['name'] for c in self.select('write tests for the orders', 'dotnet')['stack']])
+
     def test_never_offers_the_hive_or_router(self):
         for task in ('decide which skills to use', 'select skills for this task', 'sfp select'):
             names = {c['name'] for c in self.select(task)['stack']}

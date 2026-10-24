@@ -16,6 +16,23 @@ export interface Skill {
   reasons?: string[];
 }
 
+export interface Candidate {
+  name: string;
+  status: string; // 'chosen', 'pinned by you', 'excluded by you', or 'dropped: <reason>'
+  quality: number;
+  signals: { words: number | null; project: number | null; role: number | null; category: number | null; history: number | null };
+  backers: string[];
+  relation?: string;
+  learned: number;
+  tokens: number;
+}
+
+export interface Steer {
+  include?: string[]; // skills the user pinned
+  exclude?: string[]; // skills the user ruled out
+  explain?: boolean; // ask for every top candidate and why it was or was not taken
+}
+
 export interface Selection {
   task: string;
   decision?: string; // absent when the user switched logging off (SFP_NO_USAGE_LOG)
@@ -23,6 +40,8 @@ export interface Selection {
   layers: { base: string[]; check: string[]; finish: string[] };
   tokens: number;
   next: { name: string; probability: number }[];
+  explain?: Candidate[];
+  intervention?: { pinned: string[]; excluded: string[] };
 }
 
 export type Verdict = 'helped' | 'unhelpful' | 'ignored' | 'missing';
@@ -51,10 +70,24 @@ export function pythonCommand(opts: Options = {}): string {
   return opts.python || (process.platform === 'win32' ? 'python' : 'python3');
 }
 
-export function selectArgs(root: string, task: string, project: string | undefined, max: number): string[] {
+export function selectArgs(root: string, task: string, project: string | undefined, max: number, steer: Steer = {}): string[] {
   const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'select', task, '--json', '--max', String(max)];
   if (project) args.push('--project', project);
+  if (steer.include && steer.include.length) args.push('--include', steer.include.join(','));
+  if (steer.exclude && steer.exclude.length) args.push('--exclude', steer.exclude.join(','));
+  if (steer.explain) args.push('--explain');
   return args;
+}
+
+/** The feedback an intervention implies: a chosen skill the user removed did not help; one they added was missing. */
+export function interventionFeedback(before: Selection, steer: Steer): { verdict: Verdict; skills: string[] }[] {
+  const chosen = new Set(before.stack.map((s) => s.name));
+  const removed = (steer.exclude ?? []).filter((n) => chosen.has(n));
+  const added = (steer.include ?? []).filter((n) => !chosen.has(n));
+  const out: { verdict: Verdict; skills: string[] }[] = [];
+  if (removed.length) out.push({ verdict: 'unhelpful', skills: removed });
+  if (added.length) out.push({ verdict: 'missing', skills: added });
+  return out;
 }
 
 export function feedbackArgs(root: string, decision: string, verdict: Verdict, skills: string[], task?: string): string[] {
@@ -99,6 +132,8 @@ export function parseSelection(json: string): Selection {
     layers: raw.layers ?? { base: [], check: [], finish: [] },
     tokens: Number(raw.tokens ?? 0),
     next: Array.isArray(raw.next) ? raw.next : [],
+    explain: Array.isArray(raw.explain) ? raw.explain : undefined,
+    intervention: raw.intervention,
   };
 }
 

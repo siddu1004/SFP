@@ -294,11 +294,12 @@ def keep_words():
     return os.environ.get('SFP_LEARN_WORDS', '1') not in ('0', 'false', 'no')
 
 
-def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, learn=True):
+def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, learn=True, include=(), exclude=(), explain=False):
     """Select skills, apply what has been learned, and log the decision so feedback can refer to it."""
     use = learn and enabled()
     res = sel.select(task, project, goal, after, budget, max_skills,
-                     history=load_history(), model=load_model() if use else None, want_signals=True)
+                     history=load_history(), model=load_model() if use else None, want_signals=True,
+                     include=include, exclude=exclude, explain=explain)
     record = res.pop('_record')
     res['learning'] = {'enabled': use, 'examples': load_model().examples if use else 0, 'words_kept': keep_words()}
     res['decision'] = None
