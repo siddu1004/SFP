@@ -655,6 +655,9 @@ def main(argv=None):
     ba.add_argument('--when', default='')
     br = sub.add_parser('bundle-remove', help='remove a bundle of your own')
     br.add_argument('name')
+    sk = sub.add_parser('skill', help='everything about one skill: description, area, purpose, bundles, similar skills')
+    sk.add_argument('name')
+    sk.add_argument('--json', action='store_true')
     bl = sub.add_parser('bundles', help='list the bundles')
     bl.add_argument('--json', action='store_true')
     cl = sub.add_parser('clusters', help='the skills grouped into clusters, with what has been used')
@@ -750,6 +753,14 @@ def main(argv=None):
     elif a.cmd == 'library':
         import sfp_library
         print(json.dumps(sfp_library.library(), separators=(',', ':')))
+    elif a.cmd == 'skill':
+        import sfp_library
+        try:
+            d = sfp_library.skill_detail(a.name)
+        except KeyError:
+            raise SystemExit('no skill named %r' % a.name)
+        print(json.dumps(d, indent=1) if a.json else '%s\n  %s / %s / %s\n  %s' % (
+            d['name'], d['family']['name'], d['cluster']['name'], d['purpose']['name'], d['description']))
     elif a.cmd == 'bundles':
         import sfp_library
         res = sfp_library.bundles()
