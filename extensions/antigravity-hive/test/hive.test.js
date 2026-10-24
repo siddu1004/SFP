@@ -138,3 +138,49 @@ test('a command that fails reports why, and a missing program says so', async ()
   await assert.rejects(hive.run(hive.pythonCommand(), ['-c', 'import sys; sys.exit("boom")']), /boom/);
   await assert.rejects(hive.run('no-such-python-xyz', []), /could not start/);
 });
+
+test('the activity buffer merges repeated saves, drops opens when there is more, and empties on take', () => {
+  let now = 100;
+  const b = new hive.ActivityBuffer(5, () => now);
+  b.add({ kind: 'open', path: 'README.md' });
+  b.add({ kind: 'save', path: 'a.go' });
+  now = 110;
+  b.add({ kind: 'save', path: 'a.go' });
+  b.add({ kind: 'run', command: 'go test ./...', exit: 0 });
+  const batch = b.take();
+  assert.deepStrictEqual(batch.map((e) => e.kind), ['save', 'run']);
+  assert.strictEqual(batch[0].t, 110);
+  assert.strictEqual(b.size, 0);
+  b.add({ kind: 'open', path: 'x' });
+  assert.deepStrictEqual(b.take().map((e) => e.kind), ['open']);
+  for (let i = 0; i < 9; i++) b.add({ kind: 'run', command: 'c' + i });
+  assert.strictEqual(b.size, 5);
+});
+
+test('paths outside the workspace are never described', () => {
+  assert.strictEqual(hive.relative('/w', '/w/src/a.ts'), 'src/a.ts');
+  assert.strictEqual(hive.relative('/w', '/etc/passwd'), undefined);
+  assert.strictEqual(hive.relative(undefined, '/w/a'), undefined);
+});
+
+test('track and cluster arguments', () => {
+  assert.deepStrictEqual(hive.trackArgs('/r', '/p', 3, false, true).slice(1), ['track', '--json', '--max', '3', '--project', '/p', '--no-select', '--reset']);
+  assert.deepStrictEqual(hive.clusterAddArgs('/r', 'Mine', ['a', 'b'], 'd').slice(1), ['cluster-add', 'Mine', '--skills', 'a,b', '--description', 'd']);
+  assert.deepStrictEqual(hive.clusterRemoveArgs('/r', 'Mine').slice(1), ['cluster-remove', 'Mine']);
+});
+
+test('end to end: tracking events gives a phase, a prediction and skills; clusters list every skill', async () => {
+  const data = fs.mkdtempSync(path.join(os.tmpdir(), 'hive-track-'));
+  process.env.SFP_DATA_DIR = data;
+  delete process.env.SFP_NO_USAGE_LOG;
+  const python = hive.pythonCommand();
+  const events = [0, 30, 60, 90].map((dt) => ({ t: 1000 + dt, kind: 'run', command: 'go test ./...', exit: 0 }));
+  const res = hive.parseTrack(await hive.run(python, hive.trackArgs(REPO, undefined, 3), 120000, JSON.stringify(events)));
+  assert.strictEqual(res.phase, 'test');
+  assert.strictEqual(res.layer, 'check');
+  assert.ok(res.confidence > 0 && res.confidence <= 1);
+  assert.ok(res.next.length > 0 && res.skills && res.skills.length > 0);
+  const clusters = hive.parseClusters(await hive.run(python, hive.clustersArgs(REPO), 120000));
+  const total = clusters.reduce((n, c) => n + c.count, 0);
+  assert.strictEqual(total, hive.catalogNames(REPO).length);
+});

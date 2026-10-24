@@ -114,6 +114,10 @@ A before-and-after check is stronger than one run: do V5 with the prompt and aga
 
 Send the agent's report back and I will fix whatever it shows.
 
+## One extension that follows the agent
+
+[HIVE-STUDIO.md](HIVE-STUDIO.md) is the brief and prompt for merging the two SFP extensions into one, with tabs for following the agent (phase tracking with a Kalman filter and a Markov chain, [TRACKING.md](TRACKING.md)), choosing and steering, a library of skill clusters, and insights.
+
 ## A visible button to see and steer the choice
 
 [HIVE-INSPECTOR.md](HIVE-INSPECTOR.md) is the build brief and prompt for the Hive Inspector: a status-bar button under the agent window that shows the chosen skills, every candidate that was considered with its signal votes and the reason it was dropped, and lets you remove, add and re-choose, with the change sent back as feedback. The hive side (`--explain`, `--include`, `--exclude`) is built and tested.

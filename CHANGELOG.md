@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.7.0
+
+- **Follow the agent.** `sfp_hive.py track` reads workspace events (saves, commands and their exit codes, errors, prompts), turns them into evidence for the eleven phases of work, smooths it with one Kalman filter per phase, and predicts the next phase with a Markov chain over phase changes, learned from your sessions on top of a prior for the usual order of work. The phase is passed to the hive as a hint, and also brings the phase's own words into the search, so the skills change when the work does. On hand-labelled sessions the filter is steadier than following the last event, and on the held-out set about 7 points less accurate; `docs/TRACKING.md` has the numbers.
+- **Clusters.** `clusters.json` groups all 819 skills into 40 named clusters (UI components, animation, testing, GSD workflow, Blender scenes and more); `sfp_hive.py clusters` lists them with usage, and `cluster-add` and `cluster-remove` manage clusters of your own.
+- The extension's bridge has the calls for tracking, an activity buffer and clusters, with tests (25). `docs/HIVE-STUDIO.md` is the prompt for Antigravity to merge the two SFP extensions into one, with the Now, Choose, Library and Insights tabs.
+
 ## 3.6.0
 
 - **See and steer the choice.** `select --explain` lists the top candidates with their five signal votes, the signals that backed each, its learned preference, token cost, and the exact reason it was chosen or dropped (no agreement, overlap with a chosen skill, token budget, stack full, another technology). `--exclude` rules skills out and `--include` pins them in; pinned skills say so. With no options the choice is unchanged. The extension's `src/hive.ts` exposes them, and turns an intervention into feedback (removed is `unhelpful`, added is `missing`).
