@@ -11,9 +11,9 @@ The router and the hive: find the right skill for any task, installed or not, an
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 | `sfp-hive` | Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work move… |
 
-## frontend (76)
+## frontend (80)
 
-UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.
+UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.
 
 | Skill | What it does |
 |---|---|
@@ -67,6 +67,10 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `vite-patterns` | Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, and build optimization. Activate when working with vite.config.ts, Vite… |
 | `vue-patterns` | Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigation, and Nuxt SSR patterns. Activates for Vue, Nuxt, Vite, or Pinia proj… |
 | `web-interface-guidelines` | Review UI code against the Vercel Web Interface Guidelines (accessibility, focus states, forms, animation, typography, content handling, images, performance, navigation and state, touch, safe areas, d… |
+| `react-three-fiber` | Build 3D scenes in React with React Three Fiber (@react-three/fiber), the React renderer for three.js. Use when the user wants 3D in a React or Next.js app, a Canvas with meshes, lights and cameras, a… |
+| `liquid-glass-js` | Add Apple Liquid Glass-style buttons and containers to a web page with liquid-glass-js, a plain JavaScript and WebGL library with real-time refraction, blur and nested glass. Use when the user wants a… |
+| `shadergradient` | Add an animated 3D shader gradient background to a React, Next.js, Vue or Nuxt site with ShaderGradient (@shadergradient/react, @shadergradient/vue). Use when the user wants a moving gradient, an anim… |
+| `liquid-logo` | Turn a logo or image into an animated liquid-metal effect with Liquid Logo, a WebGL fragment-shader tool, or reuse its shader in your own page. Use when the user wants an animated chrome or liquid met… |
 | `accessibility-audit` | Conduct accessibility audits against WCAG 2.2 guidelines. Evaluate pages, components, and flows for conformance at A, AA, and AAA levels. Identify issues, assess severity, provide code fixes, and gene… |
 | `design-critique` | Evaluate UI designs against usability heuristics, UX laws, interaction patterns, interaction design principles, information architecture, and content quality. Conduct heuristic evaluations, structured… |
 | `design-elevation` | Comprehensive design elevation system that automatically transforms functional visual outputs into polished, professional designs. Use when creating ANY visual output including presentations (pptx), s… |
@@ -737,9 +741,9 @@ Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, conf
 | `network-config-validation` | Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, stale references, management-plane risk, and IOS-style security hygiene. … |
 | `network-interface-health` | Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, switches, and Linux hosts. Use when an interface shows errors, drops, CRCs… |
 
-## research-docs (28)
+## research-docs (29)
 
-Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself.
+Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).
 
 | Skill | What it does |
 |---|---|
@@ -761,6 +765,7 @@ Deep research, scientific databases, literature review, docs, ADRs, a teach-me t
 | `scientific-thinking-scholar-evaluation` | Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation support, and research-writing feedback. Use when evaluating academic or sci… |
 | `story-lifecycle` | Manage a file-based epic → story → sprint development loop without requiring an external project management tool. Creates and tracks epics, breaks them into user stories, assigns them to sprints, and … |
 | `rederive` | Teaches a codebase by making the user re-derive its design decisions from first principles through Socratic questions, instead of explaining the code. Works on the user's own repo or any open source r… |
+| `graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question should be treated as a graphify query first. … |
 | `teach-me` | Teach adaptively from learner goals or authorized sources, or help educators prepare lessons, in English or simplified Modern Standard Arabic. Use for learning, practice, review, or getting unstuck. |
 | `vibewise-learn` | Activate or resume learning-first development. You lead the design; Claude gives feedback, explains concepts, asks follow-ups, and writes the agreed code. |
 | `vibewise-reset` | Back up this project's learning notes and restart onboarding after confirmation. Does not reset application code. |
@@ -774,7 +779,7 @@ Deep research, scientific databases, literature review, docs, ADRs, a teach-me t
 
 ## web3 (9)
 
-DeFi, EVM, prediction markets, ItÃ´ baskets and compute, and trading-agent security.
+DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security.
 
 | Skill | What it does |
 |---|---|
@@ -814,7 +819,7 @@ General engineering practice: architecture, standards, error handling, performan
 | `rea-tool-design` | Design or change REA investigation tools, CLI/MCP contracts, provider capabilities, and Evidence semantics. |
 | `unlazy` | Anti-laziness execution discipline for substantial tasks. Use when work keeps coming back half done, when an agent reports done before it is done, when output must be exhaustive rather than fast, on l… |
 | `karpathy-guidelines` | Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiabl… |
-| `graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question should be treated as a graphify query first. … |
+| `engineering-graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question should be treated as a graphify query first. … |
 
 ## science-hardware (116)
 

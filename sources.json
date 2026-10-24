@@ -179,6 +179,81 @@
       ]
     },
     {
+      "repo": "Graphify-Labs/graphify",
+      "license": "Apache-2.0",
+      "default": "research-docs",
+      "fixed": true,
+      "template": "templates/graphify",
+      "files": {
+        "graphify/skill.md": "SKILL.md",
+        "README.md": "reference/readme.md"
+      }
+    },
+    {
+      "repo": "pmndrs/react-three-fiber",
+      "license": "MIT",
+      "default": "frontend",
+      "fixed": true,
+      "template": "templates/react-three-fiber",
+      "files": {
+        "docs/getting-started/introduction.mdx": "reference/introduction.md",
+        "docs/getting-started/installation.mdx": "reference/installation.md",
+        "docs/API/canvas.mdx": "reference/canvas.md",
+        "docs/API/hooks.mdx": "reference/hooks.md",
+        "docs/API/objects.mdx": "reference/objects.md",
+        "docs/API/events.mdx": "reference/events.md",
+        "docs/API/typescript.mdx": "reference/typescript.md",
+        "docs/API/testing.mdx": "reference/testing.md",
+        "docs/advanced/pitfalls.mdx": "reference/pitfalls.md",
+        "docs/advanced/scaling-performance.mdx": "reference/scaling-performance.md",
+        "docs/tutorials/basic-animations.mdx": "reference/basic-animations.md",
+        "docs/tutorials/loading-models.mdx": "reference/loading-models.md",
+        "docs/tutorials/loading-textures.mdx": "reference/loading-textures.md",
+        "docs/tutorials/how-it-works.mdx": "reference/how-it-works.md",
+        "docs/tutorials/v9-migration-guide.mdx": "reference/v9-migration-guide.md"
+      }
+    },
+    {
+      "repo": "dashersw/liquid-glass-js",
+      "license": "MIT",
+      "default": "frontend",
+      "fixed": true,
+      "template": "templates/liquid-glass-js",
+      "files": {
+        "README.md": "reference/readme.md",
+        "container.js": "reference/container.js",
+        "button.js": "reference/button.js",
+        "glass.css": "reference/glass.css",
+        "styles.css": "reference/styles.css"
+      }
+    },
+    {
+      "repo": "ruucm/shadergradient",
+      "license": "MIT",
+      "default": "frontend",
+      "fixed": true,
+      "template": "templates/shadergradient",
+      "files": {
+        "README.md": "reference/readme.md",
+        "packages/shadergradient-vue/README.md": "reference/vue.md"
+      }
+    },
+    {
+      "repo": "collidingScopes/liquid-logo",
+      "license": "MIT",
+      "default": "frontend",
+      "fixed": true,
+      "template": "templates/liquid-logo",
+      "files": {
+        "README.MD": "reference/readme.md",
+        "fragment-shader.glsl": "reference/fragment-shader.glsl",
+        "vertex-shader.glsl": "reference/vertex-shader.glsl",
+        "shaders.js": "reference/shaders.js",
+        "main.js": "reference/main.js",
+        "presets.js": "reference/presets.js"
+      }
+    },
+    {
       "repo": "ahmed3bead/teach-me",
       "license": "MIT",
       "default": "research-docs",

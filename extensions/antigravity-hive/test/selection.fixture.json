@@ -1,0 +1,127 @@
+{
+ "engine": "sfp-hive 3.4.0",
+ "task": "add an accessible signup form",
+ "goal": null,
+ "project": {
+  "technologies": [
+   "android",
+   "celery",
+   "compose",
+   "django",
+   "dotnet",
+   "fastapi",
+   "flutter",
+   "golang"
+  ],
+  "evidence": [
+   "mcp.json: mcp",
+   "package.json: nodejs",
+   "package.json: playwright",
+   "jest.config.js: jest",
+   "package.json: jest",
+   "package.json: react",
+   "package.json: typescript",
+   "package.json: vite"
+  ],
+  "files_scanned": 4977
+ },
+ "phases": {},
+ "layers": {
+  "base": [
+   "impeccable",
+   "accessibility"
+  ],
+  "check": [
+   "django-celery"
+  ],
+  "finish": []
+ },
+ "stack": [
+  {
+   "name": "impeccable",
+   "phase": "design",
+   "layer": "base",
+   "category": "frontend",
+   "tokens": 3010,
+   "score": 0.698,
+   "support": 3,
+   "response": 0.312,
+   "relevance": 0.698,
+   "path": "plugins/frontend/skills/impeccable/SKILL.md",
+   "reasons": [
+    "task words: accessible, form",
+    "fits project: android",
+    "backed by: words, project, category"
+   ]
+  },
+  {
+   "name": "accessibility",
+   "phase": "build",
+   "layer": "base",
+   "category": "frontend",
+   "tokens": 1636,
+   "score": 1.0,
+   "support": 3,
+   "response": 0.5,
+   "relevance": 1.0,
+   "path": "plugins/frontend/skills/accessibility/SKILL.md",
+   "reasons": [
+    "task words: accessible",
+    "fits project: android",
+    "backed by: words, project, category"
+   ]
+  },
+  {
+   "name": "django-celery",
+   "phase": "test",
+   "layer": "check",
+   "category": "backend",
+   "tokens": 3283,
+   "score": 0.738,
+   "support": 2,
+   "response": 0.344,
+   "relevance": 0.96,
+   "path": "plugins/backend/skills/django-celery/SKILL.md",
+   "reasons": [
+    "fits project: celery, django",
+    "backed by: words, project"
+   ]
+  }
+ ],
+ "tokens": 7929,
+ "recipe": null,
+ "next": [
+  {
+   "name": "browser-qa",
+   "probability": 0.0113
+  },
+  {
+   "name": "csharp-testing",
+   "probability": 0.0113
+  },
+  {
+   "name": "django-tdd",
+   "probability": 0.0113
+  }
+ ],
+ "analysis": {
+  "candidates": 33,
+  "agreed": 13,
+  "reserve": [
+   "accessibility-audit",
+   "frontend-a11y",
+   "android-clean-architecture",
+   "react-patterns",
+   "ux-writing"
+  ],
+  "unmet": {}
+ },
+ "considered": 33,
+ "ms": 56,
+ "learning": {
+  "enabled": false,
+  "examples": 0,
+  "words_kept": true
+ },
+ "decision": null
+}

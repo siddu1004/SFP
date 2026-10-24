@@ -12,7 +12,7 @@
     {
       "name": "frontend",
       "source": "./plugins/frontend",
-      "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines."
+      "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo."
     },
     {
       "name": "design-styles",
@@ -97,12 +97,12 @@
     {
       "name": "research-docs",
       "source": "./plugins/research-docs",
-      "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself."
+      "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project)."
     },
     {
       "name": "web3",
       "source": "./plugins/web3",
-      "description": "DeFi, EVM, prediction markets, It\u00c3\u00b4 baskets and compute, and trading-agent security."
+      "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security."
     },
     {
       "name": "engineering",

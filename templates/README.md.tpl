@@ -218,6 +218,18 @@ The server is written under VS Code's `servers` key and your other servers are k
 </details>
 
 <details>
+<summary><b>Antigravity and other VS Code editors, with the hive inside the editor</b></summary>
+
+`extensions/antigravity-hive` is a TypeScript extension for Antigravity, VS Code, Cursor and Windsurf. It adds a status-bar item and a view: type a task, get the few skills it needs in order, copy a ready prompt for the agent panel, and mark each skill helped, unhelpful, ignored or missing.
+
+```bash
+python3 extensions/antigravity-hive/install.py
+```
+
+It builds a `.vsix` and installs it with the editor's own command, so nothing inside the editor is changed. [docs/ANTIGRAVITY.md](docs/ANTIGRAVITY.md) has the details, what has not been tested (it was tested in a real VS Code 1.117, and has not been run inside Antigravity itself), and implementation prompts for extending it.
+</details>
+
+<details>
 <summary><b>Codex, Copilot CLI, Cursor and Gemini CLI, as plugins</b></summary>
 
 The repo carries each tool's plugin files, generated from the same categories, so each category is a plugin in all of them:
@@ -436,7 +448,7 @@ Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--js
 
 ## Skills That Need a Program
 
-A few skills only guide a program that is installed separately: OmniRoute (@@APP_OMNIROUTE@@ skills), claude-mem (@@APP_CLAUDE_MEM@@), Strix (@@APP_STRIX@@), FreeLLMAPI, Agent Reach and AgentShield. Each of these skills carries its own setup, so the skill that needs the program can install it. A note at the top of the skill tells the agent to run, from the skill's folder:
+A few skills only guide a program that is installed separately: OmniRoute (@@APP_OMNIROUTE@@ skills), claude-mem (@@APP_CLAUDE_MEM@@), Strix (@@APP_STRIX@@), Graphify, FreeLLMAPI, Agent Reach and AgentShield. Each of these skills carries its own setup, so the skill that needs the program can install it. A note at the top of the skill tells the agent to run, from the skill's folder:
 
 ```bash
 python3 scripts/sfp_app.py status            # installed? running? what is missing (Node version, Docker...)
@@ -534,6 +546,8 @@ SFP reads the original repos directly, and `sources.lock.json` records the exact
 | harry0703/MoneyPrinterTurbo | `content-media` |
 | marketing-psychology | `content-media`: 5 persuasion and behavior skills |
 | Anthropic example skills | 8 Apache-2.0 skills: algorithmic art, brand guidelines, canvas design, internal comms, MCP builder, Slack GIF creator, theme factory, web artifacts builder |
+| pmndrs/react-three-fiber, dashersw/liquid-glass-js, ruucm/shadergradient, collidingScopes/liquid-logo | `frontend`: a skill each, with the project's docs and source |
+| Graphify-Labs/graphify | `research-docs`: a queryable knowledge graph of a project (needs the `graphify` program) |
 | EricJujianZou/rederive | `research-docs`: teaches a codebase by Socratic questions |
 | teach-me | `research-docs` |
 | task-observer, headroom | `agent-dev` |

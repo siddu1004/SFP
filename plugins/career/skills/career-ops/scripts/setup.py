@@ -15,7 +15,7 @@ import os
 import subprocess
 import sys
 
-COMMIT = '09a554802d4254942aeaf151682e3c824fc2684b'
+COMMIT = 'cf72768a98fa6521911d0bdf30e8d7f6ce07a502'
 REPO = 'https://github.com/career-ops-hq/career-ops.git'
 HERE = os.path.dirname(os.path.abspath(__file__))
 PATCH = os.path.normpath(os.path.join(HERE, '..', 'patches', 'data-root.patch'))

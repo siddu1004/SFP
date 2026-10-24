@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.5.0
+
+- **The hive as an extension for Antigravity and other VS Code editors** (`extensions/antigravity-hive/`, TypeScript, MIT). A status-bar item and an activity-bar view choose the skills for a task, group them as base, check and finish, copy a ready prompt for the agent panel, open each skill, and record `helped`, `unhelpful`, `ignored` and `missing` feedback. Commands open the installer for skills, the standing instruction and programs such as OmniRoute, showing the plan first. `install.py` in that folder builds the `.vsix` and installs it with the editor's own command. 18 tests, including a real end-to-end run of the hive. It was run in a real VS Code 1.117 (code-server) with a browser-driven test, which found and fixed one bug; it has not been run inside Antigravity itself. `docs/ANTIGRAVITY.md` explains the design, why it is an extension and not a patch to the editor, and has seven implementation prompts for extending it.
+- **Five more sources:** react-three-fiber, liquid-glass-js, shadergradient and liquid-logo as frontend skills with each project's docs and source, and Graphify (Apache-2.0) as a research skill plus a program entry (`uv tool install graphifyy`).
+- The dev-set floor against the earlier engine allows one task of slack, since that baseline moves with the catalog; the held-out set stays strict.
+
 ## 3.4.0
 
 - **VS Code.** `--tools vscode` installs into Copilot's skill folders (`~/.copilot/skills`, or `.github/skills` with `--project`), and `install.sh mcp --tools vscode` writes the SFP server into VS Code's `mcp.json` under its `servers` key (your user file, or `.vscode/mcp.json` with `--project`), keeping other servers. VS Code is detected by its settings folder.
