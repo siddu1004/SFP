@@ -46,7 +46,7 @@ class ExtensionManifestTest(unittest.TestCase):
         self.assertLessEqual(used, declared)
 
     def test_files_the_manifest_points_at_exist(self):
-        for rel in (self.pkg['icon'], 'media/hive.svg', 'src/extension.ts', 'src/hive.ts', 'install.py'):
+        for rel in (self.pkg['icon'], 'media/hive.svg', 'src/extension.ts', 'src/hive.ts', 'install.py', 'verify.py'):
             self.assertTrue(os.path.isfile(os.path.join(EXT, rel)), rel)
         self.assertEqual(self.pkg['main'], './out/extension.js')
 
@@ -56,6 +56,72 @@ class ExtensionManifestTest(unittest.TestCase):
 
     def test_the_licence_is_mit_like_the_rest_of_the_repo(self):
         self.assertEqual(self.pkg['license'], 'MIT')
+
+
+class VerifyScriptTest(unittest.TestCase):
+    """verify.py: the command-line check that the extension is installed in an editor and can work."""
+
+    @classmethod
+    def setUpClass(cls):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('verify_ext', os.path.join(EXT, 'verify.py'))
+        cls.v = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.v)
+
+    def home(self):
+        import tempfile
+        d = tempfile.TemporaryDirectory()
+        self.addCleanup(d.cleanup)
+        return d.name
+
+    def install(self, home, activation=True):
+        import shutil
+        folder = os.path.join(home, '.antigravity', 'extensions', 'siddu1004.sfp-hive-0.1.0')
+        os.makedirs(os.path.join(folder, 'out'))
+        pkg = json.loads(read('package.json'))
+        if not activation:
+            pkg.pop('activationEvents')
+        with open(os.path.join(folder, 'package.json'), 'w') as f:
+            json.dump(pkg, f)
+        with open(os.path.join(folder, 'out', 'extension.js'), 'w') as f:
+            f.write('')
+        return folder
+
+    def result(self, home, name):
+        return next(r for r in self.v.run_checks(home=home) if r['check'] == name)
+
+    def test_finds_the_extension_in_any_editors_folder(self):
+        home = self.home()
+        self.assertEqual(self.v.find_installed(home), [])
+        folder = self.install(home)
+        self.assertEqual(self.v.find_installed(home), [folder])
+        self.assertEqual(self.result(home, 'extension folder on disk')['status'], 'PASS')
+
+    def test_a_build_without_startup_activation_fails(self):
+        home = self.home()
+        self.install(home, activation=False)
+        self.assertEqual(self.result(home, 'installed copy activates at startup and has its code')['status'], 'FAIL')
+        home2 = self.home()
+        self.install(home2)
+        self.assertEqual(self.result(home2, 'installed copy activates at startup and has its code')['status'], 'PASS')
+
+    def test_the_logs_are_read_for_errors_from_this_extension(self):
+        home = self.home()
+        logdir = os.path.join(home, '.config', 'Antigravity', 'logs', '20261024T010101', 'window1', 'exthost')
+        os.makedirs(logdir)
+        with open(os.path.join(logdir, 'exthost.log'), 'w') as f:
+            f.write('info Extension siddu1004.sfp-hive activated\n')
+        self.assertEqual(self.result(home, 'editor logs show the extension starting')['status'], 'PASS')
+        with open(os.path.join(logdir, 'exthost.log'), 'a') as f:
+            f.write('error Cannot find module for siddu1004.sfp-hive\n')
+        self.assertEqual(self.result(home, 'editor logs show the extension starting')['status'], 'FAIL')
+
+    def test_no_logs_is_a_skip_not_a_failure(self):
+        self.assertEqual(self.result(self.home(), 'editor logs show the extension starting')['status'], 'SKIP')
+
+    def test_the_real_hive_is_run(self):
+        res = self.result(self.home(), 'the hive answers')
+        self.assertEqual(res['status'], 'PASS', res['detail'])
 
 
 if __name__ == '__main__':

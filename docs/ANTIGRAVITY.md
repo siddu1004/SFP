@@ -45,6 +45,75 @@ Settings: `sfpHive.sfpPath`, `sfpHive.python`, `sfpHive.maxSkills`, `sfpHive.cop
 
 `npm test` inside the folder runs 18 tests, with the editor API stood in. `test/e2e/drive.js` goes further: it drives a real VS Code (code-server 4.117.0, VS Code 1.117.0) in a headless browser with the extension installed, and checks that it activates at startup, the command is in the palette, choosing skills lists them, the status bar counts them, the prompt is copied and feedback is recorded. That run found one bug (no status-bar item until first use), now fixed. What has not been run: the extension inside Antigravity itself, because the editor is not available where this was built. It uses only the standard extension API that Antigravity shares with VS Code, so it should behave the same, but that is an expectation, not a test.
 
+## Check that it runs in Antigravity
+
+The extension adds its own activity-bar view, status-bar item and commands. It does not add itself inside the agent chat window; it copies a prompt that you paste there. So "appearing" means the things below, and the last check is the one that matters: the agent acting on the prompt.
+
+### 1. The prompt for Antigravity's agent
+
+Open the SFP checkout as the workspace, open the agent window, and paste this. The agent can run commands, so it does the command-line half and then asks you for the on-screen half.
+
+> You are checking that the SFP Hive extension works in this Antigravity. Do not modify Antigravity's own files; only run the commands below and report what they print.
+>
+> 1. In the terminal, from the SFP checkout, run `python3 extensions/antigravity-hive/install.py`. Show me the last 15 lines. If it says no editor command was found, tell me and stop: I will install the `.vsix` by hand from the Extensions view.
+> 2. Run `python3 extensions/antigravity-hive/verify.py --json` and show me the complete JSON.
+> 3. Ask me to run "Developer: Reload Window" and wait until I say it is done. You cannot do this yourself.
+> 4. Run `verify.py --json` again and show the complete output.
+> 5. Ask me the on-screen questions V1 to V8 from the checklist below, one line each, and wait for my answers. Do not guess any of them.
+> 6. Then write the report: a table with one row per check (the M checks from the JSON, then V1 to V8), each marked PASS, FAIL or WARN with one line of evidence, and a final verdict from the scoring rule below. For every FAIL, name the most likely cause from the troubleshooting table and the exact command or setting that fixes it.
+
+### 2. The checks
+
+Machine checks (`verify.py`, exit code 1 on any FAIL):
+
+| ID | Check |
+|---|---|
+| M1 | The editor's command is on `PATH`, and the editor is VS Code 1.85 or newer |
+| M2 | The editor lists `siddu1004.sfp-hive` |
+| M3 | The extension folder exists, activates at startup and has its code |
+| M4 | An SFP checkout is found and the hive answers with at least one skill |
+| M5 | The feedback log folder is writable |
+| M6 | The editor's extension-host logs show no error mentioning the extension |
+
+On-screen checks, which you answer yes or no (do V1 to V3 once before installing as a control; they should all be no):
+
+| ID | Look at | Expected |
+|---|---|---|
+| V1 | The activity bar (left edge) | A hexagon icon, "SFP Hive" on hover |
+| V2 | The status bar (bottom left), right after a reload and before you use anything | An item reading "Hive" |
+| V3 | The command palette, typing "SFP Hive" | Seven commands (the four buttons on each skill are hidden from the palette) |
+| V4 | Run "Choose skills for a task" with `write table driven tests for a go parser` | The SFP Hive view lists at least one skill under Base, Check or Finish, the status bar reads "Hive: N", and a message says the prompt is copied |
+| V5 | Paste the clipboard into the agent window and send it | The agent names the listed skills and opens their `SKILL.md` files before it answers |
+| V6 | Click the thumbs-up on a skill | The status bar says "noted helped", and `~/.sfp/feedback.jsonl` gains a line with that skill |
+| V7 | Click a skill's name | Its `SKILL.md` opens |
+| V8 | Settings, searching "SFP Hive" | Five settings |
+
+### 3. Scoring
+
+- **Installed**: M1 to M3 all pass.
+- **Running**: Installed, and V1, V2, V3 pass, with no FAIL in M4 to M6.
+- **Working**: Running, and V4, V6 and V7 pass.
+- **Used by the agent**: Working, and V5 passes. This is the result that shows the extension changes what the agent does. If V5 fails while V4 passes, the extension works and the agent ignored the prompt; try the standing instruction (`install.py rules --project .`) and compare.
+
+A before-and-after check is stronger than one run: do V5 with the prompt and again with the same task and no prompt, and compare which skills the agent opens.
+
+### 4. If a check fails
+
+| Symptom | Likely cause | Fix |
+|---|---|---|
+| M1 fails | The editor's shell command is not installed | In the editor run "Shell Command: Install command in PATH", or install the `.vsix` from the Extensions view (`...` menu, Install from VSIX) |
+| M2 or M3 fails after install | The install ran in a different editor, or needs a reload | Run `install.py --editor antigravity`, then reload the window |
+| M3 says no startup activation | An older build is installed | Rebuild and reinstall with `install.py` |
+| Editor too old | Its VS Code base is older than 1.85 | Update the editor, or lower `engines.vscode` in `package.json` and rebuild |
+| V1 passes, V2 fails | Old build without startup activation | Reinstall |
+| V1 fails, M3 passes | The icon is hidden | Right-click the activity bar and tick "SFP Hive" |
+| V4 says it could not find your SFP checkout | `~/.sfp/root` is missing | Set `sfpHive.sfpPath` to the checkout folder |
+| V4 says it could not start python3 | Python is not named `python3` | Set `sfpHive.python` |
+| V6 shows "Feedback is off" | `SFP_NO_USAGE_LOG` is set in the editor's environment | Unset it, restart the editor |
+| M6 fails | The log line names the cause | Send me that line |
+
+Send the agent's report back and I will fix whatever it shows.
+
 ## Implementation prompts
 
 Paste these into your agent, one at a time, from the SFP checkout. Each ends with how to tell it worked.
