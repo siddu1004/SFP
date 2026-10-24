@@ -2,7 +2,7 @@
   "name": "sfp-hive",
   "displayName": "SFP Hive",
   "description": "Choose the few agent skills a task needs, in order, from the SFP library. Works in VS Code and in Antigravity and other VS Code forks.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "siddu1004",
   "license": "MIT",
   "repository": {"type": "git", "url": "https://github.com/siddu1004/SFP.git", "directory": "extensions/antigravity-hive"},
@@ -16,6 +16,15 @@
     "viewsContainers": {"activitybar": [{"id": "sfpHive", "title": "SFP Hive", "icon": "media/hive.svg"}]},
     "views": {"sfpHive": [{"id": "sfpHive.stack", "name": "Chosen skills"}]},
     "viewsWelcome": [{"view": "sfpHive.stack", "contents": "No skills chosen yet.\n[Choose skills for a task](command:sfpHive.choose)\n[Install SFP skills](command:sfpHive.install)"}],
+    "chatParticipants": [
+      {
+        "id": "sfp.hive",
+        "name": "hive",
+        "fullName": "SFP Hive",
+        "description": "Agent skills advisor powered by SFP Hive",
+        "isDefault": false
+      }
+    ],
     "commands": [
       {"command": "sfpHive.choose", "title": "Choose skills for a task", "category": "SFP Hive", "icon": "$(search)"},
       {"command": "sfpHive.copyPrompt", "title": "Copy the agent prompt", "category": "SFP Hive", "icon": "$(copy)"},
@@ -25,6 +34,7 @@
       {"command": "sfpHive.ignored", "title": "Chosen but never used", "category": "SFP Hive", "icon": "$(circle-slash)"},
       {"command": "sfpHive.missing", "title": "Report a missing skill", "category": "SFP Hive", "icon": "$(add)"},
       {"command": "sfpHive.status", "title": "Show what the hive has learned", "category": "SFP Hive"},
+      {"command": "sfpHive.train", "title": "Train the hive model", "category": "SFP Hive"},
       {"command": "sfpHive.install", "title": "Install SFP skills into this workspace", "category": "SFP Hive"},
       {"command": "sfpHive.rules", "title": "Add the standing hive instruction to this workspace", "category": "SFP Hive"},
       {"command": "sfpHive.apps", "title": "Set up a program a skill needs (OmniRoute, Strix...)", "category": "SFP Hive"}

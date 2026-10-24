@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import * as hive from './hive';
 
 let selection: hive.Selection | undefined;
@@ -157,6 +158,7 @@ export function activate(context: vscode.ExtensionContext) {
     if (pick) await sendFeedback('missing', [pick]);
   });
   reg('sfpHive.status', () => terminal((root) => [`${root}/mcp/sfp_hive.py`, 'status']));
+  reg('sfpHive.train', () => terminal((root) => [`${root}/mcp/sfp_hive.py`, 'train']));
   reg('sfpHive.install', async () => {
     const root = sfpRoot();
     if (!root) return;
@@ -172,6 +174,31 @@ export function activate(context: vscode.ExtensionContext) {
     const pick = await vscode.window.showQuickPick(apps.map((a) => ({ label: a.name, description: a.id, detail: a.what })), { placeHolder: 'Show the install plan for...' });
     if (pick) terminal((r) => [`${r}/scripts/install.py`, 'apps', 'install', pick.description!]);
   });
+
+  if ('chat' in vscode && typeof (vscode as any).chat?.createChatParticipant === 'function') {
+    try {
+      const participant = (vscode as any).chat.createChatParticipant('sfp.hive', async (request: any, _chatContext: any, stream: any) => {
+        stream.progress('Analyzing prompt with SFP Hive...');
+        const root = sfpRoot();
+        if (!root) {
+          stream.markdown('SFP checkout not found.');
+          return;
+        }
+        try {
+          const cfg = config();
+          const out = await hive.run(hive.pythonCommand(cfg.opts), hive.selectArgs(root, request.prompt, project(), cfg.max));
+          const sel = hive.parseSelection(out);
+          stream.markdown(hive.buildPrompt(sel, root));
+        } catch (err: any) {
+          stream.markdown(`Failed to select skills: ${err.message}`);
+        }
+      });
+      participant.iconPath = vscode.Uri.file(path.join(context.extensionPath, 'media', 'hive.svg'));
+      context.subscriptions.push(participant);
+    } catch {
+      // Chat API not available in this environment
+    }
+  }
 }
 
 export function deactivate() {}
