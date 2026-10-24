@@ -44,10 +44,16 @@ const vscode = {
       show() {},
       dispose() {},
     }),
-    showInformationMessage: note('info'), showErrorMessage: note('error'), showWarningMessage: note('warn'),
+    showInformationMessage: async (m, ...items) => {
+      state.messages.push(['info', m]);
+      if (state.picks.length) return state.picks.shift();
+      if (items.includes('Run')) return 'Run';
+      return undefined;
+    },
+    showErrorMessage: note('error'), showWarningMessage: note('warn'),
     setStatusBarMessage: (m) => state.messages.push(['status', m]),
     withProgress: async (_o, fn) => fn(),
-    createTerminal: () => ({ show() {}, sendText: (t) => state.messages.push(['terminal', t]) }),
+    createTerminal: (name) => ({ name, show() {}, sendText: (t, addNewLine = true) => state.messages.push(['terminal', t, addNewLine]) }),
     showTextDocument: async () => {},
     onDidChangeActiveTextEditor: (l) => { state.openListeners = state.openListeners || []; state.openListeners.push(l); return { dispose() {} }; },
     onDidStartTerminalShellExecution: (l) => { state.termStartListeners = state.termStartListeners || []; state.termStartListeners.push(l); return { dispose() {} }; },
@@ -363,6 +369,28 @@ test('webview handles choose, refresh, remove, and helped messages', async () =>
     draft: 'make login accessible',
     change: { pin: ['accessible'] },
   });
+
+  // Test needs action message handlers
+  state.clipboard = '';
+  await webviewMessageHandler({
+    command: 'copyNeedAction',
+    action: 'install agent-reach: python3 apps/sfp_app.py install agent-reach',
+  });
+  assert.strictEqual(state.clipboard, 'python3 apps/sfp_app.py install agent-reach');
+  assert.ok(state.messages.some((m) => m[0] === 'info' && m[1].includes('copied')));
+
+  state.messages = [];
+  await webviewMessageHandler({
+    command: 'runNeedAction',
+    action: 'install agent-reach: python3 apps/sfp_app.py install agent-reach',
+  });
+  const termMsg = state.messages.find((m) => m[0] === 'terminal');
+  assert.ok(termMsg, 'Must create terminal and send command');
+  assert.strictEqual(termMsg[1], 'python3 apps/sfp_app.py install agent-reach');
+  assert.strictEqual(termMsg[2], false, 'Must not press enter (addNewLine: false)');
+
+  await webviewMessageHandler({ command: 'openChoose', task: 'browse this website' });
+  await webviewMessageHandler({ command: 'focusModels' });
 });
 
 test('Stage 2: registers the SFP Hive Library webview provider and commands', async () => {

@@ -271,4 +271,60 @@ test('updateSessionStats tracks decisions, interventions and feedback', () => {
   assert.strictEqual(stats.unhelpful, 1);
 });
 
+test('parseNeeds parses valid JSON and throws on invalid', () => {
+  const json = JSON.stringify([
+    {
+      id: 'make-3d',
+      name: 'Make 3D models',
+      why: 'Needs 3D tools',
+      score: 1.0,
+      skills: ['image-to-3d'],
+      attach: 'image-to-3d',
+      preload: ['multi-image-to-3d'],
+      action: 'set MESHY_API_KEY in your environment',
+    },
+  ]);
+  const needs = hive.parseNeeds(json);
+  assert.strictEqual(needs.length, 1);
+  assert.strictEqual(needs[0].id, 'make-3d');
+  assert.throws(() => hive.parseNeeds('{"invalid": true}'));
+});
+
+test('renderNeedCard renders card with escaping and handles action buttons', () => {
+  const need = {
+    id: 'test-need',
+    name: 'Need <script>alert("xss")</script> & More',
+    why: 'Why <img src=x onerror=alert(1)> & test',
+    score: 0.9,
+    skills: ['skill<1>', 'skill-2'],
+    attach: 'skill<1>',
+    preload: ['skill-2'],
+    action: 'install test: python3 apps/sfp_app.py install "test"',
+  };
+  const html = hive.renderNeedCard(need);
+  assert.ok(!html.includes('<script>'));
+  assert.ok(html.includes('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt; &amp; More'));
+  assert.ok(!html.includes('<img'));
+  assert.ok(html.includes('&lt;img src=x onerror=alert(1)&gt; &amp; test'));
+  assert.ok(html.includes('skill&lt;1&gt;'));
+  assert.ok(html.includes('skill-2'));
+  assert.ok(html.includes('data-action="runNeedAction"'));
+  assert.ok(html.includes('data-action="copyNeedAction"'));
+
+  // Test router need action button
+  const routerNeed = {
+    id: 'never-run-out',
+    name: 'Keep working',
+    why: 'Router fallback',
+    score: 0.8,
+    skills: ['sfp-route'],
+    attach: 'sfp-route',
+    preload: [],
+    action: 'start the router: python3 mcp/sfp_route.py serve',
+  };
+  const routerHtml = hive.renderNeedCard(routerNeed);
+  assert.ok(routerHtml.includes('data-action="focusModels"'));
+});
+
+
 

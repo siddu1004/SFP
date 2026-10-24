@@ -25,6 +25,7 @@
     clusters: [],
     selectedClusterId: null,
     libraryFilter: '',
+    needs: [],
   };
 
   // Cache DOM elements
@@ -75,6 +76,41 @@
       .replace(/'/g, '&#39;');
   }
 
+  function renderNeedCardHtml(need) {
+    const name = escapeHtml(need.name);
+    const why = escapeHtml(need.why);
+    const attach = escapeHtml(need.attach);
+    const preloadHtml = (need.preload || [])
+      .map((s) => `<span class="badge badge-preload">${escapeHtml(s)}</span>`)
+      .join(' ');
+    const action = need.action || '';
+    let actionHtml = '';
+    if (action && action !== 'ready') {
+      const isRouter = need.id === 'never-run-out';
+      const actionBtn = isRouter
+        ? `<button class="btn btn-secondary btn-small" data-action="focusModels">Open Models</button>`
+        : `<button class="btn btn-secondary btn-small" data-action="runNeedAction" data-action-cmd="${escapeHtml(action)}">Run in terminal</button>`;
+      actionHtml = `
+        <div class="need-action-bar">
+          <span class="need-action-cmd" title="${escapeHtml(action)}">${escapeHtml(action)}</span>
+          <div class="need-action-btns">
+            <button class="btn btn-secondary btn-small" data-action="copyNeedAction" data-action-cmd="${escapeHtml(action)}">Copy</button>
+            ${actionBtn}
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="need-card" data-need-id="${escapeHtml(need.id)}">
+        <div class="need-header">
+          <span class="need-title">${name}</span>
+          <span class="badge badge-attached">Attached: ${attach}</span>
+        </div>
+        <div class="need-why">${why}</div>
+        ${preloadHtml ? `<div class="need-preload"><span class="need-preload-label">Preload:</span> ${preloadHtml}</div>` : ''}
+        ${actionHtml}
+      </div>`;
+  }
+
   function setTab(tabId) {
     currentTab = tabId;
     tabButtons.forEach((btn) => {
@@ -88,6 +124,12 @@
       const match = content.id === `tab-${tabId}`;
       content.classList.toggle('active', match);
     });
+
+    if (tabId === 'choose') {
+      const input = document.getElementById('choose-task-input');
+      const taskVal = input?.value?.trim() || state.selection?.task || '';
+      vscode.postMessage({ command: 'openChoose', task: taskVal });
+    }
 
     vscode.setState({ currentTab });
   }
@@ -286,6 +328,26 @@
         if (skill) {
           vscode.postMessage({ command: 'addToMyCluster', skill });
         }
+        break;
+      }
+      case 'copyNeedAction': {
+        const cmd = target.getAttribute('data-action-cmd');
+        if (cmd) {
+          vscode.postMessage({ command: 'copyNeedAction', action: cmd });
+        }
+        break;
+      }
+      case 'runNeedAction': {
+        const cmd = target.getAttribute('data-action-cmd');
+        if (cmd) {
+          vscode.postMessage({ command: 'runNeedAction', action: cmd });
+        }
+        break;
+      }
+      case 'focusModels': {
+        vscode.postMessage({ command: 'focusModels' });
+        break;
+      }
       case 'liveRemove': {
         if (skill) {
           vscode.postMessage({
@@ -379,6 +441,18 @@
       } else {
         removedBar.classList.add('hidden');
         removedBar.innerHTML = '';
+      }
+    }
+
+    // Live needs
+    const liveNeeds = document.getElementById('choose-live-needs');
+    if (liveNeeds) {
+      if (live.needs && live.needs.length) {
+        liveNeeds.classList.remove('hidden');
+        liveNeeds.innerHTML = live.needs.map(renderNeedCardHtml).join('');
+      } else {
+        liveNeeds.classList.add('hidden');
+        liveNeeds.innerHTML = '';
       }
     }
   }
@@ -525,6 +599,16 @@
             state.live = msg.payload.live;
             renderLive();
           }
+          if (msg.payload.needs !== undefined) {
+            state.needs = msg.payload.needs;
+          }
+          renderChoose();
+        }
+        break;
+      }
+      case 'updateNeeds': {
+        if (msg.needs) {
+          state.needs = msg.needs;
           renderChoose();
         }
         break;
@@ -590,6 +674,19 @@
         }
       } else {
         steerSection.classList.add('hidden');
+      }
+    }
+
+    // Task Needs
+    const needsSection = document.getElementById('choose-needs-section');
+    const needsList = document.getElementById('choose-needs-list');
+    if (needsSection && needsList) {
+      if (state.needs && state.needs.length) {
+        needsSection.classList.remove('hidden');
+        needsList.innerHTML = state.needs.map(renderNeedCardHtml).join('');
+      } else {
+        needsSection.classList.add('hidden');
+        needsList.innerHTML = '';
       }
     }
 

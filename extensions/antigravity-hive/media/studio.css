@@ -912,6 +912,105 @@ input:checked + .toggle-slider:before {
   color: var(--vscode-descriptionForeground);
 }
 
+/* Needs Cards */
+.needs-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-2);
+}
+
+.live-needs-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-2);
+  margin-top: var(--grid-2);
+}
+
+.need-card {
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  border-radius: var(--radius-md);
+  padding: var(--grid-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-1);
+}
+
+.need-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--grid-1);
+}
+
+.need-title {
+  font-weight: 600;
+  font-size: var(--font-sm);
+  color: var(--vscode-foreground);
+}
+
+.badge-attached {
+  background-color: var(--accent);
+  color: var(--vscode-button-foreground);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.need-why {
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.4;
+}
+
+.need-preload {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-xs);
+}
+
+.need-preload-label {
+  color: var(--vscode-descriptionForeground);
+}
+
+.badge-preload {
+  background-color: var(--vscode-badge-background, rgba(127, 127, 127, 0.2));
+  color: var(--vscode-descriptionForeground);
+  opacity: 0.75;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+}
+
+.need-action-bar {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.need-action-cmd {
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 11px;
+  color: var(--vscode-textPreformat-foreground, inherit);
+  background: var(--vscode-textCodeBlock-background, rgba(0, 0, 0, 0.1));
+  padding: 3px 6px;
+  border-radius: 3px;
+  word-break: break-all;
+}
+
+.need-action-btns {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
 /* Responsive tweaks for narrow sidebars (down to 260px) */
 @media (max-width: 280px) {
   body {

@@ -14,6 +14,7 @@ let status: vscode.StatusBarItem;
 
 export const activity = new hive.ActivityBuffer();
 export let lastTrackResult: hive.TrackResult | undefined;
+export let lastNeeds: hive.Need[] = [];
 let lastNotificationTime = 0;
 const excludedNowSkills = new Set<string>();
 
@@ -62,6 +63,24 @@ function project(): string | undefined {
 function showStatus() {
   status.text = selection ? `$(organization) Hive: ${selection.stack.length}` : '$(organization) Hive';
   status.tooltip = selection ? `Chosen for: ${selection.task}` : 'Choose skills for a task';
+}
+
+export async function checkNeeds(task: string): Promise<hive.Need[]> {
+  const root = sfpRoot();
+  if (!root || !task.trim()) return [];
+  try {
+    const cfg = config();
+    const out = await hive.run(
+      hive.pythonCommand(cfg.opts),
+      hive.needsArgs(root, task.trim(), project(), true)
+    );
+    const needs = hive.parseNeeds(out);
+    lastNeeds = needs;
+    studioProvider?.updateNeeds(needs);
+    return needs;
+  } catch {
+    return [];
+  }
 }
 
 export async function flushActivity(): Promise<hive.TrackResult | undefined> {
@@ -146,6 +165,7 @@ async function choose(preset?: string, steer?: hive.Steer) {
       }
 
       selection = newSel;
+      void checkNeeds(task.trim());
       verdicts.clear();
       await vscode.commands.executeCommand('setContext', 'sfpHive.hasSelection', selection.stack.length > 0);
       showStatus();
@@ -600,6 +620,9 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       const py = hive.pythonCommand(config().opts);
       const args = hive.liveArgs(root, draft, state, project(), config().max, change);
       const out = await hive.run(py, args);
+      if (change.commit && draft.trim()) {
+        void checkNeeds(draft.trim());
+      }
       return hive.parseLive(out);
     };
 
@@ -762,8 +785,45 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         case 'train':
           await vscode.commands.executeCommand('sfpHive.train');
           break;
+        case 'openChoose': {
+          const t = message.task || selection?.task;
+          if (t) {
+            void checkNeeds(t);
+          }
+          break;
+        }
+        case 'copyNeedAction':
+          if (message.action) {
+            const raw = message.action;
+            const cmd = raw.includes(': ') ? raw.split(': ').slice(1).join(': ').trim() : raw.trim();
+            await vscode.env.clipboard.writeText(cmd);
+            void vscode.window.showInformationMessage('Action command copied to clipboard.');
+          }
+          break;
+        case 'runNeedAction':
+          if (message.action) {
+            const raw = message.action;
+            const cmd = raw.includes(': ') ? raw.split(': ').slice(1).join(': ').trim() : raw.trim();
+            const pick = await vscode.window.showInformationMessage(`Run "${cmd}" in terminal?`, 'Run', 'Cancel');
+            if (pick === 'Run') {
+              const term = vscode.window.createTerminal('SFP Need');
+              term.show();
+              term.sendText(cmd, false);
+            }
+          }
+          break;
+        case 'focusModels':
+          await vscode.commands.executeCommand('sfpHive.focusModels');
+          break;
       }
     });
+  }
+
+  public lastNeeds: hive.Need[] = [];
+
+  public updateNeeds(needs: hive.Need[]) {
+    this.lastNeeds = needs;
+    this._view?.webview.postMessage({ type: 'updateNeeds', needs });
   }
 
   public showTab(tab: 'now' | 'choose' | 'insights') {
@@ -804,6 +864,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         follow: config().follow,
         live: this.lastLiveResult,
         collapsed: this.isCollapsed,
+        needs: this.lastNeeds,
       },
     });
   }
@@ -942,7 +1003,12 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         <div id="choose-live-chips" class="live-chips-bar"></div>
         <div id="choose-live-waiting" class="live-waiting-label hidden">waiting for more words...</div>
         <div id="choose-live-removed" class="live-removed-bar hidden"></div>
+        <div id="choose-live-needs" class="live-needs-container hidden"></div>
       </div>
+    </div>
+    <div class="section hidden" id="choose-needs-section">
+      <div class="section-title">Task Needs</div>
+      <div id="choose-needs-list" class="needs-list"></div>
     </div>
     <div class="section hidden" id="choose-steer-section">
       <div class="steer-actions">
@@ -1449,6 +1515,13 @@ export function activate(context: vscode.ExtensionContext) {
     const pick = await vscode.window.showQuickPick(picks, { placeHolder: 'Apply which bundle?' });
     if (pick) {
       await applyBundleWorkflow(pick.bundleId);
+    }
+  });
+  reg('sfpHive.focusModels', async () => {
+    try {
+      await vscode.commands.executeCommand('sfpHive.models.focus');
+    } catch {
+      // models view might not be registered yet
     }
   });
 

@@ -541,3 +541,45 @@ export function needsArgs(root: string, task: string, project?: string, check = 
   return args;
 }
 
+export function parseNeeds(json: string): Need[] {
+  const r = JSON.parse(json);
+  if (!Array.isArray(r)) throw new Error('unexpected output from the hive needs command');
+  return r as Need[];
+}
+
+export function renderNeedCard(need: Need): string {
+  const name = escapeHtml(need.name);
+  const why = escapeHtml(need.why);
+  const attach = escapeHtml(need.attach);
+  const preloadHtml = (need.preload || [])
+    .map((s) => `<span class="badge badge-preload">${escapeHtml(s)}</span>`)
+    .join(' ');
+  const action = need.action || '';
+  let actionHtml = '';
+  if (action && action !== 'ready') {
+    const isRouter = need.id === 'never-run-out';
+    const actionBtn = isRouter
+      ? `<button class="btn-small btn-primary" data-action="focusModels">Open Models</button>`
+      : `<button class="btn-small btn-primary" data-action="runNeedAction" data-action-cmd="${escapeHtml(action)}">Run in terminal</button>`;
+    actionHtml = `
+      <div class="need-action-bar">
+        <span class="need-action-cmd" title="${escapeHtml(action)}">${escapeHtml(action)}</span>
+        <div class="need-action-btns">
+          <button class="btn-small btn-secondary" data-action="copyNeedAction" data-action-cmd="${escapeHtml(action)}">Copy</button>
+          ${actionBtn}
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="need-card" data-need-id="${escapeHtml(need.id)}">
+      <div class="need-header">
+        <span class="need-title">${name}</span>
+        <span class="badge badge-attached">Attached: ${attach}</span>
+      </div>
+      <div class="need-why">${why}</div>
+      ${preloadHtml ? `<div class="need-preload"><span class="need-preload-label">Preload:</span> ${preloadHtml}</div>` : ''}
+      ${actionHtml}
+    </div>`.trim();
+}
+
+

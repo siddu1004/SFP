@@ -47,7 +47,8 @@
       {"command": "sfpHive.rules", "title": "Add the standing hive instruction to this workspace", "category": "SFP Hive"},
       {"command": "sfpHive.apps", "title": "Set up a program a skill needs (OmniRoute, Strix...)", "category": "SFP Hive"},
       {"command": "sfpHive.clusterAdd", "title": "Create a new skill cluster", "category": "SFP Hive"},
-      {"command": "sfpHive.clusterRemove", "title": "Remove a skill cluster of your own", "category": "SFP Hive"}
+      {"command": "sfpHive.clusterRemove", "title": "Remove a skill cluster of your own", "category": "SFP Hive"},
+      {"command": "sfpHive.focusModels", "title": "Focus models view", "category": "SFP Hive"}
     ],
     "menus": {
       "commandPalette": [
