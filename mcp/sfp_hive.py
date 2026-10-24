@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.7.0'
+VERSION = '3.9.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
@@ -612,6 +612,7 @@ def main(argv=None):
     r.add_argument('--no-learning', action='store_true', help='ignore what feedback has taught the model')
     r.add_argument('--include', default='', help='comma-separated skills to pin into the stack')
     r.add_argument('--exclude', default='', help='comma-separated skills to rule out')
+    r.add_argument('--bundle', default='', help='pin all the skills of a bundle (an id or a name from `library`)')
     r.add_argument('--explain', action='store_true', help='add each top candidate, its signal votes and why it was or was not taken')
     r.add_argument('--json', action='store_true')
     f = sub.add_parser('feedback', help='tell the hive what helped, what did not, and what was missing')
@@ -639,6 +640,18 @@ def main(argv=None):
     tk.add_argument('--max', type=int, default=4)
     tk.add_argument('--reset', action='store_true', help='forget the current tracking state first (learned transitions stay)')
     tk.add_argument('--json', action='store_true')
+    lb = sub.add_parser('library', help='every skill by purpose, cluster and bundle, in one JSON object, for the editor')
+    lb.add_argument('--json', action='store_true')
+    ba = sub.add_parser('bundle-add', help='add or replace a bundle of your own')
+    ba.add_argument('name')
+    ba.add_argument('--skills', required=True, help='comma-separated skills, in the order to use them')
+    ba.add_argument('--goal', default='')
+    ba.add_argument('--purpose', default='build')
+    ba.add_argument('--when', default='')
+    br = sub.add_parser('bundle-remove', help='remove a bundle of your own')
+    br.add_argument('name')
+    bl = sub.add_parser('bundles', help='list the bundles')
+    bl.add_argument('--json', action='store_true')
     cl = sub.add_parser('clusters', help='the skills grouped into clusters, with what has been used')
     cl.add_argument('--json', action='store_true')
     ca = sub.add_parser('cluster-add', help='add or replace a cluster of your own')
@@ -647,6 +660,17 @@ def main(argv=None):
     ca.add_argument('--description', default='')
     cr = sub.add_parser('cluster-remove', help='remove a cluster of your own')
     cr.add_argument('name')
+    lv = sub.add_parser('live', help='attach skills to a message while it is being typed')
+    lv.add_argument('draft')
+    lv.add_argument('--state', default='', help='the state a previous call printed, as JSON')
+    lv.add_argument('--project')
+    lv.add_argument('--max', type=int, default=4)
+    lv.add_argument('--pin', default='')
+    lv.add_argument('--unpin', default='')
+    lv.add_argument('--remove', default='')
+    lv.add_argument('--restore', default='')
+    lv.add_argument('--commit', action='store_true', help='the message was sent: record the decision')
+    lv.add_argument('--json', action='store_true')
     tr = sub.add_parser('train', help='train the hive learning model from the benchmark task suites')
     tr.add_argument('--reset', action='store_true', help='reset prior feedback before training')
     tr.add_argument('--json', action='store_true')
@@ -657,9 +681,18 @@ def main(argv=None):
         if a.engine == 'v1':
             res = v1.recommend(a.task, a.project, a.goal, after, a.budget, a.max)
         else:
-            res = sfp_learn.decide(a.task, a.project, a.goal, after, a.budget, a.max, learn=not a.no_learning,
-                                   include=[x.strip() for x in a.include.split(',') if x.strip()],
-                                   exclude=[x.strip() for x in a.exclude.split(',') if x.strip()], explain=a.explain)
+            include = [x.strip() for x in a.include.split(',') if x.strip()]
+            bundle = None
+            if a.bundle:
+                import sfp_library
+                bundle = sfp_library.find_bundle(a.bundle)
+                if not bundle:
+                    raise SystemExit('no bundle %r. `sfp_hive.py bundles` lists them.' % a.bundle)
+                include = list(dict.fromkeys(bundle['skills'] + include))
+            res = sfp_learn.decide(a.task, a.project, a.goal, after, a.budget, max(a.max, len(include)), learn=not a.no_learning,
+                                   include=include, exclude=[x.strip() for x in a.exclude.split(',') if x.strip()], explain=a.explain)
+            if bundle:
+                res['bundle'] = {'id': bundle['id'], 'name': bundle['name']}
         print(json.dumps(res, indent=1) if a.json else format_stack(res))
     elif a.cmd == 'feedback':
         helped, bad, ignored, missing = ([x.strip() for x in s.split(',') if x.strip()]
@@ -687,6 +720,26 @@ def main(argv=None):
                 print('Next, likely: ' + ', '.join('%s %.0f%%' % (n['phase'], 100 * n['probability']) for n in res['next']))
             for c in res.get('skills', []):
                 print('  %s (%s)' % (c['name'], c['phase']))
+    elif a.cmd == 'live':
+        import sfp_live
+        split = lambda v: [x.strip() for x in v.split(',') if x.strip()]
+        res = sfp_live.live(a.draft, json.loads(a.state) if a.state else None, a.project, a.max, split(a.pin), split(a.unpin),
+                            split(a.remove), split(a.restore), a.commit)
+        print(json.dumps(res, indent=1) if a.json else sfp_live.format_live(res))
+    elif a.cmd == 'library':
+        import sfp_library
+        print(json.dumps(sfp_library.library(), separators=(',', ':')))
+    elif a.cmd == 'bundles':
+        import sfp_library
+        res = sfp_library.bundles()
+        print(json.dumps(res, indent=1) if a.json else '\n'.join(
+            '%-28s %-9s %2d skills%s' % (b['id'], b['purpose'], len(b['skills']), '  [yours]' if b['mine'] else '') for b in res))
+    elif a.cmd == 'bundle-add':
+        import sfp_library
+        print(json.dumps(sfp_library.add_user_bundle(a.name, [x.strip() for x in a.skills.split(',') if x.strip()], a.goal, a.purpose, a.when)))
+    elif a.cmd == 'bundle-remove':
+        import sfp_library
+        print(json.dumps(sfp_library.remove_user_bundle(a.name)))
     elif a.cmd in ('clusters', 'cluster-add', 'cluster-remove'):
         import sfp_clusters
         if a.cmd == 'cluster-add':

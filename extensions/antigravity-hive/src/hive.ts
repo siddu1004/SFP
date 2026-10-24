@@ -31,6 +31,7 @@ export interface Steer {
   include?: string[]; // skills the user pinned
   exclude?: string[]; // skills the user ruled out
   explain?: boolean; // ask for every top candidate and why it was or was not taken
+  bundle?: string; // a bundle id or name: all its skills are pinned, in order
 }
 
 export interface Selection {
@@ -42,6 +43,7 @@ export interface Selection {
   next: { name: string; probability: number }[];
   explain?: Candidate[];
   intervention?: { pinned: string[]; excluded: string[] };
+  bundle?: { id: string; name: string };
 }
 
 export type Verdict = 'helped' | 'unhelpful' | 'ignored' | 'missing';
@@ -76,6 +78,7 @@ export function selectArgs(root: string, task: string, project: string | undefin
   if (steer.include && steer.include.length) args.push('--include', steer.include.join(','));
   if (steer.exclude && steer.exclude.length) args.push('--exclude', steer.exclude.join(','));
   if (steer.explain) args.push('--explain');
+  if (steer.bundle) args.push('--bundle', steer.bundle);
   return args;
 }
 
@@ -459,4 +462,52 @@ export function parseClusters(json: string): Cluster[] {
   const raw = JSON.parse(json);
   if (!Array.isArray(raw)) throw new Error('unexpected answer for clusters');
   return raw as Cluster[];
+}
+
+// ------------------------------------------------------------------ the library
+
+export function libraryArgs(root: string): string[] {
+  return [path.join(root, 'mcp', 'sfp_hive.py'), 'library'];
+}
+
+export function parseLibrary(json: string): import('./library').Library {
+  const raw = JSON.parse(json);
+  if (!raw || typeof raw !== 'object' || !raw.skills || !Array.isArray(raw.purposes) || !Array.isArray(raw.bundles)) {
+    throw new Error('unexpected answer for the library');
+  }
+  return raw;
+}
+
+export function bundleAddArgs(root: string, name: string, skills: string[], goal = '', purpose = 'build', when = ''): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'bundle-add', name, '--skills', skills.join(','), '--purpose', purpose];
+  if (goal) args.push('--goal', goal);
+  if (when) args.push('--when', when);
+  return args;
+}
+
+export function bundleRemoveArgs(root: string, name: string): string[] {
+  return [path.join(root, 'mcp', 'sfp_hive.py'), 'bundle-remove', name];
+}
+
+export interface LiveSkill { name: string; category: string; description: string; source: 'auto' | 'pinned' }
+export interface LiveState { anchor: string[]; auto: string[]; pinned: string[]; removed: string[] }
+export interface LiveResult { status: 'waiting' | 'kept' | 'updated' | 'committed'; changed: boolean; attached: LiveSkill[]; state: LiveState; words: string[]; decision?: string }
+export interface LiveChange { pin?: string[]; unpin?: string[]; remove?: string[]; restore?: string[]; commit?: boolean }
+
+export function liveArgs(root: string, draft: string, state: LiveState | undefined, project: string | undefined, max: number, change: LiveChange = {}): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'live', draft, '--json', '--max', String(max)];
+  if (state) args.push('--state', JSON.stringify(state));
+  if (project) args.push('--project', project);
+  for (const k of ['pin', 'unpin', 'remove', 'restore'] as const) {
+    const v = change[k];
+    if (v && v.length) args.push('--' + k, v.join(','));
+  }
+  if (change.commit) args.push('--commit');
+  return args;
+}
+
+export function parseLive(json: string): LiveResult {
+  const r = JSON.parse(json);
+  if (!r || !Array.isArray(r.attached) || !r.state) throw new Error('unexpected output from the hive live command');
+  return r as LiveResult;
 }

@@ -1,0 +1,240 @@
+{
+  "_note": "What a skill is trying to do, in 15 purposes. A skill gets one primary purpose: (1) an entry in `names`, else (2) the first purpose whose `name_rx` matches the skill's name, else (3) its home cluster's entry in `cluster_purpose`: a fixed purpose, or `by_phase` with a default, in which case the skill's strongest job (the hive's phase scores) picks the purpose through `phase_purpose`, and the default is used when the skill's words name no job. Up to two secondary purposes come from the skill's other clusters and its second-strongest job.",
+  "purposes": [
+    {
+      "id": "design",
+      "name": "Design interfaces",
+      "description": "Make interfaces look and feel right: visual style, components, motion and accessibility.",
+      "icon": "symbol-color"
+    },
+    {
+      "id": "build",
+      "name": "Build features",
+      "description": "Write the code: frameworks, languages, APIs, data and integrations.",
+      "icon": "code"
+    },
+    {
+      "id": "test",
+      "name": "Test and verify",
+      "description": "Write tests and check that things work.",
+      "icon": "beaker"
+    },
+    {
+      "id": "debug",
+      "name": "Debug and fix",
+      "description": "Find the cause of a failure and repair it.",
+      "icon": "bug"
+    },
+    {
+      "id": "secure",
+      "name": "Secure and audit",
+      "description": "Find and close security holes; privacy and compliance.",
+      "icon": "shield"
+    },
+    {
+      "id": "review",
+      "name": "Review and refactor",
+      "description": "Review changes, enforce quality and clean up code.",
+      "icon": "checklist"
+    },
+    {
+      "id": "speed",
+      "name": "Speed up and cut cost",
+      "description": "Make it faster, smaller or cheaper, including tokens.",
+      "icon": "dashboard"
+    },
+    {
+      "id": "deploy",
+      "name": "Deploy and release",
+      "description": "Ship it: containers, CI, infrastructure and releases.",
+      "icon": "rocket"
+    },
+    {
+      "id": "plan",
+      "name": "Plan and architect",
+      "description": "Decide what to build and how: plans, specs, architecture and decisions.",
+      "icon": "map"
+    },
+    {
+      "id": "research",
+      "name": "Research and understand",
+      "description": "Learn a codebase, a topic or a market before acting.",
+      "icon": "search"
+    },
+    {
+      "id": "document",
+      "name": "Document and explain",
+      "description": "Write docs, records and reports.",
+      "icon": "book"
+    },
+    {
+      "id": "agents",
+      "name": "Run agents and workflows",
+      "description": "Orchestrate agents, loops, automations, memory and gateways.",
+      "icon": "robot"
+    },
+    {
+      "id": "extend",
+      "name": "Build skills, plugins and MCP",
+      "description": "Extend the agent itself: skills, plugins, hooks and MCP servers.",
+      "icon": "extensions"
+    },
+    {
+      "id": "create",
+      "name": "Create content, media and 3D",
+      "description": "Produce writing, video, social posts, Blender scenes and other media.",
+      "icon": "wand"
+    },
+    {
+      "id": "business",
+      "name": "Run the business",
+      "description": "Finance, operations, planning for teams, industry work and careers.",
+      "icon": "briefcase"
+    }
+  ],
+  "phase_purpose": {
+    "research": "research",
+    "plan": "plan",
+    "design": "design",
+    "build": "build",
+    "debug": "debug",
+    "test": "test",
+    "secure": "secure",
+    "review": "review",
+    "optimize": "speed",
+    "document": "document",
+    "ship": "deploy"
+  },
+  "name_rx": [
+    [
+      "create",
+      "^blend|blender|polyhaven|turntable|crane-shot|dolly|slow-zoom|perfect-loop|dynamic-full-loop|image-to-3d"
+    ],
+    [
+      "test",
+      "(^|-)(testing|tdd|e2e|test|tests|qa|regression|coverage)(-|$)"
+    ],
+    [
+      "secure",
+      "secur|vulnerab|pentest|owasp|hipaa|compliance|threat"
+    ],
+    [
+      "debug",
+      "(^|-)(fix|debug|defect|bug|forensics)(-|$)|^sweep-reds"
+    ],
+    [
+      "review",
+      "(^|-)(review|audit|stocktake|verification|verify)(-|$)|^santa-method"
+    ],
+    [
+      "extend",
+      "^(skill-|plugin-|hook-|command-|agent-development|mcp-|build-mcp|mcp-builder|create-cowork|cowork-plugin)|(^|-)(plugins?|hooks?|mcp)(-|$)"
+    ],
+    [
+      "document",
+      "^docs?-|(^|-)(documentation|readme|adr|changelog)(-|$)"
+    ],
+    [
+      "deploy",
+      "(^|-)(deploy|deployment|release|ship|publish|docker|kubernetes|canary)(-|$)"
+    ],
+    [
+      "research",
+      "(^|-)(research|investigate|explore|spike|discover|learn|scan|teach)(-|$)"
+    ],
+    [
+      "plan",
+      "(^|-)(plan|planning|council|intent|roadmap|architect|spec)(-|$)"
+    ],
+    [
+      "speed",
+      "(^|-)(compression|compress|performance|optimi[sz]e|benchmark|budget|cache|token|tokens)(-|$)"
+    ],
+    [
+      "build",
+      "-patterns?$|-builder$|^write-"
+    ]
+  ],
+  "cluster_purpose": {
+    "sfp": "agents",
+    "gsd": {
+      "by_phase": true,
+      "default": "plan"
+    },
+    "caveman": "speed",
+    "n8n": "agents",
+    "blender-styles": "create",
+    "blender": "create",
+    "hardware": "build",
+    "science": "research",
+    "three-d-web": "design",
+    "animation": "design",
+    "accessibility": "design",
+    "ux": "design",
+    "design-taste": "design",
+    "ui": "design",
+    "web-frameworks": {
+      "by_phase": true,
+      "default": "build"
+    },
+    "design-styles": "design",
+    "frontend-other": {
+      "by_phase": true,
+      "default": "design"
+    },
+    "databases": {
+      "by_phase": true,
+      "default": "build"
+    },
+    "backend": {
+      "by_phase": true,
+      "default": "build"
+    },
+    "mobile": {
+      "by_phase": true,
+      "default": "build"
+    },
+    "languages": {
+      "by_phase": true,
+      "default": "build"
+    },
+    "testing": {
+      "by_phase": true,
+      "default": "test"
+    },
+    "security": "secure",
+    "devops": "deploy",
+    "gateway": "agents",
+    "ai-ml": {
+      "by_phase": true,
+      "default": "build"
+    },
+    "context": "speed",
+    "agent-building": "extend",
+    "agent-quality": "review",
+    "agent-workflows": "agents",
+    "memory": "agents",
+    "research-docs": {
+      "by_phase": true,
+      "default": "research"
+    },
+    "engineering": {
+      "by_phase": true,
+      "default": "plan"
+    },
+    "data-apis": "research",
+    "content": "create",
+    "business": "business",
+    "industry": "business",
+    "networking": {
+      "by_phase": true,
+      "default": "build"
+    },
+    "web3": {
+      "by_phase": true,
+      "default": "build"
+    },
+    "career": "business"
+  },
+  "names": {}
+}
