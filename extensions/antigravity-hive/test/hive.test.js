@@ -184,3 +184,56 @@ test('end to end: tracking events gives a phase, a prediction and skills; cluste
   const total = clusters.reduce((n, c) => n + c.count, 0);
   assert.strictEqual(total, hive.catalogNames(REPO).length);
 });
+
+test('notification throttle respects minimum time interval and confidence threshold', () => {
+  const t0 = 100000;
+  // Not changed -> no notification
+  assert.strictEqual(hive.shouldNotifyPhaseChange(t0, t0 + 130000, false, 0.8), false);
+  // Confidence too low -> no notification
+  assert.strictEqual(hive.shouldNotifyPhaseChange(t0, t0 + 130000, true, 0.5), false);
+  // Too soon (< 2 min) -> no notification
+  assert.strictEqual(hive.shouldNotifyPhaseChange(t0, t0 + 60000, true, 0.7), false);
+  // Changed, high confidence, elapsed >= 120s -> notification fires
+  assert.strictEqual(hive.shouldNotifyPhaseChange(t0, t0 + 120000, true, 0.6), true);
+  assert.strictEqual(hive.shouldNotifyPhaseChange(t0, t0 + 150000, true, 0.9), true);
+});
+
+test('phase bar view model normalizes percentages and maps layers', () => {
+  const shares = { test: 0.5, build: 0.3, ship: 0.2 };
+  const vm = hive.phaseBarViewModel(shares);
+  assert.strictEqual(vm.length, 3);
+  const testSeg = vm.find((s) => s.phase === 'test');
+  assert.ok(testSeg);
+  assert.strictEqual(testSeg.percent, 50);
+  assert.strictEqual(testSeg.layer, 'check');
+
+  const buildSeg = vm.find((s) => s.phase === 'build');
+  assert.ok(buildSeg);
+  assert.strictEqual(buildSeg.layer, 'base');
+
+  const shipSeg = vm.find((s) => s.phase === 'ship');
+  assert.ok(shipSeg);
+  assert.strictEqual(shipSeg.layer, 'finish');
+});
+
+test('chips view model creates chip labels and assigns layer classes', () => {
+  const next = [{ phase: 'debug', probability: 0.45 }, { phase: 'review', probability: 0.3 }];
+  const chips = hive.chipsViewModel(next);
+  assert.strictEqual(chips.length, 2);
+  assert.strictEqual(chips[0].label, 'Debug 45%');
+  assert.strictEqual(chips[0].layer, 'base');
+  assert.strictEqual(chips[1].label, 'Review 30%');
+  assert.strictEqual(chips[1].layer, 'check');
+});
+
+test('phase changes view model formats and orders changes', () => {
+  const changes = [
+    { t: 100, from: 'plan', to: 'build' },
+    { t: 200, from: 'build', to: 'test' },
+  ];
+  const vm = hive.phaseChangesViewModel(changes);
+  assert.strictEqual(vm.length, 2);
+  assert.strictEqual(vm[0].label, 'build → test');
+  assert.strictEqual(vm[1].label, 'plan → build');
+});
+

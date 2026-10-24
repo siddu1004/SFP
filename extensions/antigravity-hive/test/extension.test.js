@@ -22,6 +22,8 @@ const vscode = {
   TreeItemCollapsibleState: { None: 0, Collapsed: 1, Expanded: 2 },
   StatusBarAlignment: { Left: 1, Right: 2 },
   ProgressLocation: { Window: 10 },
+  ConfigurationTarget: { Global: 1, Workspace: 2, WorkspaceFolder: 3 },
+  DiagnosticSeverity: { Error: 0, Warning: 1, Information: 2, Hint: 3 },
   window: {
     createStatusBarItem: (alignment, priority) => {
       const item = { alignment, priority, text: '', tooltip: '', command: '', show() {}, dispose() {} };
@@ -38,6 +40,9 @@ const vscode = {
     withProgress: async (_o, fn) => fn(),
     createTerminal: () => ({ show() {}, sendText: (t) => state.messages.push(['terminal', t]) }),
     showTextDocument: async () => {},
+    onDidChangeActiveTextEditor: (l) => { state.openListeners = state.openListeners || []; state.openListeners.push(l); return { dispose() {} }; },
+    onDidStartTerminalShellExecution: (l) => { state.termStartListeners = state.termStartListeners || []; state.termStartListeners.push(l); return { dispose() {} }; },
+    onDidEndTerminalShellExecution: (l) => { state.termEndListeners = state.termEndListeners || []; state.termEndListeners.push(l); return { dispose() {} }; },
   },
   commands: {
     registerCommand: (id, fn) => { commands.set(id, fn); return { dispose() {} }; },
@@ -47,9 +52,19 @@ const vscode = {
     },
   },
   workspace: {
-    workspaceFolders: undefined,
-    getConfiguration: () => ({ get: (k, d) => ({ sfpPath: REPO, maxSkills: 3 }[k] ?? d) }),
+    workspaceFolders: [{ uri: { fsPath: REPO } }],
+    getConfiguration: () => ({
+      get: (k, d) => ({ sfpPath: REPO, maxSkills: 3, follow: true, followCommands: true }[k] ?? d),
+      update: async (k, v) => { state.settings = state.settings || {}; state.settings[k] = v; },
+    }),
     openTextDocument: async (f) => f,
+    onDidSaveTextDocument: (l) => { state.saveListeners = state.saveListeners || []; state.saveListeners.push(l); return { dispose() {} }; },
+    onDidCreateFiles: (l) => { state.createListeners = state.createListeners || []; state.createListeners.push(l); return { dispose() {} }; },
+    onDidDeleteFiles: (l) => { state.deleteListeners = state.deleteListeners || []; state.deleteListeners.push(l); return { dispose() {} }; },
+  },
+  languages: {
+    onDidChangeDiagnostics: (l) => { state.diagListeners = state.diagListeners || []; state.diagListeners.push(l); return { dispose() {} }; },
+    getDiagnostics: () => state.diagnostics || [],
   },
   env: { clipboard: { writeText: async (t) => { state.clipboard = t; } } },
   Uri: { file: (f) => ({ fsPath: f }) },
@@ -160,3 +175,30 @@ test('Stage 2: registers the SFP Hive Studio webview provider and right status b
   await commands.get('sfpHive.focusNow')();
   assert.deepStrictEqual(state.lastPostedMessage, { type: 'switchTab', tab: 'now' });
 });
+
+test('Stage 3: workspace events feed ActivityBuffer and flush updates Now state', async () => {
+  ext.activity.take(); // clear buffer
+  assert.strictEqual(ext.activity.size, 0);
+
+  // Save event
+  assert.ok(state.saveListeners && state.saveListeners.length > 0);
+  state.saveListeners[0]({ uri: { fsPath: path.join(REPO, 'src', 'app.ts') } });
+  assert.strictEqual(ext.activity.size, 1);
+
+  // Create event
+  state.createListeners[0]({ files: [{ fsPath: path.join(REPO, 'src', 'new.ts') }] });
+  assert.strictEqual(ext.activity.size, 2);
+
+  // Delete event
+  state.deleteListeners[0]({ files: [{ fsPath: path.join(REPO, 'src', 'old.ts') }] });
+  assert.strictEqual(ext.activity.size, 3);
+
+  // Open event
+  state.openListeners[0]({ document: { uri: { fsPath: path.join(REPO, 'README.md') } } });
+  assert.strictEqual(ext.activity.size, 4);
+
+  // Terminal run event
+  state.termEndListeners[0]({ execution: { commandLine: { value: 'npm test' } }, exitCode: 0 });
+  assert.ok(ext.activity.size <= 4);
+});
+

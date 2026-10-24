@@ -332,6 +332,34 @@ input:focus-visible,
   transition: width 0.3s ease;
 }
 
+/* Thin stacked bar of phase shares, coloured by layer */
+.stacked-phase-bar {
+  display: flex;
+  height: 4px;
+  width: 100%;
+  border-radius: 2px;
+  overflow: hidden;
+  background-color: var(--vscode-progressBar-background, rgba(128, 128, 128, 0.2));
+  margin: var(--grid-1) 0;
+}
+
+.stacked-phase-segment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.layer-base {
+  background-color: var(--accent);
+}
+
+.layer-check {
+  background-color: var(--vscode-charts-green, #89d185);
+}
+
+.layer-finish {
+  background-color: var(--vscode-charts-purple, #b180d7);
+}
+
 /* Phase Chip Bar */
 .chip-bar {
   display: flex;
@@ -348,12 +376,141 @@ input:focus-visible,
   font-size: var(--font-xs);
   background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.15));
   color: var(--vscode-descriptionForeground);
+  border: 1px solid transparent;
 }
 
 .chip.active {
   color: var(--vscode-foreground);
   background-color: var(--vscode-badge-background);
   color: var(--vscode-badge-foreground);
+}
+
+.chip-pct {
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+
+/* Skill Cards List */
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-2);
+}
+
+.skill-card {
+  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.08));
+  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.2));
+  border-radius: var(--radius-md);
+  padding: var(--grid-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-1);
+}
+
+.skill-reasons {
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  padding-left: var(--grid-2);
+  margin-top: 2px;
+}
+
+.skill-reasons li {
+  margin-bottom: 2px;
+}
+
+.skill-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--grid-1);
+  margin-top: var(--grid-1);
+}
+
+.skill-actions .btn,
+.skill-actions .btn-secondary {
+  padding: 2px 6px;
+  font-size: var(--font-xs);
+}
+
+/* Phase Changes List */
+.changes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.change-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  padding: 2px var(--grid-1);
+  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.05));
+  border-radius: var(--radius-sm);
+}
+
+/* Toggle Switch */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--grid-1) 0;
+}
+
+.toggle-label {
+  font-size: var(--font-sm);
+  color: var(--vscode-foreground);
+  display: flex;
+  align-items: center;
+  gap: var(--grid-1);
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 18px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--vscode-input-background, rgba(128, 128, 128, 0.3));
+  border: 1px solid var(--vscode-input-border, rgba(128, 128, 128, 0.4));
+  border-radius: 9px;
+  transition: 0.2s;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--vscode-foreground);
+  border-radius: 50%;
+  transition: 0.2s;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(14px);
+  background-color: #ffffff;
 }
 
 /* Responsive tweaks for narrow sidebars (down to 260px) */

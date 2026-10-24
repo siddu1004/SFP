@@ -64,7 +64,9 @@
         "sfpHive.python": {"type": "string", "default": "", "description": "Python 3 command. Empty uses python3 (python on Windows)."},
         "sfpHive.maxSkills": {"type": "number", "default": 4, "minimum": 1, "maximum": 8, "description": "The most skills to choose for one task."},
         "sfpHive.copyPromptAfterChoosing": {"type": "boolean", "default": true, "description": "Copy the agent prompt to the clipboard after choosing, ready to paste into the agent panel."},
-        "sfpHive.installTool": {"type": "string", "default": "antigravity", "description": "The SFP installer tool name used by the install commands (antigravity, copilot for VS Code, cursor, windsurf...)."}
+        "sfpHive.installTool": {"type": "string", "default": "antigravity", "description": "The SFP installer tool name used by the install commands (antigravity, copilot for VS Code, cursor, windsurf...)."},
+        "sfpHive.follow": {"type": "boolean", "default": true, "description": "Follow workspace activity and update skills to match the current phase of work."},
+        "sfpHive.followCommands": {"type": "boolean", "default": true, "description": "Include terminal commands in workspace activity when shell integration is available."}
       }
     }
   },

@@ -285,6 +285,87 @@ export class ActivityBuffer {
   }
 }
 
+export const PHASE_LAYERS: Record<string, 'base' | 'check' | 'finish'> = {
+  research: 'base',
+  plan: 'base',
+  design: 'base',
+  build: 'base',
+  debug: 'base',
+  test: 'check',
+  secure: 'check',
+  review: 'check',
+  optimize: 'finish',
+  document: 'finish',
+  ship: 'finish',
+};
+
+/**
+ * Throttle phase change notifications: at most one every 2 minutes (minIntervalMs),
+ * and only when the phase changed with a confidence of at least 0.6 (minConfidence).
+ */
+export function shouldNotifyPhaseChange(
+  lastNotifyTime: number,
+  now: number,
+  changed: boolean,
+  confidence: number,
+  minIntervalMs = 120000,
+  minConfidence = 0.6
+): boolean {
+  return changed && confidence >= minConfidence && (now - lastNotifyTime >= minIntervalMs);
+}
+
+export interface PhaseBarSegment {
+  phase: string;
+  share: number;
+  percent: number;
+  layer: 'base' | 'check' | 'finish';
+}
+
+export function phaseBarViewModel(shares: Record<string, number>): PhaseBarSegment[] {
+  const entries = Object.entries(shares || {}).filter(([_, s]) => s > 0.005);
+  const total = entries.reduce((acc, [_, s]) => acc + s, 0) || 1;
+  return entries.map(([phase, share]) => ({
+    phase,
+    share,
+    percent: Math.round((share / total) * 100),
+    layer: PHASE_LAYERS[phase] ?? 'base',
+  }));
+}
+
+export interface NextChip {
+  phase: string;
+  probability: number;
+  percent: number;
+  label: string;
+  layer: 'base' | 'check' | 'finish';
+}
+
+export function chipsViewModel(next: { phase: string; probability: number }[]): NextChip[] {
+  return (next || []).map((n) => ({
+    phase: n.phase,
+    probability: n.probability,
+    percent: Math.round(n.probability * 100),
+    label: `${n.phase[0].toUpperCase() + n.phase.slice(1)} ${Math.round(n.probability * 100)}%`,
+    layer: PHASE_LAYERS[n.phase] ?? 'base',
+  }));
+}
+
+export interface PhaseChangeItem {
+  from: string;
+  to: string;
+  t: number;
+  label: string;
+}
+
+export function phaseChangesViewModel(changes: { t: number; from: string; to: string }[]): PhaseChangeItem[] {
+  return (changes || []).slice(-5).reverse().map((c) => ({
+    from: c.from,
+    to: c.to,
+    t: c.t,
+    label: `${c.from} → ${c.to}`,
+  }));
+}
+
 // ------------------------------------------------------------------ clusters
 
 export interface ClusterSkill {

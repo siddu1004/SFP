@@ -36,6 +36,11 @@ class StackView implements vscode.TreeDataProvider<Node> {
   }
 }
 
+export const activity = new hive.ActivityBuffer();
+export let lastTrackResult: hive.TrackResult | undefined;
+let lastNotificationTime = 0;
+const excludedNowSkills = new Set<string>();
+
 function config() {
   const c = vscode.workspace.getConfiguration('sfpHive');
   return {
@@ -43,6 +48,8 @@ function config() {
     max: c.get<number>('maxSkills', 4),
     copy: c.get<boolean>('copyPromptAfterChoosing', true),
     tool: c.get<string>('installTool', 'antigravity'),
+    follow: c.get<boolean>('follow', true),
+    followCommands: c.get<boolean>('followCommands', true),
   };
 }
 
@@ -65,11 +72,68 @@ function showStatus() {
   status.tooltip = selection ? `Chosen for: ${selection.task}` : 'Choose skills for a task';
 }
 
+export async function flushActivity(): Promise<hive.TrackResult | undefined> {
+  const root = sfpRoot();
+  if (!root) return;
+  const cfg = config();
+  if (!cfg.follow) return;
+  const events = activity.take();
+  if (!events.length) return;
+  try {
+    const out = await hive.run(
+      hive.pythonCommand(cfg.opts),
+      hive.trackArgs(root, project(), cfg.max),
+      15000,
+      JSON.stringify(events)
+    );
+    const result = hive.parseTrack(out);
+    lastTrackResult = result;
+    studioProvider?.updateTrackResult(result);
+    if (result.phase) {
+      updateRightStatus(result.phase[0].toUpperCase() + result.phase.slice(1), result.skills?.length);
+    }
+    const now = Date.now();
+    if (hive.shouldNotifyPhaseChange(lastNotificationTime, now, result.changed, result.confidence)) {
+      lastNotificationTime = now;
+      void vscode.window.showInformationMessage(
+        `SFP Hive: Phase moved to ${result.phase} (${Math.round(result.confidence * 100)}% confidence).`,
+        'Use these skills'
+      ).then((action) => {
+        if (action === 'Use these skills') {
+          if (result.skills && result.skills.length) {
+            selection = {
+              task: `Phase: ${result.phase}`,
+              stack: result.skills,
+              layers: {
+                base: result.skills.filter((s) => s.layer === 'base').map((s) => s.name),
+                check: result.skills.filter((s) => s.layer === 'check').map((s) => s.name),
+                finish: result.skills.filter((s) => s.layer === 'finish').map((s) => s.name),
+              },
+              tokens: result.skills.reduce((acc, s) => acc + (s.tokens || 0), 0),
+              next: (result.next || []).map((n) => ({ name: n.phase, probability: n.probability })),
+            };
+            changed.fire();
+            studioProvider?.syncState();
+            if (cfg.copy) {
+              void vscode.env.clipboard.writeText(hive.buildPrompt(selection, root));
+            }
+          }
+          studioProvider?.showTab('now');
+        }
+      });
+    }
+    return result;
+  } catch {
+    // quiet fail or transient error
+  }
+}
+
 async function choose(preset?: string) {
   const root = sfpRoot();
   if (!root) return;
   const task = preset ?? (await vscode.window.showInputBox({ prompt: 'What are you about to do?', placeHolder: 'add an accessible signup form', ignoreFocusOut: true }));
   if (!task || !task.trim()) return;
+  activity.add({ kind: 'prompt', text: task.trim() });
   const cfg = config();
   await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'SFP Hive: choosing skills' }, async () => {
     try {
@@ -96,13 +160,14 @@ async function choose(preset?: string) {
 
 async function sendFeedback(verdict: hive.Verdict, names: string[]) {
   const root = sfpRoot();
-  if (!root || !selection || !names.length) return;
-  if (!selection.decision) {
+  if (!root || !names.length) return;
+  const decision = selection?.decision;
+  if (!decision) {
     void vscode.window.showWarningMessage('Feedback is off: SFP_NO_USAGE_LOG is set, so the hive logs nothing and learns nothing.');
     return;
   }
   try {
-    await hive.run(hive.pythonCommand(config().opts), hive.feedbackArgs(root, selection.decision, verdict, names, selection.task));
+    await hive.run(hive.pythonCommand(config().opts), hive.feedbackArgs(root, decision, verdict, names, selection?.task));
     names.forEach((n) => verdict !== 'missing' && verdicts.set(n, verdict));
     changed.fire();
     studioProvider?.syncState();
@@ -167,10 +232,41 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
             await sendFeedback(message.verdict, [message.skill]);
           }
           break;
+        case 'removeSkill':
+          if (message.skill) {
+            excludedNowSkills.add(message.skill);
+            await sendFeedback('unhelpful', [message.skill]);
+            if (lastTrackResult?.phase) {
+              const root = sfpRoot();
+              if (root) {
+                try {
+                  const cfg = config();
+                  const out = await hive.run(
+                    hive.pythonCommand(cfg.opts),
+                    hive.selectArgs(root, lastTrackResult.phase, project(), cfg.max, {
+                      exclude: Array.from(excludedNowSkills),
+                    })
+                  );
+                  const sel = hive.parseSelection(out);
+                  lastTrackResult.skills = sel.stack;
+                  this.updateTrackResult(lastTrackResult);
+                } catch {
+                  // keep existing
+                }
+              }
+            }
+          }
+          break;
+        case 'toggleFollow':
+          await vscode.workspace.getConfiguration('sfpHive').update('follow', Boolean(message.value), vscode.ConfigurationTarget.Global);
+          break;
+        case 'refresh':
+          await flushActivity();
+          break;
         case 'openSkill':
           const root = sfpRoot();
           if (root && message.skill) {
-            const skill = selection?.stack.find((s) => s.name === message.skill);
+            const skill = (selection?.stack || lastTrackResult?.skills)?.find((s) => s.name === message.skill);
             const file = skill ? hive.skillFile(root, skill) : undefined;
             if (file) {
               await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(file), { preview: true });
@@ -194,6 +290,15 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  public updateTrackResult(track: hive.TrackResult) {
+    if (!this._view) return;
+    this._view.webview.postMessage({
+      type: 'updateTrack',
+      track,
+      follow: config().follow,
+    });
+  }
+
   public syncState() {
     if (!this._view) return;
     this._view.webview.postMessage({
@@ -202,6 +307,8 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         task: selection?.task ?? '',
         skills: selection?.stack ?? [],
         decision: selection?.decision,
+        track: lastTrackResult,
+        follow: config().follow,
       },
     });
   }
@@ -253,6 +360,18 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   <!-- Tab 1: Now -->
   <div class="tab-content active" id="tab-now" role="tabpanel" aria-labelledby="btn-tab-now">
     <div class="section">
+      <div class="toggle-row">
+        <label class="toggle-label" for="follow-toggle">
+          <span>Follow the agent</span>
+        </label>
+        <label class="toggle-switch">
+          <input type="checkbox" id="follow-toggle" checked aria-label="Toggle following agent activity">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="section">
       <div class="section-title">
         <span>Current Phase &amp; Activity</span>
         <button class="btn-icon" data-action="refresh" aria-label="Refresh Phase" title="Refresh">
@@ -267,19 +386,38 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         <div class="progress-container">
           <div class="progress-track"><div class="progress-fill" id="now-confidence-fill" style="width: 0%;"></div></div>
         </div>
+        <div class="stacked-phase-bar" id="now-stacked-shares" title="Phase shares by layer"></div>
         <div class="card-meta">
           <span id="now-phase-detail">Watching workspace events</span>
         </div>
       </div>
     </div>
 
+    <div class="section" id="now-next-section" style="display: none;">
+      <div class="section-title">Next likely</div>
+      <div class="chip-bar" id="now-next-chips"></div>
+    </div>
+
     <div class="section">
-      <div class="section-title">Active Skills</div>
+      <div class="section-title">
+        <span>Skills for this phase</span>
+        <button class="btn btn-secondary" data-action="copyPrompt" id="now-copy-btn" style="display: none;">Copy for the agent</button>
+      </div>
       <div class="state-box" id="now-empty-state">
         <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm-.5-9h1v2h-1V5zm0 3h1v4h-1V8z"/></svg>
         <span>No workspace activity recorded yet. Edit a file, run a test, or start a task.</span>
       </div>
-      <div id="now-skills-list" style="display: none; flex-direction: column; gap: 8px;"></div>
+      <div id="now-skills-list" class="skills-list" style="display: none;"></div>
+    </div>
+
+    <div class="section" id="now-upcoming-section" style="display: none;">
+      <div class="section-title">Coming up</div>
+      <div id="now-upcoming-skills" class="skills-list"></div>
+    </div>
+
+    <div class="section" id="now-changes-section" style="display: none;">
+      <div class="section-title">Recent phase changes</div>
+      <div id="now-changes-list" class="changes-list"></div>
     </div>
   </div>
 
@@ -364,6 +502,94 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.registerWebviewViewProvider(StudioViewProvider.viewType, studioProvider)
   );
 
+  // Wire workspace activity listeners for Now tracking
+  context.subscriptions.push(
+    vscode.workspace.onDidSaveTextDocument((doc) => {
+      if (!config().follow) return;
+      const p = hive.relative(project(), doc.uri.fsPath);
+      if (p) activity.add({ kind: 'save', path: p });
+    }),
+    vscode.workspace.onDidCreateFiles((e) => {
+      if (!config().follow) return;
+      for (const f of e.files) {
+        const p = hive.relative(project(), f.fsPath);
+        if (p) activity.add({ kind: 'create', path: p });
+      }
+    }),
+    vscode.workspace.onDidDeleteFiles((e) => {
+      if (!config().follow) return;
+      for (const f of e.files) {
+        const p = hive.relative(project(), f.fsPath);
+        if (p) activity.add({ kind: 'delete', path: p });
+      }
+    }),
+    vscode.window.onDidChangeActiveTextEditor((ed) => {
+      if (!config().follow || !ed?.document) return;
+      const p = hive.relative(project(), ed.document.uri.fsPath);
+      if (p) activity.add({ kind: 'open', path: p });
+    })
+  );
+
+  let diagTimer: NodeJS.Timeout | undefined;
+  context.subscriptions.push(
+    vscode.languages.onDidChangeDiagnostics(() => {
+      if (!config().follow) return;
+      if (diagTimer) return;
+      diagTimer = setTimeout(() => {
+        diagTimer = undefined;
+        const proj = project();
+        let errors = 0;
+        for (const [uri, diags] of vscode.languages.getDiagnostics()) {
+          if (hive.relative(proj, uri.fsPath)) {
+            errors += diags.filter((d) => d.severity === vscode.DiagnosticSeverity.Error).length;
+          }
+        }
+        activity.add({ kind: 'diagnostics', errors });
+      }, 10000);
+      diagTimer.unref?.();
+    })
+  );
+
+  if ('onDidStartTerminalShellExecution' in vscode.window) {
+    try {
+      context.subscriptions.push(
+        (vscode.window as any).onDidStartTerminalShellExecution((e: any) => {
+          const cfg = config();
+          if (!cfg.follow || !cfg.followCommands) return;
+          const cmd = (e.execution?.commandLine?.value || '').slice(0, 200);
+          if (cmd) activity.add({ kind: 'run', command: cmd });
+        })
+      );
+    } catch {
+      // shell integration not available
+    }
+  }
+
+  if ('onDidEndTerminalShellExecution' in vscode.window) {
+    try {
+      context.subscriptions.push(
+        (vscode.window as any).onDidEndTerminalShellExecution((e: any) => {
+          const cfg = config();
+          if (!cfg.follow || !cfg.followCommands) return;
+          const cmd = (e.execution?.commandLine?.value || '').slice(0, 200);
+          const exit = typeof e.exitCode === 'number' ? e.exitCode : undefined;
+          if (cmd) activity.add({ kind: 'run', command: cmd, exit });
+          if (exit !== undefined) {
+            void flushActivity();
+          }
+        })
+      );
+    } catch {
+      // shell integration not available
+    }
+  }
+
+  const flushInterval = setInterval(() => {
+    if (activity.size > 0) void flushActivity();
+  }, 20000);
+  flushInterval.unref?.();
+  context.subscriptions.push({ dispose: () => clearInterval(flushInterval) });
+
   reg('sfpHive.choose', () => choose());
   reg('sfpHive.focusNow', async () => {
     await vscode.commands.executeCommand('sfpHive.stack.focus');
@@ -371,8 +597,20 @@ export function activate(context: vscode.ExtensionContext) {
   });
   reg('sfpHive.copyPrompt', async () => {
     const root = sfpRoot();
-    if (!selection || !root) return;
-    await vscode.env.clipboard.writeText(hive.buildPrompt(selection, root));
+    if (!root) return;
+    const targetSel = selection || (lastTrackResult?.skills && lastTrackResult.skills.length ? {
+      task: `Phase: ${lastTrackResult.phase}`,
+      stack: lastTrackResult.skills,
+      layers: {
+        base: lastTrackResult.skills.filter((s) => s.layer === 'base').map((s) => s.name),
+        check: lastTrackResult.skills.filter((s) => s.layer === 'check').map((s) => s.name),
+        finish: lastTrackResult.skills.filter((s) => s.layer === 'finish').map((s) => s.name),
+      },
+      tokens: lastTrackResult.skills.reduce((acc, s) => acc + (s.tokens || 0), 0),
+      next: (lastTrackResult.next || []).map((n) => ({ name: n.phase, probability: n.probability })),
+    } : undefined);
+    if (!targetSel) return;
+    await vscode.env.clipboard.writeText(hive.buildPrompt(targetSel, root));
     void vscode.window.showInformationMessage('Prompt copied. Paste it into the agent panel.');
   });
   reg('sfpHive.openSkill', async (arg) => {
