@@ -31,6 +31,7 @@ export interface Steer {
   include?: string[]; // skills the user pinned
   exclude?: string[]; // skills the user ruled out
   explain?: boolean; // ask for every top candidate and why it was or was not taken
+  bundle?: string; // a bundle id or name: all its skills are pinned, in order
 }
 
 export interface Selection {
@@ -42,6 +43,7 @@ export interface Selection {
   next: { name: string; probability: number }[];
   explain?: Candidate[];
   intervention?: { pinned: string[]; excluded: string[] };
+  bundle?: { id: string; name: string };
 }
 
 export type Verdict = 'helped' | 'unhelpful' | 'ignored' | 'missing';
@@ -76,6 +78,7 @@ export function selectArgs(root: string, task: string, project: string | undefin
   if (steer.include && steer.include.length) args.push('--include', steer.include.join(','));
   if (steer.exclude && steer.exclude.length) args.push('--exclude', steer.exclude.join(','));
   if (steer.explain) args.push('--explain');
+  if (steer.bundle) args.push('--bundle', steer.bundle);
   return args;
 }
 
@@ -323,4 +326,29 @@ export function parseClusters(json: string): Cluster[] {
   const raw = JSON.parse(json);
   if (!Array.isArray(raw)) throw new Error('unexpected answer for clusters');
   return raw as Cluster[];
+}
+
+// ------------------------------------------------------------------ the library
+
+export function libraryArgs(root: string): string[] {
+  return [path.join(root, 'mcp', 'sfp_hive.py'), 'library'];
+}
+
+export function parseLibrary(json: string): import('./library').Library {
+  const raw = JSON.parse(json);
+  if (!raw || typeof raw !== 'object' || !raw.skills || !Array.isArray(raw.purposes) || !Array.isArray(raw.bundles)) {
+    throw new Error('unexpected answer for the library');
+  }
+  return raw;
+}
+
+export function bundleAddArgs(root: string, name: string, skills: string[], goal = '', purpose = 'build', when = ''): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'bundle-add', name, '--skills', skills.join(','), '--purpose', purpose];
+  if (goal) args.push('--goal', goal);
+  if (when) args.push('--when', when);
+  return args;
+}
+
+export function bundleRemoveArgs(root: string, name: string): string[] {
+  return [path.join(root, 'mcp', 'sfp_hive.py'), 'bundle-remove', name];
 }

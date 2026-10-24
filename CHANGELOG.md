@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.8.0
+
+- **The skill library.** Every skill now has a purpose, what it is trying to do, in 15 purposes (Design interfaces, Build features, Test and verify, Deploy and release and more), assigned by `purposes.json`: a name pattern, else the skill's cluster, else its strongest job when its name says so. Measured against one person's labels: 83% on the 120 skills the rules were tuned on and 78% on 40 held-out ones (`docs/LIBRARY.md`).
+- **Bundles.** `bundles.json` has 34 named, ordered sets of skills for one job: the 18 hive recipes by reference, and 16 new ones such as "Prepare a release", "Add tests to legacy code" and "Accessible form". `bundle-add` and `bundle-remove` keep your own. `select --bundle ID` pins a bundle's skills into the choice for a task, and feedback learns from it.
+- **One payload for the editor.** `sfp_hive.py library` prints everything the sidebar needs in about 0.2 s. `src/library.ts` in the extension searches it without calling Python: whole words in names first, word starts, related words, purposes and clusters, descriptions, and one typo; about 5 ms per search over 819 skills. Its tokenizer is checked against the Python one.
+- `docs/LIBRARY-BRIEF.md` is the prompt for building the sidebar, starting with fixes for what a review of Stage 2 found (two registrations of one view, an empty renderer, a loose CSP, nothing escaped).
+
 ## 3.7.0
 
 - **Follow the agent.** `sfp_hive.py track` reads workspace events (saves, commands and their exit codes, errors, prompts), turns them into evidence for the eleven phases of work, smooths it with one Kalman filter per phase, and predicts the next phase with a Markov chain over phase changes, learned from your sessions on top of a prior for the usual order of work. The phase is passed to the hive as a hint, and also brings the phase's own words into the search, so the skills change when the work does. On hand-labelled sessions the filter is steadier than following the last event, and on the held-out set about 7 points less accurate; `docs/TRACKING.md` has the numbers.

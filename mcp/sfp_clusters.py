@@ -77,11 +77,12 @@ def usage():
     return counts
 
 
-def clusters(with_usage=False):
-    """The clusters, each with its skills, in the order of clusters.json, then yours."""
+def clusters(with_usage=False, used=None, home=None):
+    """The clusters, each with its skills, in the order of clusters.json, then yours.
+    `used` and `home` can be passed in when the caller already has them."""
     rules = shared_rules()
-    home = assign(rules=rules)
-    used = usage() if with_usage else {}
+    home = home or assign(rules=rules)
+    used = (used if used is not None else usage()) if with_usage else {}
     by_id = {r['id']: {'id': r['id'], 'name': r['name'], 'description': r.get('description', ''), 'mine': False, 'skills': []}
              for r in rules}
     for s in core.CATALOG['skills']:
