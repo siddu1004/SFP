@@ -93,35 +93,29 @@ test('activates and registers every command in package.json', () => {
   });
   const declared = require('../package.json').contributes.commands.map((c) => c.command);
   declared.forEach((id) => assert.ok(commands.has(id), id));
-  assert.ok(state.providers['sfpHive.stack']);
+  assert.ok(state.webviewProviders['sfpHive.stack']);
   assert.ok(state.chatParticipants && state.chatParticipants.has('sfp.hive'));
 });
 
-test('choosing skills fills the tree, copies the prompt and sets the context', async () => {
+test('choosing skills updates selection, copies the prompt and sets the context', async () => {
   const data = fs.mkdtempSync(path.join(os.tmpdir(), 'hive-ext-'));
   process.env.SFP_DATA_DIR = data;
   delete process.env.SFP_NO_USAGE_LOG;
   state.inputs.push('write table driven tests for a go parser');
   await commands.get('sfpHive.choose')();
   assert.strictEqual(state.contexts['sfpHive.hasSelection'], true);
-  const tree = state.providers['sfpHive.stack'];
-  const layers = tree.getChildren();
-  assert.ok(layers.length > 0);
-  const skills = layers.flatMap((l) => tree.getChildren(l));
-  assert.ok(skills.length > 0);
-  const item = tree.getTreeItem(skills[0]);
-  assert.strictEqual(item.contextValue, 'skill');
-  assert.strictEqual(item.command.command, 'sfpHive.openSkill');
-  assert.ok(state.clipboard.includes(skills[0].skill.name));
+  assert.ok(state.clipboard.includes('Use these SFP skills, in this order'));
 });
 
-test('marking a skill helped records feedback and updates the tree', async () => {
-  const tree = state.providers['sfpHive.stack'];
-  const node = tree.getChildren().flatMap((l) => tree.getChildren(l))[0];
-  await commands.get('sfpHive.helped')(node);
-  assert.strictEqual(tree.getTreeItem(node).iconPath.id, 'thumbsup');
+test('marking a skill helped records feedback to feedback.jsonl', async () => {
+  const data = fs.mkdtempSync(path.join(os.tmpdir(), 'hive-ext-'));
+  process.env.SFP_DATA_DIR = data;
+  delete process.env.SFP_NO_USAGE_LOG;
+  state.inputs.push('write table driven tests for a go parser');
+  await commands.get('sfpHive.choose')();
+  await commands.get('sfpHive.helped')('golang-patterns');
   const log = path.join(process.env.SFP_DATA_DIR, 'feedback.jsonl');
-  assert.match(fs.readFileSync(log, 'utf8'), new RegExp(node.skill.name));
+  assert.match(fs.readFileSync(log, 'utf8'), /golang-patterns/);
 });
 
 test('the install commands send a plan to the terminal, not a silent install', async () => {
@@ -265,6 +259,77 @@ test('Stage 4: Inspector supports steer, diff, and session learning stats', asyn
     sendFeedback: true,
   });
   assert.ok(state.clipboard.length > 0, 'Clipboard filled with applied stack prompt');
+});
+
+test('escapeHtml sanitizes dynamic strings against XSS injection', () => {
+  const hiveModule = require('../out/hive.js');
+  assert.strictEqual(
+    hiveModule.escapeHtml('<img src=x onerror=alert(1)>'),
+    '&lt;img src=x onerror=alert(1)&gt;'
+  );
+  assert.strictEqual(
+    hiveModule.escapeHtml('Tom & "Jerry" \'show\''),
+    'Tom &amp; &quot;Jerry&quot; &#39;show&#39;'
+  );
+});
+
+test('webview CSP enforces strict origin without unsafe-inline or remote https', () => {
+  const provider = state.webviewProviders['sfpHive.stack'];
+  let html = '';
+  const webviewView = {
+    webview: {
+      options: {},
+      asWebviewUri: (uri) => uri.fsPath,
+      cspSource: 'vscode-webview:',
+      postMessage: () => {},
+      onDidReceiveMessage: () => {},
+      set html(val) { html = val; },
+    },
+    show: () => {},
+  };
+  provider.resolveWebviewView(webviewView, {}, {});
+  const cspMatch = html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)">/);
+  assert.ok(cspMatch, 'CSP meta tag must be present');
+  const csp = cspMatch[1];
+  assert.ok(!csp.includes("'unsafe-inline'"), 'CSP must not allow unsafe-inline styles');
+  assert.ok(!csp.includes('https:'), 'CSP must not allow arbitrary https image sources');
+  assert.ok(csp.includes("style-src vscode-webview:"), 'CSP must allow webview style-src');
+  assert.ok(csp.includes("img-src vscode-webview: data:"), 'CSP must restrict img-src to webview and data URIs');
+});
+
+test('webview handles choose, feedback, and refresh messages', async () => {
+  const provider = state.webviewProviders['sfpHive.stack'];
+  let webviewMessageHandler;
+  let posted = [];
+  const webviewView = {
+    webview: {
+      options: {},
+      asWebviewUri: (uri) => uri.fsPath,
+      cspSource: 'vscode-webview:',
+      postMessage: (m) => { posted.push(m); },
+      onDidReceiveMessage: (handler) => { webviewMessageHandler = handler; },
+      set html(val) {},
+    },
+    show: () => {},
+  };
+  provider.resolveWebviewView(webviewView, {}, {});
+  assert.ok(webviewMessageHandler);
+
+  // Test choose message
+  posted = [];
+  await webviewMessageHandler({ command: 'choose', task: 'write table driven tests for a go parser' });
+  assert.ok(posted.some((m) => m.type === 'updateState'), 'choose command should post updateState');
+
+  // Test feedback message
+  posted = [];
+  await webviewMessageHandler({ command: 'feedback', skill: 'golang-patterns', verdict: 'helped' });
+  const log = path.join(process.env.SFP_DATA_DIR, 'feedback.jsonl');
+  assert.match(fs.readFileSync(log, 'utf8'), /golang-patterns/);
+
+  // Test refresh message
+  posted = [];
+  await webviewMessageHandler({ command: 'refresh' });
+  assert.ok(posted.some((m) => m.type === 'updateState'), 'refresh command should post updateState');
 });
 
 

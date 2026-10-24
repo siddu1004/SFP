@@ -511,3 +511,14 @@ export function parseLive(json: string): LiveResult {
   if (!r || !Array.isArray(r.attached) || !r.state) throw new Error('unexpected output from the hive live command');
   return r as LiveResult;
 }
+
+export function escapeHtml(str: string): string {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+

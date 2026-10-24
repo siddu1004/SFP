@@ -22,6 +22,9 @@
       unhelpful: 0,
     },
     follow: true,
+    clusters: [],
+    selectedClusterId: null,
+    libraryFilter: '',
   };
 
   // Cache DOM elements
@@ -44,6 +47,7 @@
       const match = btn.getAttribute('data-tab') === tabId;
       btn.classList.toggle('active', match);
       btn.setAttribute('aria-selected', match ? 'true' : 'false');
+      btn.setAttribute('tabindex', match ? '0' : '-1');
     });
 
     tabContents.forEach((content) => {
@@ -54,20 +58,31 @@
     vscode.setState({ currentTab });
   }
 
-  // Keyboard navigation for tab bar
+  // Keyboard navigation for tab bar: roving tabindex, Left, Right, Home, End
   const tabBar = document.querySelector('.tab-bar');
   if (tabBar) {
     tabBar.addEventListener('keydown', (e) => {
       const tabs = Array.from(tabButtons);
       const idx = tabs.findIndex((t) => t.getAttribute('data-tab') === currentTab);
+      let nextTab = null;
+
       if (e.key === 'ArrowRight') {
-        const next = tabs[(idx + 1) % tabs.length];
-        next.focus();
-        setTab(next.getAttribute('data-tab'));
+        e.preventDefault();
+        nextTab = tabs[(idx + 1) % tabs.length];
       } else if (e.key === 'ArrowLeft') {
-        const prev = tabs[(idx - 1 + tabs.length) % tabs.length];
-        prev.focus();
-        setTab(prev.getAttribute('data-tab'));
+        e.preventDefault();
+        nextTab = tabs[(idx - 1 + tabs.length) % tabs.length];
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        nextTab = tabs[0];
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        nextTab = tabs[tabs.length - 1];
+      }
+
+      if (nextTab) {
+        nextTab.focus();
+        setTab(nextTab.getAttribute('data-tab'));
       }
     });
   }
@@ -191,7 +206,7 @@
           state.exclude = state.exclude.filter((s) => s !== val);
           if (searchInput) searchInput.value = '';
           const dropdown = document.getElementById('choose-catalog-results');
-          if (dropdown) dropdown.style.display = 'none';
+          if (dropdown) dropdown.classList.add('hidden');
           const input = document.getElementById('choose-task-input');
           const text = input ? input.value.trim() : (state.selection?.task || '');
           vscode.postMessage({
@@ -203,47 +218,118 @@
         }
         break;
       }
+      case 'selectCluster': {
+        const clusterId = target.getAttribute('data-cluster-id');
+        if (clusterId) {
+          state.selectedClusterId = clusterId;
+          renderLibrary();
+        }
+        break;
+      }
+      case 'backToClusters': {
+        state.selectedClusterId = null;
+        renderLibrary();
+        break;
+      }
+      case 'newCluster': {
+        vscode.postMessage({ command: 'newCluster' });
+        break;
+      }
+      case 'removeCluster': {
+        const name = target.getAttribute('data-cluster-name');
+        if (name) {
+          vscode.postMessage({ command: 'removeCluster', name });
+        }
+        break;
+      }
+      case 'pinSkill': {
+        if (skill) {
+          vscode.postMessage({ command: 'pinSkill', skill });
+        }
+        break;
+      }
+      case 'addToMyCluster': {
+        if (skill) {
+          vscode.postMessage({ command: 'addToMyCluster', skill });
+        }
+        break;
+      }
     }
   });
 
-  const followToggle = document.getElementById('follow-toggle');
-  if (followToggle) {
-    followToggle.addEventListener('change', (e) => {
-      vscode.postMessage({ command: 'toggleFollow', value: e.target.checked });
+  // Task input submits on Enter
+  const chooseTaskInput = document.getElementById('choose-task-input');
+  if (chooseTaskInput) {
+    chooseTaskInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const text = chooseTaskInput.value.trim();
+        if (text) {
+          state.include = [];
+          state.exclude = [];
+          vscode.postMessage({ command: 'choose', task: text });
+        }
+      }
     });
   }
 
-  // Catalog search input typing
+  // Catalog search input
   const catalogSearch = document.getElementById('choose-catalog-search');
   const catalogResults = document.getElementById('choose-catalog-results');
   if (catalogSearch && catalogResults) {
     catalogSearch.addEventListener('input', () => {
       const q = catalogSearch.value.trim().toLowerCase();
       if (!q || !state.catalog || !state.catalog.length) {
-        catalogResults.style.display = 'none';
-        catalogResults.innerHTML = '';
+        catalogResults.classList.add('hidden');
         return;
       }
-      const matches = state.catalog.filter((n) => n.toLowerCase().includes(q)).slice(0, 10);
-      if (matches.length) {
-        catalogResults.style.display = 'block';
-        catalogResults.innerHTML = matches
-          .map((m) => `<div class="catalog-item" data-skill="${escapeHtml(m)}">${escapeHtml(m)}</div>`)
-          .join('');
-      } else {
-        catalogResults.style.display = 'none';
+      const matches = state.catalog.filter((name) => name.toLowerCase().includes(q)).slice(0, 8);
+      if (!matches.length) {
+        catalogResults.classList.add('hidden');
+        return;
       }
+      catalogResults.classList.remove('hidden');
+      catalogResults.innerHTML = matches
+        .map((m) => `<div class="catalog-item" data-action="addCatalogSkill" data-skill="${escapeHtml(m)}">${escapeHtml(m)}</div>`)
+        .join('');
     });
 
     catalogResults.addEventListener('click', (e) => {
       const item = e.target.closest('.catalog-item');
       if (item) {
-        const s = item.getAttribute('data-skill');
-        if (s) {
-          catalogSearch.value = s;
-          catalogResults.style.display = 'none';
+        const skillName = item.getAttribute('data-skill');
+        if (skillName) {
+          if (!state.include.includes(skillName)) state.include.push(skillName);
+          state.exclude = state.exclude.filter((s) => s !== skillName);
+          catalogSearch.value = '';
+          catalogResults.classList.add('hidden');
+          const input = document.getElementById('choose-task-input');
+          const text = input ? input.value.trim() : (state.selection?.task || '');
+          vscode.postMessage({
+            command: 'rechoose',
+            task: text,
+            include: state.include,
+            exclude: state.exclude,
+          });
         }
       }
+    });
+  }
+
+  // Follow the agent toggle switch
+  const followToggle = document.getElementById('follow-toggle');
+  if (followToggle) {
+    followToggle.addEventListener('change', () => {
+      vscode.postMessage({ command: 'toggleFollow', value: followToggle.checked });
+    });
+  }
+
+  // Library search input typing
+  const librarySearch = document.getElementById('library-search-input');
+  if (librarySearch) {
+    librarySearch.addEventListener('input', () => {
+      state.libraryFilter = librarySearch.value.trim().toLowerCase();
+      renderLibrary();
     });
   }
 
@@ -257,15 +343,7 @@
         if (msg.tab) setTab(msg.tab);
         break;
       }
-      case 'updateTrack': {
-        state.track = msg.track;
-        if (typeof msg.follow === 'boolean') {
-          state.follow = msg.follow;
-        }
-        renderTrack(state.track, state.follow);
-        break;
-      }
-      case 'updateState': {
+      case 'state': {
         if (msg.payload) {
           if (msg.payload.selection) {
             state.selection = msg.payload.selection;
@@ -285,6 +363,9 @@
           if (msg.payload.catalog) {
             state.catalog = msg.payload.catalog;
           }
+          if (Array.isArray(msg.payload.clusters)) {
+            state.clusters = msg.payload.clusters;
+          }
           if (msg.payload.sessionStats) {
             state.sessionStats = msg.payload.sessionStats;
           }
@@ -302,6 +383,7 @@
             }
           }
           renderChoose();
+          renderLibrary();
         }
         break;
       }
@@ -316,11 +398,18 @@
       keys
         .map((k) => {
           const v = signals[k];
-          if (v === null || v === undefined) {
-            return `<div class="signal-bar signal-bar-empty" title="${k}: abstained"></div>`;
+          if (v === undefined || v === null) {
+            return `<div class="signal-bar signal-bar-empty" title="${k}: none"></div>`;
           }
-          const p = Math.min(100, Math.round(v * 100));
-          return `<div class="signal-bar" title="${k}: ${p}%"><div class="signal-bar-fill" style="width: ${p}%;"></div></div>`;
+          const p = Math.min(100, Math.max(10, Math.round(Number(v) * 100)));
+          const bar = document.createElement('div');
+          bar.className = 'signal-bar';
+          bar.title = `${k}: ${p}%`;
+          const fill = document.createElement('div');
+          fill.className = 'signal-bar-fill';
+          fill.style.width = `${p}%`;
+          bar.appendChild(fill);
+          return bar.outerHTML;
         })
         .join('') +
       `</div>`
@@ -339,20 +428,26 @@
     const diffSummary = document.getElementById('choose-diff-summary');
     if (steerSection) {
       if (sel) {
-        steerSection.style.display = 'block';
+        steerSection.classList.remove('hidden');
         if (state.diff && (state.diff.added.length || state.diff.removed.length)) {
           if (diffSummary) {
-            diffSummary.style.display = 'block';
+            diffSummary.classList.remove('hidden');
             const addedHtml = state.diff.added.map((n) => `<span class="diff-added">+ ${escapeHtml(n)}</span>`).join('  ');
             const removedHtml = state.diff.removed.map((n) => `<span class="diff-removed">- ${escapeHtml(n)}</span>`).join('  ');
             diffSummary.innerHTML = `<strong>Changes:</strong> ${addedHtml} ${removedHtml}`;
           }
         } else if (diffSummary) {
-          diffSummary.style.display = 'none';
+          diffSummary.classList.add('hidden');
         }
       } else {
-        steerSection.style.display = 'none';
+        steerSection.classList.add('hidden');
       }
+    }
+
+    // Decision ID in Choose header
+    const chooseDecision = document.getElementById('choose-decision-id');
+    if (chooseDecision) {
+      chooseDecision.textContent = sel && sel.decision ? `Decision: ${sel.decision}` : '';
     }
 
     // Chosen Stack
@@ -361,10 +456,10 @@
     const addSection = document.getElementById('choose-add-section');
 
     if (sel && sel.stack && sel.stack.length) {
-      if (emptyBox) emptyBox.style.display = 'none';
-      if (addSection) addSection.style.display = 'block';
+      if (emptyBox) emptyBox.classList.add('hidden');
+      if (addSection) addSection.classList.remove('hidden');
       if (stackList) {
-        stackList.style.display = 'flex';
+        stackList.classList.remove('hidden');
         // Group by layer: Base, Check, Finish
         const layers = ['base', 'check', 'finish'];
         stackList.innerHTML = layers
@@ -381,6 +476,7 @@
                   : '';
                 const tokens = s.tokens ? `<span>· ${s.tokens} tokens</span>` : '';
                 const score = typeof s.score === 'number' ? `<span>· score ${s.score.toFixed(2)}</span>` : '';
+                const dec = sel.decision || '';
                 return `
                   <div class="skill-card">
                     <div class="card-header">
@@ -395,18 +491,17 @@
                     ${reasonsHtml}
                     <div class="skill-actions">
                       <button class="btn btn-secondary" data-action="openSkill" data-skill="${escapeHtml(s.name)}">Open</button>
-                      <button class="btn btn-secondary" data-action="steerRemove" data-skill="${escapeHtml(s.name)}">Remove</button>
-                      <button class="btn btn-secondary" data-action="helped" data-skill="${escapeHtml(s.name)}" data-decision="${escapeHtml(sel.decision || '')}">Helped</button>
-                      <button class="btn btn-secondary" data-action="unhelpful" data-skill="${escapeHtml(s.name)}" data-decision="${escapeHtml(sel.decision || '')}">Unhelpful</button>
-                      <button class="btn btn-secondary" data-action="ignored" data-skill="${escapeHtml(s.name)}" data-decision="${escapeHtml(sel.decision || '')}">Ignored</button>
+                      <button class="btn btn-secondary" data-action="helped" data-skill="${escapeHtml(s.name)}" data-decision="${escapeHtml(dec)}">Helped</button>
+                      <button class="btn btn-secondary" data-action="unhelpful" data-skill="${escapeHtml(s.name)}" data-decision="${escapeHtml(dec)}">Unhelpful</button>
+                      <button class="btn btn-secondary btn-danger" data-action="steerRemove" data-skill="${escapeHtml(s.name)}">Remove</button>
                     </div>
                   </div>
                 `;
               })
               .join('');
             return `
-              <div style="display: flex; flex-direction: column; gap: 4px;">
-                <div class="section-title" style="margin-top: 4px;">${escapeHtml(layerLabel)}</div>
+              <div class="flex-col">
+                <div class="section-title">${escapeHtml(layerLabel)}</div>
                 ${cardsHtml}
               </div>
             `;
@@ -414,10 +509,10 @@
           .join('');
       }
     } else {
-      if (emptyBox) emptyBox.style.display = 'flex';
-      if (addSection) addSection.style.display = 'none';
+      if (emptyBox) emptyBox.classList.remove('hidden');
+      if (addSection) addSection.classList.add('hidden');
       if (stackList) {
-        stackList.style.display = 'none';
+        stackList.classList.add('hidden');
         stackList.innerHTML = '';
       }
     }
@@ -429,7 +524,7 @@
       if (sel && sel.explain && sel.explain.length) {
         const notTaken = sel.explain.filter((c) => c.status !== 'chosen' && !sel.stack.some((s) => s.name === c.name));
         if (notTaken.length) {
-          consideredSection.style.display = 'block';
+          consideredSection.classList.remove('hidden');
           consideredBody.innerHTML = notTaken
             .map((c) => {
               const reason = c.status.replace(/^dropped:\s*/, '');
@@ -441,16 +536,16 @@
                   <td title="${escapeHtml(c.status)}">${escapeHtml(reason)}</td>
                   <td>${renderSignalBars(c.signals)}</td>
                   <td>${escapeHtml(backersStr)} · ${escapeHtml(learnedStr)}</td>
-                  <td><button class="btn btn-secondary" style="padding: 2px 6px; font-size: 11px;" data-action="steerAdd" data-skill="${escapeHtml(c.name)}">Add</button></td>
+                  <td><button class="btn btn-secondary btn-small" data-action="steerAdd" data-skill="${escapeHtml(c.name)}">Add</button></td>
                 </tr>
               `;
             })
             .join('');
         } else {
-          consideredSection.style.display = 'none';
+          consideredSection.classList.add('hidden');
         }
       } else {
-        consideredSection.style.display = 'none';
+        consideredSection.classList.add('hidden');
       }
     }
 
@@ -470,6 +565,144 @@
     if (statAdded) statAdded.textContent = String(stats.addedSkills);
   }
 
+  function renderLibrary() {
+    const emptyBox = document.getElementById('library-empty-state');
+    const clustersView = document.getElementById('library-clusters-view');
+    const detailView = document.getElementById('library-detail-view');
+    const grid = document.getElementById('library-cluster-grid');
+    const q = state.libraryFilter || '';
+
+    // Update search placeholder with actual count
+    const libSearch = document.getElementById('library-search-input');
+    if (libSearch && state.catalog && state.catalog.length) {
+      libSearch.placeholder = `Search ${state.catalog.length} skills and clusters...`;
+    }
+
+    if (state.selectedClusterId) {
+      if (clustersView) clustersView.classList.add('hidden');
+      if (detailView) detailView.classList.remove('hidden');
+
+      const cluster = (state.clusters || []).find((c) => c.id === state.selectedClusterId || c.name === state.selectedClusterId);
+      if (!cluster) {
+        state.selectedClusterId = null;
+        renderLibrary();
+        return;
+      }
+
+      const nameEl = document.getElementById('library-cluster-name');
+      const badgeEl = document.getElementById('library-cluster-badge');
+      const metaEl = document.getElementById('library-cluster-meta');
+      const descEl = document.getElementById('library-cluster-desc');
+      const removeBtn = document.getElementById('library-remove-cluster-btn');
+      const skillsContainer = document.getElementById('library-cluster-skills');
+
+      if (nameEl) nameEl.textContent = cluster.name;
+      if (badgeEl) {
+        if (cluster.mine) {
+          badgeEl.textContent = 'Mine';
+          badgeEl.className = 'cluster-mine-badge';
+          badgeEl.classList.remove('hidden');
+        } else {
+          badgeEl.classList.add('hidden');
+        }
+      }
+      if (metaEl) {
+        const count = cluster.count || (cluster.skills && cluster.skills.length) || 0;
+        metaEl.textContent = `${count} skills · ${cluster.used || 0} used`;
+      }
+      if (descEl) descEl.textContent = cluster.description || '';
+      if (removeBtn) {
+        if (cluster.mine) {
+          removeBtn.classList.remove('hidden');
+          removeBtn.setAttribute('data-cluster-name', cluster.name);
+        } else {
+          removeBtn.classList.add('hidden');
+        }
+      }
+
+      if (skillsContainer) {
+        const skills = (cluster.skills || []).filter((s) => {
+          if (!q) return true;
+          return s.name.toLowerCase().includes(q) || (s.description && s.description.toLowerCase().includes(q));
+        });
+
+        if (!skills.length) {
+          skillsContainer.innerHTML = '<div class="empty-text">No skills match your search in this cluster.</div>';
+        } else {
+          skillsContainer.innerHTML = skills
+            .map((s) => {
+              const u = s.usage || {};
+              const usageParts = [];
+              if (u.chosen) usageParts.push(`chosen: ${u.chosen}`);
+              if (u.helped) usageParts.push(`helped: ${u.helped}`);
+              if (u.unhelpful) usageParts.push(`unhelpful: ${u.unhelpful}`);
+              const usageStr = usageParts.length ? usageParts.join(' · ') : 'never used';
+
+              return `
+                <div class="skill-card">
+                  <div class="card-header">
+                    <span class="card-title">${escapeHtml(s.name)}</span>
+                    <span class="studio-badge">${escapeHtml(s.category || 'skill')}</span>
+                  </div>
+                  <div class="card-meta">
+                    <span class="skill-usage-badge">${escapeHtml(usageStr)}</span>
+                  </div>
+                  <div class="card-desc">${escapeHtml(s.description || '')}</div>
+                  <div class="skill-actions">
+                    <button class="btn btn-secondary" data-action="openSkill" data-skill="${escapeHtml(s.name)}">Open</button>
+                    <button class="btn btn-secondary" data-action="pinSkill" data-skill="${escapeHtml(s.name)}">Pin to current task</button>
+                    <button class="btn btn-secondary" data-action="addToMyCluster" data-skill="${escapeHtml(s.name)}">Add to a cluster of mine</button>
+                  </div>
+                </div>
+              `;
+            })
+            .join('');
+        }
+      }
+    } else {
+      if (detailView) detailView.classList.add('hidden');
+      if (clustersView) clustersView.classList.remove('hidden');
+
+      const filtered = (state.clusters || []).filter((c) => {
+        if (!q) return true;
+        if (c.name.toLowerCase().includes(q) || (c.description && c.description.toLowerCase().includes(q))) {
+          return true;
+        }
+        return (c.skills || []).some((s) => s.name.toLowerCase().includes(q) || (s.description && s.description.toLowerCase().includes(q)));
+      });
+
+      if (!filtered.length) {
+        if (emptyBox) emptyBox.classList.remove('hidden');
+        if (grid) grid.classList.add('hidden');
+      } else {
+        if (emptyBox) emptyBox.classList.add('hidden');
+        if (grid) {
+          grid.classList.remove('hidden');
+          grid.innerHTML = filtered
+            .map((c) => {
+              const mineBadge = c.mine ? `<span class="cluster-mine-badge">Mine</span>` : '';
+              const count = c.count || (c.skills && c.skills.length) || 0;
+              return `
+                <div class="cluster-card" data-action="selectCluster" data-cluster-id="${escapeHtml(c.id || c.name)}" role="button" tabindex="0">
+                  <div class="card-header">
+                    <span class="card-title">${escapeHtml(c.name)}</span>
+                    ${mineBadge}
+                  </div>
+                  <div class="card-meta">
+                    <span>${count} skills · ${c.used || 0} used</span>
+                  </div>
+                  <div class="card-desc-clamp">
+                    ${escapeHtml(c.description || '')}
+                  </div>
+                </div>
+              `;
+            })
+            .join('');
+        }
+      }
+    }
+  }
+
   function renderTrack(track, follow) {
     if (followToggle && typeof follow === 'boolean') {
       followToggle.checked = follow;
@@ -482,6 +715,7 @@
     const confBadge = document.getElementById('now-confidence-badge');
     const confFill = document.getElementById('now-confidence-fill');
     const phaseDetail = document.getElementById('now-phase-detail');
+    const nowDecision = document.getElementById('now-decision-id');
 
     const phase = track.phase ? track.phase[0].toUpperCase() + track.phase.slice(1) : 'Idle';
     const layer = track.layer ? ` (${track.layer} layer)` : '';
@@ -496,6 +730,11 @@
         : `Watching workspace events`;
     }
 
+    const decisionId = track.decision || state.decision || state.selection?.decision;
+    if (nowDecision) {
+      nowDecision.textContent = decisionId ? `Decision: ${decisionId}` : '';
+    }
+
     // Thin stacked bar of phase shares
     const sharesBar = document.getElementById('now-stacked-shares');
     if (sharesBar && track.shares) {
@@ -506,13 +745,16 @@
       };
       const entries = Object.entries(track.shares).filter(([_, s]) => s > 0.01);
       const total = entries.reduce((acc, [_, s]) => acc + s, 0) || 1;
-      sharesBar.innerHTML = entries
-        .map(([p, share]) => {
-          const l = PHASE_LAYERS[p] || 'base';
-          const pPct = Math.round((share / total) * 100);
-          return `<div class="stacked-phase-segment layer-${l}" style="width: ${pPct}%;" title="${p}: ${pPct}%"></div>`;
-        })
-        .join('');
+      sharesBar.innerHTML = '';
+      entries.forEach(([p, share]) => {
+        const l = PHASE_LAYERS[p] || 'base';
+        const pPct = Math.round((share / total) * 100);
+        const seg = document.createElement('div');
+        seg.className = `stacked-phase-segment layer-${l}`;
+        seg.style.width = `${pPct}%`;
+        seg.title = `${p}: ${pPct}%`;
+        sharesBar.appendChild(seg);
+      });
     }
 
     // Next likely chips
@@ -520,7 +762,7 @@
     const nextChips = document.getElementById('now-next-chips');
     if (nextSection && nextChips) {
       if (track.next && track.next.length) {
-        nextSection.style.display = 'flex';
+        nextSection.classList.remove('hidden');
         nextChips.innerHTML = track.next
           .map((n) => {
             const probPct = Math.round(n.probability * 100);
@@ -528,7 +770,7 @@
           })
           .join('');
       } else {
-        nextSection.style.display = 'none';
+        nextSection.classList.add('hidden');
       }
     }
 
@@ -538,10 +780,10 @@
     const copyBtn = document.getElementById('now-copy-btn');
 
     if (track.skills && track.skills.length) {
-      if (emptyBox) emptyBox.style.display = 'none';
-      if (copyBtn) copyBtn.style.display = 'inline-flex';
+      if (emptyBox) emptyBox.classList.add('hidden');
+      if (copyBtn) copyBtn.classList.remove('hidden');
       if (skillsList) {
-        skillsList.style.display = 'flex';
+        skillsList.classList.remove('hidden');
         skillsList.innerHTML = track.skills
           .map((s) => {
             const reasonsHtml = s.reasons && s.reasons.length
@@ -549,6 +791,7 @@
               : '';
             const tokens = s.tokens ? `<span>· ${s.tokens} tokens</span>` : '';
             const score = typeof s.score === 'number' ? `<span>· score ${s.score.toFixed(2)}</span>` : '';
+            const dec = decisionId || '';
             return `
               <div class="skill-card">
                 <div class="card-header">
@@ -563,9 +806,9 @@
                 ${reasonsHtml}
                 <div class="skill-actions">
                   <button class="btn btn-secondary" data-action="openSkill" data-skill="${escapeHtml(s.name)}">Open</button>
-                  <button class="btn btn-secondary" data-action="helped" data-skill="${escapeHtml(s.name)}">Helped</button>
-                  <button class="btn btn-secondary" data-action="unhelpful" data-skill="${escapeHtml(s.name)}">Unhelpful</button>
-                  <button class="btn btn-secondary" data-action="removeSkill" data-skill="${escapeHtml(s.name)}">Remove</button>
+                  <button class="btn btn-secondary" data-action="helped" data-skill="${escapeHtml(s.name)}" data-decision="${escapeHtml(dec)}">Helped</button>
+                  <button class="btn btn-secondary" data-action="unhelpful" data-skill="${escapeHtml(s.name)}" data-decision="${escapeHtml(dec)}">Unhelpful</button>
+                  <button class="btn btn-secondary btn-danger" data-action="removeSkill" data-skill="${escapeHtml(s.name)}">Remove</button>
                 </div>
               </div>
             `;
@@ -573,10 +816,10 @@
           .join('');
       }
     } else {
-      if (emptyBox) emptyBox.style.display = 'flex';
-      if (copyBtn) copyBtn.style.display = 'none';
+      if (emptyBox) emptyBox.classList.remove('hidden');
+      if (copyBtn) copyBtn.classList.add('hidden');
       if (skillsList) {
-        skillsList.style.display = 'none';
+        skillsList.classList.add('hidden');
         skillsList.innerHTML = '';
       }
     }
@@ -586,19 +829,19 @@
     const upcomingSkills = document.getElementById('now-upcoming-skills');
     if (upcomingSection && upcomingSkills) {
       if (track.upcoming && track.upcoming.skills && track.upcoming.skills.length) {
-        upcomingSection.style.display = 'flex';
+        upcomingSection.classList.remove('hidden');
         upcomingSkills.innerHTML = track.upcoming.skills
           .map((name) => `
-            <div class="skill-card" style="padding: 6px 8px;">
+            <div class="skill-card card-compact">
               <div class="card-header">
-                <span class="card-title" style="font-size: var(--font-xs);">${escapeHtml(name)}</span>
+                <span class="card-title">${escapeHtml(name)}</span>
                 <span class="studio-badge">${escapeHtml(track.upcoming.phase)}</span>
               </div>
             </div>
           `)
           .join('');
       } else {
-        upcomingSection.style.display = 'none';
+        upcomingSection.classList.add('hidden');
       }
     }
 
@@ -607,7 +850,7 @@
     const changesList = document.getElementById('now-changes-list');
     if (changesSection && changesList) {
       if (track.changes && track.changes.length) {
-        changesSection.style.display = 'flex';
+        changesSection.classList.remove('hidden');
         const recent = track.changes.slice(-5).reverse();
         changesList.innerHTML = recent
           .map((c) => {
@@ -616,17 +859,17 @@
           })
           .join('');
       } else {
-        changesSection.style.display = 'none';
+        changesSection.classList.add('hidden');
       }
     }
   }
 
-  // Restore tab on load
+  // Restore saved state
   const prev = vscode.getState();
-  if (prev && prev.currentTab) {
+  if (prev?.currentTab) {
     setTab(prev.currentTab);
   }
 
-  // Signal ready
+  // Notify extension host that frontend is ready
   vscode.postMessage({ command: 'ready' });
 })();

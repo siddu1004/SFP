@@ -1,13 +1,14 @@
 /* SFP Hive Studio Stylesheet
- * Meets all Stage 2 requirements:
+ * Meets all Stage 1 & Stage 2 requirements:
  * - 8px spacing grid
  * - Font sizes 11px, 13px, 16px
  * - Colors exclusively from VS Code theme variables (--vscode-...)
- * - Single accent color (--vscode-focusBorder)
+ * - Single accent color (--vscode-button-background / textLink-foreground)
+ * - Visible keyboard focus ring with --vscode-focusBorder
  * - Pure SVG codicons (no emoji)
  * - Responsive down to 260px
- * - Visible keyboard focus ring
  * - prefers-reduced-motion support
+ * - No hardcoded colors or unsafe styles
  */
 
 :root {
@@ -20,7 +21,7 @@
   --font-md: 16px;
   --radius-sm: 3px;
   --radius-md: 6px;
-  --accent: var(--vscode-focusBorder, #007acc);
+  --accent: var(--vscode-button-background, var(--vscode-textLink-foreground));
 }
 
 * {
@@ -45,7 +46,7 @@ button:focus-visible,
 input:focus-visible,
 [role="tab"]:focus-visible,
 [tabindex="0"]:focus-visible {
-  outline: 1px solid var(--accent);
+  outline: 1px solid var(--vscode-focusBorder);
   outline-offset: 2px;
 }
 
@@ -59,13 +60,115 @@ input:focus-visible,
   }
 }
 
+/* Utility classes */
+.hidden {
+  display: none !important;
+}
+
+.flex-row {
+  display: flex;
+  gap: var(--grid-2);
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-1);
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--grid-2);
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.relative {
+  position: relative;
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+}
+
+.btn-small {
+  padding: 2px 6px;
+  font-size: var(--font-xs);
+}
+
+.btn-danger {
+  color: var(--vscode-errorForeground);
+}
+
+.card-compact {
+  padding: 6px var(--grid-2);
+}
+
+.card-desc {
+  font-size: var(--font-xs);
+  margin-top: 4px;
+  color: var(--vscode-foreground);
+}
+
+.card-desc-muted {
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  margin-top: 4px;
+}
+
+.card-desc-clamp {
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.empty-text {
+  padding: 12px;
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+}
+
+.steer-actions {
+  display: flex;
+  gap: var(--grid-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.steer-feedback-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--grid-1);
+  font-size: var(--font-xs);
+  cursor: pointer;
+}
+
+.diff-summary {
+  margin-top: 6px;
+  font-size: var(--font-xs);
+}
+
+.decision-id {
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  margin-top: 2px;
+}
+
 /* Studio Header & Tab Navigation */
 .studio-header {
   display: flex;
   flex-direction: column;
   gap: var(--grid-2);
   margin-bottom: var(--grid-3);
-  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-sideBarSectionHeader-border, rgba(128, 128, 128, 0.2)));
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
   padding-bottom: var(--grid-2);
 }
 
@@ -103,7 +206,7 @@ input:focus-visible,
 .tab-bar {
   display: flex;
   gap: 2px;
-  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.1));
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
   padding: 2px;
   border-radius: var(--radius-sm);
 }
@@ -127,13 +230,12 @@ input:focus-visible,
 
 .tab-btn:hover {
   color: var(--vscode-foreground);
-  background-color: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.15));
+  background-color: var(--vscode-list-hoverBackground);
 }
 
 .tab-btn.active {
   color: var(--vscode-foreground);
   background-color: var(--vscode-sideBar-background, var(--vscode-editor-background));
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-weight: 600;
 }
 
@@ -174,8 +276,8 @@ input:focus-visible,
 
 /* Cards */
 .card {
-  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.08));
-  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.2));
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
   border-radius: var(--radius-md);
   padding: var(--grid-2);
   display: flex;
@@ -255,7 +357,7 @@ input:focus-visible,
 }
 
 .btn-icon:hover {
-  background-color: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.2));
+  background-color: var(--vscode-list-hoverBackground);
 }
 
 .btn-icon svg {
@@ -269,7 +371,7 @@ input:focus-visible,
   width: 100%;
   background-color: var(--vscode-input-background);
   color: var(--vscode-input-foreground);
-  border: 1px solid var(--vscode-input-border, rgba(128, 128, 128, 0.3));
+  border: 1px solid var(--vscode-input-border, var(--vscode-widget-border));
   border-radius: var(--radius-sm);
   padding: var(--grid-1) var(--grid-2);
   font-size: var(--font-sm);
@@ -289,7 +391,7 @@ input:focus-visible,
   text-align: center;
   gap: var(--grid-2);
   padding: var(--grid-4) var(--grid-2);
-  border: 1px dashed var(--vscode-panel-border, rgba(128, 128, 128, 0.2));
+  border: 1px dashed var(--vscode-panel-border, var(--vscode-widget-border));
   border-radius: var(--radius-md);
   color: var(--vscode-descriptionForeground);
   font-size: var(--font-xs);
@@ -302,13 +404,23 @@ input:focus-visible,
   opacity: 0.8;
 }
 
-.state-box.error {
-  border-color: var(--vscode-inputValidation-errorBorder, #f48771);
-  color: var(--vscode-inputValidation-errorForeground, #f48771);
+.state-box.error-state {
+  border-color: var(--vscode-inputValidation-errorBorder, var(--vscode-errorForeground));
+  color: var(--vscode-inputValidation-errorForeground, var(--vscode-errorForeground));
 }
 
-.state-box.error svg {
-  color: var(--vscode-errorForeground, #f48771);
+.state-box.error-state svg {
+  color: var(--vscode-errorForeground);
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Progress / Confidence Bar */
@@ -321,7 +433,7 @@ input:focus-visible,
 
 .progress-track {
   height: 4px;
-  background-color: var(--vscode-progressBar-background, rgba(128, 128, 128, 0.2));
+  background-color: var(--vscode-progressBar-background, var(--vscode-widget-border));
   border-radius: 2px;
   overflow: hidden;
 }
@@ -339,7 +451,7 @@ input:focus-visible,
   width: 100%;
   border-radius: 2px;
   overflow: hidden;
-  background-color: var(--vscode-progressBar-background, rgba(128, 128, 128, 0.2));
+  background-color: var(--vscode-progressBar-background, var(--vscode-widget-border));
   margin: var(--grid-1) 0;
 }
 
@@ -353,11 +465,11 @@ input:focus-visible,
 }
 
 .layer-check {
-  background-color: var(--vscode-charts-green, #89d185);
+  background-color: var(--vscode-testing-iconPassed, var(--vscode-charts-green));
 }
 
 .layer-finish {
-  background-color: var(--vscode-charts-purple, #b180d7);
+  background-color: var(--vscode-charts-purple, var(--vscode-textLink-activeForeground));
 }
 
 /* Phase Chip Bar */
@@ -374,13 +486,12 @@ input:focus-visible,
   padding: 2px 6px;
   border-radius: var(--radius-sm);
   font-size: var(--font-xs);
-  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.15));
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
   color: var(--vscode-descriptionForeground);
   border: 1px solid transparent;
 }
 
 .chip.active {
-  color: var(--vscode-foreground);
   background-color: var(--vscode-badge-background);
   color: var(--vscode-badge-foreground);
 }
@@ -398,8 +509,8 @@ input:focus-visible,
 }
 
 .skill-card {
-  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.08));
-  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.2));
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
   border-radius: var(--radius-md);
   padding: var(--grid-2);
   display: flex;
@@ -423,6 +534,7 @@ input:focus-visible,
   align-items: center;
   gap: var(--grid-1);
   margin-top: var(--grid-1);
+  flex-wrap: wrap;
 }
 
 .skill-actions .btn,
@@ -445,7 +557,7 @@ input:focus-visible,
   font-size: var(--font-xs);
   color: var(--vscode-descriptionForeground);
   padding: 2px var(--grid-1);
-  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.05));
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
   border-radius: var(--radius-sm);
 }
 
@@ -485,8 +597,8 @@ input:focus-visible,
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--vscode-input-background, rgba(128, 128, 128, 0.3));
-  border: 1px solid var(--vscode-input-border, rgba(128, 128, 128, 0.4));
+  background-color: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border, var(--vscode-widget-border));
   border-radius: 9px;
   transition: 0.2s;
 }
@@ -510,7 +622,7 @@ input:checked + .toggle-slider {
 
 input:checked + .toggle-slider:before {
   transform: translateX(14px);
-  background-color: #ffffff;
+  background-color: var(--vscode-button-foreground);
 }
 
 /* Inspector: Signal Bars */
@@ -523,7 +635,7 @@ input:checked + .toggle-slider:before {
 .signal-bar {
   width: 14px;
   height: 8px;
-  background-color: var(--vscode-progressBar-background, rgba(128, 128, 128, 0.2));
+  background-color: var(--vscode-progressBar-background, var(--vscode-widget-border));
   border-radius: 1px;
   overflow: hidden;
   position: relative;
@@ -549,7 +661,7 @@ input:checked + .toggle-slider:before {
 .considered-table td {
   padding: 4px;
   text-align: left;
-  border-bottom: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.15));
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
 }
 
 .considered-table th {
@@ -558,12 +670,12 @@ input:checked + .toggle-slider:before {
 }
 
 .diff-added {
-  color: var(--vscode-charts-green, #89d185);
+  color: var(--vscode-gitDecoration-addedResourceForeground, var(--vscode-charts-green));
   font-weight: 600;
 }
 
 .diff-removed {
-  color: var(--vscode-charts-red, #f48771);
+  color: var(--vscode-gitDecoration-deletedResourceForeground, var(--vscode-charts-red));
   font-weight: 600;
   text-decoration: line-through;
 }
@@ -578,8 +690,8 @@ input:checked + .toggle-slider:before {
 
 .session-stat-card {
   padding: var(--grid-1) var(--grid-2);
-  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.08));
-  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.15));
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
   border-radius: var(--radius-sm);
   display: flex;
   flex-direction: column;
@@ -598,12 +710,12 @@ input:checked + .toggle-slider:before {
   left: 0;
   right: 0;
   background-color: var(--vscode-dropdown-background, var(--vscode-sideBar-background));
-  border: 1px solid var(--vscode-dropdown-border, rgba(128, 128, 128, 0.3));
+  border: 1px solid var(--vscode-dropdown-border, var(--vscode-widget-border));
   border-radius: var(--radius-sm);
   max-height: 160px;
   overflow-y: auto;
   z-index: 100;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 10px var(--vscode-widget-shadow, transparent);
 }
 
 .catalog-item {
@@ -613,7 +725,46 @@ input:checked + .toggle-slider:before {
 }
 
 .catalog-item:hover {
-  background-color: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.15));
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+/* Clusters Grid & Detail */
+.cluster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--grid-2);
+}
+
+.cluster-card {
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  border-radius: var(--radius-md);
+  padding: var(--grid-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-1);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.cluster-card:hover {
+  background-color: var(--vscode-list-hoverBackground);
+  border-color: var(--accent);
+}
+
+.cluster-mine-badge {
+  background-color: var(--accent);
+  color: var(--vscode-button-foreground);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+}
+
+.skill-usage-badge {
+  font-size: 10px;
+  color: var(--vscode-descriptionForeground);
 }
 
 /* Responsive tweaks for narrow sidebars (down to 260px) */

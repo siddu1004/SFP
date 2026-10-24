@@ -5,36 +5,6 @@ import * as hive from './hive';
 let selection: hive.Selection | undefined;
 const verdicts = new Map<string, hive.Verdict>();
 let status: vscode.StatusBarItem;
-const changed = new vscode.EventEmitter<void>();
-
-type Node = { kind: 'layer'; layer: string; skills: hive.Skill[] } | { kind: 'skill'; skill: hive.Skill };
-
-class StackView implements vscode.TreeDataProvider<Node> {
-  onDidChangeTreeData = changed.event;
-
-  getChildren(node?: Node): Node[] {
-    if (!selection) return [];
-    if (!node) return hive.byLayer(selection).map((g) => ({ kind: 'layer' as const, layer: g.layer, skills: g.skills }));
-    return node.kind === 'layer' ? node.skills.map((skill) => ({ kind: 'skill' as const, skill })) : [];
-  }
-
-  getTreeItem(node: Node): vscode.TreeItem {
-    if (node.kind === 'layer') {
-      const item = new vscode.TreeItem(node.layer[0].toUpperCase() + node.layer.slice(1), vscode.TreeItemCollapsibleState.Expanded);
-      item.description = node.layer === 'base' ? 'do first' : node.layer === 'check' ? 'then verify' : 'to finish';
-      return item;
-    }
-    const s = node.skill;
-    const item = new vscode.TreeItem(s.name, vscode.TreeItemCollapsibleState.None);
-    const verdict = verdicts.get(s.name);
-    item.description = [s.phase, s.tokens ? `${s.tokens} tokens` : '', verdict ? `(${verdict})` : ''].filter(Boolean).join(' · ');
-    item.tooltip = new vscode.MarkdownString([`**${s.name}**`, ...(s.reasons ?? []).map((r) => `- ${r}`)].join('\n\n'));
-    item.contextValue = 'skill';
-    item.iconPath = new vscode.ThemeIcon(verdict === 'helped' ? 'thumbsup' : verdict === 'unhelpful' ? 'thumbsdown' : verdict === 'ignored' ? 'circle-slash' : 'sparkle');
-    item.command = { command: 'sfpHive.openSkill', title: 'Open skill', arguments: [node] };
-    return item;
-  }
-}
 
 export const activity = new hive.ActivityBuffer();
 export let lastTrackResult: hive.TrackResult | undefined;
@@ -126,7 +96,6 @@ export async function flushActivity(): Promise<hive.TrackResult | undefined> {
               tokens: result.skills.reduce((acc, s) => acc + (s.tokens || 0), 0),
               next: (result.next || []).map((n) => ({ name: n.phase, probability: n.probability })),
             };
-            changed.fire();
             studioProvider?.syncState();
             if (cfg.copy) {
               void vscode.env.clipboard.writeText(hive.buildPrompt(selection, root));
@@ -171,7 +140,6 @@ async function choose(preset?: string, steer?: hive.Steer) {
       selection = newSel;
       verdicts.clear();
       await vscode.commands.executeCommand('setContext', 'sfpHive.hasSelection', selection.stack.length > 0);
-      changed.fire();
       showStatus();
       updateRightStatus();
       studioProvider?.syncState();
@@ -201,7 +169,6 @@ async function sendFeedback(verdict: hive.Verdict, names: string[]) {
     names.forEach((n) => verdict !== 'missing' && verdicts.set(n, verdict));
     sessionStats = hive.updateSessionStats(sessionStats, { type: 'feedback', verdict: verdict === 'helped' ? 'helped' : 'unhelpful' });
     void extContext?.workspaceState?.update('sfpHive.sessionStats', sessionStats);
-    changed.fire();
     studioProvider?.syncState();
     void vscode.window.setStatusBarMessage(`SFP Hive: noted ${verdict}: ${names.join(', ')}`, 4000);
   } catch (e) {
@@ -210,8 +177,18 @@ async function sendFeedback(verdict: hive.Verdict, names: string[]) {
 }
 
 function skillOf(arg: unknown): hive.Skill | undefined {
-  const node = arg as Node | undefined;
-  return node && node.kind === 'skill' ? node.skill : undefined;
+  if (typeof arg === 'string') {
+    return (
+      selection?.stack.find((s) => s.name === arg) ||
+      lastTrackResult?.skills?.find((s) => s.name === arg) ||
+      { name: arg, phase: '', tokens: 0 }
+    );
+  }
+  if (arg && typeof arg === 'object') {
+    if ('skill' in arg && (arg as any).skill) return (arg as any).skill;
+    if ('name' in arg) return arg as hive.Skill;
+  }
+  return undefined;
 }
 
 function terminal(args: (root: string) => string[]) {
@@ -220,6 +197,133 @@ function terminal(args: (root: string) => string[]) {
   const t = vscode.window.createTerminal({ name: 'SFP', cwd: project() ?? root });
   t.show();
   t.sendText([hive.quote(hive.pythonCommand(config().opts)), ...args(root).map(hive.quote)].join(' '));
+}
+
+let loadedClusters: hive.Cluster[] = [];
+
+async function fetchClusters(): Promise<hive.Cluster[]> {
+  const root = sfpRoot();
+  if (!root) return [];
+  try {
+    const out = await hive.run(hive.pythonCommand(config().opts), hive.clustersArgs(root));
+    loadedClusters = hive.parseClusters(out);
+    return loadedClusters;
+  } catch {
+    return loadedClusters;
+  }
+}
+
+async function clusterAddWorkflow(preselectedSkill?: string) {
+  const root = sfpRoot();
+  if (!root) return;
+  const name = await vscode.window.showInputBox({
+    prompt: 'Name your new skill cluster',
+    placeHolder: 'e.g., My Go Stack',
+    ignoreFocusOut: true,
+  });
+  if (!name || !name.trim()) return;
+
+  const description = (await vscode.window.showInputBox({
+    prompt: 'Description for this cluster (optional)',
+    placeHolder: 'e.g., Everyday skills for Go microservices',
+    ignoreFocusOut: true,
+  })) || '';
+
+  const allSkills = hive.catalogNames(root);
+  let picked: string[] = [];
+  if (preselectedSkill) {
+    picked = [preselectedSkill];
+    const others = await vscode.window.showQuickPick(
+      allSkills.filter((s) => s !== preselectedSkill),
+      {
+        canPickMany: true,
+        placeHolder: `Add more skills to "${name.trim()}" (already includes ${preselectedSkill})`,
+      }
+    );
+    if (others && others.length) picked.push(...others);
+  } else {
+    const picks = await vscode.window.showQuickPick(allSkills, {
+      canPickMany: true,
+      placeHolder: `Pick skills for "${name.trim()}"`,
+    });
+    if (!picks || !picks.length) return;
+    picked = picks;
+  }
+
+  try {
+    await hive.run(
+      hive.pythonCommand(config().opts),
+      hive.clusterAddArgs(root, name.trim(), picked, description.trim())
+    );
+    await fetchClusters();
+    studioProvider?.syncState();
+    void vscode.window.showInformationMessage(`Created cluster "${name.trim()}" with ${picked.length} skills.`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
+async function clusterRemoveWorkflow(clusterName?: string) {
+  const root = sfpRoot();
+  if (!root) return;
+  let target = clusterName;
+  if (!target) {
+    const userClusts = loadedClusters.filter((c) => c.mine);
+    if (!userClusts.length) {
+      void vscode.window.showInformationMessage('You have no custom clusters to remove.');
+      return;
+    }
+    target = await vscode.window.showQuickPick(userClusts.map((c) => c.name), {
+      placeHolder: 'Select a custom cluster to remove',
+    });
+  }
+  if (!target) return;
+
+  const confirm = await vscode.window.showWarningMessage(
+    `Remove cluster "${target}"?`,
+    { modal: true },
+    'Remove'
+  );
+  if (confirm !== 'Remove') return;
+
+  try {
+    await hive.run(hive.pythonCommand(config().opts), hive.clusterRemoveArgs(root, target));
+    await fetchClusters();
+    studioProvider?.syncState();
+    void vscode.window.showInformationMessage(`Removed cluster "${target}".`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
+async function addSkillToMyClusterWorkflow(skill: string) {
+  const root = sfpRoot();
+  if (!root || !skill) return;
+  const userClusts = loadedClusters.filter((c) => c.mine);
+  const CREATE_NEW = '$(plus) Create new cluster...';
+  const items = [CREATE_NEW, ...userClusts.map((c) => c.name)];
+  const pick = await vscode.window.showQuickPick(items, {
+    placeHolder: `Add "${skill}" to which cluster?`,
+  });
+  if (!pick) return;
+  if (pick === CREATE_NEW) {
+    await clusterAddWorkflow(skill);
+    return;
+  }
+  const target = userClusts.find((c) => c.name === pick);
+  if (!target) return;
+  const skills = Array.from(new Set([...target.skills.map((s) => s.name), skill]));
+  try {
+    await hive.run(
+      hive.pythonCommand(config().opts),
+      hive.clusterAddArgs(root, target.name, skills, target.description)
+    );
+    await fetchClusters();
+    studioProvider?.syncState();
+    void vscode.window.showInformationMessage(`Added "${skill}" to "${target.name}".`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
 }
 
 let rightStatus: vscode.StatusBarItem;
@@ -294,6 +398,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
           break;
         case 'refresh':
           await flushActivity();
+          this.syncState();
           break;
         case 'openSkill':
           const root = sfpRoot();
@@ -340,6 +445,28 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
             this.syncState();
           }
           break;
+        case 'getClusters':
+          await fetchClusters();
+          this.syncState();
+          break;
+        case 'newCluster':
+          await clusterAddWorkflow();
+          break;
+        case 'removeCluster':
+          if (message.name) await clusterRemoveWorkflow(message.name);
+          break;
+        case 'pinSkill':
+          if (message.skill) {
+            if (!currentInclude.includes(message.skill)) currentInclude.push(message.skill);
+            currentExclude = currentExclude.filter((s) => s !== message.skill);
+            await choose(selection?.task, { include: currentInclude, exclude: currentExclude, explain: true });
+            this.showTab('choose');
+            void vscode.window.showInformationMessage(`Pinned "${message.skill}" to current task.`);
+          }
+          break;
+        case 'addToMyCluster':
+          if (message.skill) await addSkillToMyClusterWorkflow(message.skill);
+          break;
         case 'copyPrompt':
           await vscode.commands.executeCommand('sfpHive.copyPrompt');
           break;
@@ -380,6 +507,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         include: currentInclude,
         exclude: currentExclude,
         catalog: root ? hive.catalogNames(root) : [],
+        clusters: loadedClusters,
         sessionStats,
         editorSelection: getEditorSelection(),
         decision: selection?.decision,
@@ -392,14 +520,17 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   private getHtml(webview: vscode.Webview): string {
     const nonce = getNonce();
     const styleUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'studio.css')));
+    const iconsUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'icons.js')));
     const scriptUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'studio.js')));
     const iconUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'hive.svg')));
+    const root = sfpRoot();
+    const catalogCount = root ? hive.catalogNames(root).length : 819;
 
     return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} https: data:;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} data:;">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SFP Hive Studio</title>
   <link rel="stylesheet" href="${styleUri}">
@@ -460,16 +591,17 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
           <span class="studio-badge" id="now-confidence-badge">0% conf</span>
         </div>
         <div class="progress-container">
-          <div class="progress-track"><div class="progress-fill" id="now-confidence-fill" style="width: 0%;"></div></div>
+          <div class="progress-track"><div class="progress-fill" id="now-confidence-fill"></div></div>
         </div>
         <div class="stacked-phase-bar" id="now-stacked-shares" title="Phase shares by layer"></div>
         <div class="card-meta">
           <span id="now-phase-detail">Watching workspace events</span>
+          <span id="now-decision-id" class="decision-id"></span>
         </div>
       </div>
     </div>
 
-    <div class="section" id="now-next-section" style="display: none;">
+    <div class="section hidden" id="now-next-section">
       <div class="section-title">Next likely</div>
       <div class="chip-bar" id="now-next-chips"></div>
     </div>
@@ -477,21 +609,29 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     <div class="section">
       <div class="section-title">
         <span>Skills for this phase</span>
-        <button class="btn btn-secondary" data-action="copyPrompt" id="now-copy-btn" style="display: none;">Copy for the agent</button>
+        <button class="btn btn-secondary hidden" data-action="copyPrompt" id="now-copy-btn">Copy for the agent</button>
+      </div>
+      <div class="state-box hidden" id="now-loading-state">
+        <svg class="spin-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1.5a6.5 6.5 0 1 0 6.5 6.5h-1.5A5 5 0 1 1 8 3v-1.5z"/></svg>
+        <span>Watching workspace activity...</span>
       </div>
       <div class="state-box" id="now-empty-state">
         <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm-.5-9h1v2h-1V5zm0 3h1v4h-1V8z"/></svg>
         <span>No workspace activity recorded yet. Edit a file, run a test, or start a task.</span>
       </div>
-      <div id="now-skills-list" class="skills-list" style="display: none;"></div>
+      <div class="state-box error-state hidden" id="now-error-state">
+        <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8.865 1.52c-.418-.723-1.312-.723-1.73 0L.14 13.56c-.418.723.03 1.64.865 1.64h14c.836 0 1.283-.917.865-1.64L8.865 1.52zM8 4a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 8 4zm0 8.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+        <span>Could not track workspace activity. Check Python settings in sfpHive.python.</span>
+      </div>
+      <div id="now-skills-list" class="skills-list hidden"></div>
     </div>
 
-    <div class="section" id="now-upcoming-section" style="display: none;">
+    <div class="section hidden" id="now-upcoming-section">
       <div class="section-title">Coming up</div>
       <div id="now-upcoming-skills" class="skills-list"></div>
     </div>
 
-    <div class="section" id="now-changes-section" style="display: none;">
+    <div class="section hidden" id="now-changes-section">
       <div class="section-title">Recent phase changes</div>
       <div id="now-changes-list" class="changes-list"></div>
     </div>
@@ -501,41 +641,52 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   <div class="tab-content" id="tab-choose" role="tabpanel" aria-labelledby="btn-tab-choose">
     <div class="section">
       <div class="section-title">Task Prompt</div>
-      <div style="display: flex; gap: 8px;">
+      <div class="flex-row">
         <input type="text" id="choose-task-input" class="input-text" placeholder="What are you about to do?" aria-label="Task prompt input">
         <button class="btn" data-action="choose" aria-label="Choose skills for task">Choose</button>
       </div>
     </div>
-    <div class="section" id="choose-steer-section" style="display: none;">
-      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+    <div class="section hidden" id="choose-steer-section">
+      <div class="steer-actions">
         <button class="btn" data-action="rechoose" id="choose-rechoose-btn">Re-choose with changes</button>
         <button class="btn btn-secondary" data-action="applyStack" id="choose-apply-btn">Apply</button>
-        <label style="display: inline-flex; align-items: center; gap: 4px; font-size: var(--font-xs); cursor: pointer;">
+        <label class="steer-feedback-label">
           <input type="checkbox" id="choose-feedback-checkbox" checked>
           <span>Send feedback on changes</span>
         </label>
       </div>
-      <div id="choose-diff-summary" style="margin-top: 6px; font-size: var(--font-xs); display: none;"></div>
+      <div id="choose-diff-summary" class="diff-summary hidden"></div>
     </div>
     <div class="section">
-      <div class="section-title">Skill Stack</div>
+      <div class="section-title">
+        <span>Skill Stack</span>
+        <span id="choose-decision-id" class="decision-id"></span>
+      </div>
+      <div class="state-box hidden" id="choose-loading-state">
+        <svg class="spin-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1.5a6.5 6.5 0 1 0 6.5 6.5h-1.5A5 5 0 1 1 8 3v-1.5z"/></svg>
+        <span>Choosing skills for your task...</span>
+      </div>
       <div class="state-box" id="choose-empty-state">
         <svg viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>
         <span>Type a task above or select text in the editor to inspect skills.</span>
       </div>
-      <div id="choose-stack-list" class="skills-list" style="display: none;"></div>
+      <div class="state-box error-state hidden" id="choose-error-state">
+        <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8.865 1.52c-.418-.723-1.312-.723-1.73 0L.14 13.56c-.418.723.03 1.64.865 1.64h14c.836 0 1.283-.917.865-1.64L8.865 1.52zM8 4a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 8 4zm0 8.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+        <span>Failed to choose skills. Check that the SFP checkout exists in sfpHive.sfpPath.</span>
+      </div>
+      <div id="choose-stack-list" class="skills-list hidden"></div>
     </div>
-    <div class="section" id="choose-add-section" style="display: none; position: relative;">
+    <div class="section relative hidden" id="choose-add-section">
       <div class="section-title">Add any skill from catalog</div>
-      <div style="display: flex; gap: 8px; position: relative;">
+      <div class="flex-row relative">
         <input type="text" id="choose-catalog-search" class="input-text" placeholder="Type a skill name..." aria-label="Search catalog skills">
         <button class="btn btn-secondary" data-action="addCatalogSkill">Add</button>
       </div>
-      <div id="choose-catalog-results" class="catalog-dropdown" style="display: none;"></div>
+      <div id="choose-catalog-results" class="catalog-dropdown hidden"></div>
     </div>
-    <div class="section" id="choose-considered-section" style="display: none;">
+    <div class="section hidden" id="choose-considered-section">
       <div class="section-title">Considered but not taken</div>
-      <div style="overflow-x: auto;">
+      <div class="overflow-x-auto">
         <table class="considered-table" id="choose-considered-table">
           <thead>
             <tr>
@@ -576,12 +727,46 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   <!-- Tab 3: Library -->
   <div class="tab-content" id="tab-library" role="tabpanel" aria-labelledby="btn-tab-library">
     <div class="section">
-      <div class="section-title">Skill Library &amp; Clusters</div>
-      <input type="text" id="library-search-input" class="input-text" placeholder="Search 819 skills..." aria-label="Search skills and clusters">
-      <div class="state-box" id="library-empty-state">
-        <svg viewBox="0 0 16 16"><path fill="currentColor" d="M3 2v12h10V2H3zm9 11H4V3h8v10zM5 5h6v1H5V5zm0 3h6v1H5V8zm0 3h4v1H5v-1z"/></svg>
-        <span>Search 819 skills across 24 categories or browse clusters.</span>
+      <div class="section-title">
+        <span>Skill Library &amp; Clusters</span>
+        <button class="btn btn-secondary" data-action="newCluster" id="library-new-cluster-btn">+ New Cluster</button>
       </div>
+      <input type="text" id="library-search-input" class="input-text" placeholder="Search ${catalogCount} skills and clusters..." aria-label="Search skills and clusters">
+    </div>
+    <div class="state-box hidden" id="library-loading-state">
+      <svg class="spin-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1.5a6.5 6.5 0 1 0 6.5 6.5h-1.5A5 5 0 1 1 8 3v-1.5z"/></svg>
+      <span>Loading skills and clusters...</span>
+    </div>
+    <div id="library-clusters-view">
+      <div class="cluster-grid" id="library-cluster-grid"></div>
+    </div>
+    <div id="library-detail-view" class="hidden">
+      <div class="section">
+        <div class="flex-between">
+          <button class="btn btn-secondary" data-action="backToClusters">← Back to Clusters</button>
+          <button class="btn btn-secondary btn-danger hidden" data-action="removeCluster" id="library-remove-cluster-btn">Remove Cluster</button>
+        </div>
+        <div class="card" id="library-cluster-info">
+          <div class="card-header">
+            <span class="card-title" id="library-cluster-name"></span>
+            <span class="studio-badge" id="library-cluster-badge"></span>
+          </div>
+          <div class="card-meta" id="library-cluster-meta"></div>
+          <div class="card-desc-muted" id="library-cluster-desc"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">Skills in this cluster</div>
+        <div class="skills-list" id="library-cluster-skills"></div>
+      </div>
+    </div>
+    <div class="state-box hidden" id="library-empty-state">
+      <svg viewBox="0 0 16 16"><path fill="currentColor" d="M3 2v12h10V2H3zm9 11H4V3h8v10zM5 5h6v1H5V5zm0 3h6v1H5V8zm0 3h4v1H5v-1z"/></svg>
+      <span>No clusters or skills match your search.</span>
+    </div>
+    <div class="state-box error-state hidden" id="library-error-state">
+      <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8.865 1.52c-.418-.723-1.312-.723-1.73 0L.14 13.56c-.418.723.03 1.64.865 1.64h14c.836 0 1.283-.917.865-1.64L8.865 1.52zM8 4a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 8 4zm0 8.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+      <span>Could not load the skill library. Verify your SFP repository checkout.</span>
     </div>
   </div>
 
@@ -592,13 +777,22 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         <span>Learning &amp; Usage</span>
         <button class="btn btn-secondary" data-action="train" aria-label="Train model">Train</button>
       </div>
+      <div class="state-box hidden" id="insights-loading-state">
+        <svg class="spin-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1.5a6.5 6.5 0 1 0 6.5 6.5h-1.5A5 5 0 1 1 8 3v-1.5z"/></svg>
+        <span>Loading learning history...</span>
+      </div>
       <div class="state-box" id="insights-empty-state">
         <svg viewBox="0 0 16 16"><path fill="currentColor" d="M1 14h14v1H1v-1zm2-2h2V7H3v5zm4 0h2V3H7v9zm4 0h2V5h-2v7z"/></svg>
         <span>No learning decisions recorded yet. Start choosing skills and reporting feedback.</span>
       </div>
+      <div class="state-box error-state hidden" id="insights-error-state">
+        <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8.865 1.52c-.418-.723-1.312-.723-1.73 0L.14 13.56c-.418.723.03 1.64.865 1.64h14c.836 0 1.283-.917.865-1.64L8.865 1.52zM8 4a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 8 4zm0 8.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+        <span>Could not read feedback logs in ~/.sfp. Run python3 mcp/sfp_hive.py train.</span>
+      </div>
     </div>
   </div>
 
+  <script nonce="${nonce}" src="${iconsUri}"></script>
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`;
@@ -618,7 +812,6 @@ export function activate(context: vscode.ExtensionContext) {
   extContext = context;
   sessionStats = context.workspaceState?.get<hive.SessionStats>('sfpHive.sessionStats') || hive.defaultSessionStats();
 
-  const view = new StackView();
   status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 50);
   status.command = 'sfpHive.choose';
   showStatus();
@@ -635,7 +828,6 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     status,
     rightStatus,
-    vscode.window.registerTreeDataProvider('sfpHive.stack', view),
     vscode.window.registerWebviewViewProvider(StudioViewProvider.viewType, studioProvider)
   );
 
@@ -786,6 +978,9 @@ export function activate(context: vscode.ExtensionContext) {
     const pick = await vscode.window.showQuickPick(apps.map((a) => ({ label: a.name, description: a.id, detail: a.what })), { placeHolder: 'Show the install plan for...' });
     if (pick) terminal((r) => [`${r}/scripts/install.py`, 'apps', 'install', pick.description!]);
   });
+  reg('sfpHive.clusterAdd', () => clusterAddWorkflow());
+  reg('sfpHive.clusterRemove', () => clusterRemoveWorkflow());
+  void fetchClusters().then(() => studioProvider?.syncState());
 
   if ('chat' in vscode && typeof (vscode as any).chat?.createChatParticipant === 'function') {
     try {

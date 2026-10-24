@@ -37,19 +37,11 @@
       {"command": "sfpHive.train", "title": "Train the hive model", "category": "SFP Hive"},
       {"command": "sfpHive.install", "title": "Install SFP skills into this workspace", "category": "SFP Hive"},
       {"command": "sfpHive.rules", "title": "Add the standing hive instruction to this workspace", "category": "SFP Hive"},
-      {"command": "sfpHive.apps", "title": "Set up a program a skill needs (OmniRoute, Strix...)", "category": "SFP Hive"}
+      {"command": "sfpHive.apps", "title": "Set up a program a skill needs (OmniRoute, Strix...)", "category": "SFP Hive"},
+      {"command": "sfpHive.clusterAdd", "title": "Create a new skill cluster", "category": "SFP Hive"},
+      {"command": "sfpHive.clusterRemove", "title": "Remove a skill cluster of your own", "category": "SFP Hive"}
     ],
     "menus": {
-      "view/title": [
-        {"command": "sfpHive.choose", "when": "view == sfpHive.stack", "group": "navigation@1"},
-        {"command": "sfpHive.copyPrompt", "when": "view == sfpHive.stack && sfpHive.hasSelection", "group": "navigation@2"},
-        {"command": "sfpHive.missing", "when": "view == sfpHive.stack && sfpHive.hasSelection", "group": "navigation@3"}
-      ],
-      "view/item/context": [
-        {"command": "sfpHive.helped", "when": "view == sfpHive.stack && viewItem == skill", "group": "inline@1"},
-        {"command": "sfpHive.unhelpful", "when": "view == sfpHive.stack && viewItem == skill", "group": "inline@2"},
-        {"command": "sfpHive.ignored", "when": "view == sfpHive.stack && viewItem == skill", "group": "inline@3"}
-      ],
       "commandPalette": [
         {"command": "sfpHive.openSkill", "when": "false"},
         {"command": "sfpHive.helped", "when": "false"},
