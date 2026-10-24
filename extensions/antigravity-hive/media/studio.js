@@ -252,14 +252,111 @@
         if (skill) {
           vscode.postMessage({ command: 'addToMyCluster', skill });
         }
+      case 'liveRemove': {
+        if (skill) {
+          vscode.postMessage({
+            command: 'liveChange',
+            draft: chooseTaskInput ? chooseTaskInput.value : '',
+            change: { remove: [skill] },
+          });
+        }
+        break;
+      }
+      case 'liveRestore': {
+        if (skill) {
+          vscode.postMessage({
+            command: 'liveChange',
+            draft: chooseTaskInput ? chooseTaskInput.value : '',
+            change: { restore: [skill] },
+          });
+        }
+        break;
+      }
+      case 'livePin': {
+        if (skill) {
+          vscode.postMessage({
+            command: 'liveChange',
+            draft: chooseTaskInput ? chooseTaskInput.value : '',
+            change: { pin: [skill] },
+          });
+        }
         break;
       }
     }
   });
 
-  // Task input submits on Enter
+  function renderLive() {
+    const container = document.getElementById('choose-live-container');
+    const chipsBar = document.getElementById('choose-live-chips');
+    const waitingLabel = document.getElementById('choose-live-waiting');
+    const removedBar = document.getElementById('choose-live-removed');
+    if (!container || !chipsBar) return;
+
+    const live = state.live;
+    if (!live) {
+      container.classList.add('hidden');
+      return;
+    }
+
+    container.classList.remove('hidden');
+
+    // Waiting state
+    if (waitingLabel) {
+      if (live.status === 'waiting' && (!live.attached || live.attached.length === 0)) {
+        waitingLabel.classList.remove('hidden');
+      } else {
+        waitingLabel.classList.add('hidden');
+      }
+    }
+
+    // Attached chips
+    if (live.attached && live.attached.length) {
+      chipsBar.innerHTML = live.attached
+        .map((s) => {
+          const isPinned = s.source === 'pinned';
+          const badgeClass = isPinned ? 'badge-pinned' : 'badge-auto';
+          const badgeText = isPinned ? 'pinned' : 'auto';
+          return `
+            <span class="live-chip">
+              <span class="live-chip-badge ${badgeClass}">${badgeText}</span>
+              <span class="live-chip-name" title="${escapeHtml(s.description || s.name)}">${escapeHtml(s.name)}</span>
+              <button class="live-chip-remove" data-action="liveRemove" data-skill="${escapeHtml(s.name)}" title="Remove skill">&times;</button>
+            </span>
+          `;
+        })
+        .join('');
+    } else {
+      chipsBar.innerHTML = '';
+    }
+
+    // Removed skills for restoration
+    const removed = live.state?.removed || [];
+    if (removedBar) {
+      if (removed.length > 0) {
+        removedBar.classList.remove('hidden');
+        removedBar.innerHTML = removed
+          .map((n) => `
+            <span class="live-removed-chip">
+              <span>${escapeHtml(n)}</span>
+              <button class="live-chip-restore" data-action="liveRestore" data-skill="${escapeHtml(n)}">restore</button>
+            </span>
+          `)
+          .join('');
+      } else {
+        removedBar.classList.add('hidden');
+        removedBar.innerHTML = '';
+      }
+    }
+  }
+
+  // Task input submits on Enter or types live
   const chooseTaskInput = document.getElementById('choose-task-input');
   if (chooseTaskInput) {
+    chooseTaskInput.addEventListener('input', () => {
+      const text = chooseTaskInput.value;
+      vscode.postMessage({ command: 'liveType', draft: text });
+    });
+
     chooseTaskInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -382,7 +479,18 @@
               taskInput.value = msg.payload.editorSelection;
             }
           }
+          if (msg.payload.live !== undefined) {
+            state.live = msg.payload.live;
+            renderLive();
+          }
           renderChoose();
+        }
+        break;
+      }
+      case 'liveResult': {
+        if (msg.result) {
+          state.live = msg.result;
+          renderLive();
         }
         break;
       }

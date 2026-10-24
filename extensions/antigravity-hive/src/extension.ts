@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as hive from './hive';
 import * as library from './library';
+import { LiveSession } from './live';
 
 export let loadedLibrary: library.Library | undefined;
 export let libraryProvider: LibraryViewProvider | undefined;
@@ -39,6 +40,8 @@ function config() {
     tool: c.get<string>('installTool', 'antigravity'),
     follow: c.get<boolean>('follow', true),
     followCommands: c.get<boolean>('followCommands', true),
+    autoAttach: c.get<boolean>('autoAttach', true),
+    autoAttachDelayMs: c.get<number>('autoAttachDelayMs', 350),
   };
 }
 
@@ -572,6 +575,8 @@ function updateRightStatus(phaseName?: string, skillCount?: number) {
 export class StudioViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'sfpHive.stack';
   public _view?: vscode.WebviewView;
+  public liveSession?: LiveSession;
+  public lastLiveResult?: hive.LiveResult;
 
   constructor(private readonly extensionPath: string) {}
 
@@ -581,6 +586,30 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     _token: vscode.CancellationToken
   ) {
     this._view = webviewView;
+    const cfg = config();
+    const askLive = async (draft: string, state: hive.LiveState | undefined, change: hive.LiveChange) => {
+      const root = sfpRoot();
+      if (!root) throw new Error('SFP checkout not found');
+      const py = hive.pythonCommand(config().opts);
+      const args = hive.liveArgs(root, draft, state, project(), config().max, change);
+      const out = await hive.run(py, args);
+      return hive.parseLive(out);
+    };
+
+    this.liveSession = new LiveSession(
+      {
+        ask: askLive,
+        show: (result) => {
+          this.lastLiveResult = result;
+          webviewView.webview.postMessage({ type: 'liveResult', result });
+        },
+        fail: (_err) => {
+          // Keep current state without flashing errors while typing
+        },
+      },
+      cfg.autoAttachDelayMs
+    );
+
     webviewView.webview.options = {
       enableScripts: true,
       localResourceRoots: [vscode.Uri.file(path.join(this.extensionPath, 'media'))],
@@ -592,8 +621,23 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         case 'ready':
           this.syncState();
           break;
+        case 'liveType':
+          if (config().autoAttach && this.liveSession) {
+            this.liveSession.type(message.draft ?? '');
+          }
+          break;
+        case 'liveChange':
+          if (this.liveSession) {
+            await this.liveSession.steer(message.draft ?? '', message.change ?? {});
+          }
+          break;
         case 'choose':
-          if (message.task) await choose(message.task);
+          if (message.task) {
+            if (this.liveSession) {
+              await this.liveSession.send(message.task);
+            }
+            await choose(message.task);
+          }
           break;
         case 'feedback':
           if (message.skill && message.verdict) {
@@ -745,6 +789,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         decision: selection?.decision,
         track: lastTrackResult,
         follow: config().follow,
+        live: this.lastLiveResult,
       },
     });
   }
@@ -872,6 +917,11 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       <div class="flex-row">
         <input type="text" id="choose-task-input" class="input-text" placeholder="What are you about to do?" aria-label="Task prompt input">
         <button class="btn" data-action="choose" aria-label="Choose skills for task">Choose</button>
+      </div>
+      <div id="choose-live-container" class="live-chips-container hidden">
+        <div id="choose-live-chips" class="live-chips-bar"></div>
+        <div id="choose-live-waiting" class="live-waiting-label hidden">waiting for more words...</div>
+        <div id="choose-live-removed" class="live-removed-bar hidden"></div>
       </div>
     </div>
     <div class="section hidden" id="choose-steer-section">
@@ -1475,6 +1525,16 @@ export function activate(context: vscode.ExtensionContext) {
 
   if ('chat' in vscode && typeof (vscode as any).chat?.createChatParticipant === 'function') {
     try {
+      const askLiveChat = async (draft: string, state: hive.LiveState | undefined, change: hive.LiveChange) => {
+        const root = sfpRoot();
+        if (!root) throw new Error('SFP checkout not found');
+        const py = hive.pythonCommand(config().opts);
+        const args = hive.liveArgs(root, draft, state, project(), config().max, change);
+        const out = await hive.run(py, args);
+        return hive.parseLive(out);
+      };
+      const chatLiveSession = new LiveSession({ ask: askLiveChat, show() {} }, config().autoAttachDelayMs);
+
       const participant = (vscode as any).chat.createChatParticipant('sfp.hive', async (request: any, _chatContext: any, stream: any) => {
         stream.progress('Analyzing prompt with SFP Hive...');
         const root = sfpRoot();
@@ -1484,9 +1544,39 @@ export function activate(context: vscode.ExtensionContext) {
         }
         try {
           const cfg = config();
-          const out = await hive.run(hive.pythonCommand(cfg.opts), hive.selectArgs(root, request.prompt, project(), cfg.max));
-          const sel = hive.parseSelection(out);
-          stream.markdown(hive.buildPrompt(sel, root));
+          const liveRes = await chatLiveSession.send(request.prompt);
+          if (liveRes && liveRes.attached.length > 0) {
+            const skillRows = liveRes.attached.map((s) => ({
+              name: s.name,
+              category: s.category,
+              description: s.description,
+              layer: 'base' as const,
+              tokens: 1000,
+            }));
+            const sel: hive.Selection = {
+              task: request.prompt,
+              stack: skillRows,
+              layers: {
+                base: skillRows.map((s) => s.name),
+                check: [],
+                finish: [],
+              },
+              tokens: skillRows.reduce((a, s) => a + s.tokens, 0),
+              next: [],
+              decision: liveRes.decision,
+            };
+            selection = sel;
+            showStatus();
+            updateRightStatus();
+            stream.markdown(hive.buildPrompt(sel, root));
+          } else {
+            const out = await hive.run(hive.pythonCommand(cfg.opts), hive.selectArgs(root, request.prompt, project(), cfg.max));
+            const sel = hive.parseSelection(out);
+            selection = sel;
+            showStatus();
+            updateRightStatus();
+            stream.markdown(hive.buildPrompt(sel, root));
+          }
         } catch (err: any) {
           stream.markdown(`Failed to select skills: ${err.message}`);
         }

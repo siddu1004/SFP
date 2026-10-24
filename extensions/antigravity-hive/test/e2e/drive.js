@@ -49,7 +49,16 @@ const browserPath = process.env.CHROMIUM || '/opt/pw-browsers/chromium';
   await firstCard.locator('button[data-action="helped"]').click();
   await page.waitForTimeout(3000);
   assert.match(await status(), /noted helped/, 'feedback should be acknowledged');
+
+  // Test live session: type in Choose input and verify live chips
+  const chooseInput = webviewFrame.locator('#choose-task-input');
+  await chooseInput.fill('');
+  await chooseInput.type('make the login form accessible and animate the button');
+  await page.waitForTimeout(2500);
+  const liveChips = await webviewFrame.locator('.live-chip').allInnerTexts();
+  assert.ok(liveChips.length > 0, 'live chips should appear when typing: ' + JSON.stringify(liveChips));
+
   assert.deepStrictEqual(errors.filter((e) => /sfp|hive/i.test(e)), [], 'no page error from the extension');
   await browser.close();
-  console.log('ok: activated at startup, command in palette, skills listed in webview, prompt copied, feedback sent');
+  console.log('ok: activated at startup, command in palette, skills listed in webview, prompt copied, feedback sent, live chips verified');
 })().catch((e) => { console.error('FAILED: ' + e.message); process.exit(1); });

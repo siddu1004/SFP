@@ -501,6 +501,103 @@ input:focus-visible,
   color: var(--vscode-foreground);
 }
 
+/* Live attached chips */
+.live-chips-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-1);
+  margin-top: var(--grid-1);
+}
+
+.live-chips-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.live-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  background-color: var(--vscode-sideBarSectionHeader-background, var(--vscode-editor-inactiveSelectionBackground));
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  color: var(--vscode-foreground);
+}
+
+.live-chip-badge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 1px 4px;
+  border-radius: 2px;
+}
+
+.live-chip-badge.badge-auto {
+  background-color: var(--vscode-badge-background, rgba(127, 127, 127, 0.2));
+  color: var(--vscode-badge-foreground);
+}
+
+.live-chip-badge.badge-pinned {
+  background-color: var(--accent);
+  color: var(--vscode-button-foreground);
+}
+
+.live-chip-remove {
+  background: transparent;
+  border: none;
+  color: var(--vscode-descriptionForeground);
+  cursor: pointer;
+  padding: 0 2px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.live-chip-remove:hover {
+  color: var(--vscode-errorForeground);
+}
+
+.live-waiting-label {
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  font-style: italic;
+  padding: 2px 0;
+}
+
+.live-removed-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.live-removed-chip {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  text-decoration: line-through;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.live-chip-restore {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 11px;
+  text-decoration: none;
+  padding: 0 2px;
+}
+
+.live-chip-restore:hover {
+  text-decoration: underline;
+}
+
 /* Skill Cards List */
 .skills-list {
   display: flex;

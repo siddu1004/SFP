@@ -352,6 +352,17 @@ test('webview handles choose, refresh, remove, and helped messages', async () =>
   await webviewMessageHandler({ command: 'removeSkill', skill: 'golang-patterns' });
   const logAfterRemove = fs.readFileSync(log, 'utf8');
   assert.match(logAfterRemove, /unhelpful/);
+
+  // Test liveType and liveChange messages
+  posted = [];
+  await webviewMessageHandler({ command: 'liveType', draft: 'fix' });
+  // wait for debounce
+  await new Promise((r) => setTimeout(r, 60));
+  await webviewMessageHandler({
+    command: 'liveChange',
+    draft: 'make login accessible',
+    change: { pin: ['accessible'] },
+  });
 });
 
 test('Stage 2: registers the SFP Hive Library webview provider and commands', async () => {
