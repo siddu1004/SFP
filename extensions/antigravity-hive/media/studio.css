@@ -1146,3 +1146,54 @@ input:checked + .toggle-slider:before {
   font-family: var(--vscode-editor-font-family, monospace);
   font-size: 11px;
 }
+
+
+/* ==== Polish layer ====================================================================================
+ * One rhythm for the whole sidebar: 12px side gutters, 8px steps, quiet section headings, flat cards, underline tabs.
+ * Layout and spacing only: nothing here changes what a control does. */
+body { padding: 0; }
+.studio-title-bar { display: none; }                      /* the view's own title already says "SFP Hive" */
+.studio-header { margin: 0; padding: 8px 12px 0; gap: 0; border-bottom: 1px solid var(--vscode-widget-border, rgba(127, 127, 127, 0.25)); background: var(--vscode-sideBar-background); position: sticky; top: 0; z-index: 3; }
+.tab-bar { background: transparent; padding: 0; gap: 2px; border-radius: 0; }
+.tab-btn { padding: 6px 4px 7px; border-radius: 0; border-bottom: 2px solid transparent; background: transparent; }
+.tab-btn:hover { background: transparent; color: var(--vscode-foreground); }
+.tab-btn.active { background: transparent; color: var(--vscode-foreground); border-bottom-color: var(--vscode-focusBorder, var(--accent)); font-weight: 600; box-shadow: none; }
+.tab-btn .tab-icon { width: 13px; height: 13px; }
+@media (max-width: 300px) { .tab-btn .tab-icon { display: none; } }
+.studio-body { padding: 0; }
+.tab-content { padding: 12px 12px 16px; gap: 16px; }
+.section { gap: 8px; }
+.section-title { font-size: 10.5px; letter-spacing: 0.06em; }
+.card { background: transparent; border-radius: 6px; padding: 10px; gap: 6px; }
+.toggle-row { padding: 0; }
+.state-box { padding: 16px 12px; gap: 8px; line-height: 1.45; }
+.choose-welcome { margin: 0; padding: 12px; background: transparent; }
+.btn { padding: 4px 10px; font-size: 12px; border-radius: 4px; }
+.skill-card, .need-card, .preload-card { margin: 0; }
+
+/* Check connection: one row per check, the name with its detail beneath, the fix under that. */
+.doctor-container { margin: 0; }
+.doctor-list { display: flex; flex-direction: column; gap: 0; list-style: none; margin: 0; padding: 0; }
+.doctor-item {
+  display: block; padding: 7px 0; border: 0; border-radius: 0; background: transparent;
+  border-bottom: 1px solid var(--vscode-widget-border, rgba(127, 127, 127, 0.2));
+  font-size: 12px; line-height: 1.4;
+}
+.doctor-item:last-child { border-bottom: 0; }
+.doctor-line { display: grid; grid-template-columns: 16px 1fr; grid-template-areas: "mark name" "mark detail"; column-gap: 8px; row-gap: 1px; align-items: start; }
+.doctor-mark { grid-area: mark; display: grid; place-items: center; height: 17px; font-size: 12px; }
+.doctor-name { grid-area: name; font-weight: 600; }
+.doctor-detail { grid-area: detail; color: var(--vscode-descriptionForeground); overflow-wrap: anywhere; }
+.doctor-info { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.doctor-fix {
+  margin: 5px 0 0 24px; padding: 4px 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  background: var(--vscode-textCodeBlock-background, rgba(127, 127, 127, 0.12)); border-radius: 4px;
+  font-family: var(--vscode-editor-font-family, monospace); font-size: 11px; overflow-wrap: anywhere;
+}
+.doctor-fix-text { min-width: 0; }
+
+/* The Library tab brings its own gutters and sticky search; the studio header scrolls away above it. */
+#tab-library { padding: 0; gap: 0; }
+.studio-header { position: static; }
+
+.doctor-fix .btn { flex: none; white-space: nowrap; }

@@ -485,3 +485,46 @@ select:focus, input[type="text"]:focus {
   font-family: var(--vscode-editor-font-family, monospace);
   font-size: 11px;
 }
+
+
+/* ==== Polish layer ====================================================================================
+ * Same rhythm as the Library and the Hive tabs: 12px gutters, 8px steps, quiet headings, flat cards. Spacing only. */
+body { padding: 0; }
+.models-top-bar { margin: 0; padding: 8px 12px 0; justify-content: flex-end; }
+.models-header { margin: 0; padding: 8px 12px 10px; }
+.models-title { font-size: 13px; }
+.server-card, .provider-item, .status-card { background: transparent; border-radius: 6px; padding: 10px; gap: 6px; }
+.server-card { margin: 0 12px 12px; }
+.section { margin: 0; padding: 12px 12px 14px; }
+.section-title { font-size: 10.5px; font-weight: 600; letter-spacing: 0.06em; margin-bottom: 8px; }
+.providers-list, .status-list { display: flex; flex-direction: column; gap: 8px; }
+.btn { padding: 4px 10px; font-size: 12px; border-radius: 4px; }
+.setup-form { gap: 8px; }
+.try-container { gap: 8px; }
+.doctor-container { margin: 0; padding: 0 12px 4px; }
+
+/* Check connection: one row per check, the name with its detail beneath, the fix under that. */
+.doctor-container { margin: 0; }
+.doctor-list { display: flex; flex-direction: column; gap: 0; list-style: none; margin: 0; padding: 0; }
+.doctor-item {
+  display: block; padding: 7px 0; border: 0; border-radius: 0; background: transparent;
+  border-bottom: 1px solid var(--vscode-widget-border, rgba(127, 127, 127, 0.2));
+  font-size: 12px; line-height: 1.4;
+}
+.doctor-item:last-child { border-bottom: 0; }
+.doctor-line { display: grid; grid-template-columns: 16px 1fr; grid-template-areas: "mark name" "mark detail"; column-gap: 8px; row-gap: 1px; align-items: start; }
+.doctor-mark { grid-area: mark; display: grid; place-items: center; height: 17px; font-size: 12px; }
+.doctor-name { grid-area: name; font-weight: 600; }
+.doctor-detail { grid-area: detail; color: var(--vscode-descriptionForeground); overflow-wrap: anywhere; }
+.doctor-info { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.doctor-fix {
+  margin: 5px 0 0 24px; padding: 4px 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  background: var(--vscode-textCodeBlock-background, rgba(127, 127, 127, 0.12)); border-radius: 4px;
+  font-family: var(--vscode-editor-font-family, monospace); font-size: 11px; overflow-wrap: anywhere;
+}
+.doctor-fix-text { min-width: 0; }
+
+.doctor-summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; font-size: 12px; line-height: 1.4; }
+.doctor-summary-text { min-width: 0; color: var(--vscode-descriptionForeground); overflow-wrap: anywhere; }
+
+.doctor-fix .btn { flex: none; white-space: nowrap; }

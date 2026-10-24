@@ -66,3 +66,13 @@ test('the detail page escapes everything and loads only its own files', () => {
   assert.ok(html.includes("script-src 'nonce-N0NCE'") && !html.includes('unsafe-inline') && !/https?:/.test(html.replace(/vscode-resource:/g, '')));
   assert.ok(!/ style=/.test(html));
 });
+
+test('the Models view shows one line about the connection check, escaped, and a way to the full list', () => {
+  const ok = hive.doctorSummaryHtml({ status: 'ok', checks: [{ name: 'Python', status: 'ok', detail: '3', fix: '' }] });
+  assert.ok(ok.includes('Everything is connected.') && ok.includes('data-action="showInsights"'));
+  const bad = hive.doctorSummaryHtml({ status: 'warn', checks: [
+    { name: '<b>Router</b>', status: 'warn', detail: '', fix: '' }, { name: 'Index', status: 'warn', detail: '', fix: '' },
+    { name: 'A', status: 'warn', detail: '', fix: '' }, { name: 'B', status: 'fail', detail: '', fix: '' }] });
+  assert.ok(bad.includes('4 things to look at') && bad.includes('&lt;b&gt;Router') && bad.includes('…'));
+  assert.ok(!bad.includes('<b>Router'));
+});

@@ -20,8 +20,9 @@ const assert = require('node:assert');
   const lib = async () => { const f = await find('#lib-groups-container'); return f; };
   let f = await lib();
   await f.waitForFunction(() => document.querySelectorAll('#lib-groups-container .area').length >= 8, null, { timeout: 30000 });
-  const count = await f.locator('#lib-search-count').innerText();
+  const count = await f.locator('#lib-footer-counts').innerText();
   assert.match(count, /819 skills/, 'the library should say how many skills it has: ' + count);
+  assert.strictEqual((await f.locator('#lib-search-count').innerText()).trim(), '', 'the count under the search box is only for a search');
   assert.ok((await f.locator('#lib-groups-container .area').count()) >= 8, 'areas should be listed');
   if (shots) await page.screenshot({ path: shots + '-areas.png' });
 

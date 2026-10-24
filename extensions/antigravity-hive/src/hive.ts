@@ -856,3 +856,13 @@ export function renderDoctorHtml(result: DoctorResult): string {
   return `<ul class="doctor-list">${rows}</ul>`;
 }
 
+
+/** The one line the Models view shows about the connection check; the full list lives in Insights. */
+export function doctorSummaryHtml(result: DoctorResult): string {
+  const bad = result.checks.filter((c) => c.status !== 'ok');
+  const level = result.status === 'ok' ? 'ok' : result.status;
+  const text = !bad.length ? 'Everything is connected.'
+    : `${bad.length} thing${bad.length === 1 ? '' : 's'} to look at: ${bad.slice(0, 3).map((c) => c.name).join(', ')}${bad.length > 3 ? '…' : ''}`;
+  return `<div class="doctor-summary doctor-${level}"><span class="doctor-summary-text">${escapeHtml(text)}</span>`
+    + `<button class="btn btn-secondary btn-small" data-action="showInsights">Details</button></div>`;
+}

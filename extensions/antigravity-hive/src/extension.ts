@@ -46,7 +46,7 @@ function config() {
     follow: c.get<boolean>('follow', true),
     followCommands: c.get<boolean>('followCommands', true),
     autoAttach: c.get<boolean>('autoAttach', true),
-    autoAttachDelayMs: c.get<number>('autoAttachDelayMs', 350),
+    autoAttachDelayMs: c.get<number>('autoAttachDelayMs', 200),
   };
 }
 
@@ -101,15 +101,17 @@ export async function checkNeeds(task: string): Promise<hive.Need[]> {
   const root = sfpRoot();
   if (!root || !task.trim()) return [];
   try {
-    const cfg = config();
-    const out = await hive.run(
-      hive.pythonCommand(cfg.opts),
-      hive.needsArgs(root, task.trim(), project(), true)
-    );
-    const needs = hive.parseNeeds(out);
-    lastNeeds = needs;
-    studioProvider?.updateNeeds(needs);
-    return needs;
+    const py = hive.pythonCommand(config().opts);
+    // Fast first: matching the task takes about 100 ms. Checking programs and keys (--check) takes up to a second, so it
+    // only runs when the task needs something, and the cards appear before it finishes.
+    const quick = hive.parseNeeds(await hive.run(py, hive.needsArgs(root, task.trim(), project(), false)));
+    lastNeeds = quick;
+    studioProvider?.updateNeeds(quick);
+    if (!quick.length) return quick;
+    const checked = hive.parseNeeds(await hive.run(py, hive.needsArgs(root, task.trim(), project(), true)));
+    lastNeeds = checked;
+    studioProvider?.updateNeeds(checked);
+    return checked;
   } catch {
     return [];
   }
@@ -732,6 +734,8 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     _context: vscode.WebviewViewResolveContext,
     _token: vscode.CancellationToken
   ) {
+    this.sent.clear();
+    this.librarySent = false;
     this._view = webviewView;
     const cfg = config();
     const askLive = async (draft: string, state: hive.LiveState | undefined, change: hive.LiveChange) => {
@@ -1039,8 +1043,14 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
+  private librarySent = false;
+  private libraryObject: unknown;
+
   public syncLibraryState(): void {
     if (!this._view || !loadedLibrary) return;
+    if (this.librarySent && this.libraryObject === loadedLibrary) return;   // the webview already has this payload
+    this.librarySent = true;
+    this.libraryObject = loadedLibrary;
     const hits = this._libQuery.trim() ? library.searchLibrary(loadedLibrary, this._libQuery.trim()) : undefined;
     const groups = library.groupBy(loadedLibrary, this._libMode, hits);
     const summary = library.summary(loadedLibrary);
@@ -1116,6 +1126,16 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     });
   }
 
+  private sent = new Map<string, unknown>();
+
+  /** The value if the webview has not seen this exact one yet, otherwise undefined (the webview keeps what it has). */
+  private fresh<T>(key: string, value: T): T | undefined {
+    const same = this.sent.has(key) && (this.sent.get(key) === value || (Array.isArray(value) && Array.isArray(this.sent.get(key)) && JSON.stringify(this.sent.get(key)) === JSON.stringify(value)));
+    if (same) return undefined;
+    this.sent.set(key, value);
+    return value;
+  }
+
   public syncState() {
     if (!this._view) return;
     const root = sfpRoot();
@@ -1129,8 +1149,9 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         diff: baselineSelection && selection ? hive.selectionDiff(baselineSelection, selection) : currentDiff,
         include: currentInclude,
         exclude: currentExclude,
-        catalog: root ? hive.catalogNames(root) : [],
-        clusters: loadedClusters,
+        // These two are large and rarely change: send them once per webview, then only when they do.
+        catalog: this.fresh('catalog', root ? hive.catalogNames(root) : []),
+        clusters: this.fresh('clusters', loadedClusters),
         sessionStats,
         editorSelection: getEditorSelection(),
         decision: selection?.decision,
@@ -2056,6 +2077,10 @@ export class ModelsViewProvider implements vscode.WebviewViewProvider {
           }
           break;
         }
+        case 'showInsights':
+          await vscode.commands.executeCommand('sfpHive.stack.focus');
+          studioProvider?.showTab('insights');
+          break;
         case 'runDoctor':
           await runDoctor(true);
           break;
@@ -2147,7 +2172,7 @@ export class ModelsViewProvider implements vscode.WebviewViewProvider {
     <button id="models-check-conn-btn" class="btn btn-secondary btn-small" data-action="runDoctor">Check connection</button>
   </div>
   <div id="models-doctor-container" class="doctor-container">
-    ${lastDoctorResult ? hive.renderDoctorHtml(lastDoctorResult) : ''}
+    ${lastDoctorResult ? hive.doctorSummaryHtml(lastDoctorResult) : ''}
   </div>
 
   <div class="models-header">

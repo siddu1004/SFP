@@ -225,13 +225,15 @@
       return;
     }
     stateError.classList.add('hidden');
-    searchCountBadge.textContent = searching() ? `${state.matchCount} of ${state.totalCount} skills` : `${state.totalCount} skills`;
+    // The footer already says how many skills there are; the line under the search box only reports a search.
+    searchCountBadge.textContent = searching() ? `${state.matchCount} of ${state.totalCount} skills` : '';
+    searchCountBadge.parentElement.classList.toggle('hidden', !searching());
     const any = state.groups.some((g) => (g.skills && g.skills.length) || (g.bundles && g.bundles.length));
     stateEmpty.classList.toggle('hidden', any);
     if (!any) { groupsContainer.innerHTML = ''; } else { renderGroups(); }
     if (state.summary) {
       const s = state.summary;
-      footerCounts.textContent = `${s.skills} skills · ${s.bundles} bundles · ${s.used} used`;
+      footerCounts.textContent = `${s.skills} skills · ${s.bundles} bundles`;
     }
   }
 

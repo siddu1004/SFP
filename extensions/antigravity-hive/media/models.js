@@ -249,6 +249,8 @@
       });
     }
 
+    if (e.target.closest('[data-action="showInsights"]')) vscode.postMessage({ command: 'showInsights' });
+
     const fixBtn = e.target.closest('[data-action="copyFix"]');
     if (fixBtn) {
       const fix = fixBtn.getAttribute('data-fix');
@@ -263,24 +265,13 @@
     });
   }
 
+  // The full list is in the Insights tab. Here: one line, and a way to get there.
   function renderDoctorResultHtml(result) {
-    if (!result || !result.checks) return '';
-    const items = result.checks.map((c) => {
-      const mark = c.status === 'ok' ? '✔' : c.status === 'warn' ? '▲' : '✖';
-      const statusClass = c.status === 'ok' ? 'doctor-ok' : c.status === 'warn' ? 'doctor-warn' : 'doctor-fail';
-      const fixHtml = c.fix
-        ? `<div class="doctor-fix"><span>Fix: ${escapeHtml(c.fix)}</span><button class="btn btn-secondary btn-small" data-action="copyFix" data-fix="${escapeHtml(c.fix)}">Copy</button></div>`
-        : '';
-      return `<div class="doctor-item ${statusClass}">
-        <span class="doctor-mark">${mark}</span>
-        <div class="doctor-info">
-          <span class="doctor-name">${escapeHtml(c.name)}</span>
-          <span class="doctor-detail">${escapeHtml(c.detail)}</span>
-          ${fixHtml}
-        </div>
-      </div>`;
-    }).join('');
-    return `<div class="doctor-list">${items}</div>`;
+    const bad = result.checks.filter((c) => c.status !== 'ok');
+    const text = !bad.length ? 'Everything is connected.'
+      : `${bad.length} thing${bad.length === 1 ? '' : 's'} to look at: ${bad.slice(0, 3).map((c) => c.name).join(', ')}${bad.length > 3 ? '…' : ''}`;
+    return `<div class="doctor-summary doctor-${escapeHtml(result.status)}"><span class="doctor-summary-text">${escapeHtml(text)}</span>`
+      + '<button class="btn btn-secondary btn-small" data-action="showInsights">Details</button></div>';
   }
 
   // Incoming Messages

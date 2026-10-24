@@ -75,7 +75,7 @@
         "sfpHive.follow": {"type": "boolean", "default": true, "description": "Follow workspace activity and update skills to match the current phase of work."},
         "sfpHive.followCommands": {"type": "boolean", "default": true, "description": "Include terminal commands in workspace activity when shell integration is available."},
         "sfpHive.autoAttach": {"type": "boolean", "default": true, "description": "Automatically attach skills while typing a prompt or message."},
-        "sfpHive.autoAttachDelayMs": {"type": "number", "default": 350, "description": "Debounce delay in milliseconds before asking the hive for live attached skills."}
+        "sfpHive.autoAttachDelayMs": {"type": "number", "default": 200, "description": "Debounce delay in milliseconds before asking the hive for live attached skills."}
       }
     }
   },
