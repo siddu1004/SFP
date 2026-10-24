@@ -1,6 +1,6 @@
 {
   "name": "languages",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "Language idioms, standards and testing for Go, Rust, Python, C++, C#, F#, Java, Kotlin, Perl and .NET.",
   "author": {
     "name": "siddu1004"

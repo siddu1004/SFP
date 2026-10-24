@@ -218,6 +218,18 @@ The server is written under VS Code's `servers` key and your other servers are k
 </details>
 
 <details>
+<summary><b>Antigravity and other VS Code editors, with the hive inside the editor</b></summary>
+
+`extensions/antigravity-hive` is a TypeScript extension for Antigravity, VS Code, Cursor and Windsurf. It adds a status-bar item and a view: type a task, get the few skills it needs in order, copy a ready prompt for the agent panel, and mark each skill helped, unhelpful, ignored or missing.
+
+```bash
+python3 extensions/antigravity-hive/install.py
+```
+
+It builds a `.vsix` and installs it with the editor's own command, so nothing inside the editor is changed. [docs/ANTIGRAVITY.md](docs/ANTIGRAVITY.md) has the details, what has not been tested (the extension has not been run inside Antigravity itself), and implementation prompts for extending it.
+</details>
+
+<details>
 <summary><b>Codex, Copilot CLI, Cursor and Gemini CLI, as plugins</b></summary>
 
 The repo carries each tool's plugin files, generated from the same categories, so each category is a plugin in all of them:

@@ -1,6 +1,6 @@
 {
   "name": "industry",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "description": "Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy.",
   "author": {
     "name": "siddu1004"
