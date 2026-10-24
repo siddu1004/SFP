@@ -1,6 +1,6 @@
 {
   "name": "research-docs",
-  "version": "3.11.0",
+  "version": "3.12.0",
   "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).",
   "author": {
     "name": "siddu1004"

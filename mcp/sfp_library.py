@@ -111,8 +111,11 @@ def user_bundles():
     return _read(_user_bundles_path(), {'bundles': []})['bundles']
 
 
+ACRONYMS = {'ui': 'UI', 'ux': 'UX', 'api': 'API', 'mcp': 'MCP', 'ci': 'CI', 'sql': 'SQL', 'e2e': 'E2E', 'css': 'CSS', 'seo': 'SEO'}
+
+
 def _humanize(recipe_id):
-    text = recipe_id.replace('-', ' ')
+    text = ' '.join(ACRONYMS.get(w, w) for w in recipe_id.replace('-', ' ').split())
     return text[:1].upper() + text[1:]
 
 
