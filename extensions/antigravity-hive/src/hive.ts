@@ -548,7 +548,6 @@ export function needsArgs(root: string, task: string, project?: string, check = 
   return args;
 }
 
-<<<<<<< HEAD
 export function parseNeeds(json: string): Need[] {
   const r = JSON.parse(json);
   if (!Array.isArray(r)) throw new Error('unexpected output from the hive needs command');
