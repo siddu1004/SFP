@@ -352,3 +352,26 @@ export function bundleAddArgs(root: string, name: string, skills: string[], goal
 export function bundleRemoveArgs(root: string, name: string): string[] {
   return [path.join(root, 'mcp', 'sfp_hive.py'), 'bundle-remove', name];
 }
+
+export interface LiveSkill { name: string; category: string; description: string; source: 'auto' | 'pinned' }
+export interface LiveState { anchor: string[]; auto: string[]; pinned: string[]; removed: string[] }
+export interface LiveResult { status: 'waiting' | 'kept' | 'updated' | 'committed'; changed: boolean; attached: LiveSkill[]; state: LiveState; words: string[]; decision?: string }
+export interface LiveChange { pin?: string[]; unpin?: string[]; remove?: string[]; restore?: string[]; commit?: boolean }
+
+export function liveArgs(root: string, draft: string, state: LiveState | undefined, project: string | undefined, max: number, change: LiveChange = {}): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'live', draft, '--json', '--max', String(max)];
+  if (state) args.push('--state', JSON.stringify(state));
+  if (project) args.push('--project', project);
+  for (const k of ['pin', 'unpin', 'remove', 'restore'] as const) {
+    const v = change[k];
+    if (v && v.length) args.push('--' + k, v.join(','));
+  }
+  if (change.commit) args.push('--commit');
+  return args;
+}
+
+export function parseLive(json: string): LiveResult {
+  const r = JSON.parse(json);
+  if (!r || !Array.isArray(r.attached) || !r.state) throw new Error('unexpected output from the hive live command');
+  return r as LiveResult;
+}

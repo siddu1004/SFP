@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.8.0'
+VERSION = '3.9.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
@@ -660,6 +660,17 @@ def main(argv=None):
     ca.add_argument('--description', default='')
     cr = sub.add_parser('cluster-remove', help='remove a cluster of your own')
     cr.add_argument('name')
+    lv = sub.add_parser('live', help='attach skills to a message while it is being typed')
+    lv.add_argument('draft')
+    lv.add_argument('--state', default='', help='the state a previous call printed, as JSON')
+    lv.add_argument('--project')
+    lv.add_argument('--max', type=int, default=4)
+    lv.add_argument('--pin', default='')
+    lv.add_argument('--unpin', default='')
+    lv.add_argument('--remove', default='')
+    lv.add_argument('--restore', default='')
+    lv.add_argument('--commit', action='store_true', help='the message was sent: record the decision')
+    lv.add_argument('--json', action='store_true')
     tr = sub.add_parser('train', help='train the hive learning model from the benchmark task suites')
     tr.add_argument('--reset', action='store_true', help='reset prior feedback before training')
     tr.add_argument('--json', action='store_true')
@@ -709,6 +720,12 @@ def main(argv=None):
                 print('Next, likely: ' + ', '.join('%s %.0f%%' % (n['phase'], 100 * n['probability']) for n in res['next']))
             for c in res.get('skills', []):
                 print('  %s (%s)' % (c['name'], c['phase']))
+    elif a.cmd == 'live':
+        import sfp_live
+        split = lambda v: [x.strip() for x in v.split(',') if x.strip()]
+        res = sfp_live.live(a.draft, json.loads(a.state) if a.state else None, a.project, a.max, split(a.pin), split(a.unpin),
+                            split(a.remove), split(a.restore), a.commit)
+        print(json.dumps(res, indent=1) if a.json else sfp_live.format_live(res))
     elif a.cmd == 'library':
         import sfp_library
         print(json.dumps(sfp_library.library(), separators=(',', ':')))

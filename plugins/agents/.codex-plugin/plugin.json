@@ -1,6 +1,6 @@
 {
   "name": "agents",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "description": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.",
   "author": {
     "name": "siddu1004"

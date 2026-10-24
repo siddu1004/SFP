@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.9.0
+
+- **Skills follow what you type.** `sfp_hive.py live` takes a half-typed message and returns the skills to attach: it waits for enough words, keeps the list steady while you keep typing the same idea, moves only the skill that no longer fits when the topic shifts, honours your pins and removals, and logs nothing until the message is sent. `src/live.ts` debounces and drops stale answers. `docs/LIVE.md` has the rules and the brief for wiring it to the chat input.
+
 ## 3.8.0
 
 - **The skill library.** Every skill now has a purpose, what it is trying to do, in 15 purposes (Design interfaces, Build features, Test and verify, Deploy and release and more), assigned by `purposes.json`: a name pattern, else the skill's cluster, else its strongest job when its name says so. Measured against one person's labels: 83% on the 120 skills the rules were tuned on and 78% on 40 held-out ones (`docs/LIBRARY.md`).
