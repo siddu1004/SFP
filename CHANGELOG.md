@@ -4,6 +4,7 @@
 
 - **A router for your models.** `mcp/sfp_route.py` finds the models running on your machine (Ollama, LM Studio, llama.cpp, Jan, vLLM), adds free and paid providers whose key is set, and serves one OpenAI-compatible endpoint. Each request is sized; local models go first, the weakest one that is strong enough; when a model is rate limited, out of credit, down or too small, it cools down and the next one answers. No dependencies, no keys stored. `docs/ROUTER.md`.
 - **The project cannot veto what the task names.** A skill the task's words name best is no longer dropped as being for another technology than the project (a 3D skill in a web project). Project-based selection: 75.0% to 79.2% hit, first-place 58.3% to 62.5%; the other sets are unchanged.
+- **The project fingerprint ignores copies of other projects** (`plugins/`, `fixtures/`, `examples/`, `third_party/`, `site-packages/`): this repository no longer looks like a FastAPI project because of a vendored skill's requirements.
 - The `never-run-out` need checks the router first and gives the one command to set it up or start it.
 
 ## 3.10.0

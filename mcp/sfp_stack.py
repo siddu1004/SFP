@@ -135,6 +135,9 @@ EXT = {'.py': 'python', '.ts': 'typescript', '.tsx': 'react', '.jsx': 'react', '
        '.tf': 'terraform', '.ets': 'arkts', '.sql': 'database'}
 SKIP_DIRS = {'node_modules', '.git', '.venv', 'venv', 'env', '__pycache__', 'dist', 'build', '.next', '.nuxt', 'target',
              'Pods', '.gradle', '.idea', '.vscode', 'coverage', '.cache', '.dart_tool', 'vendor'}
+# Folders that hold other people's projects or copies of them (installed plugins, fixtures, examples): what they
+# contain says nothing about the project itself.
+COPIED_DIRS = {'plugins', 'third_party', 'fixtures', 'examples', 'site-packages'}
 
 # ------------------------------------------------------------- skill profiles
 
@@ -367,7 +370,7 @@ def scan_project(path, max_files=5000, max_depth=5):
         rel_os = '.' if d == root else os.path.relpath(d, root)
         depth = 0 if d == root else rel_os.count(os.sep) + 1
         dirs[:] = sorted(x for x in dirs if x in ('.github', '.claude-plugin')
-                         or (x not in SKIP_DIRS and not x.startswith('.')))
+                         or (x not in SKIP_DIRS and x not in COPIED_DIRS and not x.startswith('.')))
         if depth >= max_depth:
             dirs[:] = []
         base = os.path.basename(d)

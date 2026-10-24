@@ -118,6 +118,18 @@ class DecideTest(unittest.TestCase):
         self.assertTrue(found[0]['apps'])
         self.assertTrue(found[0]['action'].startswith(('set up the router', 'start the router', 'ready')))
 
+    def test_copies_of_other_projects_do_not_define_the_project(self):
+        import sfp_stack as v1
+        proj = tempfile.mkdtemp()
+        os.makedirs(os.path.join(proj, 'plugins', 'x', 'skills', 'y'))
+        with open(os.path.join(proj, 'plugins', 'x', 'skills', 'y', 'requirements.txt'), 'w') as f:
+            f.write('fastapi\n')
+        with open(os.path.join(proj, 'package.json'), 'w') as f:
+            json.dump({'dependencies': {'react': '18'}}, f)
+        terms = v1.scan_project(proj)['terms']
+        self.assertNotIn('fastapi', terms)
+        self.assertIn('react', terms)
+
     def test_the_project_cannot_veto_a_skill_the_task_names(self):
         import sfp_hive as sel
         proj = tempfile.mkdtemp()
