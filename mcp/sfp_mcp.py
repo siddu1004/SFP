@@ -74,6 +74,10 @@ def _load_catalog():
         _RAW = _f.read()
     CATALOG = json.loads(_RAW.decode('utf-8'))
     CATALOG_SHA = hashlib.sha1(_RAW).hexdigest()
+    for s in CATALOG['skills']:
+        # A catalog synced on Windows may carry backslashes; paths in the catalog are always forward-slash.
+        s['path'] = s['path'].replace('\\', '/')
+        s['variants'] = {k: v.replace('\\', '/') for k, v in s.get('variants', {}).items()}
     SKILLS = {s['name']: s for s in CATALOG['skills']}
     _CATALOG_STAT = cur_stat
 

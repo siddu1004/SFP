@@ -169,5 +169,50 @@ class McpServerTest(unittest.TestCase):
         self.assertEqual(self.c.rpc('ping')['result'], {})  # still alive
 
 
+class PortablePathsTest(unittest.TestCase):
+    """The catalog must read the same on every system. A sync run on Windows once wrote backslashes into
+    catalog.json, and every path broke on Linux and macOS."""
+
+    def test_catalog_paths_use_forward_slashes(self):
+        with open(os.path.join(ROOT, 'catalog.json'), encoding='utf-8') as f:
+            cat = json.load(f)
+        for s in cat['skills']:
+            self.assertNotIn('\\', s['path'], s['name'])
+            for v in s.get('variants', {}).values():
+                self.assertNotIn('\\', v, s['name'])
+
+    def test_the_sync_writes_forward_slashes_even_on_windows(self):
+        import importlib.util
+        import ntpath
+        spec = importlib.util.spec_from_file_location('sync_paths', os.path.join(ROOT, 'scripts', 'sync.py'))
+        sync = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(sync)
+        real = sync.os.path
+        try:
+            sync.os.path = ntpath   # behave as on Windows
+            sync.os.sep, old_sep = '\\', sync.os.sep
+            self.assertEqual(sync.rel('C:\\r\\plugins\\a\\skills\\b', 'C:\\r'), 'plugins/a/skills/b')
+        finally:
+            sync.os.path = real
+            sync.os.sep = old_sep
+
+    def test_the_server_reads_a_catalog_written_with_backslashes(self):
+        import shutil
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(ROOT, 'catalog.json'), encoding='utf-8') as f:
+                cat = json.load(f)
+            for s in cat['skills']:
+                s['path'] = s['path'].replace('/', '\\')
+            with open(os.path.join(d, 'catalog.json'), 'w', encoding='utf-8') as f:
+                json.dump(cat, f)
+            shutil.copytree(os.path.join(ROOT, 'plugins', 'sfp'), os.path.join(d, 'plugins', 'sfp'))
+            code = ('import sys, json; sys.path.insert(0, %r); import sfp_mcp as m; '
+                    'print(json.dumps([m.SKILLS["sfp"]["path"], m.SKILLS["sfp-hive"]["path"]]))' % os.path.join(ROOT, 'mcp'))
+            out = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True, timeout=60,
+                                 env=dict(os.environ, SFP_ROOT=d))
+            self.assertEqual(json.loads(out.stdout), ['plugins/sfp/skills/sfp', 'plugins/sfp/skills/sfp-hive'], out.stderr)
+
+
 if __name__ == '__main__':
     unittest.main()

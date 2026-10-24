@@ -53,6 +53,12 @@ def slug(name):
     return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
 
 
+def rel(path, start):
+    """A relative path with forward slashes, the same on every system. The catalog and the hashes must not
+    depend on where the sync ran: a catalog written on Windows with backslashes breaks every other system."""
+    return os.path.relpath(path, start).replace(os.sep, '/')
+
+
 def tree_hash(path):
     h = hashlib.sha256()
     for d, dirs, files in sorted(os.walk(path)):
@@ -60,7 +66,7 @@ def tree_hash(path):
         for f in sorted(files):
             p = os.path.join(d, f)
             if os.path.isfile(p):
-                h.update(os.path.relpath(p, path).encode())
+                h.update(rel(p, path).encode())
                 with open(p, 'rb') as fh:
                     h.update(fh.read())
     return h.hexdigest()
@@ -186,13 +192,13 @@ def main():
             'name': name, 'category': cat,
             'description': ' '.join(field(fm, 'description').split()),
             'source': source['repo'], 'license': source.get('license', ''),
-            'path': os.path.relpath(dest, ROOT), 'variants': {},
+            'path': rel(dest, ROOT), 'variants': {},
         }
         for tool, vsrc in (variants or {}).items():
             vdest = os.path.join(OUT, cat, 'variants', tool, name)
             copy_skill(vsrc, vdest)
             rename_skill(vdest, name)
-            entry['variants'][tool] = os.path.relpath(vdest, ROOT)
+            entry['variants'][tool] = rel(vdest, ROOT)
         if app_key:
             entry['app'] = app_key
         catalog.append(entry)
@@ -239,10 +245,10 @@ def main():
         for pattern in source.get('skills', []):
             for skill_src in sorted(glob.glob(os.path.join(repo_dir, pattern))):
                 skill_src = os.path.normpath(skill_src)
-                rel = os.path.relpath(skill_src, repo_dir)
+                rel_src = rel(skill_src, repo_dir)
                 if not os.path.isfile(os.path.join(skill_src, 'SKILL.md')):
                     continue
-                if any(fnmatch.fnmatch(rel, e) for e in excludes):
+                if any(fnmatch.fnmatch(rel_src, e) for e in excludes):
                     continue
                 variants = {t: os.path.join(repo_dir, p) for t, p in source.get('variants', {}).items()
                             if os.path.isfile(os.path.join(repo_dir, p, 'SKILL.md'))}
@@ -282,7 +288,7 @@ def main():
     catalog.append({
         'name': 'sfp', 'category': 'sfp',
         'description': ' '.join(field(frontmatter(open(os.path.join(router, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
-        'source': 'siddu1004/SFP', 'license': '', 'path': os.path.relpath(router, ROOT), 'variants': {},
+        'source': 'siddu1004/SFP', 'license': '', 'path': rel(router, ROOT), 'variants': {},
     })
     # The selection skill: chooses which skills a task needs, in what order, and learns from feedback (mcp/sfp_hive.py).
     hive = os.path.join(OUT, 'sfp', 'skills', 'sfp-hive')
@@ -290,7 +296,7 @@ def main():
     catalog.append({
         'name': 'sfp-hive', 'category': 'sfp',
         'description': ' '.join(field(frontmatter(open(os.path.join(hive, 'SKILL.md'), encoding='utf-8').read()), 'description').split()),
-        'source': 'siddu1004/SFP', 'license': 'MIT', 'path': os.path.relpath(hive, ROOT), 'variants': {},
+        'source': 'siddu1004/SFP', 'license': 'MIT', 'path': rel(hive, ROOT), 'variants': {},
     })
 
     write_manifests(cfg, cats, catalog)
