@@ -401,3 +401,20 @@ export function needsArgs(root: string, task: string, project?: string, check = 
   if (check) args.push('--check');
   return args;
 }
+
+/** One line of `sfp_hive.py doctor --json`: a part of the hive and whether it works. */
+export interface DoctorCheck { name: string; status: 'ok' | 'warn' | 'fail'; detail: string; fix: string }
+export interface DoctorResult { status: 'ok' | 'warn' | 'fail'; checks: DoctorCheck[] }
+
+export function doctorArgs(root: string, project?: string, port = 8787): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'doctor', '--json', '--port', String(port)];
+  if (project) args.push('--project', project);
+  return args;
+}
+
+/** `doctor` exits 1 when something fails but still prints its JSON, so a failed run is parsed from its output. */
+export function parseDoctor(json: string): DoctorResult {
+  const r = JSON.parse(json);
+  if (!r || !Array.isArray(r.checks)) throw new Error('unexpected output from the hive doctor command');
+  return r as DoctorResult;
+}

@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.13.0'
+VERSION = '3.14.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
@@ -674,6 +674,10 @@ def main(argv=None):
     nd.add_argument('--project')
     nd.add_argument('--check', action='store_true', help='check the programs and keys (runs their --version)')
     nd.add_argument('--json', action='store_true')
+    dr = sub.add_parser('doctor', help='check that everything is connected: catalog, selection, live, needs, library, router, MCP')
+    dr.add_argument('--project')
+    dr.add_argument('--port', type=int, default=8787, help='where the router would be running')
+    dr.add_argument('--json', action='store_true')
     lv = sub.add_parser('live', help='attach skills to a message while it is being typed')
     lv.add_argument('draft')
     lv.add_argument('--state', default='', help='the state a previous call printed, as JSON')
@@ -745,6 +749,11 @@ def main(argv=None):
         terms = list(scan(a.project).get('terms', {})) if a.project else []
         found = sfp_needs.needs(a.task, terms, check=a.check)
         print(json.dumps(found, indent=1) if a.json else sfp_needs.format_needs(found))
+    elif a.cmd == 'doctor':
+        import sfp_doctor
+        items = sfp_doctor.checks(a.port, a.project)
+        print(json.dumps({'status': sfp_doctor.summary(items), 'checks': items}, indent=1) if a.json else sfp_doctor.format_checks(items))
+        raise SystemExit(1 if sfp_doctor.summary(items) == 'fail' else 0)
     elif a.cmd == 'live':
         import sfp_live
         split = lambda v: [x.strip() for x in v.split(',') if x.strip()]
