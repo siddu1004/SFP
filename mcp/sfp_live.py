@@ -16,6 +16,7 @@ State is plain JSON, so the editor keeps it between calls and clears it when a m
 import json
 
 import sfp_hive as sel
+import sfp_needs
 import sfp_stack as v1
 
 core = v1.core
@@ -65,7 +66,7 @@ def live(draft, state=None, project=None, max_skills=4, pin=(), unpin=(), remove
 
     if commit:
         import sfp_learn
-        res = sfp_learn.decide(draft, project, None, (), 12000, max(max_skills, len(st['pinned'])),
+        res = sfp_needs.decide(draft, project, None, (), 12000, max(max_skills, len(st['pinned'])),
                                include=st['pinned'], exclude=st['removed'])
         decision = res.get('decision')
         st['auto'] = [c['name'] for c in res['stack'] if c['name'] not in st['pinned']]
@@ -76,7 +77,11 @@ def live(draft, state=None, project=None, max_skills=4, pin=(), unpin=(), remove
         status = 'kept'
     else:
         room = max(max_skills - len(st['pinned']), 0)
-        res = sel.select(draft, project, None, (), 12000, max_skills + STICKY, include=st['pinned'], exclude=st['removed'])
+        terms = list(sel.scan(project).get('terms', {})) if project else []
+        found = sfp_needs.needs(draft, terms, exclude=st['removed'])
+        res = sel.select(draft, project, None, (), 12000, max_skills + STICKY + len(found),
+                         include=st['pinned'] + [n['attach'] for n in found if n['attach'] not in st['pinned']],
+                         exclude=st['removed'])
         ranked = [c['name'] for c in res['stack'] if c['name'] not in st['pinned']]
         fresh = ranked[:room]
         keep = [n for n in st['auto'] if n in ranked[:room + STICKY]]
@@ -90,6 +95,7 @@ def live(draft, state=None, project=None, max_skills=4, pin=(), unpin=(), remove
     source = {n: 'pinned' for n in st['pinned']}
     rows = [dict(r, source=source.get(r['name'], 'auto')) for r in _rows(attached)]
     out = {'status': status, 'changed': attached != before, 'attached': rows, 'state': st, 'words': words}
+    out['needs'] = sfp_needs.needs(draft, exclude=st['removed']) if status != 'waiting' else []
     if decision:
         out['decision'] = decision
     return out

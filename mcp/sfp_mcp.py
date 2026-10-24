@@ -37,7 +37,7 @@ import sys
 import threading
 
 SERVER_NAME = 'sfp'
-SERVER_VERSION = '3.9.0'
+SERVER_VERSION = '3.11.0'
 SUPPORTED_PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05']
 MAX_FILE_BYTES = 400000
 MAX_LISTED_FILES = 200
@@ -423,8 +423,10 @@ def tool_select_skills(a):
     if project and not os.path.isdir(os.path.expanduser(project)):
         raise ValueError('no such folder: %s' % project)
     after = _skills_arg(a.get('after')) or SESSION_HISTORY[-3:]
-    res = hive().decide(task, project and os.path.expanduser(project), a.get('goal'), after,
-                            int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)))
+    hive()
+    import sfp_needs
+    res = sfp_needs.decide(task, project and os.path.expanduser(project), a.get('goal'), after,
+                           int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)))
     res['next_step'] = ('Call get_skill for each skill in the stack, in order: base layers do the work, '
                         'check layers verify it, finish layers ship it.')
     return json.dumps(res, indent=1)

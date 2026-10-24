@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.11.0
+
+- **A router for your models.** `mcp/sfp_route.py` finds the models running on your machine (Ollama, LM Studio, llama.cpp, Jan, vLLM), adds free and paid providers whose key is set, and serves one OpenAI-compatible endpoint. Each request is sized; local models go first, the weakest one that is strong enough; when a model is rate limited, out of credit, down or too small, it cools down and the next one answers. No dependencies, no keys stored. `docs/ROUTER.md`.
+- **The project cannot veto what the task names.** A skill the task's words name best is no longer dropped as being for another technology than the project (a 3D skill in a web project). Project-based selection: 75.0% to 79.2% hit, first-place 58.3% to 62.5%; the other sets are unchanged.
+- The `never-run-out` need checks the router first and gives the one command to set it up or start it.
+
+## 3.10.0
+
+- **Needs.** The hive now knows what a model cannot do alone. `capabilities.json` lists eight abilities (3D from images, reading websites, never running out of tokens, finding a free API, generating media, checking work in a browser, remembering, pentesting) with the skills, programs and keys behind each. A task that needs one gets the provider skill attached, the follow-on skills preloaded, and with `--check` the exact install, start or key step that is missing (OmniRoute, FreeLLMAPI and Agent Reach through `apps/sfp_app.py`). `sfp_hive.py needs`, and `needs` and `preload` in `select`, `live` and `select_skills`. Detection costs about 0.1 ms, so it also runs while typing. `docs/NEEDS.md`.
+
 ## 3.9.0
 
 - **Skills follow what you type.** `sfp_hive.py live` takes a half-typed message and returns the skills to attach: it waits for enough words, keeps the list steady while you keep typing the same idea, moves only the skill that no longer fits when the topic shifts, honours your pins and removals, and logs nothing until the message is sent. `src/live.ts` debounces and drops stale answers. `docs/LIVE.md` has the rules and the brief for wiring it to the chat input.

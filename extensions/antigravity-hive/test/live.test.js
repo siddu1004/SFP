@@ -84,3 +84,15 @@ test('the real hive: waits, attaches, keeps, and logs only on send', async () =>
   assert.ok(done.decision);
   assert.strictEqual(fs.readFileSync(path.join(data, 'decisions.jsonl'), 'utf8').trim().split('\n').length, 1);
 });
+
+test('needsArgs asks for the needs of a task, with or without the check', () => {
+  assert.deepStrictEqual(hive.needsArgs('/r', 'read https://x.dev', undefined, true).slice(1), ['needs', 'read https://x.dev', '--json', '--check']);
+  assert.ok(!hive.needsArgs('/r', 't').includes('--check'));
+});
+
+test('the real hive reports a need for a task that cannot be done by the model alone', async () => {
+  process.env.SFP_DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'needs-test-'));
+  const out = JSON.parse(await hive.run(hive.pythonCommand(), hive.needsArgs(REPO, 'turn this photo into a 3d model')));
+  assert.strictEqual(out[0].id, 'make-3d');
+  assert.strictEqual(out[0].attach, 'image-to-3d');
+});
