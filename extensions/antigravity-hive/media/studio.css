@@ -172,16 +172,52 @@ input:focus-visible,
   padding-bottom: var(--grid-2);
 }
 
+.studio-header.collapsed {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
 .studio-title-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+
+.studio-title-bar:hover {
+  opacity: 0.9;
+}
+
+.collapse-chevron-btn {
+  background: transparent;
+  border: none;
+  color: var(--vscode-foreground);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.collapse-chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.15s ease-in-out;
+  transform: rotate(90deg); /* Expanded points down */
+}
+
+.studio-header.collapsed .collapse-chevron {
+  transform: rotate(0deg); /* Collapsed points right */
 }
 
 .studio-brand {
   display: flex;
   align-items: center;
-  gap: var(--grid-2);
+  gap: var(--grid-1);
   font-size: var(--font-md);
   font-weight: 600;
   color: var(--vscode-foreground);

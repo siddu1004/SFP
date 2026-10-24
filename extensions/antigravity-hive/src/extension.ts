@@ -577,8 +577,13 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   public _view?: vscode.WebviewView;
   public liveSession?: LiveSession;
   public lastLiveResult?: hive.LiveResult;
+  public isCollapsed = true;
 
-  constructor(private readonly extensionPath: string) {}
+  constructor(private readonly extensionPath: string) {
+    if (extContext) {
+      this.isCollapsed = extContext.workspaceState?.get<boolean>('sfpHive.stackCollapsed', true) ?? true;
+    }
+  }
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -620,6 +625,12 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       switch (message.command) {
         case 'ready':
           this.syncState();
+          break;
+        case 'toggleCollapse':
+          this.isCollapsed = typeof message.collapsed === 'boolean' ? message.collapsed : !this.isCollapsed;
+          if (extContext) {
+            void extContext.workspaceState?.update('sfpHive.stackCollapsed', this.isCollapsed);
+          }
           break;
         case 'liveType':
           if (config().autoAttach && this.liveSession) {
@@ -790,6 +801,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         track: lastTrackResult,
         follow: config().follow,
         live: this.lastLiveResult,
+        collapsed: this.isCollapsed,
       },
     });
   }
@@ -813,15 +825,18 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   <link rel="stylesheet" href="${styleUri}">
 </head>
 <body>
-  <div class="studio-header">
-    <div class="studio-title-bar">
+  <div class="studio-header ${this.isCollapsed ? 'collapsed' : ''}" id="studio-header">
+    <div class="studio-title-bar" id="studio-title-bar" role="button" tabindex="0" aria-expanded="${!this.isCollapsed}" aria-label="Toggle SFP Hive view">
       <div class="studio-brand">
+        <button class="btn-icon collapse-chevron-btn" id="studio-collapse-btn" aria-label="Toggle view" tabindex="-1">
+          <svg class="collapse-chevron" viewBox="0 0 16 16"><path fill="currentColor" d="M11 8l-5 5-.7-.7L9.6 8 5.3 3.7 6 3z"/></svg>
+        </button>
         <img class="icon" src="${iconUri}" alt="Hive">
         <span>SFP Hive</span>
       </div>
       <div class="studio-badge" id="studio-status-badge">Ready</div>
     </div>
-    <div class="tab-bar" role="tablist" aria-label="SFP Hive Studio Navigation">
+    <div class="tab-bar ${this.isCollapsed ? 'hidden' : ''}" id="studio-tab-bar" role="tablist" aria-label="SFP Hive Studio Navigation">
       <button class="tab-btn active" data-tab="now" role="tab" aria-selected="true" aria-controls="tab-now" id="btn-tab-now" tabindex="0">
         <svg class="tab-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M1 8.5h3.2l1.6-4.5 3.4 9 2.1-5.5H15v-1h-4.2l-1.6 4.2-3.4-9-2.1 6.8H1v1z"/></svg>
         <span>Now</span>
@@ -836,6 +851,8 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       </button>
     </div>
   </div>
+
+  <div class="studio-body ${this.isCollapsed ? 'hidden' : ''}" id="studio-body">
 
   <!-- Tab 1: Now -->
   <div class="tab-content active" id="tab-now" role="tabpanel" aria-labelledby="btn-tab-now">
@@ -1023,6 +1040,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       </div>
     </div>
   </div>
+  </div>
 
   <script nonce="${nonce}" src="${iconsUri}"></script>
   <script nonce="${nonce}" src="${scriptUri}"></script>
@@ -1035,11 +1053,11 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'sfpHive.library';
   public _view?: vscode.WebviewView;
   private _query = '';
-  private _mode: library.GroupMode = 'purpose';
+  private _mode: library.GroupMode = 'bundle';
 
   constructor(private readonly extensionPath: string) {
     if (extContext) {
-      this._mode = extContext.workspaceState?.get<library.GroupMode>('sfpHive.libraryMode', 'purpose') ?? 'purpose';
+      this._mode = extContext.workspaceState?.get<library.GroupMode>('sfpHive.libraryMode', 'bundle') ?? 'bundle';
     }
   }
 
@@ -1215,13 +1233,13 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
       <span id="lib-search-count">Loading skills...</span>
     </div>
     <div class="mode-switch" id="lib-mode-switch" role="radiogroup" aria-label="Skill grouping">
-      <button class="mode-btn active" data-mode="purpose" role="radio" aria-checked="true" tabindex="0">What it does</button>
+      <button class="mode-btn" data-mode="purpose" role="radio" aria-checked="false" tabindex="-1">What it does</button>
       <button class="mode-btn" data-mode="cluster" role="radio" aria-checked="false" tabindex="-1">Clusters</button>
-      <button class="mode-btn" data-mode="bundle" role="radio" aria-checked="false" tabindex="-1">Bundles</button>
+      <button class="mode-btn active" data-mode="bundle" role="radio" aria-checked="true" tabindex="0">Bundles</button>
     </div>
   </div>
 
-  <div class="new-bundle-bar hidden" id="lib-new-bundle-bar">
+  <div class="new-bundle-bar" id="lib-new-bundle-bar">
     <button class="btn-small btn-secondary" id="lib-new-bundle-btn">+ New bundle</button>
   </div>
 

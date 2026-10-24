@@ -16,7 +16,7 @@
     "viewsContainers": {"activitybar": [{"id": "sfpHive", "title": "SFP Hive", "icon": "media/hive.svg"}]},
     "views": {
       "sfpHive": [
-        {"type": "webview", "id": "sfpHive.stack", "name": "SFP Hive"},
+        {"type": "webview", "id": "sfpHive.stack", "name": "SFP Hive", "visibility": "collapsed"},
         {"type": "webview", "id": "sfpHive.library", "name": "Skill Library"}
       ]
     },

@@ -3,7 +3,7 @@
   const vscode = acquireVsCodeApi();
 
   let state = {
-    mode: 'purpose',
+    mode: 'bundle',
     query: '',
     groups: [],
     skills: {},

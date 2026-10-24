@@ -30,6 +30,40 @@
   // Cache DOM elements
   const tabButtons = document.querySelectorAll('.tab-btn');
   const tabContents = document.querySelectorAll('.tab-content');
+  const studioHeader = document.getElementById('studio-header');
+  const studioTitleBar = document.getElementById('studio-title-bar');
+  const studioTabBar = document.getElementById('studio-tab-bar');
+  const studioBody = document.getElementById('studio-body');
+  let isStudioCollapsed = studioHeader ? studioHeader.classList.contains('collapsed') : true;
+
+  function setStudioCollapsed(collapsed) {
+    isStudioCollapsed = collapsed;
+    if (studioHeader) {
+      studioHeader.classList.toggle('collapsed', collapsed);
+    }
+    if (studioTitleBar) {
+      studioTitleBar.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    }
+    if (studioTabBar) {
+      studioTabBar.classList.toggle('hidden', collapsed);
+    }
+    if (studioBody) {
+      studioBody.classList.toggle('hidden', collapsed);
+    }
+    vscode.postMessage({ command: 'toggleCollapse', collapsed });
+  }
+
+  if (studioTitleBar) {
+    studioTitleBar.addEventListener('click', () => {
+      setStudioCollapsed(!isStudioCollapsed);
+    });
+    studioTitleBar.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setStudioCollapsed(!isStudioCollapsed);
+      }
+    });
+  }
 
   function escapeHtml(str) {
     if (!str) return '';
@@ -440,8 +474,16 @@
         if (msg.tab) setTab(msg.tab);
         break;
       }
-      case 'state': {
+      case 'state':
+      case 'updateState': {
         if (msg.payload) {
+          if (typeof msg.payload.collapsed === 'boolean' && msg.payload.collapsed !== isStudioCollapsed) {
+            isStudioCollapsed = msg.payload.collapsed;
+            if (studioHeader) studioHeader.classList.toggle('collapsed', isStudioCollapsed);
+            if (studioTitleBar) studioTitleBar.setAttribute('aria-expanded', isStudioCollapsed ? 'false' : 'true');
+            if (studioTabBar) studioTabBar.classList.toggle('hidden', isStudioCollapsed);
+            if (studioBody) studioBody.classList.toggle('hidden', isStudioCollapsed);
+          }
           if (msg.payload.selection) {
             state.selection = msg.payload.selection;
           }
