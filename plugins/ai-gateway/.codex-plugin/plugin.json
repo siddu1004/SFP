@@ -1,6 +1,6 @@
 {
   "name": "ai-gateway",
-  "version": "3.12.0",
+  "version": "3.13.0",
   "description": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
   "author": {
     "name": "siddu1004"

@@ -1,0 +1,52 @@
+{
+ "cases": [
+  {
+   "task": "make a marketing page for the app launch",
+   "bundle": "ship-a-page"
+  },
+  {
+   "task": "the animations feel janky, polish the motion",
+   "bundle": "polish-motion"
+  },
+  {
+   "task": "review the ui of the onboarding flow and tell me what's wrong",
+   "bundle": "critique-a-ui"
+  },
+  {
+   "task": "write a postgres migration to add an index",
+   "bundle": "postgres-change"
+  },
+  {
+   "task": "do a security review and fix the vulnerabilities",
+   "bundle": "harden-an-app"
+  },
+  {
+   "task": "create an mcp server for our database",
+   "bundle": "mcp-server"
+  },
+  {
+   "task": "what does this codebase do, i'm new to it",
+   "bundle": "join-a-codebase"
+  },
+  {
+   "task": "check dependencies for known vulnerabilities",
+   "bundle": "dependency-audit"
+  },
+  {
+   "task": "ship the new version: release notes and tagging",
+   "bundle": "prepare-release"
+  },
+  {
+   "task": "reduce token usage in my agent prompts",
+   "bundle": "cut-tokens"
+  },
+  {
+   "task": "refactor the payment module to remove duplication",
+   "bundle": null
+  },
+  {
+   "task": "fix the off by one error in pagination",
+   "bundle": null
+  }
+ ]
+}

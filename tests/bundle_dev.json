@@ -1,0 +1,116 @@
+{
+ "cases": [
+  {
+   "task": "build a landing page for our new product and make it look great",
+   "bundle": "ship-a-page"
+  },
+  {
+   "task": "add smooth animations and transitions to the dashboard",
+   "bundle": "polish-motion"
+  },
+  {
+   "task": "give me a critique of this settings screen and what to improve",
+   "bundle": "critique-a-ui"
+  },
+  {
+   "task": "add a new feature to the react app with tests",
+   "bundle": "react-feature"
+  },
+  {
+   "task": "build the checkout screen in flutter",
+   "bundle": "flutter-screen"
+  },
+  {
+   "task": "add an endpoint to the django project",
+   "bundle": "django-feature"
+  },
+  {
+   "task": "add a new route to the fastapi service",
+   "bundle": "fastapi-feature"
+  },
+  {
+   "task": "start a new go service from scratch",
+   "bundle": "go-service"
+  },
+  {
+   "task": "containerize this app and deploy it to kubernetes",
+   "bundle": "containerize-and-deploy"
+  },
+  {
+   "task": "add a column to the orders table and write the migration",
+   "bundle": "postgres-change"
+  },
+  {
+   "task": "harden this app before launch, find security problems and fix them",
+   "bundle": "harden-an-app"
+  },
+  {
+   "task": "build a claude code plugin with a skill and a hook",
+   "bundle": "build-a-plugin"
+  },
+  {
+   "task": "write an mcp server that exposes our internal api",
+   "bundle": "mcp-server"
+  },
+  {
+   "task": "i just joined this team, help me understand the codebase",
+   "bundle": "join-a-codebase"
+  },
+  {
+   "task": "add tests to this legacy code that has none",
+   "bundle": "legacy-tests"
+  },
+  {
+   "task": "write end to end tests for the whole app",
+   "bundle": "e2e-suite"
+  },
+  {
+   "task": "make the signup form accessible",
+   "bundle": "accessible-form"
+  },
+  {
+   "task": "audit our dependencies for vulnerabilities",
+   "bundle": "dependency-audit"
+  },
+  {
+   "task": "prepare the release and write the changelog",
+   "bundle": "prepare-release"
+  },
+  {
+   "task": "this page re-renders too much, make the react app faster",
+   "bundle": "speed-up-react"
+  },
+  {
+   "task": "we burn too many tokens, cut the context cost",
+   "bundle": "cut-tokens"
+  },
+  {
+   "task": "set up a team of agents to work on this in parallel",
+   "bundle": "agent-team"
+  },
+  {
+   "task": "we keep hitting rate limits, use free models so we never run out",
+   "bundle": "keep-going"
+  },
+  {
+   "task": "find a free api for weather data",
+   "bundle": "find-an-api"
+  },
+  {
+   "task": "write unit tests for the parser",
+   "bundle": null
+  },
+  {
+   "task": "rename the user model fields",
+   "bundle": null
+  },
+  {
+   "task": "explain how this recursion works",
+   "bundle": null
+  },
+  {
+   "task": "add a dark mode toggle",
+   "bundle": null
+  }
+ ]
+}

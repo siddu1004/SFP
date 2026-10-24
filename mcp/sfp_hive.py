@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.12.0'
+VERSION = '3.13.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
@@ -619,6 +619,7 @@ def main(argv=None):
     r.add_argument('--explain', action='store_true', help='add each top candidate, its signal votes and why it was or was not taken')
     r.add_argument('--no-needs', action='store_true', help='do not add skills for what the model cannot do alone (3D, web, limits...)')
     r.add_argument('--check', action='store_true', help='also check the programs and keys the needs depend on')
+    r.add_argument('--bundles', choices=['push', 'suggest', 'off'], default='push', help='push a bundle that fits the task whole (default), only suggest it, or ignore bundles')
     r.add_argument('--json', action='store_true')
     f = sub.add_parser('feedback', help='tell the hive what helped, what did not, and what was missing')
     f.add_argument('decision', help='the decision id printed by select, or "last"')
@@ -709,7 +710,7 @@ def main(argv=None):
             else:
                 import sfp_needs
                 res = sfp_needs.decide(a.task, a.project, a.goal, after, a.budget, max(a.max, len(include)), include=include,
-                                       exclude=exclude, explain=a.explain, check=a.check, learn=not a.no_learning)
+                                       exclude=exclude, explain=a.explain, check=a.check, learn=not a.no_learning, bundles=a.bundles)
             if bundle:
                 res['bundle'] = {'id': bundle['id'], 'name': bundle['name']}
         print(json.dumps(res, indent=1) if a.json else format_stack(res))
