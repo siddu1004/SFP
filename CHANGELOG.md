@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.12.0
+
+- **Areas.** `families.json` groups the 40 clusters and 36 bundles into eleven areas (Design and UI, Build apps and services, Test and quality, Security, Ship and run, Prompts and agents, Models and gateways, Run a project, Research and docs, 3D and creative, Business and automation). The `library` payload carries `families`, and every skill, cluster and bundle names its area. Two new bundles: Never run out of tokens, Find the right API.
+- `sfp_hive.py skill NAME` gives everything the skill detail window shows: the full description, when to use it, its area, topic and goals, the bundles it is in and similar skills.
+- Recipe bundle names keep their acronyms ("Critique a UI").
+
 ## 3.11.0
 
 - **A router for your models.** `mcp/sfp_route.py` finds the models running on your machine (Ollama, LM Studio, llama.cpp, Jan, vLLM), adds free and paid providers whose key is set, and serves one OpenAI-compatible endpoint. Each request is sized; local models go first, the weakest one that is strong enough; when a model is rate limited, out of credit, down or too small, it cools down and the next one answers. No dependencies, no keys stored. `docs/ROUTER.md`.
