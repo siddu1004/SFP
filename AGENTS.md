@@ -20,3 +20,9 @@ SFP (Skills for Productivity) collects agent skills from other repos into catego
 - The repo is public. Do not add content from private repos.
 
 After changing sources or categories: run the sync, then `claude plugin validate .`.
+
+## SFP Live Hive Chat Protocol
+Whenever responding to the user in the Antigravity IDE agentic chat:
+1. Run SFP Hive skill selection for the user's task prompt.
+2. Render the active skills banner with prompt delta (`+ Added`, `- Removed`), three-tier layer allocation (`⚡ Base`, `🛡️ Check`, `✨ Finish`), and token budget.
+3. Actively follow and execute the guidance of the selected skills.

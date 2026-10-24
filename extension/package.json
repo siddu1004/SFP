@@ -2,7 +2,7 @@
   "name": "sfp-hive-extension",
   "displayName": "SFP Hive: Dynamic Skill Monitor & Agentic Chat",
   "description": "Real-time AI skill detector, layer-aware monitor and customizer for agentic workflows.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "sfp",
   "engines": {
     "vscode": "^1.80.0"
@@ -36,10 +36,29 @@
         }
       ]
     },
+    "chatParticipants": [
+      {
+        "id": "sfp.hive",
+        "name": "hive",
+        "fullName": "SFP Hive",
+        "description": "Live Skill Monitor and dynamic agentic stack detector",
+        "isDefault": false
+      }
+    ],
     "commands": [
       {
         "command": "sfp.showMonitor",
         "title": "SFP: Focus Skill Monitor",
+        "category": "SFP Hive"
+      },
+      {
+        "command": "sfp.openBesideChat",
+        "title": "SFP: Open Live Skill Monitor Beside Chat",
+        "category": "SFP Hive"
+      },
+      {
+        "command": "sfp.syncEditorSelection",
+        "title": "SFP: Sync Prompt from Active Selection",
         "category": "SFP Hive"
       },
       {

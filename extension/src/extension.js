@@ -366,11 +366,125 @@ function activate(context) {
     })
   );
 
+  // Panel beside chat
+  let besidePanel = null;
+  const openBesideChat = () => {
+    if (besidePanel) {
+      besidePanel.reveal(vscode.ViewColumn.Beside);
+      return;
+    }
+    besidePanel = vscode.window.createWebviewPanel(
+      'sfp.skillMonitorBeside',
+      'SFP Hive: Live Skill Monitor',
+      vscode.ViewColumn.Beside,
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true,
+        localResourceRoots: [context.extensionUri]
+      }
+    );
+    besidePanel.iconPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'icon.svg');
+    besidePanel.webview.html = provider._getHtmlForWebview(besidePanel.webview);
+
+    besidePanel.webview.onDidReceiveMessage(async (message) => {
+      switch (message.command) {
+        case 'ready':
+          besidePanel.webview.postMessage({
+            command: 'updateState',
+            payload: {
+              res: provider._currentRes,
+              diff: null,
+              excluded: Array.from(provider._userExcluded),
+              initialPrompt: provider._currentPrompt
+            }
+          });
+          break;
+        case 'promptChanged':
+          await provider.analyzePrompt(message.text);
+          besidePanel.webview.postMessage({
+            command: 'updateState',
+            payload: {
+              res: provider._currentRes,
+              diff: null,
+              excluded: Array.from(provider._userExcluded),
+              initialPrompt: provider._currentPrompt
+            }
+          });
+          break;
+        case 'toggleSkill':
+          if (message.enabled) {
+            provider._userExcluded.delete(message.skill);
+          } else {
+            provider._userExcluded.add(message.skill);
+          }
+          break;
+        case 'feedback':
+          await provider._recordFeedback(message.decisionId, message.skill, message.verdict);
+          break;
+        case 'copyStack':
+          await provider._copyStack(message.skills);
+          break;
+        case 'train':
+          await provider._trainHive();
+          break;
+      }
+    });
+
+    besidePanel.onDidDispose(() => {
+      besidePanel = null;
+    });
+  };
+
+  // Chat Participant for @hive inside the chat window
+  if (vscode.chat && typeof vscode.chat.createChatParticipant === 'function') {
+    try {
+      const participant = vscode.chat.createChatParticipant('sfp.hive', async (request, chatContext, stream, token) => {
+        stream.progress('Analyzing prompt with SFP Hive...');
+        try {
+          const res = await provider._bridge.selectSkills(request.prompt, sfpRoot);
+          const stack = res.stack || [];
+          const currentNames = new Set(stack.map(s => s.name));
+          const added = [...currentNames].filter(x => !provider._previousSkillNames.has(x));
+          const removed = [...provider._previousSkillNames].filter(x => !currentNames.has(x));
+          provider._previousSkillNames = currentNames;
+          provider._currentRes = res;
+
+          let md = `### 🐝 SFP Hive Live Skill Monitor\n\n`;
+          if (added.length > 0 || removed.length > 0) {
+            md += `**Prompt Skill Delta:**\n`;
+            if (added.length > 0) md += `- **Added:** ${added.map(s => `\`+ ${s}\``).join(', ')}\n`;
+            if (removed.length > 0) md += `- **Removed:** ${removed.map(s => `\`~ ${s}\``).join(', ')}\n`;
+            md += `\n`;
+          }
+
+          md += `**Active Skill Stack (${stack.length} skills, ${res.tokens || 0} tokens):**\n\n`;
+          const base = stack.filter(s => s.layer === 'base');
+          const check = stack.filter(s => s.layer === 'check');
+          const finish = stack.filter(s => s.layer === 'finish');
+
+          if (base.length) md += `* **⚡ Base Layer (Grounding):** ${base.map(s => `\`${s.name}\` (${Math.round(s.score * 100)}%)`).join(', ')}\n`;
+          if (check.length) md += `* **🛡️ Check Layer (Safety):** ${check.map(s => `\`${s.name}\` (${Math.round(s.score * 100)}%)`).join(', ')}\n`;
+          if (finish.length) md += `* **✨ Finish Layer (Review):** ${finish.map(s => `\`${s.name}\` (${Math.round(s.score * 100)}%)`).join(', ')}\n`;
+
+          stream.markdown(md);
+        } catch (err) {
+          stream.markdown(`Failed to select skills: ${err.message}`);
+        }
+      });
+      participant.iconPath = vscode.Uri.joinPath(context.extensionUri, 'media', 'icon.svg');
+      context.subscriptions.push(participant);
+    } catch (e) {
+      console.log('Chat participant registration skipped:', e.message);
+    }
+  }
+
   // Commands
   context.subscriptions.push(
     vscode.commands.registerCommand('sfp.showMonitor', async () => {
       await vscode.commands.executeCommand('sfp.skillMonitor.focus');
     }),
+
+    vscode.commands.registerCommand('sfp.openBesideChat', openBesideChat),
 
     vscode.commands.registerCommand('sfp.syncEditorSelection', async () => {
       await vscode.commands.executeCommand('sfp.skillMonitor.focus');
