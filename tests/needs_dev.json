@@ -1,0 +1,163 @@
+{
+ "cases": [
+  {
+   "task": "turn this photo of my chair into a 3D model for blender",
+   "needs": [
+    "make-3d"
+   ]
+  },
+  {
+   "task": "generate a glb mesh of a low poly tree for the game",
+   "needs": [
+    "make-3d"
+   ]
+  },
+  {
+   "task": "make a 3d printable stl from my sketch",
+   "needs": [
+    "make-3d"
+   ]
+  },
+  {
+   "task": "scrape product prices from these shop pages every day",
+   "needs": [
+    "browse-web"
+   ]
+  },
+  {
+   "task": "read https://example.com/blog/post and summarise it",
+   "needs": [
+    "browse-web"
+   ]
+  },
+  {
+   "task": "get the subtitles of this youtube video",
+   "needs": [
+    "browse-web"
+   ]
+  },
+  {
+   "task": "we keep hitting the rate limit on claude, route to other models",
+   "needs": [
+    "never-run-out"
+   ]
+  },
+  {
+   "task": "use free llm tiers so we never run out of tokens",
+   "needs": [
+    "never-run-out"
+   ]
+  },
+  {
+   "task": "set up omniroute as a gateway for all my tools",
+   "needs": [
+    "never-run-out"
+   ]
+  },
+  {
+   "task": "find a free weather api for my app",
+   "needs": [
+    "find-api"
+   ]
+  },
+  {
+   "task": "is there an api for currency exchange rates",
+   "needs": [
+    "find-api"
+   ]
+  },
+  {
+   "task": "generate an image for the hero section",
+   "needs": [
+    "generate-media"
+   ]
+  },
+  {
+   "task": "create a short video clip from this script with remotion",
+   "needs": [
+    "generate-media"
+   ]
+  },
+  {
+   "task": "click through the checkout flow and take screenshots",
+   "needs": [
+    "see-the-page"
+   ]
+  },
+  {
+   "task": "write playwright e2e tests for login",
+   "needs": [
+    "see-the-page"
+   ]
+  },
+  {
+   "task": "continue from where we left off yesterday on the billing work",
+   "needs": [
+    "remember"
+   ]
+  },
+  {
+   "task": "run a pentest and find vulnerabilities in the staging app",
+   "needs": [
+    "pentest"
+   ]
+  },
+  {
+   "task": "check the login form works in a browser and is accessible",
+   "needs": [
+    "see-the-page"
+   ]
+  },
+  {
+   "task": "scrape the competitor site and then write a free api search for their data",
+   "needs": [
+    "browse-web",
+    "find-api"
+   ]
+  },
+  {
+   "task": "write unit tests for the parser",
+   "needs": []
+  },
+  {
+   "task": "refactor the payment module to remove duplication",
+   "needs": []
+  },
+  {
+   "task": "add a dockerfile and deploy this service to kubernetes",
+   "needs": []
+  },
+  {
+   "task": "fix the off by one error in the pagination",
+   "needs": []
+  },
+  {
+   "task": "write a readme for the project",
+   "needs": []
+  },
+  {
+   "task": "design a settings page with a sidebar",
+   "needs": []
+  },
+  {
+   "task": "add a postgres migration for the orders table",
+   "needs": []
+  },
+  {
+   "task": "explain how this recursion works",
+   "needs": []
+  },
+  {
+   "task": "optimise the slow sql query on the dashboard",
+   "needs": []
+  },
+  {
+   "task": "rename the user model fields and update the serializers",
+   "needs": []
+  },
+  {
+   "task": "review this pull request for readability",
+   "needs": []
+  }
+ ]
+}

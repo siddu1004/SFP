@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.10.0
+
+- **Needs.** The hive now knows what a model cannot do alone. `capabilities.json` lists eight abilities (3D from images, reading websites, never running out of tokens, finding a free API, generating media, checking work in a browser, remembering, pentesting) with the skills, programs and keys behind each. A task that needs one gets the provider skill attached, the follow-on skills preloaded, and with `--check` the exact install, start or key step that is missing (OmniRoute, FreeLLMAPI and Agent Reach through `apps/sfp_app.py`). `sfp_hive.py needs`, and `needs` and `preload` in `select`, `live` and `select_skills`. Detection costs about 0.1 ms, so it also runs while typing. `docs/NEEDS.md`.
+
 ## 3.9.0
 
 - **Skills follow what you type.** `sfp_hive.py live` takes a half-typed message and returns the skills to attach: it waits for enough words, keeps the list steady while you keep typing the same idea, moves only the skill that no longer fits when the topic shifts, honours your pins and removals, and logs nothing until the message is sent. `src/live.ts` debounces and drops stale answers. `docs/LIVE.md` has the rules and the brief for wiring it to the chat input.

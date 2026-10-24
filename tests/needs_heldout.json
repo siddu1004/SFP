@@ -1,0 +1,104 @@
+{
+ "cases": [
+  {
+   "task": "convert these four photos of a shoe into a textured 3d asset",
+   "needs": [
+    "make-3d"
+   ]
+  },
+  {
+   "task": "export the character as fbx and clean the mesh",
+   "needs": [
+    "make-3d"
+   ]
+  },
+  {
+   "task": "open the pricing page of three competitors and compare their plans",
+   "needs": [
+    "browse-web"
+   ]
+  },
+  {
+   "task": "pull the latest posts from reddit about our product",
+   "needs": [
+    "browse-web"
+   ]
+  },
+  {
+   "task": "my quota is gone halfway through the day, find a way to keep going with other providers",
+   "needs": [
+    "never-run-out"
+   ]
+  },
+  {
+   "task": "which public api gives me ip geolocation",
+   "needs": [
+    "find-api"
+   ]
+  },
+  {
+   "task": "make a voiceover audio for the demo",
+   "needs": [
+    "generate-media"
+   ]
+  },
+  {
+   "task": "verify in a real browser that the signup form works with a screenshot",
+   "needs": [
+    "see-the-page"
+   ]
+  },
+  {
+   "task": "what did we decide about the auth design last time",
+   "needs": [
+    "remember"
+   ]
+  },
+  {
+   "task": "scan our web app for sql injection and xss",
+   "needs": [
+    "pentest"
+   ]
+  },
+  {
+   "task": "write a go function that merges two sorted slices",
+   "needs": []
+  },
+  {
+   "task": "add caching to the users endpoint",
+   "needs": []
+  },
+  {
+   "task": "write a changelog entry for the release",
+   "needs": []
+  },
+  {
+   "task": "make the table sortable and add pagination controls",
+   "needs": []
+  },
+  {
+   "task": "clean up the git history before merging",
+   "needs": []
+  },
+  {
+   "task": "convert the csv importer to stream rows instead of loading everything",
+   "needs": []
+  },
+  {
+   "task": "add dark mode to the settings screen",
+   "needs": []
+  },
+  {
+   "task": "investigate why the build is slow on ci",
+   "needs": []
+  },
+  {
+   "task": "create a terraform module for the vpc",
+   "needs": []
+  },
+  {
+   "task": "document the public functions in utils",
+   "needs": []
+  }
+ ]
+}

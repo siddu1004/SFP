@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "3.9.0",
+  "version": "3.10.0",
   "description": "Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, NestJS, Rails, Postgres, Redis, Prisma).",
   "author": {
     "name": "siddu1004"

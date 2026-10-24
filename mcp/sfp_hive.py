@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.9.0'
+VERSION = '3.10.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
@@ -614,6 +614,8 @@ def main(argv=None):
     r.add_argument('--exclude', default='', help='comma-separated skills to rule out')
     r.add_argument('--bundle', default='', help='pin all the skills of a bundle (an id or a name from `library`)')
     r.add_argument('--explain', action='store_true', help='add each top candidate, its signal votes and why it was or was not taken')
+    r.add_argument('--no-needs', action='store_true', help='do not add skills for what the model cannot do alone (3D, web, limits...)')
+    r.add_argument('--check', action='store_true', help='also check the programs and keys the needs depend on')
     r.add_argument('--json', action='store_true')
     f = sub.add_parser('feedback', help='tell the hive what helped, what did not, and what was missing')
     f.add_argument('decision', help='the decision id printed by select, or "last"')
@@ -660,6 +662,11 @@ def main(argv=None):
     ca.add_argument('--description', default='')
     cr = sub.add_parser('cluster-remove', help='remove a cluster of your own')
     cr.add_argument('name')
+    nd = sub.add_parser('needs', help='what a task needs that the model cannot do alone, and what is missing for it')
+    nd.add_argument('task')
+    nd.add_argument('--project')
+    nd.add_argument('--check', action='store_true', help='check the programs and keys (runs their --version)')
+    nd.add_argument('--json', action='store_true')
     lv = sub.add_parser('live', help='attach skills to a message while it is being typed')
     lv.add_argument('draft')
     lv.add_argument('--state', default='', help='the state a previous call printed, as JSON')
@@ -689,8 +696,14 @@ def main(argv=None):
                 if not bundle:
                     raise SystemExit('no bundle %r. `sfp_hive.py bundles` lists them.' % a.bundle)
                 include = list(dict.fromkeys(bundle['skills'] + include))
-            res = sfp_learn.decide(a.task, a.project, a.goal, after, a.budget, max(a.max, len(include)), learn=not a.no_learning,
-                                   include=include, exclude=[x.strip() for x in a.exclude.split(',') if x.strip()], explain=a.explain)
+            exclude = [x.strip() for x in a.exclude.split(',') if x.strip()]
+            if a.no_needs:
+                res = sfp_learn.decide(a.task, a.project, a.goal, after, a.budget, max(a.max, len(include)), learn=not a.no_learning,
+                                       include=include, exclude=exclude, explain=a.explain)
+            else:
+                import sfp_needs
+                res = sfp_needs.decide(a.task, a.project, a.goal, after, a.budget, max(a.max, len(include)), include=include,
+                                       exclude=exclude, explain=a.explain, check=a.check, learn=not a.no_learning)
             if bundle:
                 res['bundle'] = {'id': bundle['id'], 'name': bundle['name']}
         print(json.dumps(res, indent=1) if a.json else format_stack(res))
@@ -720,6 +733,11 @@ def main(argv=None):
                 print('Next, likely: ' + ', '.join('%s %.0f%%' % (n['phase'], 100 * n['probability']) for n in res['next']))
             for c in res.get('skills', []):
                 print('  %s (%s)' % (c['name'], c['phase']))
+    elif a.cmd == 'needs':
+        import sfp_needs
+        terms = list(scan(a.project).get('terms', {})) if a.project else []
+        found = sfp_needs.needs(a.task, terms, check=a.check)
+        print(json.dumps(found, indent=1) if a.json else sfp_needs.format_needs(found))
     elif a.cmd == 'live':
         import sfp_live
         split = lambda v: [x.strip() for x in v.split(',') if x.strip()]
