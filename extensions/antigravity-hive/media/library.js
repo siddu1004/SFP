@@ -1,32 +1,35 @@
-// SFP Skill Library Sidebar View Script
+// SFP Skill Library sidebar. The extension host does the search and the grouping (src/library.ts); this file only draws
+// what it is sent and posts what the user does. Every dynamic string goes through escapeHtml.
 (function () {
   const vscode = acquireVsCodeApi();
 
+  const MODES = ['family', 'purpose', 'bundle', 'cluster'];
   let state = {
-    mode: 'bundle',
+    mode: 'family',
     query: '',
     groups: [],
     skills: {},
+    families: [],
     purposes: [],
     clusters: [],
     bundles: [],
     summary: null,
-    totalCount: 819,
-    matchCount: 819,
-    hitsMap: new Map(), // name -> Hit
-    collapsedGroups: new Set(),
+    totalCount: 0,
+    matchCount: 0,
+    hitsMap: new Map(),
+    open: new Set(), // ids of the groups, bundles and clusters the user opened
     error: null,
     loading: true,
   };
+  try {
+    const saved = vscode.getState();
+    if (saved && Array.isArray(saved.open)) state.open = new Set(saved.open);
+  } catch (e) { /* no saved state */ }
+  const remember = () => { try { vscode.setState({ open: [...state.open] }); } catch (e) { /* ignore */ } };
 
   function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+    if (str === undefined || str === null) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   function highlightName(name, marks) {
@@ -34,28 +37,27 @@
     let res = '';
     let last = 0;
     for (const [start, end] of marks) {
-      if (start > last) {
-        res += escapeHtml(name.slice(last, start));
-      }
+      if (start > last) res += escapeHtml(name.slice(last, start));
       res += `<mark>${escapeHtml(name.slice(start, end))}</mark>`;
       last = end;
     }
-    if (last < name.length) {
-      res += escapeHtml(name.slice(last));
-    }
+    if (last < name.length) res += escapeHtml(name.slice(last));
     return res;
   }
 
-  // Icons
   const ICONS = {
-    chevron: '<svg class="group-chevron" viewBox="0 0 16 16"><path fill="currentColor" d="M11 8l-5 5-.7-.7L9.6 8 5.3 3.7 6 3z"/></svg>',
-    refresh: '<svg viewBox="0 0 16 16"><path fill="currentColor" d="M13.6 2.4A7 7 0 1 0 15 8h-1.5a5.5 5.5 0 1 1-1.1-4.4L10 6h5V1l-1.4 1.4z"/></svg>',
-    folder: '<svg class="group-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14.5 3H7.7L6.3 1.5H1.5C.7 1.5 0 2.2 0 3v10c0 .8.7 1.5 1.5 1.5h13c.8 0 1.5-.7 1.5-1.5V4.5c0-.8-.7-1.5-1.5-1.5zm.5 10c0 .3-.2.5-.5.5h-13c-.3 0-.5-.2-.5-.5V3c0-.3.2-.5.5-.5h4.4l1.4 1.5h6.7c.3 0 .5.2.5.5v8.5z"/></svg>',
-    package: '<svg class="group-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8.5 1.1l6 3.5v7l-6 3.5-6-3.5v-7l6-3.5zm0 1.2L3.5 5.2 8.5 8l5-2.8-5-2.9zM2.5 6.4v5.3l5 2.9V9.3l-5-2.9zm11 0l-5 2.9v5.3l5-2.9V6.4z"/></svg>',
-    purposeDefault: '<svg class="group-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13A6 6 0 1 1 8 2a6 6 0 0 1 0 12z"/></svg>',
+    chevron: '<svg class="chevron" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M6 3.5l5 4.5-5 4.5-.8-.9L9.3 8 5.2 4.4z"/></svg>',
+    info: '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13A6 6 0 1 1 8 2a6 6 0 0 1 0 12zm-.5-8.5h1V7h-1V5.5zm0 2.5h1v4h-1V8z"/></svg>',
+    pin: '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M10.7 1.3l4 4-1 .7-1 3.6 1 1-.7.7-3-3-4.6 4.6-.7-.7L9.3 8.3l-3-3 .7-.7 1 1 3.6-1 .7-1.7z"/></svg>',
+    plus: '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7.5 3h1v4.5H13v1H8.5V13h-1V8.5H3v-1h4.5V3z"/></svg>',
+    stack: '<svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M8 1.5l6.5 3.2L8 8 1.5 4.7 8 1.5zm-5.8 6L8 10.4l5.8-2.9.4.8L8 11.5 1.8 8.3l.4-.8zm0 3L8 13.4l5.8-2.9.4.8L8 14.5 1.8 11.3l.4-.8z"/></svg>',
   };
-
   const PURPOSE_ICONS = {
+    'tools': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14.6 3.4l-2.2 2.2-1.9-.5-.5-1.9 2.2-2.2a4 4 0 0 0-4.9 5.1L1.5 11.7a1.4 1.4 0 0 0 2 2l5.7-5.8a4 4 0 0 0 5.4-4.5z"/></svg>',
+    'sparkle': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M7 1l1.4 4.6L13 7l-4.6 1.4L7 13 5.6 8.4 1 7l4.6-1.4L7 1zm6 8l.7 2.3L16 12l-2.3.7L13 15l-.7-2.3L10 12l2.3-.7L13 9z"/></svg>',
+    'plug': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M5 1v4H4v3a4 4 0 0 0 3 3.9V15h2v-3.1A4 4 0 0 0 12 8V5h-1V1h-1.5v4h-3V1H5z"/></svg>',
+    'package': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8.5 1.1l6 3.5v7l-6 3.5-6-3.5v-7l6-3.5zm0 1.2L3.5 5.2 8.5 8l5-2.8-5-2.9zM2.5 6.4v5.3l5 2.9V9.3l-5-2.9zm11 0l-5 2.9v5.3l5-2.9V6.4z"/></svg>',
+    'account': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1c-3 0-5.5 1.6-5.5 4v1.5h11V13c0-2.4-2.5-4-5.5-4z"/></svg>',
     'symbol-color': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1a7 7 0 0 0-7 7c0 2.4 1.2 4.5 3 5.7V12a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1V9a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v.5a.5.5 0 0 0 1 0V9a3 3 0 0 0-3-3h-.5A2.5 2.5 0 0 1 7 3.5V2.1A6.98 6.98 0 0 0 8 1z"/></svg>',
     'code': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M4.7 3.3L1 7l3.7 3.7.7-.7L2.4 7l3-3-.7-.7zm6.6 0l-.7.7 3 3-3 3 .7.7L15 7l-3.7-3.7zM9.1 2l-3.5 12h1.1l3.5-12H9.1z"/></svg>',
     'beaker': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14.5 13.5L10 4V2h1V1H5v1h1v2L1.5 13.5A1.5 1.5 0 0 0 2.8 15h10.4a1.5 1.5 0 0 0 1.3-1.5zM6.8 5l3.2 6.8H2.8L6 5.2V2h4v3.2L6.8 5z"/></svg>',
@@ -86,422 +88,293 @@
     'business': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14 4h-3V2a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zM6 2h4v2H6V2zm8 4l-6 3.5L2 6V5h12v1zm0 7H2V7.2l6 3.5 6-3.5V13z"/></svg>',
   };
 
-  function getPurposeIcon(purposeId) {
-    if (!purposeId) return ICONS.purposeDefault;
-    const p = (state.purposes || []).find((x) => x.id === purposeId);
-    const iconName = p?.icon || purposeId;
-    return PURPOSE_ICONS[iconName] || PURPOSE_ICONS[purposeId] || ICONS.purposeDefault;
-  }
+  const iconFor = (name) => PURPOSE_ICONS[name] || PURPOSE_ICONS.package;
+  const $ = (id) => document.getElementById(id);
+  const searchInput = $('lib-search-input');
+  const searchClearBtn = $('lib-search-clear');
+  const searchCountBadge = $('lib-search-count');
+  const modeSwitch = $('lib-mode-switch');
+  const groupsContainer = $('lib-groups-container');
+  const newBundleBar = $('lib-new-bundle-bar');
+  const footerCounts = $('lib-footer-counts');
+  const stateLoading = $('lib-state-loading');
+  const stateEmpty = $('lib-state-empty');
+  const stateError = $('lib-state-error');
 
-  // DOM Elements
-  const searchInput = document.getElementById('lib-search-input');
-  const searchClearBtn = document.getElementById('lib-search-clear');
-  const searchCountBadge = document.getElementById('lib-search-count');
-  const modeSwitch = document.getElementById('lib-mode-switch');
-  const modeBtns = document.querySelectorAll('.mode-btn');
-  const groupsContainer = document.getElementById('lib-groups-container');
-  const newBundleBar = document.getElementById('lib-new-bundle-bar');
-  const newBundleBtn = document.getElementById('lib-new-bundle-btn');
-  const footerCounts = document.getElementById('lib-footer-counts');
-  const footerRefreshBtn = document.getElementById('lib-refresh-btn');
-  const stateLoading = document.getElementById('lib-state-loading');
-  const stateEmpty = document.getElementById('lib-state-empty');
-  const stateError = document.getElementById('lib-state-error');
-  const stateErrorMsg = document.getElementById('lib-error-msg');
-  const stateErrorBtn = document.getElementById('lib-error-btn');
+  const accentOf = (familyId) => {
+    const i = (state.families || []).findIndex((f) => f.id === familyId);
+    return i < 0 ? 0 : (i % 7) + 1;
+  };
+  const purposeName = (id) => ((state.purposes || []).find((p) => p.id === id) || {}).name || id || '';
+  const clusterName = (id) => ((state.clusters || []).find((c) => c.id === id) || {}).name || id || '';
+  const searching = () => Boolean(state.query && state.query.trim());
 
-  // Debounced search
+  // ---- input
   let searchTimeout = null;
-  if (searchInput) {
-    searchInput.addEventListener('input', () => {
-      const q = searchInput.value;
-      if (searchClearBtn) {
-        if (q.length > 0) searchClearBtn.classList.remove('hidden');
-        else searchClearBtn.classList.add('hidden');
-      }
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        state.query = q;
-        vscode.postMessage({ command: 'search', query: q, mode: state.mode });
-      }, 80);
-    });
-
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        searchInput.value = '';
-        state.query = '';
-        if (searchClearBtn) searchClearBtn.classList.add('hidden');
-        vscode.postMessage({ command: 'search', query: '', mode: state.mode });
-        e.preventDefault();
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        const firstBtn = groupsContainer.querySelector('button, [tabindex="0"]');
-        if (firstBtn) firstBtn.focus();
-      }
-    });
-  }
-
-  if (searchClearBtn) {
-    searchClearBtn.addEventListener('click', () => {
-      if (searchInput) {
-        searchInput.value = '';
-        searchInput.focus();
-      }
-      state.query = '';
-      searchClearBtn.classList.add('hidden');
-      vscode.postMessage({ command: 'search', query: '', mode: state.mode });
-    });
-  }
-
-  // Mode segmented switch
-  if (modeSwitch) {
-    modeSwitch.addEventListener('click', (e) => {
-      const btn = e.target.closest('.mode-btn');
-      if (!btn) return;
-      const targetMode = btn.getAttribute('data-mode');
-      if (targetMode === state.mode) return;
-      setMode(targetMode);
-    });
-
-    modeSwitch.addEventListener('keydown', (e) => {
-      const activeBtn = document.activeElement;
-      if (!activeBtn || !activeBtn.classList.contains('mode-btn')) return;
-      const modes = ['purpose', 'cluster', 'bundle'];
-      let idx = modes.indexOf(state.mode);
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        idx = (idx + 1) % modes.length;
-        setMode(modes[idx]);
-        const nextBtn = document.querySelector(`.mode-btn[data-mode="${modes[idx]}"]`);
-        if (nextBtn) nextBtn.focus();
-        e.preventDefault();
-      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        idx = (idx - 1 + modes.length) % modes.length;
-        setMode(modes[idx]);
-        const prevBtn = document.querySelector(`.mode-btn[data-mode="${modes[idx]}"]`);
-        if (prevBtn) prevBtn.focus();
-        e.preventDefault();
-      }
-    });
-  }
-
-  function setMode(newMode) {
-    state.mode = newMode;
-    modeBtns.forEach((b) => {
-      const active = b.getAttribute('data-mode') === newMode;
-      b.classList.toggle('active', active);
-      b.setAttribute('aria-checked', active ? 'true' : 'false');
-      b.setAttribute('tabindex', active ? '0' : '-1');
-    });
-    if (newBundleBar) {
-      if (newMode === 'bundle') newBundleBar.classList.remove('hidden');
-      else newBundleBar.classList.add('hidden');
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value;
+    searchClearBtn.classList.toggle('hidden', q.length === 0);
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      state.query = q;
+      vscode.postMessage({ command: 'search', query: q, mode: state.mode });
+    }, 80);
+  });
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      clearSearch();
+      e.preventDefault();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      const first = groupsContainer.querySelector('button, [tabindex="0"]');
+      if (first) first.focus();
     }
-    vscode.postMessage({ command: 'switchMode', mode: newMode, query: state.query });
+  });
+  function clearSearch() {
+    searchInput.value = '';
+    state.query = '';
+    searchClearBtn.classList.add('hidden');
+    vscode.postMessage({ command: 'search', query: '', mode: state.mode });
   }
+  searchClearBtn.addEventListener('click', () => { clearSearch(); searchInput.focus(); });
 
-  if (newBundleBtn) {
-    newBundleBtn.addEventListener('click', () => {
-      vscode.postMessage({ command: 'newBundle' });
+  function setMode(mode) {
+    state.mode = mode;
+    paintModes();
+    vscode.postMessage({ command: 'switchMode', mode, query: state.query });
+  }
+  function paintModes() {
+    modeSwitch.querySelectorAll('.mode-btn').forEach((b) => {
+      const on = b.getAttribute('data-mode') === state.mode;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+      b.setAttribute('tabindex', on ? '0' : '-1');
     });
+    newBundleBar.classList.toggle('hidden', state.mode !== 'bundle');
   }
+  modeSwitch.addEventListener('click', (e) => {
+    const btn = e.target.closest('.mode-btn');
+    if (btn && btn.getAttribute('data-mode') !== state.mode) setMode(btn.getAttribute('data-mode'));
+  });
+  modeSwitch.addEventListener('keydown', (e) => {
+    const step = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+    if (!step && e.key !== 'Home' && e.key !== 'End') return;
+    let i = MODES.indexOf(state.mode);
+    i = e.key === 'Home' ? 0 : e.key === 'End' ? MODES.length - 1 : (i + step + MODES.length) % MODES.length;
+    setMode(MODES[i]);
+    const b = modeSwitch.querySelector(`.mode-btn[data-mode="${MODES[i]}"]`);
+    if (b) b.focus();
+    e.preventDefault();
+  });
+  $('lib-new-bundle-btn').addEventListener('click', () => vscode.postMessage({ command: 'newBundle' }));
+  $('lib-refresh-btn').addEventListener('click', () => { showLoading(true); vscode.postMessage({ command: 'refresh' }); });
+  $('lib-error-btn').addEventListener('click', () => vscode.postMessage({ command: 'openSettings' }));
 
-  if (footerRefreshBtn) {
-    footerRefreshBtn.addEventListener('click', () => {
-      showLoading(true);
-      vscode.postMessage({ command: 'refresh' });
-    });
-  }
-
-  if (stateErrorBtn) {
-    stateErrorBtn.addEventListener('click', () => {
-      vscode.postMessage({ command: 'openSettings' });
-    });
-  }
-
-  // Delegated events for groups and actions
-  if (groupsContainer) {
-    groupsContainer.addEventListener('click', (e) => {
-      const header = e.target.closest('.group-header');
-      if (header) {
-        const section = header.closest('.group-section');
-        if (section) {
-          const groupId = section.getAttribute('data-group-id');
-          section.classList.toggle('collapsed');
-          const isCollapsed = section.classList.contains('collapsed');
-          header.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
-          if (isCollapsed) state.collapsedGroups.add(groupId);
-          else state.collapsedGroups.delete(groupId);
-        }
-        return;
-      }
-
-      const btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      const action = btn.getAttribute('data-action');
-      const skill = btn.getAttribute('data-skill');
-      const bundleId = btn.getAttribute('data-bundle');
-
-      switch (action) {
-        case 'openSkill':
-          if (skill) vscode.postMessage({ command: 'openSkill', skill });
-          break;
-        case 'pinSkill':
-          if (skill) vscode.postMessage({ command: 'pinSkill', skill });
-          break;
-        case 'addToBundle':
-          if (skill) vscode.postMessage({ command: 'addToBundle', skill });
-          break;
-        case 'applyBundle':
-          if (bundleId) vscode.postMessage({ command: 'applyBundle', bundleId });
-          break;
-        case 'copyPrompt':
-          if (bundleId) vscode.postMessage({ command: 'copyPrompt', bundleId });
-          break;
-        case 'editBundle':
-          if (bundleId) vscode.postMessage({ command: 'editBundle', bundleId });
-          break;
-        case 'deleteBundle':
-          if (bundleId) vscode.postMessage({ command: 'deleteBundle', bundleId });
-          break;
-      }
-    });
-  }
-
-  function showLoading(show) {
-    state.loading = show;
-    if (stateLoading) {
-      if (show) stateLoading.classList.remove('hidden');
-      else stateLoading.classList.add('hidden');
-    }
-  }
-
-  function renderView() {
-    showLoading(false);
-
-    if (state.error) {
-      if (stateError) {
-        stateError.classList.remove('hidden');
-        if (stateErrorMsg) stateErrorMsg.textContent = state.error;
-      }
-      if (groupsContainer) groupsContainer.innerHTML = '';
-      if (stateEmpty) stateEmpty.classList.add('hidden');
+  groupsContainer.addEventListener('click', (e) => {
+    const act = e.target.closest('[data-action]');
+    if (act) {
+      const a = act.getAttribute('data-action');
+      const skill = act.getAttribute('data-skill');
+      const bundleId = act.getAttribute('data-bundle');
+      if (a === 'toggle') return toggle(act.getAttribute('data-id'));
+      if (skill && ['openDetail', 'openSkill', 'pinSkill', 'addToBundle'].includes(a)) vscode.postMessage({ command: a, skill });
+      else if (bundleId && ['applyBundle', 'copyPrompt', 'editBundle', 'deleteBundle'].includes(a)) vscode.postMessage({ command: a, bundleId });
+      e.stopPropagation();
       return;
     }
-
-    if (stateError) stateError.classList.add('hidden');
-
-    // Update search count
-    if (searchCountBadge) {
-      if (state.query && state.query.trim().length > 0) {
-        searchCountBadge.textContent = `${state.matchCount} of ${state.totalCount}`;
-      } else {
-        searchCountBadge.textContent = `${state.totalCount} skills`;
-      }
+    const row = e.target.closest('.skill-row');
+    if (row) vscode.postMessage({ command: 'openDetail', skill: row.getAttribute('data-skill') });
+  });
+  groupsContainer.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.classList.contains('skill-row')) {
+      vscode.postMessage({ command: 'openDetail', skill: e.target.getAttribute('data-skill') });
     }
+  });
 
-    // Check empty results
-    const hasResults = state.groups && state.groups.some((g) => g.skills && g.skills.length > 0);
-    if (!hasResults) {
-      if (stateEmpty) stateEmpty.classList.remove('hidden');
-      if (groupsContainer) groupsContainer.innerHTML = '';
-    } else {
-      if (stateEmpty) stateEmpty.classList.add('hidden');
-      renderGroups();
+  function toggle(id) {
+    if (state.open.has(id)) state.open.delete(id);
+    else state.open.add(id);
+    remember();
+    renderGroups();
+    const el = groupsContainer.querySelector(`[data-id="${CSS.escape(id)}"]`);
+    if (el) el.focus();
+  }
+  const isOpen = (id) => searching() || state.open.has(id);
+
+  function showLoading(on) {
+    state.loading = on;
+    stateLoading.classList.toggle('hidden', !on);
+  }
+
+  // ---- drawing
+  function renderView() {
+    showLoading(false);
+    paintModes();
+    if (state.error) {
+      stateError.classList.remove('hidden');
+      $('lib-error-msg').textContent = state.error;
+      groupsContainer.innerHTML = '';
+      stateEmpty.classList.add('hidden');
+      return;
     }
-
-    // Footer counts
-    if (footerCounts && state.summary) {
+    stateError.classList.add('hidden');
+    searchCountBadge.textContent = searching() ? `${state.matchCount} of ${state.totalCount} skills` : `${state.totalCount} skills`;
+    const any = state.groups.some((g) => (g.skills && g.skills.length) || (g.bundles && g.bundles.length));
+    stateEmpty.classList.toggle('hidden', any);
+    if (!any) { groupsContainer.innerHTML = ''; } else { renderGroups(); }
+    if (state.summary) {
       const s = state.summary;
-      footerCounts.textContent = `${s.skills} skills · ${s.used} used · ${s.purposes} purposes · ${s.clusters} clusters · ${s.bundles} bundles`;
+      footerCounts.textContent = `${s.skills} skills · ${s.bundles} bundles · ${s.used} used`;
     }
   }
 
   function renderGroups() {
-    if (!groupsContainer) return;
-    const isSearching = Boolean(state.query && state.query.trim().length > 0);
-
-    const html = state.groups
-      .filter((g) => g.skills && g.skills.length > 0)
-      .map((g) => {
-        // While searching, expand matching groups; otherwise respect user collapse
-        const isCollapsed = isSearching ? false : state.collapsedGroups.has(g.id);
-        const countText = isSearching ? `${g.skills.length} of ${g.total}` : `${g.total}`;
-
-        let iconSvg = ICONS.purposeDefault;
-        if (state.mode === 'cluster') iconSvg = ICONS.folder;
-        else if (state.mode === 'bundle') iconSvg = ICONS.package;
-
-        let contentHtml = '';
-        if (state.mode === 'bundle') {
-          contentHtml = renderBundleCards(g);
-        } else {
-          contentHtml = renderSkillRows(g.skills);
-        }
-
-        return `
-          <div class="group-section ${isCollapsed ? 'collapsed' : ''}" data-group-id="${escapeHtml(g.id)}">
-            <button class="group-header" aria-expanded="${isCollapsed ? 'false' : 'true'}" title="${escapeHtml(g.description || g.name)}">
-              ${ICONS.chevron}
-              ${iconSvg}
-              <span class="group-title">${escapeHtml(g.name)}</span>
-              <span class="group-count">${escapeHtml(countText)}</span>
-            </button>
-            <div class="group-content">
-              ${contentHtml}
-            </div>
-          </div>
-        `;
-      })
-      .join('');
-
+    let html = '';
+    let lastFamily = null;
+    for (const g of state.groups) {
+      if (!((g.skills && g.skills.length) || (g.bundles && g.bundles.length))) continue;
+      if ((state.mode === 'bundle' || state.mode === 'cluster') && g.family !== lastFamily) {
+        lastFamily = g.family;
+        const f = state.families.find((x) => x.id === g.family);
+        if (f) html += `<div class="area-heading" data-accent="${accentOf(f.id)}">${iconFor(f.icon)}<span>${escapeHtml(f.name)}</span></div>`;
+      }
+      html += state.mode === 'family' ? renderFamily(g) : state.mode === 'bundle' ? renderBundle(g.bundle, true) : renderPlainGroup(g);
+    }
     groupsContainer.innerHTML = html;
   }
 
-  function renderSkillRows(skillNames) {
-    return skillNames
-      .map((name) => {
-        const skill = state.skills[name] || { d: '', category: '', cluster: '', purpose: '' };
-        const hit = state.hitsMap.get(name);
-        const marks = hit ? hit.marks : undefined;
-        const highlightedName = highlightName(name, marks);
+  const countText = (g) => (searching() ? `${g.skills.length} of ${g.total}` : `${g.total}`);
 
-        const purposeObj = state.purposes.find((p) => p.id === skill.purpose);
-        const purposeName = purposeObj ? purposeObj.name : skill.purpose;
-        const clusterObj = state.clusters.find((c) => c.id === skill.cluster);
-        const clusterName = clusterObj ? clusterObj.name : skill.cluster;
-
-        let usageHtml = '';
-        if (skill.usage && skill.usage.chosen > 0) {
-          const helpedStr = skill.usage.helped ? `, helped ${skill.usage.helped}` : '';
-          usageHtml = `<span class="usage-mark" title="Chosen ${skill.usage.chosen} times${helpedStr}">chosen ${skill.usage.chosen}${helpedStr}</span>`;
-        }
-
-        let appHtml = '';
-        if (skill.app) {
-          appHtml = `<span class="badge badge-app" title="Requires program: ${escapeHtml(skill.app)}">needs ${escapeHtml(skill.app)}</span>`;
-        }
-
-        return `
-          <div class="skill-row" tabindex="0">
-            <div class="skill-row-top">
-              <span class="skill-name" title="${escapeHtml(name)}">${highlightedName}</span>
-              <div class="skill-actions">
-                <button class="btn-small btn-secondary" data-action="openSkill" data-skill="${escapeHtml(name)}" title="Open SKILL.md">Open</button>
-                <button class="btn-small btn-secondary" data-action="pinSkill" data-skill="${escapeHtml(name)}" title="Pin to current task">Pin</button>
-                <button class="btn-small btn-secondary" data-action="addToBundle" data-skill="${escapeHtml(name)}" title="Add to bundle...">+ Bundle</button>
-              </div>
-            </div>
-            <div class="skill-desc" title="${escapeHtml(skill.d)}">${escapeHtml(skill.d)}</div>
-            <div class="skill-meta">
-              <span class="badge badge-purpose" title="Purpose: ${escapeHtml(purposeName)}">${escapeHtml(purposeName)}</span>
-              <span class="badge badge-cluster" title="Cluster: ${escapeHtml(clusterName)}">${escapeHtml(clusterName)}</span>
-              ${appHtml}
-              ${usageHtml}
-            </div>
-          </div>
-        `;
-      })
-      .join('');
-  }
-
-  function renderBundleCards(group) {
-    const bundle = group.bundle;
-    if (!bundle) return renderSkillRows(group.skills);
-
-    const isMine = Boolean(bundle.mine);
-    const mineBadge = isMine ? '<span class="badge badge-mine">yours</span>' : '';
-    const purposeSvg = getPurposeIcon(bundle.purpose);
-    const purposeName = (state.purposes || []).find((p) => p.id === bundle.purpose)?.name || bundle.purpose || '';
-    const chipsHtml = (bundle.skills || [])
-      .map((s, idx) => `<span class="bundle-chip" title="Step ${idx + 1}: ${escapeHtml(s)}"><span class="chip-num">${idx + 1}</span>${escapeHtml(s)}</span>`)
-      .join('');
-
-    const mineActions = isMine
-      ? `<button class="btn-small btn-secondary" data-action="editBundle" data-bundle="${escapeHtml(bundle.id)}">Edit</button>
-         <button class="btn-small btn-danger" data-action="deleteBundle" data-bundle="${escapeHtml(bundle.id)}">Delete</button>`
+  function renderFamily(g) {
+    const open = isOpen('f:' + g.id);
+    const bundles = (g.bundles || []);
+    const topics = (g.children || []).filter((c) => c.skills && c.skills.length);
+    const body = open
+      ? `<div class="area-body">
+          ${bundles.length ? `<div class="section-label">Bundles</div>${bundles.map((b) => renderBundle(b, false)).join('')}` : ''}
+          ${topics.length ? `<div class="section-label">Skills</div>${topics.map((c) => renderPlainGroup(c, true)).join('')}` : ''}
+        </div>`
       : '';
-
+    const sub = `${g.total}`;
     return `
-      <div class="bundle-card" tabindex="0">
-        <div class="bundle-top">
-          <span class="bundle-title">
-            <span class="bundle-purpose-icon" title="Purpose: ${escapeHtml(purposeName)}">${purposeSvg}</span>
-            <strong>${escapeHtml(bundle.name)}</strong>
-            ${mineBadge}
+      <section class="area ${open ? 'open' : ''}" data-accent="${accentOf(g.id)}">
+        <button class="area-head" data-action="toggle" data-id="f:${escapeHtml(g.id)}" aria-expanded="${open}" title="${escapeHtml(g.blurb || '')}">
+          <span class="area-icon">${iconFor(g.icon)}</span>
+          <span class="area-text">
+            <span class="area-name">${escapeHtml(g.name)}</span>
+            <span class="area-blurb">${escapeHtml(g.blurb || '')}</span>
           </span>
-          <span class="bundle-tokens">~${escapeHtml(String(bundle.tokens))} tokens</span>
-        </div>
-        <div class="bundle-goal">${escapeHtml(bundle.goal)}</div>
-        ${bundle.when ? `<div class="bundle-when">${escapeHtml(bundle.when)}</div>` : ''}
-        <div class="bundle-chips">${chipsHtml}</div>
-        <div class="bundle-actions">
-          <button class="btn-small btn-primary" data-action="applyBundle" data-bundle="${escapeHtml(bundle.id)}">Apply</button>
-          <button class="btn-small btn-secondary" data-action="copyPrompt" data-bundle="${escapeHtml(bundle.id)}">Copy prompt</button>
-          ${mineActions}
-        </div>
-      </div>
-    `;
+          <span class="area-meta">${escapeHtml(searching() ? `${g.skills.length} of ${g.total}` : sub)}</span>
+          ${ICONS.chevron}
+        </button>
+        ${body}
+      </section>`;
   }
 
-  // Receive messages from extension host
+  function renderPlainGroup(g, nested) {
+    const id = (nested ? 'c:' : 'g:') + g.id;
+    const open = isOpen(id);
+    const icon = state.mode === 'purpose' ? `<span class="group-icon">${iconFor(g.icon)}</span>` : '';
+    return `
+      <div class="group ${open ? 'open' : ''} ${nested ? 'nested' : ''}">
+        <button class="group-head" data-action="toggle" data-id="${escapeHtml(id)}" aria-expanded="${open}" title="${escapeHtml(g.description || g.name)}">
+          ${ICONS.chevron}${icon}
+          <span class="group-title">${escapeHtml(g.name)}</span>
+          <span class="count">${escapeHtml(countText(g))}</span>
+        </button>
+        ${open ? `<div class="group-body">${renderSkillRows(g.skills)}</div>` : ''}
+      </div>`;
+  }
+
+  function renderSkillRows(names) {
+    return names.map((name) => {
+      const s = state.skills[name] || {};
+      const hit = state.hitsMap.get(name);
+      const used = s.usage && s.usage.chosen > 0 ? `<span class="tag tag-used" title="Chosen ${escapeHtml(s.usage.chosen)} times">used ${escapeHtml(s.usage.chosen)}</span>` : '';
+      const app = s.app ? `<span class="tag tag-app" title="Needs the program ${escapeHtml(s.app)}">needs a program</span>` : '';
+      const n = escapeHtml(name);
+      return `
+        <div class="skill-row" tabindex="0" data-skill="${n}" title="Click for details">
+          <div class="skill-main">
+            <span class="skill-name">${highlightName(name, hit ? hit.marks : undefined)}</span>
+            <span class="skill-sub">${escapeHtml(purposeName(s.purpose))}${s.cluster ? ' · ' + escapeHtml(clusterName(s.cluster)) : ''}</span>
+          </div>
+          <div class="skill-tags">${used}${app}</div>
+          <div class="skill-actions">
+            <button class="icon-btn" data-action="openDetail" data-skill="${n}" aria-label="Details of ${n}" title="Details">${ICONS.info}</button>
+            <button class="icon-btn" data-action="pinSkill" data-skill="${n}" aria-label="Pin ${n} to the task" title="Pin to the current task">${ICONS.pin}</button>
+            <button class="icon-btn" data-action="addToBundle" data-skill="${n}" aria-label="Add ${n} to a bundle" title="Add to a bundle">${ICONS.plus}</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderBundle(b, standalone) {
+    if (!b) return '';
+    const id = 'b:' + b.id;
+    const open = isOpen(id);
+    const mine = b.mine ? '<span class="tag tag-mine">yours</span>' : '';
+    const chips = (b.skills || []).map((s, i) => `<button class="chip" data-action="openDetail" data-skill="${escapeHtml(s)}" title="Step ${i + 1}: ${escapeHtml(s)}"><span class="chip-num">${i + 1}</span>${escapeHtml(s)}</button>`).join('');
+    const own = b.mine
+      ? `<button class="btn" data-action="editBundle" data-bundle="${escapeHtml(b.id)}">Edit</button><button class="btn btn-danger" data-action="deleteBundle" data-bundle="${escapeHtml(b.id)}">Delete</button>`
+      : '';
+    const body = open
+      ? `<div class="bundle-body">
+          <p class="bundle-goal">${escapeHtml(b.goal)}</p>
+          ${b.when ? `<p class="bundle-when"><b>Use it when</b> ${escapeHtml(b.when)}</p>` : ''}
+          <div class="chips">${chips}</div>
+          <div class="bundle-foot"><span class="tokens">about ${escapeHtml(b.tokens)} tokens</span></div>
+          <div class="bundle-actions">
+            <button class="btn btn-primary" data-action="applyBundle" data-bundle="${escapeHtml(b.id)}">Apply to task</button>
+            <button class="btn" data-action="copyPrompt" data-bundle="${escapeHtml(b.id)}">Copy prompt</button>${own}
+          </div>
+        </div>`
+      : '';
+    return `
+      <div class="bundle ${open ? 'open' : ''} ${standalone ? 'standalone' : ''}" data-accent="${accentOf(b.family)}">
+        <button class="bundle-head" data-action="toggle" data-id="${escapeHtml(id)}" aria-expanded="${open}" title="${escapeHtml(b.goal)}">
+          ${ICONS.chevron}
+          <span class="bundle-icon">${ICONS.stack}</span>
+          <span class="bundle-text"><span class="bundle-name">${escapeHtml(b.name)}</span>${mine}
+            <span class="bundle-sub">${escapeHtml(purposeName(b.purpose))}</span></span>
+          <span class="count">${escapeHtml((b.skills || []).length)} steps</span>
+        </button>
+        ${body}
+      </div>`;
+  }
+
+  // ---- messages from the extension
   window.addEventListener('message', (event) => {
     const msg = event.data;
     if (!msg) return;
-
-    switch (msg.type) {
-      case 'update': {
-        state.mode = msg.mode || state.mode;
-        state.groups = msg.groups || [];
-        state.summary = msg.summary || state.summary;
-        state.skills = msg.skills || state.skills;
-        state.purposes = msg.purposes || state.purposes;
-        state.clusters = msg.clusters || state.clusters;
-        state.bundles = msg.bundles || state.bundles;
-        state.totalCount = msg.counts ? msg.counts.skills : state.totalCount;
-        state.matchCount = state.totalCount;
-        state.hitsMap.clear();
-        state.error = msg.error || null;
-
-        // Sync mode buttons UI
-        modeBtns.forEach((b) => {
-          const active = b.getAttribute('data-mode') === state.mode;
-          b.classList.toggle('active', active);
-          b.setAttribute('aria-checked', active ? 'true' : 'false');
-          b.setAttribute('tabindex', active ? '0' : '-1');
-        });
-        if (newBundleBar) {
-          if (state.mode === 'bundle') newBundleBar.classList.remove('hidden');
-          else newBundleBar.classList.add('hidden');
-        }
-
-        renderView();
-        break;
-      }
-      case 'searchResults': {
-        state.mode = msg.mode || state.mode;
-        state.query = msg.query ?? state.query;
-        state.groups = msg.groups || [];
-        state.matchCount = msg.matchCount ?? state.totalCount;
-        state.totalCount = msg.totalCount ?? state.totalCount;
-
-        state.hitsMap.clear();
-        if (Array.isArray(msg.hits)) {
-          for (const h of msg.hits) {
-            state.hitsMap.set(h.name, h);
-          }
-        }
-
-        renderView();
-        break;
-      }
-      case 'error': {
-        state.error = msg.message || 'An unexpected error occurred.';
-        renderView();
-        break;
-      }
+    if (msg.type === 'update') {
+      state.mode = msg.mode || state.mode;
+      state.groups = msg.groups || [];
+      state.summary = msg.summary || state.summary;
+      state.skills = msg.skills || state.skills;
+      state.families = msg.families || state.families;
+      state.purposes = msg.purposes || state.purposes;
+      state.clusters = msg.clusters || state.clusters;
+      state.bundles = msg.bundles || state.bundles;
+      state.totalCount = msg.counts ? msg.counts.skills : state.totalCount;
+      state.matchCount = state.totalCount;
+      state.hitsMap.clear();
+      state.error = msg.error || null;
+      renderView();
+    } else if (msg.type === 'searchResults') {
+      state.mode = msg.mode || state.mode;
+      state.query = msg.query ?? state.query;
+      state.groups = msg.groups || [];
+      state.matchCount = msg.matchCount ?? state.totalCount;
+      state.totalCount = msg.totalCount ?? state.totalCount;
+      state.hitsMap.clear();
+      if (Array.isArray(msg.hits)) for (const h of msg.hits) state.hitsMap.set(h.name, h);
+      renderView();
+    } else if (msg.type === 'error') {
+      state.error = msg.message || 'Something went wrong.';
+      renderView();
     }
   });
 
-  // Signal ready to extension host
   vscode.postMessage({ command: 'ready' });
 })();

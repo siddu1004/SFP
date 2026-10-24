@@ -1126,11 +1126,11 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'sfpHive.library';
   public _view?: vscode.WebviewView;
   private _query = '';
-  private _mode: library.GroupMode = 'bundle';
+  private _mode: library.GroupMode = 'family';
 
   constructor(private readonly extensionPath: string) {
     if (extContext) {
-      this._mode = extContext.workspaceState?.get<library.GroupMode>('sfpHive.libraryMode', 'bundle') ?? 'bundle';
+      this._mode = extContext.workspaceState?.get<library.GroupMode>('sfpHive.libraryMode2', 'family') ?? 'family';
     }
   }
 
@@ -1161,15 +1161,20 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
           this.performSearch(this._query, this._mode);
           break;
         case 'switchMode':
-          this._mode = message.mode || 'purpose';
+          this._mode = message.mode || 'family';
           if (extContext) {
-            void extContext.workspaceState?.update('sfpHive.libraryMode', this._mode);
+            void extContext.workspaceState?.update('sfpHive.libraryMode2', this._mode);
           }
           this.performSearch(this._query, this._mode);
           break;
         case 'openSkill':
           if (message.skill) {
             await vscode.commands.executeCommand('sfpHive.openSkill', message.skill);
+          }
+          break;
+        case 'openDetail':
+          if (message.skill) {
+            await showSkillDetail(String(message.skill));
           }
           break;
         case 'pinSkill':
@@ -1245,6 +1250,7 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
       summary,
       counts: loadedLibrary.counts,
       skills: loadedLibrary.skills,
+      families: loadedLibrary.families,
       purposes: loadedLibrary.purposes,
       clusters: loadedLibrary.clusters,
       bundles: loadedLibrary.bundles,
@@ -1298,22 +1304,21 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
 <body>
   <div class="library-header">
     <div class="search-box-row">
-      <svg class="search-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>
-      <input type="text" id="lib-search-input" class="search-input" placeholder="Search skills, purposes, clusters..." aria-label="Search skills">
-      <button id="lib-search-clear" class="search-clear-btn hidden" aria-label="Clear search" title="Clear search">×</button>
+      <svg class="search-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>
+      <input type="text" id="lib-search-input" class="search-input" placeholder="Search skills or what you want to do" aria-label="Search skills" autocomplete="off" spellcheck="false">
+      <button id="lib-search-clear" class="search-clear-btn hidden" aria-label="Clear search" title="Clear search (Esc)">&times;</button>
     </div>
-    <div class="search-count-badge">
-      <span id="lib-search-count">Loading skills...</span>
-    </div>
-    <div class="mode-switch" id="lib-mode-switch" role="radiogroup" aria-label="Skill grouping">
-      <button class="mode-btn" data-mode="purpose" role="radio" aria-checked="false" tabindex="-1">What it does</button>
-      <button class="mode-btn" data-mode="cluster" role="radio" aria-checked="false" tabindex="-1">Clusters</button>
-      <button class="mode-btn active" data-mode="bundle" role="radio" aria-checked="true" tabindex="0">Bundles</button>
+    <div class="search-count-badge"><span id="lib-search-count">Loading skills...</span></div>
+    <div class="mode-switch" id="lib-mode-switch" role="radiogroup" aria-label="How to browse the library">
+      <button class="mode-btn active" data-mode="family" role="radio" aria-checked="true" tabindex="0" title="Browse by area: design, security, agents...">Areas</button>
+      <button class="mode-btn" data-mode="purpose" role="radio" aria-checked="false" tabindex="-1" title="Browse by what you want to get done">Goals</button>
+      <button class="mode-btn" data-mode="bundle" role="radio" aria-checked="false" tabindex="-1" title="Ready-made sets of skills for one job">Bundles</button>
+      <button class="mode-btn" data-mode="cluster" role="radio" aria-checked="false" tabindex="-1" title="Skills grouped by topic">Clusters</button>
     </div>
   </div>
 
   <div class="new-bundle-bar" id="lib-new-bundle-bar">
-    <button class="btn-small btn-secondary" id="lib-new-bundle-btn">+ New bundle</button>
+    <button class="btn" id="lib-new-bundle-btn">+ New bundle</button>
   </div>
 
   <div class="state-box hidden" id="lib-state-loading">
@@ -1321,19 +1326,19 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
   </div>
 
   <div class="state-box hidden" id="lib-state-empty">
-    <p class="state-msg">No skills matched your search.</p>
+    <p class="state-msg">Nothing matches that. Try one word, like &ldquo;docker&rdquo; or &ldquo;tests&rdquo;, or clear the search.</p>
   </div>
 
   <div class="state-box error hidden" id="lib-state-error">
     <p class="state-msg" id="lib-error-msg">Failed to load skill library.</p>
-    <button class="btn-small btn-primary" id="lib-error-btn">Open settings</button>
+    <button class="btn btn-primary" id="lib-error-btn">Open settings</button>
   </div>
 
   <div class="groups-container" id="lib-groups-container"></div>
 
   <div class="library-footer">
-    <span class="footer-counts" id="lib-footer-counts">819 skills</span>
-    <button class="btn-icon" id="lib-refresh-btn" aria-label="Refresh library" title="Refresh library">
+    <span class="footer-counts" id="lib-footer-counts"></span>
+    <button class="icon-btn" id="lib-refresh-btn" aria-label="Refresh library" title="Refresh library">
       <svg viewBox="0 0 16 16"><path fill="currentColor" d="M13.6 2.4A7 7 0 1 0 15 8h-1.5a5.5 5.5 0 1 1-1.1-4.4L10 6h5V1l-1.4 1.4z"/></svg>
     </button>
   </div>
@@ -1342,6 +1347,51 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
 </body>
 </html>`;
   }
+}
+
+let detailPanel: vscode.WebviewPanel | undefined;
+let detailSkill: string | undefined;
+
+/** The skill detail window: a tab in the editor area with the full description, where the skill is used and similar skills. */
+export async function showSkillDetail(name: string): Promise<void> {
+  const root = sfpRoot();
+  if (!root) {
+    void vscode.window.showWarningMessage('SFP checkout not found. Set sfpHive.sfpPath.');
+    return;
+  }
+  let detail: hive.SkillDetail;
+  try {
+    detail = hive.parseSkillDetail(await hive.run(hive.pythonCommand(config().opts), hive.skillArgs(root, name)));
+  } catch (e) {
+    void vscode.window.showWarningMessage(`No details for ${name}: ${(e as Error).message}`);
+    return;
+  }
+  const media = vscode.Uri.file(path.join(extContext?.extensionPath ?? '', 'media'));
+  if (!detailPanel) {
+    detailPanel = vscode.window.createWebviewPanel('sfpHive.skillDetail', detail.name, { viewColumn: vscode.ViewColumn.Beside, preserveFocus: false }, {
+      enableScripts: true,
+      localResourceRoots: [media],
+    });
+    detailPanel.onDidDispose(() => { detailPanel = undefined; detailSkill = undefined; });
+    detailPanel.webview.onDidReceiveMessage(async (m) => {
+      const target = detailSkill;
+      switch (m.command) {
+        case 'openFile': if (target) await vscode.commands.executeCommand('sfpHive.openSkill', target); break;
+        case 'pin': if (target) await pinSkillWorkflow(target); break;
+        case 'addToBundle': if (target) await addToBundleWorkflow(target); break;
+        case 'showSkill': if (m.skill) await showSkillDetail(String(m.skill)); break;
+        case 'showBundle': if (m.bundle) await vscode.commands.executeCommand('sfpHive.focusLibrary'); break;
+      }
+    });
+  } else {
+    detailPanel.reveal(undefined, false);
+  }
+  detailSkill = detail.name;
+  detailPanel.title = detail.name;
+  const w = detailPanel.webview;
+  w.html = hive.skillDetailHtml(detail, w.cspSource, getNonce(),
+    String(w.asWebviewUri(vscode.Uri.file(path.join(media.fsPath, 'detail.css')))),
+    String(w.asWebviewUri(vscode.Uri.file(path.join(media.fsPath, 'detail.js')))));
 }
 
 function getNonce(): string {
@@ -1961,7 +2011,7 @@ export function activate(context: vscode.ExtensionContext) {
       const selected = qp.selectedItems[0];
       qp.dispose();
       if (selected) {
-        await vscode.commands.executeCommand('sfpHive.openSkill', selected.label);
+        await showSkillDetail(selected.label);
       }
     });
     qp.show();
@@ -2066,6 +2116,10 @@ export function activate(context: vscode.ExtensionContext) {
     if (!targetSel) return;
     await vscode.env.clipboard.writeText(hive.buildPrompt(targetSel, root));
     void vscode.window.showInformationMessage('Prompt copied. Paste it into the agent panel.');
+  });
+  reg('sfpHive.showSkill', async (arg) => {
+    const n = typeof arg === 'string' ? arg : skillOf(arg)?.name;
+    if (n) await showSkillDetail(n);
   });
   reg('sfpHive.openSkill', async (arg) => {
     const root = sfpRoot();

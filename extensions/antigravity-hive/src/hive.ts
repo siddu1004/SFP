@@ -681,3 +681,61 @@ export function parseRoutePlan(text: string): RoutePlan {
 }
 
 
+
+/** Everything the skill detail window shows, from `sfp_hive.py skill NAME --json`. */
+export interface SkillDetail {
+  name: string;
+  description: string;
+  use_when: string;
+  category: string;
+  family: { id: string; name: string };
+  cluster: { id: string; name: string };
+  purpose: { id: string; name: string };
+  also: { id: string; name: string }[];
+  bundles: { id: string; name: string }[];
+  similar: string[];
+  tokens: number;
+  path: string;
+  usage?: { chosen?: number; helped?: number; unhelpful?: number; ignored?: number; missing?: number };
+  app?: string;
+}
+
+export function skillArgs(root: string, name: string): string[] {
+  return [path.join(root, 'mcp', 'sfp_hive.py'), 'skill', name, '--json'];
+}
+
+export function parseSkillDetail(json: string): SkillDetail {
+  const d = JSON.parse(json);
+  if (!d || typeof d.name !== 'string' || typeof d.description !== 'string' || !d.family) throw new Error('unexpected answer for a skill');
+  return d as SkillDetail;
+}
+
+/** The page of the skill detail window. Pure, so it is unit tested; every string is escaped. */
+export function skillDetailHtml(d: SkillDetail, cspSource: string, nonce: string, styleUri: string, scriptUri: string): string {
+  const e = escapeHtml;
+  const btn = (action: string, label: string, extra = '', cls = 'btn') => `<button class="${cls}" data-action="${action}" ${extra}>${label}</button>`;
+  const chip = (action: string, key: string, value: string, text: string) =>
+    `<button class="chip" data-action="${action}" data-${key}="${e(value)}">${e(text)}</button>`;
+  const u = d.usage && (d.usage.chosen ?? 0) > 0
+    ? `<li><b>Used</b> ${e(String(d.usage.chosen))} time${d.usage.chosen === 1 ? '' : 's'}${d.usage.helped ? `, helped ${e(String(d.usage.helped))}` : ''}</li>` : '';
+  const when = d.use_when ? `<section><h2>Use it when</h2><p>${e(d.use_when.replace(/^Use (this skill )?(when|for|to)\s*/i, ''))}</p></section>` : '';
+  const what = d.use_when ? d.description.slice(0, d.description.length - d.use_when.length).trim() || d.description : d.description;
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource}; script-src 'nonce-${nonce}'; img-src ${cspSource} data:;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${e(d.name)}</title>
+<link rel="stylesheet" href="${styleUri}"></head>
+<body><main>
+  <header>
+    <p class="crumbs">${e(d.family.name)}${d.cluster.name.toLowerCase() === d.family.name.toLowerCase() ? '' : ` <span>/</span> ${e(d.cluster.name)}`}</p>
+    <h1>${e(d.name)}</h1>
+    <p class="tags"><span class="tag tag-purpose">${e(d.purpose.name)}</span>${d.also.map((a) => `<span class="tag">${e(a.name)}</span>`).join('')}${d.app ? `<span class="tag tag-app" title="Needs the program ${e(d.app)}">needs a program</span>` : ''}</p>
+    <div class="actions">${btn('openFile', 'Open SKILL.md', '', 'btn')}${btn('pin', 'Pin to current task', '', 'btn btn-primary')}${btn('addToBundle', '+ Add to a bundle')}</div>
+  </header>
+  <section><h2>What it does</h2><p>${e(what)}</p></section>
+  ${when}
+  ${d.bundles.length ? `<section><h2>In these bundles</h2><div class="chips">${d.bundles.map((b) => chip('showBundle', 'bundle', b.id, b.name)).join('')}</div></section>` : ''}
+  ${d.similar.length ? `<section><h2>Similar skills</h2><div class="chips">${d.similar.map((n) => chip('showSkill', 'skill', n, n)).join('')}</div></section>` : ''}
+  <section><h2>Details</h2><ul class="facts"><li><b>Area</b> ${e(d.family.name)}</li><li><b>Topic</b> ${e(d.cluster.name)}</li><li><b>Category</b> ${e(d.category)}</li><li><b>Size</b> about ${e(String(d.tokens))} tokens</li>${u}</ul></section>
+</main><script nonce="${nonce}" src="${scriptUri}"></script></body></html>`;
+}
