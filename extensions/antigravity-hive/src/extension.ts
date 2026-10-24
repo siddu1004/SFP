@@ -1,6 +1,11 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
+import * as os from 'os';
 import * as hive from './hive';
+import * as library from './library';
+
+export let loadedLibrary: library.Library | undefined;
+export let libraryProvider: LibraryViewProvider | undefined;
 
 let selection: hive.Selection | undefined;
 const verdicts = new Map<string, hive.Verdict>();
@@ -326,6 +331,233 @@ async function addSkillToMyClusterWorkflow(skill: string) {
   }
 }
 
+async function pinSkillWorkflow(skillName: string) {
+  if (!currentInclude.includes(skillName)) {
+    currentInclude.push(skillName);
+  }
+  currentExclude = currentExclude.filter((s) => s !== skillName);
+  await choose(selection?.task, { include: currentInclude, exclude: currentExclude, explain: true });
+  studioProvider?.showTab('choose');
+  void vscode.window.showInformationMessage(`Pinned "${skillName}" to current task.`);
+}
+
+async function applyBundleWorkflow(bundleId: string) {
+  const root = sfpRoot();
+  if (!root) return;
+  if (!loadedLibrary) await libraryProvider?.loadLibrary();
+  const bundle = loadedLibrary?.bundles.find((b) => b.id === bundleId);
+  if (!bundle) return;
+  const cfg = config();
+  try {
+    const task = selection?.task || `Bundle: ${bundle.name}`;
+    const out = await hive.run(
+      hive.pythonCommand(cfg.opts),
+      hive.selectArgs(root, task, project(), cfg.max, { bundle: bundle.id })
+    );
+    const sel = hive.parseSelection(out);
+    selection = sel;
+    baselineSelection = sel;
+    currentInclude = sel.stack.map((s) => s.name);
+    currentExclude = [];
+    currentDiff = undefined;
+    sessionStats = hive.updateSessionStats(sessionStats, { type: 'decision', chosenCount: sel.stack.length });
+    void extContext?.workspaceState?.update('sfpHive.sessionStats', sessionStats);
+    showStatus();
+    studioProvider?.syncState();
+    studioProvider?.showTab('choose');
+    if (cfg.copy) {
+      await vscode.env.clipboard.writeText(hive.buildPrompt(sel, root));
+    }
+    void vscode.window.showInformationMessage(`Applied bundle "${bundle.name}". Skills pinned in Choose.`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
+async function copyPromptWorkflow(bundleId: string) {
+  const root = sfpRoot();
+  if (!root) return;
+  if (!loadedLibrary) await libraryProvider?.loadLibrary();
+  const bundle = loadedLibrary?.bundles.find((b) => b.id === bundleId);
+  if (!bundle) return;
+  const cfg = config();
+  try {
+    const out = await hive.run(
+      hive.pythonCommand(cfg.opts),
+      hive.selectArgs(root, `Bundle: ${bundle.name}`, project(), cfg.max, { bundle: bundle.id })
+    );
+    const sel = hive.parseSelection(out);
+    await vscode.env.clipboard.writeText(hive.buildPrompt(sel, root));
+    void vscode.window.showInformationMessage(`Prompt copied for bundle "${bundle.name}".`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
+async function newBundleWorkflow(initialSkill?: string) {
+  const root = sfpRoot();
+  if (!root) return;
+  if (!loadedLibrary) await libraryProvider?.loadLibrary();
+  if (!loadedLibrary) return;
+
+  const name = await vscode.window.showInputBox({
+    prompt: 'Bundle name (e.g. ship-a-feature)',
+    placeHolder: 'e.g., ship-a-feature',
+    ignoreFocusOut: true,
+    validateInput: (v) => (!v.trim() ? 'Name is required' : null),
+  });
+  if (!name || !name.trim()) return;
+
+  const purposes = loadedLibrary.purposes.map((p) => ({ label: p.name, description: p.id, detail: p.description }));
+  const pickedPurpose = await vscode.window.showQuickPick(purposes, {
+    placeHolder: 'Select primary purpose for this bundle',
+    ignoreFocusOut: true,
+  });
+  if (!pickedPurpose) return;
+
+  const goal = (await vscode.window.showInputBox({
+    prompt: 'Bundle goal (what does it achieve?)',
+    placeHolder: 'e.g., Build and test end-to-end',
+    ignoreFocusOut: true,
+  })) || '';
+
+  const allSkills = Object.keys(loadedLibrary.skills).sort().map((s) => ({
+    label: s,
+    picked: initialSkill === s,
+    description: loadedLibrary?.skills[s]?.d,
+  }));
+  const pickedSkills = await vscode.window.showQuickPick(allSkills, {
+    placeHolder: 'Select skills for this bundle (multi-select)',
+    canPickMany: true,
+    ignoreFocusOut: true,
+  });
+  if (!pickedSkills || !pickedSkills.length) return;
+
+  const cfg = config();
+  try {
+    const skillNames = pickedSkills.map((p) => p.label);
+    await hive.run(
+      hive.pythonCommand(cfg.opts),
+      hive.bundleAddArgs(root, name.trim(), skillNames, goal.trim(), pickedPurpose.description)
+    );
+    await libraryProvider?.loadLibrary();
+    void vscode.window.showInformationMessage(`Bundle "${name.trim()}" created.`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
+async function addToBundleWorkflow(skillName: string) {
+  const root = sfpRoot();
+  if (!root) return;
+  if (!loadedLibrary) await libraryProvider?.loadLibrary();
+  if (!loadedLibrary) return;
+
+  const myBundles = loadedLibrary.bundles.filter((b) => b.mine);
+  const CREATE_NEW = '$(add) New bundle...';
+  const items: (vscode.QuickPickItem & { bundleId?: string; action?: string })[] = [
+    { label: CREATE_NEW, action: 'new' },
+    ...myBundles.map((b) => ({
+      label: b.name,
+      description: `${b.skills.length} skills`,
+      detail: b.goal,
+      bundleId: b.id,
+    })),
+  ];
+  const pick = await vscode.window.showQuickPick(items, {
+    placeHolder: `Add "${skillName}" to which bundle?`,
+    ignoreFocusOut: true,
+  });
+  if (!pick) return;
+  if (pick.action === 'new') {
+    await newBundleWorkflow(skillName);
+    return;
+  }
+  const bundle = myBundles.find((b) => b.id === pick.bundleId);
+  if (!bundle) return;
+  if (bundle.skills.includes(skillName)) {
+    void vscode.window.showInformationMessage(`Skill "${skillName}" is already in bundle "${bundle.name}".`);
+    return;
+  }
+  const updatedSkills = [...bundle.skills, skillName];
+  const cfg = config();
+  try {
+    await hive.run(
+      hive.pythonCommand(cfg.opts),
+      hive.bundleAddArgs(root, bundle.name, updatedSkills, bundle.goal, bundle.purpose, bundle.when)
+    );
+    await libraryProvider?.loadLibrary();
+    void vscode.window.showInformationMessage(`Added "${skillName}" to bundle "${bundle.name}".`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
+async function editBundleWorkflow(bundleId: string) {
+  const root = sfpRoot();
+  if (!root) return;
+  if (!loadedLibrary) await libraryProvider?.loadLibrary();
+  if (!loadedLibrary) return;
+  const bundle = loadedLibrary.bundles.find((b) => b.id === bundleId && b.mine);
+  if (!bundle) return;
+
+  const goal = await vscode.window.showInputBox({
+    prompt: `Goal for "${bundle.name}"`,
+    value: bundle.goal,
+    ignoreFocusOut: true,
+  });
+  if (goal === undefined) return;
+
+  const allSkills = Object.keys(loadedLibrary.skills).sort().map((s) => ({
+    label: s,
+    picked: bundle.skills.includes(s),
+    description: loadedLibrary?.skills[s]?.d,
+  }));
+  const pickedSkills = await vscode.window.showQuickPick(allSkills, {
+    placeHolder: `Skills for "${bundle.name}" (in order)`,
+    canPickMany: true,
+    ignoreFocusOut: true,
+  });
+  if (!pickedSkills) return;
+
+  const cfg = config();
+  try {
+    const skillNames = pickedSkills.map((p) => p.label);
+    await hive.run(
+      hive.pythonCommand(cfg.opts),
+      hive.bundleAddArgs(root, bundle.name, skillNames, goal.trim(), bundle.purpose, bundle.when)
+    );
+    await libraryProvider?.loadLibrary();
+    void vscode.window.showInformationMessage(`Bundle "${bundle.name}" updated.`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
+async function deleteBundleWorkflow(bundleId: string) {
+  const root = sfpRoot();
+  if (!root) return;
+  if (!loadedLibrary) await libraryProvider?.loadLibrary();
+  const bundle = loadedLibrary?.bundles.find((b) => b.id === bundleId && b.mine);
+  if (!bundle) return;
+
+  const confirm = await vscode.window.showWarningMessage(
+    `Delete bundle "${bundle.name}"?`,
+    { modal: true },
+    'Delete'
+  );
+  if (confirm !== 'Delete') return;
+
+  const cfg = config();
+  try {
+    await hive.run(hive.pythonCommand(cfg.opts), hive.bundleRemoveArgs(root, bundle.name));
+    await libraryProvider?.loadLibrary();
+    void vscode.window.showInformationMessage(`Bundle "${bundle.name}" deleted.`);
+  } catch (e) {
+    void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
 let rightStatus: vscode.StatusBarItem;
 let studioProvider: StudioViewProvider | undefined;
 
@@ -477,7 +709,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     });
   }
 
-  public showTab(tab: 'now' | 'choose' | 'library' | 'insights') {
+  public showTab(tab: 'now' | 'choose' | 'insights') {
     if (this._view) {
       this._view.show?.(true);
       this._view.webview.postMessage({ type: 'switchTab', tab });
@@ -552,10 +784,6 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       <button class="tab-btn" data-tab="choose" role="tab" aria-selected="false" aria-controls="tab-choose" id="btn-tab-choose" tabindex="-1">
         <svg class="tab-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>
         <span>Choose</span>
-      </button>
-      <button class="tab-btn" data-tab="library" role="tab" aria-selected="false" aria-controls="tab-library" id="btn-tab-library" tabindex="-1">
-        <svg class="tab-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M3 2v12h10V2H3zm9 11H4V3h8v10zM5 5h6v1H5V5zm0 3h6v1H5V8zm0 3h4v1H5v-1z"/></svg>
-        <span>Library</span>
       </button>
       <button class="tab-btn" data-tab="insights" role="tab" aria-selected="false" aria-controls="tab-insights" id="btn-tab-insights" tabindex="-1">
         <svg class="tab-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M1 14h14v1H1v-1zm2-2h2V7H3v5zm4 0h2V3H7v9zm4 0h2V5h-2v7z"/></svg>
@@ -724,53 +952,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     </div>
   </div>
 
-  <!-- Tab 3: Library -->
-  <div class="tab-content" id="tab-library" role="tabpanel" aria-labelledby="btn-tab-library">
-    <div class="section">
-      <div class="section-title">
-        <span>Skill Library &amp; Clusters</span>
-        <button class="btn btn-secondary" data-action="newCluster" id="library-new-cluster-btn">+ New Cluster</button>
-      </div>
-      <input type="text" id="library-search-input" class="input-text" placeholder="Search ${catalogCount} skills and clusters..." aria-label="Search skills and clusters">
-    </div>
-    <div class="state-box hidden" id="library-loading-state">
-      <svg class="spin-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1.5a6.5 6.5 0 1 0 6.5 6.5h-1.5A5 5 0 1 1 8 3v-1.5z"/></svg>
-      <span>Loading skills and clusters...</span>
-    </div>
-    <div id="library-clusters-view">
-      <div class="cluster-grid" id="library-cluster-grid"></div>
-    </div>
-    <div id="library-detail-view" class="hidden">
-      <div class="section">
-        <div class="flex-between">
-          <button class="btn btn-secondary" data-action="backToClusters">← Back to Clusters</button>
-          <button class="btn btn-secondary btn-danger hidden" data-action="removeCluster" id="library-remove-cluster-btn">Remove Cluster</button>
-        </div>
-        <div class="card" id="library-cluster-info">
-          <div class="card-header">
-            <span class="card-title" id="library-cluster-name"></span>
-            <span class="studio-badge" id="library-cluster-badge"></span>
-          </div>
-          <div class="card-meta" id="library-cluster-meta"></div>
-          <div class="card-desc-muted" id="library-cluster-desc"></div>
-        </div>
-      </div>
-      <div class="section">
-        <div class="section-title">Skills in this cluster</div>
-        <div class="skills-list" id="library-cluster-skills"></div>
-      </div>
-    </div>
-    <div class="state-box hidden" id="library-empty-state">
-      <svg viewBox="0 0 16 16"><path fill="currentColor" d="M3 2v12h10V2H3zm9 11H4V3h8v10zM5 5h6v1H5V5zm0 3h6v1H5V8zm0 3h4v1H5v-1z"/></svg>
-      <span>No clusters or skills match your search.</span>
-    </div>
-    <div class="state-box error-state hidden" id="library-error-state">
-      <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8.865 1.52c-.418-.723-1.312-.723-1.73 0L.14 13.56c-.418.723.03 1.64.865 1.64h14c.836 0 1.283-.917.865-1.64L8.865 1.52zM8 4a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 8 4zm0 8.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
-      <span>Could not load the skill library. Verify your SFP repository checkout.</span>
-    </div>
-  </div>
-
-  <!-- Tab 4: Insights -->
+  <!-- Tab 3: Insights -->
   <div class="tab-content" id="tab-insights" role="tabpanel" aria-labelledby="btn-tab-insights">
     <div class="section">
       <div class="section-title">
@@ -793,6 +975,228 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   </div>
 
   <script nonce="${nonce}" src="${iconsUri}"></script>
+  <script nonce="${nonce}" src="${scriptUri}"></script>
+</body>
+</html>`;
+  }
+}
+
+export class LibraryViewProvider implements vscode.WebviewViewProvider {
+  public static readonly viewType = 'sfpHive.library';
+  public _view?: vscode.WebviewView;
+  private _query = '';
+  private _mode: library.GroupMode = 'purpose';
+
+  constructor(private readonly extensionPath: string) {
+    if (extContext) {
+      this._mode = extContext.workspaceState?.get<library.GroupMode>('sfpHive.libraryMode', 'purpose') ?? 'purpose';
+    }
+  }
+
+  public resolveWebviewView(
+    webviewView: vscode.WebviewView,
+    _context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken
+  ) {
+    this._view = webviewView;
+    webviewView.webview.options = {
+      enableScripts: true,
+      localResourceRoots: [vscode.Uri.file(path.join(this.extensionPath, 'media'))],
+    };
+    webviewView.webview.html = this.getHtml(webviewView.webview);
+
+    webviewView.webview.onDidReceiveMessage(async (message) => {
+      switch (message.command) {
+        case 'ready':
+          if (!loadedLibrary) {
+            await this.loadLibrary();
+          } else {
+            this.syncState();
+          }
+          break;
+        case 'search':
+          this._query = message.query || '';
+          this._mode = message.mode || this._mode;
+          this.performSearch(this._query, this._mode);
+          break;
+        case 'switchMode':
+          this._mode = message.mode || 'purpose';
+          if (extContext) {
+            void extContext.workspaceState?.update('sfpHive.libraryMode', this._mode);
+          }
+          this.performSearch(this._query, this._mode);
+          break;
+        case 'openSkill':
+          if (message.skill) {
+            await vscode.commands.executeCommand('sfpHive.openSkill', message.skill);
+          }
+          break;
+        case 'pinSkill':
+          if (message.skill) {
+            await pinSkillWorkflow(message.skill);
+          }
+          break;
+        case 'addToBundle':
+          if (message.skill) {
+            await addToBundleWorkflow(message.skill);
+          }
+          break;
+        case 'applyBundle':
+          if (message.bundleId) {
+            await applyBundleWorkflow(message.bundleId);
+          }
+          break;
+        case 'copyPrompt':
+          if (message.bundleId) {
+            await copyPromptWorkflow(message.bundleId);
+          }
+          break;
+        case 'newBundle':
+          await newBundleWorkflow();
+          break;
+        case 'editBundle':
+          if (message.bundleId) {
+            await editBundleWorkflow(message.bundleId);
+          }
+          break;
+        case 'deleteBundle':
+          if (message.bundleId) {
+            await deleteBundleWorkflow(message.bundleId);
+          }
+          break;
+        case 'refresh':
+          await this.loadLibrary();
+          break;
+        case 'openSettings':
+          void vscode.commands.executeCommand('workbench.action.openSettings', 'sfpHive.sfpPath');
+          break;
+      }
+    });
+  }
+
+  public async loadLibrary(): Promise<void> {
+    const root = sfpRoot();
+    if (!root) {
+      this.postError('SFP checkout not found. Check sfpHive.sfpPath setting.');
+      return;
+    }
+    const cfg = config();
+    try {
+      const out = await hive.run(hive.pythonCommand(cfg.opts), hive.libraryArgs(root));
+      loadedLibrary = hive.parseLibrary(out);
+      this.syncState();
+    } catch (e) {
+      this.postError((e as Error).message);
+    }
+  }
+
+  public syncState(): void {
+    if (!this._view || !loadedLibrary) return;
+    const hits = this._query.trim() ? library.searchLibrary(loadedLibrary, this._query.trim()) : undefined;
+    const groups = library.groupBy(loadedLibrary, this._mode, hits);
+    const summary = library.summary(loadedLibrary);
+
+    this._view.webview.postMessage({
+      type: 'update',
+      mode: this._mode,
+      query: this._query,
+      groups,
+      summary,
+      counts: loadedLibrary.counts,
+      skills: loadedLibrary.skills,
+      purposes: loadedLibrary.purposes,
+      clusters: loadedLibrary.clusters,
+      bundles: loadedLibrary.bundles,
+      error: null,
+    });
+  }
+
+  public performSearch(query: string, mode: library.GroupMode): void {
+    if (!this._view || !loadedLibrary) return;
+    const trimmed = query.trim();
+    const hits = trimmed ? library.searchLibrary(loadedLibrary, trimmed) : undefined;
+    const groups = library.groupBy(loadedLibrary, mode, hits);
+
+    this._view.webview.postMessage({
+      type: 'searchResults',
+      query,
+      mode,
+      hits: hits ?? null,
+      groups,
+      matchCount: hits ? hits.length : loadedLibrary.counts.skills,
+      totalCount: loadedLibrary.counts.skills,
+    });
+  }
+
+  public postError(msg: string): void {
+    if (!this._view) return;
+    this._view.webview.postMessage({
+      type: 'error',
+      message: msg,
+    });
+  }
+
+  public focus(): void {
+    this._view?.show?.(true);
+  }
+
+  public getHtml(webview: vscode.Webview): string {
+    const nonce = getNonce();
+    const styleUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'library.css')));
+    const scriptUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'library.js')));
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource} data:;">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skill Library</title>
+  <link rel="stylesheet" href="${styleUri}">
+</head>
+<body>
+  <div class="library-header">
+    <div class="search-box-row">
+      <svg class="search-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>
+      <input type="text" id="lib-search-input" class="search-input" placeholder="Search skills, purposes, clusters..." aria-label="Search skills">
+      <button id="lib-search-clear" class="search-clear-btn hidden" aria-label="Clear search" title="Clear search">×</button>
+    </div>
+    <div class="search-count-badge">
+      <span id="lib-search-count">Loading skills...</span>
+    </div>
+    <div class="mode-switch" id="lib-mode-switch" role="radiogroup" aria-label="Skill grouping">
+      <button class="mode-btn active" data-mode="purpose" role="radio" aria-checked="true" tabindex="0">What it does</button>
+      <button class="mode-btn" data-mode="cluster" role="radio" aria-checked="false" tabindex="-1">Clusters</button>
+      <button class="mode-btn" data-mode="bundle" role="radio" aria-checked="false" tabindex="-1">Bundles</button>
+    </div>
+  </div>
+
+  <div class="new-bundle-bar hidden" id="lib-new-bundle-bar">
+    <button class="btn-small btn-secondary" id="lib-new-bundle-btn">+ New bundle</button>
+  </div>
+
+  <div class="state-box hidden" id="lib-state-loading">
+    <span>Loading skill library...</span>
+  </div>
+
+  <div class="state-box hidden" id="lib-state-empty">
+    <p class="state-msg">No skills matched your search.</p>
+  </div>
+
+  <div class="state-box error hidden" id="lib-state-error">
+    <p class="state-msg" id="lib-error-msg">Failed to load skill library.</p>
+    <button class="btn-small btn-primary" id="lib-error-btn">Open settings</button>
+  </div>
+
+  <div class="groups-container" id="lib-groups-container"></div>
+
+  <div class="library-footer">
+    <span class="footer-counts" id="lib-footer-counts">819 skills</span>
+    <button class="btn-icon" id="lib-refresh-btn" aria-label="Refresh library" title="Refresh library">
+      <svg viewBox="0 0 16 16"><path fill="currentColor" d="M13.6 2.4A7 7 0 1 0 15 8h-1.5a5.5 5.5 0 1 1-1.1-4.4L10 6h5V1l-1.4 1.4z"/></svg>
+    </button>
+  </div>
+
   <script nonce="${nonce}" src="${scriptUri}"></script>
 </body>
 </html>`;
@@ -823,12 +1227,14 @@ export function activate(context: vscode.ExtensionContext) {
   rightStatus.show();
 
   studioProvider = new StudioViewProvider(context.extensionPath);
+  libraryProvider = new LibraryViewProvider(context.extensionPath);
 
   const reg = (id: string, fn: (...a: any[]) => unknown) => context.subscriptions.push(vscode.commands.registerCommand(id, fn));
   context.subscriptions.push(
     status,
     rightStatus,
-    vscode.window.registerWebviewViewProvider(StudioViewProvider.viewType, studioProvider)
+    vscode.window.registerWebviewViewProvider(StudioViewProvider.viewType, studioProvider),
+    vscode.window.registerWebviewViewProvider(LibraryViewProvider.viewType, libraryProvider)
   );
 
   // Wire workspace activity listeners for Now tracking
@@ -924,6 +1330,91 @@ export function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand('sfpHive.stack.focus');
     studioProvider?.showTab('now');
   });
+  reg('sfpHive.focusLibrary', async () => {
+    await vscode.commands.executeCommand('sfpHive.library.focus');
+    libraryProvider?.focus();
+  });
+  reg('sfpHive.searchSkills', async () => {
+    const root = sfpRoot();
+    if (!root) return;
+    if (!loadedLibrary) await libraryProvider?.loadLibrary();
+    if (!loadedLibrary) return;
+    const qp = vscode.window.createQuickPick();
+    qp.placeholder = 'Search skills in library (type to filter)...';
+    const updateItems = (q: string) => {
+      const hits = q ? library.searchLibrary(loadedLibrary!, q) : undefined;
+      const names = hits ? hits.map((h) => h.name) : Object.keys(loadedLibrary!.skills).sort();
+      qp.items = names.map((name) => {
+        const s = loadedLibrary!.skills[name];
+        return {
+          label: name,
+          description: s?.d,
+          detail: `${s?.purpose || ''} · ${s?.cluster || ''}${s?.app ? ` · needs ${s.app}` : ''}`,
+        };
+      });
+    };
+    updateItems('');
+    qp.onDidChangeValue((v) => updateItems(v));
+    qp.onDidAccept(async () => {
+      const selected = qp.selectedItems[0];
+      qp.dispose();
+      if (selected) {
+        await vscode.commands.executeCommand('sfpHive.openSkill', selected.label);
+      }
+    });
+    qp.show();
+  });
+  reg('sfpHive.applyBundle', async () => {
+    const root = sfpRoot();
+    if (!root) return;
+    if (!loadedLibrary) await libraryProvider?.loadLibrary();
+    if (!loadedLibrary) return;
+    const picks = loadedLibrary.bundles.map((b) => ({
+      label: b.name,
+      description: `${b.skills.length} skills (~${b.tokens} tokens)`,
+      detail: `${b.goal} [${b.skills.join(' → ')}]`,
+      bundleId: b.id,
+    }));
+    const pick = await vscode.window.showQuickPick(picks, { placeHolder: 'Apply which bundle?' });
+    if (pick) {
+      await applyBundleWorkflow(pick.bundleId);
+    }
+  });
+
+  // Watch catalog.json and data files for library reload
+  try {
+    const sfp = sfpRoot();
+    if (sfp && 'createFileSystemWatcher' in vscode.workspace) {
+      const home = os.homedir();
+      let reloadTimer: NodeJS.Timeout | undefined;
+      const triggerReload = () => {
+        if (reloadTimer) clearTimeout(reloadTimer);
+        reloadTimer = setTimeout(() => {
+          void libraryProvider?.loadLibrary();
+        }, 1000);
+      };
+      const catWatcher = vscode.workspace.createFileSystemWatcher(
+        'RelativePattern' in vscode
+          ? new (vscode as any).RelativePattern(sfp, 'catalog.json')
+          : path.join(sfp, 'catalog.json')
+      );
+      catWatcher.onDidChange?.(triggerReload);
+      catWatcher.onDidCreate?.(triggerReload);
+      catWatcher.onDidDelete?.(triggerReload);
+      const dataWatcher = vscode.workspace.createFileSystemWatcher(
+        'RelativePattern' in vscode
+          ? new (vscode as any).RelativePattern(path.join(home, '.sfp'), '{bundles.json,clusters.json,feedback.jsonl}')
+          : path.join(home, '.sfp', '*.json*')
+      );
+      dataWatcher.onDidChange?.(triggerReload);
+      dataWatcher.onDidCreate?.(triggerReload);
+      dataWatcher.onDidDelete?.(triggerReload);
+      context.subscriptions.push(catWatcher, dataWatcher);
+    }
+  } catch {
+    // file watchers not supported
+  }
+  void libraryProvider.loadLibrary();
   reg('sfpHive.copyPrompt', async () => {
     const root = sfpRoot();
     if (!root) return;

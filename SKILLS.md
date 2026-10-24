@@ -779,7 +779,7 @@ Deep research, scientific databases, literature review, docs, ADRs, a teach-me t
 
 ## web3 (9)
 
-DeFi, EVM, prediction markets, ItÃ´ baskets and compute, and trading-agent security.
+DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security.
 
 | Skill | What it does |
 |---|---|

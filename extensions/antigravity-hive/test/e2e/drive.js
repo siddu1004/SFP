@@ -34,18 +34,22 @@ const browserPath = process.env.CHROMIUM || '/opt/pw-browsers/chromium';
   await page.waitForSelector('.pane-header', { timeout: 90000 });
   await page.waitForTimeout(6000);
 
-  const rows = await page.locator('.monaco-tl-contents').allInnerTexts();
-  assert.ok(rows.some((r) => /tokens/.test(r)), 'a chosen skill should be listed: ' + JSON.stringify(rows));
+  // Focus SFP Hive Studio webview
+  const webviewFrame = page.frameLocator('iframe.webview').first().frameLocator('iframe#active-frame');
+  await webviewFrame.locator('button[data-tab="choose"]').click();
+  await page.waitForTimeout(2000);
+
+  const skillCards = await webviewFrame.locator('.skill-card').allInnerTexts();
+  assert.ok(skillCards.some((r) => /tokens/.test(r)), 'a chosen skill should be listed in webview: ' + JSON.stringify(skillCards));
   assert.match(await status(), /Hive: [1-9]/, 'the status bar should count the skills');
   const note = await page.locator('.notifications-toasts .notification-list-item-message').allInnerTexts();
   assert.ok(note.some((n) => /prompt is copied/.test(n)), 'the prompt should be copied: ' + JSON.stringify(note));
 
-  const row = page.locator('.monaco-list-row', { hasText: /tokens/ }).first();
-  await row.hover();
-  await row.locator('a[aria-label*="helped"]').first().click();
+  const firstCard = webviewFrame.locator('.skill-card', { hasText: /tokens/ }).first();
+  await firstCard.locator('button[data-action="helped"]').click();
   await page.waitForTimeout(3000);
   assert.match(await status(), /noted helped/, 'feedback should be acknowledged');
   assert.deepStrictEqual(errors.filter((e) => /sfp|hive/i.test(e)), [], 'no page error from the extension');
   await browser.close();
-  console.log('ok: activated at startup, command in palette, skills listed, prompt copied, feedback sent');
+  console.log('ok: activated at startup, command in palette, skills listed in webview, prompt copied, feedback sent');
 })().catch((e) => { console.error('FAILED: ' + e.message); process.exit(1); });

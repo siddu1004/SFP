@@ -734,7 +734,7 @@ Deep research, scientific databases, literature review, docs, ADRs, a teach-me t
 
 ## web3
 
-DeFi, EVM, prediction markets, ItÃ´ baskets and compute, and trading-agent security.
+DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent security.
 
 - `agent-payment-x402`: Add x402 payment execution to AI agents with per-task budgets, spending controls, and non-custodial wallets. Supports Base through agentwallet-sdk, X Layer t...
 - `evm-token-decimals`: Prevent silent decimal mismatch bugs across EVM chains. Covers runtime decimal lookup, chain-aware caching, bridged-token precision drift, and safe normaliza...

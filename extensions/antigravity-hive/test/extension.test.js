@@ -35,6 +35,15 @@ const vscode = {
     registerWebviewViewProvider: (id, p) => { state.webviewProviders = state.webviewProviders || {}; state.webviewProviders[id] = p; return { dispose() {} }; },
     showInputBox: async () => state.inputs.shift(),
     showQuickPick: async (items) => state.picks.length ? state.picks.shift() : undefined,
+    createQuickPick: () => ({
+      items: [],
+      placeholder: '',
+      selectedItems: [],
+      onDidChangeValue: () => {},
+      onDidAccept: () => {},
+      show() {},
+      dispose() {},
+    }),
     showInformationMessage: note('info'), showErrorMessage: note('error'), showWarningMessage: note('warn'),
     setStatusBarMessage: (m) => state.messages.push(['status', m]),
     withProgress: async (_o, fn) => fn(),
@@ -58,6 +67,12 @@ const vscode = {
       update: async (k, v) => { state.settings = state.settings || {}; state.settings[k] = v; },
     }),
     openTextDocument: async (f) => f,
+    createFileSystemWatcher: () => ({
+      onDidChange: () => ({ dispose() {} }),
+      onDidCreate: () => ({ dispose() {} }),
+      onDidDelete: () => ({ dispose() {} }),
+      dispose() {},
+    }),
     onDidSaveTextDocument: (l) => { state.saveListeners = state.saveListeners || []; state.saveListeners.push(l); return { dispose() {} }; },
     onDidCreateFiles: (l) => { state.createListeners = state.createListeners || []; state.createListeners.push(l); return { dispose() {} }; },
     onDidDeleteFiles: (l) => { state.deleteListeners = state.deleteListeners || []; state.deleteListeners.push(l); return { dispose() {} }; },
@@ -68,6 +83,7 @@ const vscode = {
   },
   env: { clipboard: { writeText: async (t) => { state.clipboard = t; } } },
   Uri: { file: (f) => ({ fsPath: f }) },
+  RelativePattern: class { constructor(base, pattern) { this.base = base; this.pattern = pattern; } },
   chat: {
     createChatParticipant: (id, handler) => {
       state.chatParticipants = state.chatParticipants || new Map();
@@ -167,7 +183,7 @@ test('Stage 2: registers the SFP Hive Studio webview provider and right status b
   assert.ok(html.includes('studio.js'), 'Must load studio.js');
   assert.ok(html.includes('data-tab="now"'), 'Must have Now tab');
   assert.ok(html.includes('data-tab="choose"'), 'Must have Choose tab');
-  assert.ok(html.includes('data-tab="library"'), 'Must have Library tab');
+  assert.ok(!html.includes('data-tab="library"'), 'Must not have Library tab in Studio');
   assert.ok(html.includes('data-tab="insights"'), 'Must have Insights tab');
 
   const right = state.statusBarItems.find((i) => i.alignment === 2);
@@ -297,7 +313,7 @@ test('webview CSP enforces strict origin without unsafe-inline or remote https',
   assert.ok(csp.includes("img-src vscode-webview: data:"), 'CSP must restrict img-src to webview and data URIs');
 });
 
-test('webview handles choose, feedback, and refresh messages', async () => {
+test('webview handles choose, refresh, remove, and helped messages', async () => {
   const provider = state.webviewProviders['sfpHive.stack'];
   let webviewMessageHandler;
   let posted = [];
@@ -320,16 +336,81 @@ test('webview handles choose, feedback, and refresh messages', async () => {
   await webviewMessageHandler({ command: 'choose', task: 'write table driven tests for a go parser' });
   assert.ok(posted.some((m) => m.type === 'updateState'), 'choose command should post updateState');
 
-  // Test feedback message
+  // Test refresh message
+  posted = [];
+  await webviewMessageHandler({ command: 'refresh' });
+  assert.ok(posted.some((m) => m.type === 'updateState'), 'refresh command should post updateState');
+
+  // Test helped message
   posted = [];
   await webviewMessageHandler({ command: 'feedback', skill: 'golang-patterns', verdict: 'helped' });
   const log = path.join(process.env.SFP_DATA_DIR, 'feedback.jsonl');
   assert.match(fs.readFileSync(log, 'utf8'), /golang-patterns/);
 
-  // Test refresh message
+  // Test remove message
   posted = [];
-  await webviewMessageHandler({ command: 'refresh' });
-  assert.ok(posted.some((m) => m.type === 'updateState'), 'refresh command should post updateState');
+  await webviewMessageHandler({ command: 'removeSkill', skill: 'golang-patterns' });
+  const logAfterRemove = fs.readFileSync(log, 'utf8');
+  assert.match(logAfterRemove, /unhelpful/);
 });
+
+test('Stage 2: registers the SFP Hive Library webview provider and commands', async () => {
+  const libProvider = state.webviewProviders['sfpHive.library'];
+  assert.ok(libProvider, 'sfpHive.library provider must be registered');
+
+  let libHtml = '';
+  let libMessages = [];
+  let onDidReceiveMessageCb;
+  const webviewView = {
+    webview: {
+      options: {},
+      asWebviewUri: (uri) => uri.fsPath,
+      cspSource: 'vscode-webview:',
+      postMessage: (msg) => { libMessages.push(msg); },
+      onDidReceiveMessage: (cb) => { onDidReceiveMessageCb = cb; },
+      set html(val) { libHtml = val; },
+    },
+    show: () => {},
+  };
+  libProvider.resolveWebviewView(webviewView, {}, {});
+
+  // HTML structure & CSP
+  assert.ok(libHtml.includes('Content-Security-Policy'), 'Library HTML must have CSP');
+  assert.ok(!libHtml.includes("'unsafe-inline'"), 'Library CSP must not have unsafe-inline');
+  assert.ok(libHtml.includes('library.css'), 'Library must load library.css');
+  assert.ok(libHtml.includes('library.js'), 'Library must load library.js');
+  assert.ok(libHtml.includes('id="lib-search-input"'), 'Library must have search input');
+  assert.ok(libHtml.includes('data-mode="purpose"'), 'Library must have purpose mode');
+  assert.ok(libHtml.includes('data-mode="cluster"'), 'Library must have cluster mode');
+  assert.ok(libHtml.includes('data-mode="bundle"'), 'Library must have bundle mode');
+  assert.ok(libHtml.includes('id="lib-groups-container"'), 'Library must have groups container');
+
+  // Verify ready message receives library update
+  assert.ok(onDidReceiveMessageCb, 'Must register webview message receiver');
+  await onDidReceiveMessageCb({ command: 'ready' });
+  assert.ok(libMessages.some((m) => m.type === 'update'), 'ready should trigger update message');
+  const updateMsg = libMessages.find((m) => m.type === 'update');
+  assert.ok(updateMsg.groups && updateMsg.groups.length > 0, 'Must have groups');
+  assert.ok(updateMsg.summary && updateMsg.summary.skills > 0, 'Must have summary counts');
+
+  // Search message testing
+  libMessages = [];
+  await onDidReceiveMessageCb({ command: 'search', query: 'anim' });
+  const searchMsg = libMessages.find((m) => m.type === 'searchResults');
+  assert.ok(searchMsg, 'search should post searchResults message');
+  assert.ok(searchMsg.hits && searchMsg.hits.some((h) => h.name.includes('anim')), 'Hits should match query');
+
+  // Switch mode message testing
+  libMessages = [];
+  await onDidReceiveMessageCb({ command: 'switchMode', mode: 'cluster' });
+  const clusterMsg = libMessages.find((m) => m.type === 'searchResults');
+  assert.ok(clusterMsg && clusterMsg.mode === 'cluster');
+
+  // Commands testing
+  assert.ok(commands.has('sfpHive.focusLibrary'));
+  assert.ok(commands.has('sfpHive.searchSkills'));
+  assert.ok(commands.has('sfpHive.applyBundle'));
+});
+
 
 
