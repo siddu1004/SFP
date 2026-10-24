@@ -46,6 +46,13 @@ export interface Selection {
   bundle?: { id: string; name: string };
   needs?: Need[];
   preload?: { name: string; why: string }[];
+  bundles?: BundleMatch[]; // bundles that fit the task, best first; the first is attached whole when `bundle` is set
+}
+
+/** A bundle that fits the task: pushed (attached whole, in order) when push is true, otherwise only suggested. */
+export interface BundleMatch {
+  id: string; name: string; score: number; push: boolean; applied?: boolean;
+  skills: string[]; missing: string[]; why: string;
 }
 
 /** Something the task needs that the model cannot do alone, from `sfp_hive.py needs`. */
@@ -503,7 +510,7 @@ export function bundleRemoveArgs(root: string, name: string): string[] {
 
 export interface LiveSkill { name: string; category: string; description: string; source: 'auto' | 'pinned' }
 export interface LiveState { anchor: string[]; auto: string[]; pinned: string[]; removed: string[] }
-export interface LiveResult { status: 'waiting' | 'kept' | 'updated' | 'committed'; changed: boolean; needs?: Need[]; attached: LiveSkill[]; state: LiveState; words: string[]; decision?: string }
+export interface LiveResult { status: 'waiting' | 'kept' | 'updated' | 'committed'; changed: boolean; needs?: Need[]; bundles?: BundleMatch[]; attached: LiveSkill[]; state: LiveState; words: string[]; decision?: string }
 export interface LiveChange { pin?: string[]; unpin?: string[]; remove?: string[]; restore?: string[]; commit?: boolean }
 
 export function liveArgs(root: string, draft: string, state: LiveState | undefined, project: string | undefined, max: number, change: LiveChange = {}): string[] {
@@ -541,6 +548,7 @@ export function needsArgs(root: string, task: string, project?: string, check = 
   return args;
 }
 
+<<<<<<< HEAD
 export function parseNeeds(json: string): Need[] {
   const r = JSON.parse(json);
   if (!Array.isArray(r)) throw new Error('unexpected output from the hive needs command');
@@ -738,4 +746,21 @@ export function skillDetailHtml(d: SkillDetail, cspSource: string, nonce: string
   ${d.similar.length ? `<section><h2>Similar skills</h2><div class="chips">${d.similar.map((n) => chip('showSkill', 'skill', n, n)).join('')}</div></section>` : ''}
   <section><h2>Details</h2><ul class="facts"><li><b>Area</b> ${e(d.family.name)}</li><li><b>Topic</b> ${e(d.cluster.name)}</li><li><b>Category</b> ${e(d.category)}</li><li><b>Size</b> about ${e(String(d.tokens))} tokens</li>${u}</ul></section>
 </main><script nonce="${nonce}" src="${scriptUri}"></script></body></html>`;
+}
+
+/** One line of `sfp_hive.py doctor --json`: a part of the hive and whether it works. */
+export interface DoctorCheck { name: string; status: 'ok' | 'warn' | 'fail'; detail: string; fix: string }
+export interface DoctorResult { status: 'ok' | 'warn' | 'fail'; checks: DoctorCheck[] }
+
+export function doctorArgs(root: string, project?: string, port = 8787): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'doctor', '--json', '--port', String(port)];
+  if (project) args.push('--project', project);
+  return args;
+}
+
+/** `doctor` exits 1 when something fails but still prints its JSON, so a failed run is parsed from its output. */
+export function parseDoctor(json: string): DoctorResult {
+  const r = JSON.parse(json);
+  if (!r || !Array.isArray(r.checks)) throw new Error('unexpected output from the hive doctor command');
+  return r as DoctorResult;
 }

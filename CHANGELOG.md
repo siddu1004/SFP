@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.14.0
+
+- **`sfp_hive.py doctor`** checks that everything is connected: catalog and search index, data folder, selection, live attaching, needs, the skill library, local models, the router and the MCP server, each as ok, warn or fail with the command that fixes it. `--json` for the editor.
+
+## 3.13.0
+
+- **The hive pushes whole bundles.** A task that fits a bundle gets all of its skills, in the bundle's order, instead of a few loose ones. Matching uses the task's words against each bundle and how many of its skills the hive already chose; a good fit is attached whole (even past the usual four skills), a weaker one is suggested and its remaining skills preloaded. `select --bundles push|suggest|off`; `select`, `live` and `select_skills` return `bundles` and `bundle`. Measured: right bundle first for 88% of 24 dev tasks and 50% of 10 held-out ones, with no wrong bundle pushed. `docs/BUNDLES.md`.
+
 ## 3.12.0
 
 - **Areas.** `families.json` groups the 40 clusters and 36 bundles into eleven areas (Design and UI, Build apps and services, Test and quality, Security, Ship and run, Prompts and agents, Models and gateways, Run a project, Research and docs, 3D and creative, Business and automation). The `library` payload carries `families`, and every skill, cluster and bundle names its area. Two new bundles: Never run out of tokens, Find the right API.

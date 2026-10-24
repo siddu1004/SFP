@@ -112,21 +112,56 @@ def _action(item):
     return 'ready'
 
 
+def plan_bundles(task, project=None, exclude=(), include=(), terms=None, preview=None):
+    """The bundles that fit the task, judged on its words and on what the hive would choose by itself.
+    A bundle fit well enough (score >= PUSH_MIN) is `push`: its skills all join the stack."""
+    import sfp_hive as sel
+    import sfp_library
+    if preview is None:
+        preview = [c['name'] for c in sel.select(task, project, max_skills=6, exclude=exclude)['stack']]
+    return sfp_library.match_bundles(task, chosen=list(preview) + list(include), limit=2,
+                                     exclude=())
+
+
 def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, include=(), exclude=(), explain=False,
-           check=False, learn=True):
-    """sfp_learn.decide plus needs: provider skills join the stack, the rest are preloaded."""
+           check=False, learn=True, bundles='push'):
+    """sfp_learn.decide plus needs and bundles. Provider skills of every need join the stack, the rest are preloaded.
+    `bundles`: 'push' attaches a bundle that fits the task well, whole and in order; 'suggest' only lists and preloads
+    it; 'off' does neither."""
     import sfp_hive as sel
     import sfp_learn
     terms = list(sel.scan(project).get('terms', {})) if project else []
     found = needs(task, terms, check=check, exclude=exclude)
     attach = [n['attach'] for n in found if n['attach'] not in include]
     inc = list(dict.fromkeys(list(include) + attach))
+    matches = []
+    if bundles != 'off':
+        matches = plan_bundles(task, project, exclude, inc)
+        top = matches[0] if matches else None
+        if bundles == 'push' and top and top['push'] and max_skills >= 3:
+            inc = list(dict.fromkeys(inc + [n for n in top['skills'] if n not in set(exclude)]))
     res = sfp_learn.decide(task, project, goal, after, budget, max(max_skills, len(inc)), learn=learn, include=inc,
                            exclude=exclude, explain=explain)
     chosen = {c['name'] for c in res['stack']}
     res['needs'] = found
     res['preload'] = [{'name': p, 'why': 'next step of "%s"' % n['name']} for n in found for p in n['preload']
                       if p not in chosen]
+    for m in matches:
+        m['applied'] = all(n in chosen for n in m['skills'] if n not in set(exclude))
+        m['missing'] = [n for n in m['skills'] if n not in chosen]
+        if not m['applied']:
+            res['preload'] += [{'name': n, 'why': 'rest of the "%s" bundle' % m['name']} for n in m['missing']
+                               if n not in {p['name'] for p in res['preload']}]
+    res['bundles'] = matches
+    iv = res.get('intervention')
+    if iv is not None:
+        # `pinned` and `excluded` are the user's own choices; what a need or a bundle added is reported under `needs` and `bundles`.
+        if include or exclude:
+            iv['pinned'] = [n for n in iv['pinned'] if n in set(include)]
+        else:
+            res.pop('intervention')
+    if matches and matches[0]['applied']:
+        res['bundle'] = {'id': matches[0]['id'], 'name': matches[0]['name']}
     return res
 
 

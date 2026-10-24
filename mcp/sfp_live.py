@@ -63,6 +63,7 @@ def live(draft, state=None, project=None, max_skills=4, pin=(), unpin=(), remove
     before = list(st['pinned']) + list(st['auto'])
     words = content_words(draft)
     decision = None
+    live_bundles = []
 
     if commit:
         import sfp_learn
@@ -76,17 +77,29 @@ def live(draft, state=None, project=None, max_skills=4, pin=(), unpin=(), remove
     elif st['auto'] and similarity(words, st['anchor']) >= SAME_TOPIC:
         status = 'kept'
     else:
-        room = max(max_skills - len(st['pinned']), 0)
+        live_bundles = []
         terms = list(sel.scan(project).get('terms', {})) if project else []
         found = sfp_needs.needs(draft, terms, exclude=st['removed'])
-        res = sel.select(draft, project, None, (), 12000, max_skills + STICKY + len(found),
-                         include=st['pinned'] + [n['attach'] for n in found if n['attach'] not in st['pinned']],
-                         exclude=st['removed'])
+        inc = st['pinned'] + [n['attach'] for n in found if n['attach'] not in st['pinned']]
+        matches = sfp_needs.plan_bundles(draft, project, st['removed'], inc)
+        live_bundles = matches
+        # A bundle joins whole, even past the usual limit, unless the limit was set low on purpose.
+        pushed = matches[0]['skills'] if matches and matches[0]['push'] and max_skills >= 3 else []
+        if pushed:
+            inc = list(dict.fromkeys(inc + [n for n in pushed if n not in set(st['removed'])]))
+        room = max(max(max_skills, len(inc)) - len(st['pinned']), 0)
+        res = sel.select(draft, project, None, (), 12000, max(max_skills, len(inc)) + STICKY,
+                         include=inc, exclude=st['removed'])
         ranked = [c['name'] for c in res['stack'] if c['name'] not in st['pinned']]
-        fresh = ranked[:room]
-        keep = [n for n in st['auto'] if n in ranked[:room + STICKY]]
-        auto = keep[:room]
-        auto += [n for n in fresh if n not in auto][:room - len(auto)]
+        if pushed:
+            # a bundle is a sequence: its skills come first, in its order, whole
+            auto = [n for n in pushed if n not in st['pinned'] and n not in set(st['removed'])]
+            auto += [n for n in ranked if n not in auto][:max(room - len(auto), 0)]
+        else:
+            fresh = ranked[:room]
+            keep = [n for n in st['auto'] if n in ranked[:room + STICKY]]
+            auto = keep[:room]
+            auto += [n for n in fresh if n not in auto][:room - len(auto)]
         st['auto'] = auto
         st['anchor'] = words
         status = 'updated'
@@ -96,6 +109,8 @@ def live(draft, state=None, project=None, max_skills=4, pin=(), unpin=(), remove
     rows = [dict(r, source=source.get(r['name'], 'auto')) for r in _rows(attached)]
     out = {'status': status, 'changed': attached != before, 'attached': rows, 'state': st, 'words': words}
     out['needs'] = sfp_needs.needs(draft, exclude=st['removed']) if status != 'waiting' else []
+    out['bundles'] = live_bundles if status == 'updated' else (st.get('bundles') or [])
+    st['bundles'] = out['bundles']
     if decision:
         out['decision'] = decision
     return out

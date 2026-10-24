@@ -320,3 +320,50 @@ def skill_detail(ident):
     if s.get('app'):
         out['app'] = s['app']
     return out
+
+
+# ---- matching a task to a bundle
+
+WORDS_CAP = 1.2      # the weight of query words that counts as a full match: a task needs two or three strong words, not all of them
+MATCH_MIN = 0.45     # a bundle is suggested from this score
+PUSH_MIN = 0.6       # a bundle is attached whole from this score
+
+
+def _bundle_terms(b):
+    words = set(core.tokens(' '.join([b['name'], b['goal'], b.get('when', '')]).replace('-', ' ')))
+    for n in b['skills']:
+        words |= set(core.tokens(n.replace('-', ' ')))
+    return words
+
+
+def match_bundles(task, chosen=(), limit=2, exclude=()):
+    """The bundles that fit a task, best first: [{id, name, score, push, missing, skills, why}].
+
+    Two kinds of evidence: how much of the task's meaning (rarer words count more) the bundle's name, goal, when-to-use
+    and skill names cover, and how many of the bundle's skills the hive already chose on its own. A bundle with a
+    score of PUSH_MIN or more is worth attaching whole; from MATCH_MIN it is only suggested."""
+    q = [t for t in dict.fromkeys(core.tokens(task or '')) if len(t) > 2 and t in core.DF]   # words no skill uses say nothing
+    if not q:
+        return []
+    skip = set(exclude)
+    chosen = set(chosen)
+    weight = {t: 1.0 / (1.0 + 0.5 * __import__('math').log(1 + core.DF.get(t, 1))) for t in q}
+    total = sum(weight.values()) or 1.0
+    out = []
+    for b in bundles():
+        if not b['skills'] or b['id'] in skip:
+            continue
+        terms = _bundle_terms(b)
+        hit = [t for t in q if t in terms]
+        words = min(1.0, sum(weight[t] for t in hit) / min(total, WORDS_CAP))
+        have = len([n for n in b['skills'] if n in chosen]) / len(b['skills'])
+        score = 0.65 * words + 0.35 * have if hit or have else 0.0
+        if len(hit) < 2 and have < 0.5:
+            score *= 0.6        # one shared word is not a match
+        if score < MATCH_MIN:
+            continue
+        out.append({'id': b['id'], 'name': b['name'], 'score': round(score, 2), 'push': score >= PUSH_MIN,
+                    'skills': b['skills'], 'missing': [n for n in b['skills'] if n not in chosen],
+                    'why': 'matches ' + ', '.join(hit[:4]) if hit else 'the hive already chose %d of its skills' % int(have * len(b['skills']))})
+    out.sort(key=lambda m: -m['score'])
+    return out[:limit]
