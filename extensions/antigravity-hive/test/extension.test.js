@@ -90,7 +90,7 @@ test('the install commands send a plan to the terminal, not a silent install', a
   state.picks.push('starter');
   await commands.get('sfpHive.install')();
   const sent = state.messages.filter((m) => m[0] === 'terminal').map((m) => m[1]).join('\n');
-  assert.match(sent, /install\.py install --tools antigravity/);
+  assert.match(sent, /install\.py["']?\s+install --tools antigravity/);
   state.picks.push({ label: 'OmniRoute', description: 'omniroute' });
   await commands.get('sfpHive.apps')();
   assert.match(state.messages.filter((m) => m[0] === 'terminal').pop()[1], /apps install omniroute$/);
