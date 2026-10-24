@@ -151,6 +151,61 @@ export function byLayer(sel: Selection): { layer: string; skills: Skill[] }[] {
   return groups.filter((g) => g.skills.length > 0);
 }
 
+/** Diff between two selections: returns added and removed skill names. */
+export function selectionDiff(before: Selection | undefined, after: Selection): { added: string[]; removed: string[] } {
+  const beforeNames = new Set((before?.stack || []).map((s) => s.name));
+  const afterNames = new Set((after?.stack || []).map((s) => s.name));
+  const added = Array.from(afterNames).filter((n) => !beforeNames.has(n));
+  const removed = Array.from(beforeNames).filter((n) => !afterNames.has(n));
+  return { added, removed };
+}
+
+export interface SessionStats {
+  decisions: number;
+  interventions: number;
+  chosenTotal: number;
+  keptTotal: number;
+  addedSkills: number;
+  helped: number;
+  unhelpful: number;
+}
+
+export function defaultSessionStats(): SessionStats {
+  return {
+    decisions: 0,
+    interventions: 0,
+    chosenTotal: 0,
+    keptTotal: 0,
+    addedSkills: 0,
+    helped: 0,
+    unhelpful: 0,
+  };
+}
+
+export function updateSessionStats(
+  current: SessionStats,
+  event:
+    | { type: 'decision'; chosenCount: number }
+    | { type: 'intervention'; beforeCount: number; keptCount: number; addedCount: number }
+    | { type: 'feedback'; verdict: 'helped' | 'unhelpful' }
+): SessionStats {
+  const stats = { ...current };
+  if (event.type === 'decision') {
+    stats.decisions += 1;
+    stats.chosenTotal += event.chosenCount;
+    stats.keptTotal += event.chosenCount;
+  } else if (event.type === 'intervention') {
+    stats.interventions += 1;
+    const droppedFromBefore = Math.max(0, event.beforeCount - event.keptCount);
+    stats.keptTotal = Math.max(0, stats.keptTotal - droppedFromBefore);
+    stats.addedSkills += event.addedCount;
+  } else if (event.type === 'feedback') {
+    if (event.verdict === 'helped') stats.helped += 1;
+    else if (event.verdict === 'unhelpful') stats.unhelpful += 1;
+  }
+  return stats;
+}
+
 /** A prompt to paste into an agent panel: which skills to read, in what order, and how to report back. */
 export function buildPrompt(sel: Selection, root?: string): string {
   if (!sel.stack.length) return `The hive found no skill that fits: ${sel.task}`;

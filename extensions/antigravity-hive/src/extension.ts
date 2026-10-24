@@ -41,6 +41,20 @@ export let lastTrackResult: hive.TrackResult | undefined;
 let lastNotificationTime = 0;
 const excludedNowSkills = new Set<string>();
 
+let extContext: vscode.ExtensionContext | undefined;
+let sessionStats: hive.SessionStats = hive.defaultSessionStats();
+let baselineSelection: hive.Selection | undefined;
+let currentInclude: string[] = [];
+let currentExclude: string[] = [];
+let currentDiff: { added: string[]; removed: string[] } | undefined;
+
+function getEditorSelection(): string | undefined {
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) return undefined;
+  const text = editor.document.getText(editor.selection).trim();
+  return text.length > 0 && text.length <= 300 ? text : undefined;
+}
+
 function config() {
   const c = vscode.workspace.getConfiguration('sfpHive');
   return {
@@ -128,17 +142,33 @@ export async function flushActivity(): Promise<hive.TrackResult | undefined> {
   }
 }
 
-async function choose(preset?: string) {
+async function choose(preset?: string, steer?: hive.Steer) {
   const root = sfpRoot();
   if (!root) return;
-  const task = preset ?? (await vscode.window.showInputBox({ prompt: 'What are you about to do?', placeHolder: 'add an accessible signup form', ignoreFocusOut: true }));
+  const task = preset ?? getEditorSelection() ?? (await vscode.window.showInputBox({ prompt: 'What are you about to do?', placeHolder: 'add an accessible signup form', ignoreFocusOut: true }));
   if (!task || !task.trim()) return;
   activity.add({ kind: 'prompt', text: task.trim() });
   const cfg = config();
+  const effectiveSteer: hive.Steer = { explain: true, ...(steer || { include: currentInclude, exclude: currentExclude }) };
+
   await vscode.window.withProgress({ location: vscode.ProgressLocation.Window, title: 'SFP Hive: choosing skills' }, async () => {
     try {
-      const out = await hive.run(hive.pythonCommand(cfg.opts), hive.selectArgs(root, task.trim(), project(), cfg.max));
-      selection = hive.parseSelection(out);
+      const out = await hive.run(hive.pythonCommand(cfg.opts), hive.selectArgs(root, task.trim(), project(), cfg.max, effectiveSteer));
+      const newSel = hive.parseSelection(out);
+
+      if (!steer) {
+        // Fresh choose
+        baselineSelection = newSel;
+        currentDiff = undefined;
+        currentInclude = [];
+        currentExclude = [];
+        sessionStats = hive.updateSessionStats(sessionStats, { type: 'decision', chosenCount: newSel.stack.length });
+        void extContext?.workspaceState?.update('sfpHive.sessionStats', sessionStats);
+      } else if (baselineSelection) {
+        currentDiff = hive.selectionDiff(baselineSelection, newSel);
+      }
+
+      selection = newSel;
       verdicts.clear();
       await vscode.commands.executeCommand('setContext', 'sfpHive.hasSelection', selection.stack.length > 0);
       changed.fire();
@@ -148,7 +178,7 @@ async function choose(preset?: string) {
       await vscode.commands.executeCommand('workbench.view.extension.sfpHive');
       if (!selection.stack.length) {
         void vscode.window.showInformationMessage('The hive found no skill that fits that task.');
-      } else if (cfg.copy) {
+      } else if (cfg.copy && !steer) {
         await vscode.env.clipboard.writeText(hive.buildPrompt(selection, root));
         void vscode.window.showInformationMessage(`Chose ${selection.stack.length} skills. The prompt is copied: paste it into the agent panel.`);
       }
@@ -169,6 +199,8 @@ async function sendFeedback(verdict: hive.Verdict, names: string[]) {
   try {
     await hive.run(hive.pythonCommand(config().opts), hive.feedbackArgs(root, decision, verdict, names, selection?.task));
     names.forEach((n) => verdict !== 'missing' && verdicts.set(n, verdict));
+    sessionStats = hive.updateSessionStats(sessionStats, { type: 'feedback', verdict: verdict === 'helped' ? 'helped' : 'unhelpful' });
+    void extContext?.workspaceState?.update('sfpHive.sessionStats', sessionStats);
     changed.fire();
     studioProvider?.syncState();
     void vscode.window.setStatusBarMessage(`SFP Hive: noted ${verdict}: ${names.join(', ')}`, 4000);
@@ -273,6 +305,41 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
             }
           }
           break;
+        case 'rechoose':
+          if (message.include) currentInclude = message.include;
+          if (message.exclude) currentExclude = message.exclude;
+          await choose(message.task || selection?.task, {
+            include: currentInclude,
+            exclude: currentExclude,
+            explain: true,
+          });
+          break;
+        case 'applyStack':
+          if (selection) {
+            const root = sfpRoot();
+            if (root) {
+              await vscode.env.clipboard.writeText(hive.buildPrompt(selection, root));
+              void vscode.window.showInformationMessage('Prompt copied. Paste it into the agent panel.');
+            }
+            if (message.sendFeedback && baselineSelection) {
+              const feedbacks = hive.interventionFeedback(baselineSelection, {
+                include: currentInclude,
+                exclude: currentExclude,
+              });
+              for (const fb of feedbacks) {
+                await sendFeedback(fb.verdict, fb.skills);
+              }
+            }
+            sessionStats = hive.updateSessionStats(sessionStats, {
+              type: 'intervention',
+              beforeCount: baselineSelection?.stack.length || 0,
+              keptCount: Math.max(0, (baselineSelection?.stack.length || 0) - currentExclude.length),
+              addedCount: currentInclude.length,
+            });
+            void extContext?.workspaceState?.update('sfpHive.sessionStats', sessionStats);
+            this.syncState();
+          }
+          break;
         case 'copyPrompt':
           await vscode.commands.executeCommand('sfpHive.copyPrompt');
           break;
@@ -301,11 +368,20 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
   public syncState() {
     if (!this._view) return;
+    const root = sfpRoot();
     this._view.webview.postMessage({
       type: 'updateState',
       payload: {
         task: selection?.task ?? '',
         skills: selection?.stack ?? [],
+        selection,
+        baselineSelection,
+        diff: baselineSelection && selection ? hive.selectionDiff(baselineSelection, selection) : currentDiff,
+        include: currentInclude,
+        exclude: currentExclude,
+        catalog: root ? hive.catalogNames(root) : [],
+        sessionStats,
+        editorSelection: getEditorSelection(),
         decision: selection?.decision,
         track: lastTrackResult,
         follow: config().follow,
@@ -430,11 +506,69 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         <button class="btn" data-action="choose" aria-label="Choose skills for task">Choose</button>
       </div>
     </div>
+    <div class="section" id="choose-steer-section" style="display: none;">
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <button class="btn" data-action="rechoose" id="choose-rechoose-btn">Re-choose with changes</button>
+        <button class="btn btn-secondary" data-action="applyStack" id="choose-apply-btn">Apply</button>
+        <label style="display: inline-flex; align-items: center; gap: 4px; font-size: var(--font-xs); cursor: pointer;">
+          <input type="checkbox" id="choose-feedback-checkbox" checked>
+          <span>Send feedback on changes</span>
+        </label>
+      </div>
+      <div id="choose-diff-summary" style="margin-top: 6px; font-size: var(--font-xs); display: none;"></div>
+    </div>
     <div class="section">
       <div class="section-title">Skill Stack</div>
       <div class="state-box" id="choose-empty-state">
         <svg viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>
         <span>Type a task above or select text in the editor to inspect skills.</span>
+      </div>
+      <div id="choose-stack-list" class="skills-list" style="display: none;"></div>
+    </div>
+    <div class="section" id="choose-add-section" style="display: none; position: relative;">
+      <div class="section-title">Add any skill from catalog</div>
+      <div style="display: flex; gap: 8px; position: relative;">
+        <input type="text" id="choose-catalog-search" class="input-text" placeholder="Type a skill name..." aria-label="Search catalog skills">
+        <button class="btn btn-secondary" data-action="addCatalogSkill">Add</button>
+      </div>
+      <div id="choose-catalog-results" class="catalog-dropdown" style="display: none;"></div>
+    </div>
+    <div class="section" id="choose-considered-section" style="display: none;">
+      <div class="section-title">Considered but not taken</div>
+      <div style="overflow-x: auto;">
+        <table class="considered-table" id="choose-considered-table">
+          <thead>
+            <tr>
+              <th>Skill</th>
+              <th>Reason</th>
+              <th>Signals</th>
+              <th>Backers</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="choose-considered-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="section" id="choose-session-section">
+      <div class="section-title">Session Stats</div>
+      <div class="session-stats-grid" id="choose-session-stats">
+        <div class="session-stat-card">
+          <span class="session-stat-value" id="stat-decisions">0</span>
+          <span class="card-subtitle">Decisions</span>
+        </div>
+        <div class="session-stat-card">
+          <span class="session-stat-value" id="stat-interventions">0</span>
+          <span class="card-subtitle">Interventions</span>
+        </div>
+        <div class="session-stat-card">
+          <span class="session-stat-value" id="stat-kept">100%</span>
+          <span class="card-subtitle">Kept Share</span>
+        </div>
+        <div class="session-stat-card">
+          <span class="session-stat-value" id="stat-added">0</span>
+          <span class="card-subtitle">Added Skills</span>
+        </div>
       </div>
     </div>
   </div>
@@ -481,6 +615,9 @@ function getNonce(): string {
 }
 
 export function activate(context: vscode.ExtensionContext) {
+  extContext = context;
+  sessionStats = context.workspaceState?.get<hive.SessionStats>('sfpHive.sessionStats') || hive.defaultSessionStats();
+
   const view = new StackView();
   status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 50);
   status.command = 'sfpHive.choose';

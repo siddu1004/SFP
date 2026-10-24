@@ -237,3 +237,38 @@ test('phase changes view model formats and orders changes', () => {
   assert.strictEqual(vm[1].label, 'plan → build');
 });
 
+test('selectionDiff computes added and removed skills accurately', () => {
+  const before = {
+    task: 'test',
+    stack: [{ name: 'skill-a' }, { name: 'skill-b' }],
+  };
+  const after = {
+    task: 'test',
+    stack: [{ name: 'skill-b' }, { name: 'skill-c' }],
+  };
+  const diff = hive.selectionDiff(before, after);
+  assert.deepStrictEqual(diff.added, ['skill-c']);
+  assert.deepStrictEqual(diff.removed, ['skill-a']);
+});
+
+test('updateSessionStats tracks decisions, interventions and feedback', () => {
+  let stats = hive.defaultSessionStats();
+  assert.strictEqual(stats.decisions, 0);
+
+  stats = hive.updateSessionStats(stats, { type: 'decision', chosenCount: 3 });
+  assert.strictEqual(stats.decisions, 1);
+  assert.strictEqual(stats.chosenTotal, 3);
+  assert.strictEqual(stats.keptTotal, 3);
+
+  stats = hive.updateSessionStats(stats, { type: 'intervention', beforeCount: 3, keptCount: 2, addedCount: 1 });
+  assert.strictEqual(stats.interventions, 1);
+  assert.strictEqual(stats.keptTotal, 2);
+  assert.strictEqual(stats.addedSkills, 1);
+
+  stats = hive.updateSessionStats(stats, { type: 'feedback', verdict: 'helped' });
+  stats = hive.updateSessionStats(stats, { type: 'feedback', verdict: 'unhelpful' });
+  assert.strictEqual(stats.helped, 1);
+  assert.strictEqual(stats.unhelpful, 1);
+});
+
+

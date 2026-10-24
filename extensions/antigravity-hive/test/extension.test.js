@@ -82,7 +82,15 @@ Module._load = function (request, ...rest) { return request === 'vscode' ? vscod
 const ext = require('../out/extension.js');
 
 test('activates and registers every command in package.json', () => {
-  ext.activate({ subscriptions: [], extensionPath: REPO });
+  const workspaceStateData = new Map();
+  ext.activate({
+    subscriptions: [],
+    extensionPath: REPO,
+    workspaceState: {
+      get: (k, d) => (workspaceStateData.has(k) ? workspaceStateData.get(k) : d),
+      update: async (k, v) => workspaceStateData.set(k, v),
+    },
+  });
   const declared = require('../package.json').contributes.commands.map((c) => c.command);
   declared.forEach((id) => assert.ok(commands.has(id), id));
   assert.ok(state.providers['sfpHive.stack']);
@@ -201,4 +209,62 @@ test('Stage 3: workspace events feed ActivityBuffer and flush updates Now state'
   state.termEndListeners[0]({ execution: { commandLine: { value: 'npm test' } }, exitCode: 0 });
   assert.ok(ext.activity.size <= 4);
 });
+
+test('Stage 4: Inspector supports steer, diff, and session learning stats', async () => {
+  const provider = state.webviewProviders['sfpHive.stack'];
+  let webviewMessageHandler;
+  let postedMessages = [];
+  let html = '';
+
+  const webviewView = {
+    webview: {
+      options: {},
+      asWebviewUri: (uri) => uri.fsPath,
+      cspSource: 'vscode-webview:',
+      postMessage: (msg) => { postedMessages.push(msg); },
+      onDidReceiveMessage: (handler) => { webviewMessageHandler = handler; },
+      set html(val) { html = val; },
+    },
+    show: () => {},
+  };
+
+  provider.resolveWebviewView(webviewView, {}, {});
+
+  // Check Inspector HTML markup
+  assert.ok(html.includes('id="choose-task-input"'), 'Task input exists');
+  assert.ok(html.includes('id="choose-steer-section"'), 'Steer section exists');
+  assert.ok(html.includes('data-action="rechoose"'), 'Re-choose button exists');
+  assert.ok(html.includes('data-action="applyStack"'), 'Apply button exists');
+  assert.ok(html.includes('id="choose-diff-summary"'), 'Diff summary exists');
+  assert.ok(html.includes('id="choose-considered-section"'), 'Considered section exists');
+  assert.ok(html.includes('id="choose-session-stats"'), 'Session stats grid exists');
+
+  // Trigger ready -> receives updateState
+  assert.ok(webviewMessageHandler);
+  postedMessages = [];
+  await webviewMessageHandler({ command: 'ready' });
+  assert.ok(postedMessages.some((m) => m.type === 'updateState'));
+
+  // Trigger rechoose with steer
+  postedMessages = [];
+  await webviewMessageHandler({
+    command: 'rechoose',
+    task: 'write table driven tests for a go parser',
+    include: ['golang-patterns'],
+    exclude: ['caveman'],
+  });
+
+  const lastUpdate = postedMessages.filter((m) => m.type === 'updateState').pop();
+  assert.ok(lastUpdate, 'Must post updateState after rechoose');
+  assert.ok(lastUpdate.payload.include.includes('golang-patterns'));
+  assert.ok(lastUpdate.payload.exclude.includes('caveman'));
+
+  // Trigger applyStack
+  await webviewMessageHandler({
+    command: 'applyStack',
+    sendFeedback: true,
+  });
+  assert.ok(state.clipboard.length > 0, 'Clipboard filled with applied stack prompt');
+});
+
 
