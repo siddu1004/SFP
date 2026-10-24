@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.10.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.10.0">
+  <img src="https://img.shields.io/badge/version-3.11.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.11.0">
   <img src="https://img.shields.io/badge/skills-819-0f766e?style=flat-square&labelColor=3b4350" alt="819 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
@@ -105,9 +105,9 @@ A task that really needs Celery, such as "set up background jobs with celery", s
 
 | | Result |
 |---|---:|
-| Mistakes on training tasks fixed when the same task is asked again | **90%** |
-| Unseen tasks answered correctly, without learning | 85.4% |
-| Unseen tasks answered correctly, with learning | 86.1% (+0.7 points) |
+| Mistakes on training tasks fixed when the same task is asked again | **89%** |
+| Unseen tasks answered correctly, without learning | 86.1% |
+| Unseen tasks answered correctly, with learning | 86.8% (+0.7 points) |
 | Folds that improved, against folds that got worse | 11 against 6 |
 | Unseen tasks that were right and became wrong | 10 |
 | Stacks with a skill for the wrong technology | 0 |
@@ -122,10 +122,10 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 **Does it pick the right skill, before any learning?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive 3.10.0 | Earlier engine | Plain search |
+| Task set | Hive 3.11.0 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 64% | 9% |
-| 24 tasks in 10 sample projects | 75% | 75% | 25% |
+| 24 tasks in 10 sample projects | 79% | 75% | 25% |
 | 91 tasks with no project | 88% | 88% | 84% |
 | Stacks with a skill for the wrong technology, all sets | 0 | 0 | 1 |
 

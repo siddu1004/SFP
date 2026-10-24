@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.10.0'
+VERSION = '3.11.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
@@ -69,6 +69,7 @@ IMPLIES = {v1._one(k): {v1._one(x) for x in vs} for k, vs in v1.IMPLIES.items()}
 SIGNALS = ('words', 'project', 'role', 'category', 'history')
 
 BACKING = 0.3            # a signal backs a skill when its vote is at least this
+NAMED = 0.97             # a skill whose words score this close to the best match is named by the task, whatever the project
 STRONG_WORDS = 0.8       # the task's words alone are enough when this strong
 OVERLAP_PENALTY = 0.5    # how much a chosen skill lowers a similar skill's quality, per unit of overlap
 SAME_JOB_OVERLAP = 0.5   # extra overlap between skills for the same job in the same category
@@ -155,6 +156,8 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=()):
             continue
         tech = v1.SKILL_TECH.get(name, set())
         rel = relation(tech, ctx_tech)
+        if rel == 'mismatch' and found.get(name, 0) >= NAMED * top:
+            rel = 'named'   # the project cannot veto what the task asks for by name (a 3D skill in a web project)
         if rel == 'fit':
             project = max(ctx[t] for t in tech & ctx_tech) / top_ctx
         elif rel == 'near':

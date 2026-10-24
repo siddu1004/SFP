@@ -54,6 +54,7 @@ export interface Need {
   attach: string; preload: string[]; skills: string[];
   apps?: { id: string; name: string; state: string; installed: boolean | null; running: boolean | null; install: string; start: string }[];
   env_missing?: string[];
+  router?: { configured: boolean; models: number; running: boolean; port: number };
   action?: string; // 'ready', or the one command or step that unblocks it (only with --check)
 }
 

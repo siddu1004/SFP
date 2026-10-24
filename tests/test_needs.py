@@ -116,7 +116,20 @@ class DecideTest(unittest.TestCase):
         found = nd.needs('we hit the rate limit, use free models', check=True)
         self.assertEqual(found[0]['id'], 'never-run-out')
         self.assertTrue(found[0]['apps'])
-        self.assertTrue(found[0]['action'].startswith(('install ', 'start ', 'ready')))
+        self.assertTrue(found[0]['action'].startswith(('set up the router', 'start the router', 'ready')))
+
+    def test_the_project_cannot_veto_a_skill_the_task_names(self):
+        import sfp_hive as sel
+        proj = tempfile.mkdtemp()
+        with open(os.path.join(proj, 'package.json'), 'w') as f:
+            json.dump({'dependencies': {'react': '18', 'express': '4'}}, f)
+        res = sel.select('turn this photo of a chair into a 3d model', proj, max_skills=4)
+        self.assertTrue({'image-to-3d', 'multi-image-to-3d'} & {c['name'] for c in res['stack']})
+
+    def test_running_out_of_tokens_points_to_the_router_first(self):
+        found = nd.needs('we hit the rate limit, use free models', check=True)[0]
+        self.assertFalse(found['router']['running'])
+        self.assertIn('sfp_route.py', found['action'])
 
     def test_the_command_line(self):
         hive = os.path.join(ROOT, 'mcp', 'sfp_hive.py')

@@ -1,45 +1,240 @@
 {
   "_note": "Things a model cannot do by itself, and the skills, programs and keys that give it the ability. A task that needs one gets its provider skill attached and, if a program or key is missing, a setup step. `triggers` are [regex, weight] pairs matched on the task (weights add up, capped at 1; a capability counts from 0.5). `project` lists project terms (from the fingerprint) that add 0.3. `skills` are in the order to use them; the first is attached by the hive, the rest are preloaded. `apps` are ids in apps/apps.json; `env` are variable names to check (never their values).",
   "capabilities": [
-    {"id": "make-3d", "name": "Make 3D models from images or text",
-     "why": "A model cannot produce a 3D mesh itself. It needs an image-to-3D service and Blender to clean and render the result.",
-     "triggers": [["\\b(3d|three.?d)\\b.*\\b(model|mesh|asset|object|print)|\\b(glb|gltf|obj|stl|fbx)\\b", 0.6], ["(photo|picture|image|scan|sketch).{0,30}\\b(to|into|as)\\b.{0,12}\\b3d\\b|\\bimage.to.3d\\b|\\btext.to.3d\\b", 0.7], ["\\bmeshy\\b|\\btripo\\b|\\bphotogrammetry\\b", 0.8]],
-     "project": ["blender", "three", "babylon", "gltf"],
-     "skills": ["image-to-3d", "multi-image-to-3d", "blender-product-polish"], "apps": [], "env": ["MESHY_API_KEY"]},
-    {"id": "browse-web", "name": "Read websites and platforms",
-     "why": "A model cannot open pages or sign in to platforms. It needs a browsing or reading tool, and a scraper if the job repeats.",
-     "triggers": [["https?://", 0.7], ["\\b(scrape|scraping|crawl|crawler|spider)\\b", 0.7], ["\\b(visit|open|read|fetch|browse|look at|go to)\\b.{0,30}\\b(website|web ?site|webpage|web page|page|url|link|site)\\b", 0.6], ["\\b(twitter|tweet|youtube|bilibili|reddit|xiaohongshu|linkedin|hacker ?news|subtitles|transcript)\\b", 0.6], ["\\bsearch the (web|internet)\\b|\\bonline\\b.{0,20}\\b(latest|current|news)\\b", 0.6]],
-     "project": [],
-     "skills": ["agent-reach", "playwright-cli", "data-scraper-agent"], "apps": ["agent-reach"], "env": []},
-    {"id": "never-run-out", "name": "Keep working when a model runs out",
-     "why": "One model has limits. A gateway or a free-tier router sends the work on to another model before the limit stops you.",
-     "triggers": [["\\b(rate.?limit|rate limited|quota|429|out of tokens|run out of (tokens|credits|limit)|token limit|usage limit|limit (is |has )?(run|reached|hit))\\b", 0.7], ["\\b(free (llm|model|tier)s?|fallback model|fail ?over|cheaper model|route (requests|between)|many providers|multiple providers|llm gateway|api gateway for)\\b", 0.7], ["\\b(omniroute|freellmapi|litellm|openrouter)\\b", 0.8]],
-     "project": [],
-     "skills": ["freellmapi", "cli-serve", "omni-combos-routing", "omni-budget"], "apps": ["freellmapi", "omniroute"], "env": []},
-    {"id": "find-api", "name": "Find a free API for a need",
-     "why": "A model does not know every API and invents endpoints. A searchable list of real, free APIs gives it ones that exist.",
-     "triggers": [["\\b(free|public|open)\\b.{0,12}\\bapis?\\b", 0.7], ["\\b(is there|find|looking for|need|which) (an? )?(api|data source|dataset)\\b", 0.6], ["\\b(weather|currency|exchange rate|geocod\\w*|ip lookup|news|stock price|crypto price|translation)\\b.{0,20}\\bapi\\b", 0.7]],
-     "project": [],
-     "skills": ["public-apis"], "apps": [], "env": []},
-    {"id": "generate-media", "name": "Generate images, video or voice",
-     "why": "A model cannot draw, film or speak. It calls a media generation service, or renders video from code.",
-     "triggers": [["\\b(generate|create|make|render)\\b.{0,20}\\b(an? |the |some )?(image|picture|illustration|video|clip|animation|voice|audio|speech|music|logo)s?\\b", 0.5], ["\\btext.to.(image|video|speech)\\b|\\b(stable diffusion|flux|veo|sora)\\b", 0.8], ["\\bremotion\\b", 0.8]],
-     "project": ["remotion"],
-     "skills": ["fal-ai-media", "remotion-video-creation"], "apps": [], "env": ["FAL_KEY"]},
-    {"id": "see-the-page", "name": "Check the work in a real browser",
-     "why": "A model cannot see the page it built. A browser driver clicks through it, takes screenshots and finds what is broken.",
-     "triggers": [["\\b(e2e|end.to.end|playwright|puppeteer|cypress|selenium)\\b", 0.7], ["\\b(screenshot|click through|visual (test|check|regression)|check (it|the page|the ui|the site) in (a |the )?browser)\\b", 0.6], ["\\b(test|verify|check)\\b.{0,25}\\b(login|checkout|signup|form|flow|page|ui)\\b.{0,25}\\b(works?|in a browser|browser)\\b", 0.6]],
-     "project": ["playwright", "cypress"],
-     "skills": ["playwright-cli", "browser-qa"], "apps": [], "env": []},
-    {"id": "remember", "name": "Remember earlier sessions",
-     "why": "A model forgets between sessions. A memory tool searches what was done before and why.",
-     "triggers": [["\\b(last time|previously|earlier session|where (we|i) left off|remember (when|what|how)|we (did|decided|discussed)|yesterday|continue from)\\b", 0.7], ["\\b(claude-mem|search (my |our )?(past|previous|earlier) (work|sessions?|notes))\\b", 0.8]],
-     "project": [],
-     "skills": ["mem-search"], "apps": ["claude-mem"], "env": []},
-    {"id": "pentest", "name": "Test an application for security holes",
-     "why": "A model reading code finds some bugs but cannot attack a running app. A scanner probes it the way an attacker would.",
-     "triggers": [["\\b(pentest|pen.test|penetration test\\w*|owasp|vulnerabilit\\w+ scan\\w*|security scan\\w*|find vulnerabilit\\w+)\\b", 0.8], ["\\b(scan|test|check|probe|attack|find|hunt)\\w*\\b.{0,40}\\b(sql injection|xss|csrf|ssrf|injection|auth bypass)\\b|\\b(sql injection|xss|csrf|ssrf)\\b.{0,30}\\b(test|check|find|scan)\\b", 0.7]],
-     "project": [],
-     "skills": ["application-security-testing", "find-security-vulnerabilities-in-code", "penetration-testing-with-strix"], "apps": ["strix"], "env": []}
+    {
+      "id": "make-3d",
+      "name": "Make 3D models from images or text",
+      "why": "A model cannot produce a 3D mesh itself. It needs an image-to-3D service and Blender to clean and render the result.",
+      "triggers": [
+        [
+          "\\b(3d|three.?d)\\b.*\\b(model|mesh|asset|object|print)|\\b(glb|gltf|obj|stl|fbx)\\b",
+          0.6
+        ],
+        [
+          "(photo|picture|image|scan|sketch).{0,30}\\b(to|into|as)\\b.{0,12}\\b3d\\b|\\bimage.to.3d\\b|\\btext.to.3d\\b",
+          0.7
+        ],
+        [
+          "\\bmeshy\\b|\\btripo\\b|\\bphotogrammetry\\b",
+          0.8
+        ]
+      ],
+      "project": [
+        "blender",
+        "three",
+        "babylon",
+        "gltf"
+      ],
+      "skills": [
+        "image-to-3d",
+        "multi-image-to-3d",
+        "blender-product-polish"
+      ],
+      "apps": [],
+      "env": [
+        "MESHY_API_KEY"
+      ]
+    },
+    {
+      "id": "browse-web",
+      "name": "Read websites and platforms",
+      "why": "A model cannot open pages or sign in to platforms. It needs a browsing or reading tool, and a scraper if the job repeats.",
+      "triggers": [
+        [
+          "https?://",
+          0.7
+        ],
+        [
+          "\\b(scrape|scraping|crawl|crawler|spider)\\b",
+          0.7
+        ],
+        [
+          "\\b(visit|open|read|fetch|browse|look at|go to)\\b.{0,30}\\b(website|web ?site|webpage|web page|page|url|link|site)\\b",
+          0.6
+        ],
+        [
+          "\\b(twitter|tweet|youtube|bilibili|reddit|xiaohongshu|linkedin|hacker ?news|subtitles|transcript)\\b",
+          0.6
+        ],
+        [
+          "\\bsearch the (web|internet)\\b|\\bonline\\b.{0,20}\\b(latest|current|news)\\b",
+          0.6
+        ]
+      ],
+      "project": [],
+      "skills": [
+        "agent-reach",
+        "playwright-cli",
+        "data-scraper-agent"
+      ],
+      "apps": [
+        "agent-reach"
+      ],
+      "env": []
+    },
+    {
+      "id": "never-run-out",
+      "name": "Keep working when a model runs out",
+      "why": "One model has limits. SFP's own router (your local models first, free tiers next) or a gateway sends the work on to another model before the limit stops you.",
+      "triggers": [
+        [
+          "\\b(rate.?limit|rate limited|quota|429|out of tokens|run out of (tokens|credits|limit)|token limit|usage limit|limit (is |has )?(run|reached|hit))\\b",
+          0.7
+        ],
+        [
+          "\\b(free (llm|model|tier)s?|fallback model|fail ?over|cheaper model|route (requests|between)|many providers|multiple providers|llm gateway|api gateway for)\\b",
+          0.7
+        ],
+        [
+          "\\b(omniroute|freellmapi|litellm|openrouter)\\b",
+          0.8
+        ]
+      ],
+      "project": [],
+      "skills": [
+        "freellmapi",
+        "cli-serve",
+        "omni-combos-routing",
+        "omni-budget"
+      ],
+      "apps": [
+        "freellmapi",
+        "omniroute"
+      ],
+      "env": [],
+      "router": true
+    },
+    {
+      "id": "find-api",
+      "name": "Find a free API for a need",
+      "why": "A model does not know every API and invents endpoints. A searchable list of real, free APIs gives it ones that exist.",
+      "triggers": [
+        [
+          "\\b(free|public|open)\\b.{0,12}\\bapis?\\b",
+          0.7
+        ],
+        [
+          "\\b(is there|find|looking for|need|which) (an? )?(api|data source|dataset)\\b",
+          0.6
+        ],
+        [
+          "\\b(weather|currency|exchange rate|geocod\\w*|ip lookup|news|stock price|crypto price|translation)\\b.{0,20}\\bapi\\b",
+          0.7
+        ]
+      ],
+      "project": [],
+      "skills": [
+        "public-apis"
+      ],
+      "apps": [],
+      "env": []
+    },
+    {
+      "id": "generate-media",
+      "name": "Generate images, video or voice",
+      "why": "A model cannot draw, film or speak. It calls a media generation service, or renders video from code.",
+      "triggers": [
+        [
+          "\\b(generate|create|make|render)\\b.{0,20}\\b(an? |the |some )?(image|picture|illustration|video|clip|animation|voice|audio|speech|music|logo)s?\\b",
+          0.5
+        ],
+        [
+          "\\btext.to.(image|video|speech)\\b|\\b(stable diffusion|flux|veo|sora)\\b",
+          0.8
+        ],
+        [
+          "\\bremotion\\b",
+          0.8
+        ]
+      ],
+      "project": [
+        "remotion"
+      ],
+      "skills": [
+        "fal-ai-media",
+        "remotion-video-creation"
+      ],
+      "apps": [],
+      "env": [
+        "FAL_KEY"
+      ]
+    },
+    {
+      "id": "see-the-page",
+      "name": "Check the work in a real browser",
+      "why": "A model cannot see the page it built. A browser driver clicks through it, takes screenshots and finds what is broken.",
+      "triggers": [
+        [
+          "\\b(e2e|end.to.end|playwright|puppeteer|cypress|selenium)\\b",
+          0.7
+        ],
+        [
+          "\\b(screenshot|click through|visual (test|check|regression)|check (it|the page|the ui|the site) in (a |the )?browser)\\b",
+          0.6
+        ],
+        [
+          "\\b(test|verify|check)\\b.{0,25}\\b(login|checkout|signup|form|flow|page|ui)\\b.{0,25}\\b(works?|in a browser|browser)\\b",
+          0.6
+        ]
+      ],
+      "project": [
+        "playwright",
+        "cypress"
+      ],
+      "skills": [
+        "playwright-cli",
+        "browser-qa"
+      ],
+      "apps": [],
+      "env": []
+    },
+    {
+      "id": "remember",
+      "name": "Remember earlier sessions",
+      "why": "A model forgets between sessions. A memory tool searches what was done before and why.",
+      "triggers": [
+        [
+          "\\b(last time|previously|earlier session|where (we|i) left off|remember (when|what|how)|we (did|decided|discussed)|yesterday|continue from)\\b",
+          0.7
+        ],
+        [
+          "\\b(claude-mem|search (my |our )?(past|previous|earlier) (work|sessions?|notes))\\b",
+          0.8
+        ]
+      ],
+      "project": [],
+      "skills": [
+        "mem-search"
+      ],
+      "apps": [
+        "claude-mem"
+      ],
+      "env": []
+    },
+    {
+      "id": "pentest",
+      "name": "Test an application for security holes",
+      "why": "A model reading code finds some bugs but cannot attack a running app. A scanner probes it the way an attacker would.",
+      "triggers": [
+        [
+          "\\b(pentest|pen.test|penetration test\\w*|owasp|vulnerabilit\\w+ scan\\w*|security scan\\w*|find vulnerabilit\\w+)\\b",
+          0.8
+        ],
+        [
+          "\\b(scan|test|check|probe|attack|find|hunt)\\w*\\b.{0,40}\\b(sql injection|xss|csrf|ssrf|injection|auth bypass)\\b|\\b(sql injection|xss|csrf|ssrf)\\b.{0,30}\\b(test|check|find|scan)\\b",
+          0.7
+        ]
+      ],
+      "project": [],
+      "skills": [
+        "application-security-testing",
+        "find-security-vulnerabilities-in-code",
+        "penetration-testing-with-strix"
+      ],
+      "apps": [
+        "strix"
+      ],
+      "env": []
+    }
   ]
 }

@@ -14,6 +14,7 @@ import os
 import re
 import subprocess
 import sys
+import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
@@ -53,6 +54,20 @@ def _app_state(app_id):
             'start': 'python3 apps/sfp_app.py start %s' % app_id}
 
 
+def router_state(port=8787):
+    """Is SFP's own router set up, and is it running? (A local probe, about a millisecond when nothing listens.)"""
+    import sfp_route
+    cfg = sfp_route.load_config()
+    models = sum(len(p.get('models', [])) for p in cfg.get('providers', []))
+    running = False
+    try:
+        with urllib.request.urlopen('http://127.0.0.1:%d/health' % port, timeout=0.5):
+            running = True
+    except OSError:
+        pass
+    return {'configured': models > 0, 'models': models, 'running': running, 'port': port}
+
+
 def needs(task, project_terms=(), check=False, exclude=()):
     """The abilities the task needs, strongest first. `check` adds the state of programs and keys."""
     out = []
@@ -67,6 +82,8 @@ def needs(task, project_terms=(), check=False, exclude=()):
         item = {'id': c['id'], 'name': c['name'], 'why': c['why'], 'score': round(s, 2), 'skills': skills,
                 'attach': skills[0], 'preload': skills[1:]}
         if check:
+            if c.get('router'):
+                item['router'] = router_state()
             item['apps'] = [a for a in (_app_state(i) for i in c['apps']) if a]
             item['env_missing'] = [v for v in c.get('env', []) if not os.environ.get(v)]
             item['action'] = _action(item)
@@ -76,6 +93,13 @@ def needs(task, project_terms=(), check=False, exclude=()):
 
 def _action(item):
     """The one next step that unblocks this need, or 'ready'."""
+    r = item.get('router')
+    if r:
+        if r['running']:
+            return 'ready'
+        if r['configured']:
+            return 'start the router: python3 mcp/sfp_route.py serve'
+        return 'set up the router: python3 mcp/sfp_route.py setup --yes && python3 mcp/sfp_route.py serve'
     apps = item.get('apps') or []
     # Any one program of the group is enough, so only complain when none is installed.
     if apps and not any(a['installed'] for a in apps if a['installed'] is not None) and all(a['installed'] is False for a in apps):
