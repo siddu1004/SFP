@@ -64,9 +64,37 @@ function project(): string | undefined {
   return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
 }
 
+export let lastDoctorResult: hive.DoctorResult | undefined;
+
+export function isFirstRun(): boolean {
+  try {
+    const p = path.join(process.env.SFP_DATA_DIR || path.join(os.homedir(), '.sfp'), 'decisions.jsonl');
+    if (!fs.existsSync(p)) return true;
+    const content = fs.readFileSync(p, 'utf8').trim();
+    return content.length === 0;
+  } catch {
+    return true;
+  }
+}
+
 function showStatus() {
-  status.text = selection ? `$(organization) Hive: ${selection.stack.length}` : '$(organization) Hive';
-  status.tooltip = selection ? `Chosen for: ${selection.task}` : 'Choose skills for a task';
+  if (lastDoctorResult && lastDoctorResult.status === 'fail') {
+    const firstFail = lastDoctorResult.checks.find((c) => c.status === 'fail');
+    status.text = `$(warning) Hive: ${firstFail?.name || 'Connection issue'}`;
+    status.tooltip = firstFail ? `${firstFail.name}: ${firstFail.detail}` : 'SFP Hive connection check failed';
+    return;
+  }
+  const bundleName = selection?.bundle?.name || (selection?.task?.startsWith('Bundle: ') ? selection.task.slice(8) : undefined);
+  if (bundleName) {
+    status.text = `$(organization) Hive: ${bundleName}`;
+    status.tooltip = `Bundle: ${bundleName}`;
+  } else if (selection) {
+    status.text = `$(organization) Hive: ${selection.stack.length}`;
+    status.tooltip = `Chosen for: ${selection.task}`;
+  } else {
+    status.text = '$(organization) Hive';
+    status.tooltip = 'Choose skills for a task';
+  }
 }
 
 export async function checkNeeds(task: string): Promise<hive.Need[]> {
@@ -84,6 +112,88 @@ export async function checkNeeds(task: string): Promise<hive.Need[]> {
     return needs;
   } catch {
     return [];
+  }
+}
+
+export async function runDoctor(interactive = false): Promise<hive.DoctorResult> {
+  const root = hive.findSfpRoot(config().opts);
+  if (!root) {
+    const res: hive.DoctorResult = {
+      status: 'fail',
+      checks: [
+        {
+          name: 'SFP checkout',
+          status: 'fail',
+          detail: 'Could not find your SFP checkout',
+          fix: 'Open settings and set sfpHive.sfpPath',
+        },
+      ],
+    };
+    lastDoctorResult = res;
+    showStatus();
+    studioProvider?._view?.webview.postMessage({ type: 'doctorResult', result: res });
+    modelsProvider?._view?.webview.postMessage({ type: 'doctorResult', result: res });
+    if (interactive) {
+      studioProvider?.showTab('insights');
+      studioProvider?.focus();
+    }
+    return res;
+  }
+
+  try {
+    const cfg = config();
+    const out = await hive.run(
+      hive.pythonCommand(cfg.opts),
+      hive.doctorArgs(root, project(), routerPort),
+      15000
+    );
+    const res = hive.parseDoctor(out);
+    lastDoctorResult = res;
+    showStatus();
+    studioProvider?._view?.webview.postMessage({ type: 'doctorResult', result: res });
+    modelsProvider?._view?.webview.postMessage({ type: 'doctorResult', result: res });
+    if (interactive) {
+      studioProvider?.showTab('insights');
+      studioProvider?.focus();
+    }
+    return res;
+  } catch (err: any) {
+    try {
+      const match = (err.message || '').match(/\{[\s\S]*"checks"[\s\S]*\}/);
+      if (match) {
+        const res = hive.parseDoctor(match[0]);
+        lastDoctorResult = res;
+        showStatus();
+        studioProvider?._view?.webview.postMessage({ type: 'doctorResult', result: res });
+        modelsProvider?._view?.webview.postMessage({ type: 'doctorResult', result: res });
+        if (interactive) {
+          studioProvider?.showTab('insights');
+          studioProvider?.focus();
+        }
+        return res;
+      }
+    } catch {}
+
+    const res: hive.DoctorResult = {
+      status: 'fail',
+      checks: [
+        {
+          name: 'Doctor execution',
+          status: 'fail',
+          detail: err.message || 'Failed to run doctor command',
+          fix: 'Check Python installation and permissions',
+        },
+      ],
+    };
+    lastDoctorResult = res;
+    showStatus();
+    studioProvider?._view?.webview.postMessage({ type: 'doctorResult', result: res });
+    modelsProvider?._view?.webview.postMessage({ type: 'doctorResult', result: res });
+    if (interactive) {
+      studioProvider?.showTab('insights');
+      studioProvider?.focus();
+    }
+    return res;
   }
 }
 
@@ -603,12 +713,18 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   public _view?: vscode.WebviewView;
   public liveSession?: LiveSession;
   public lastLiveResult?: hive.LiveResult;
-  public isCollapsed = true;
+  public isCollapsed = false;
+  private _libQuery = '';
+  private _libMode: library.GroupMode = 'family';
 
   constructor(private readonly extensionPath: string) {
     if (extContext) {
-      this.isCollapsed = extContext.workspaceState?.get<boolean>('sfpHive.stackCollapsed', true) ?? true;
+      this.isCollapsed = extContext.workspaceState?.get<boolean>('sfpHive.stackCollapsed', false) ?? false;
     }
+  }
+
+  public focus(): void {
+    this._view?.show?.(true);
   }
 
   public resolveWebviewView(
@@ -819,7 +935,146 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         case 'focusModels':
           await vscode.commands.executeCommand('sfpHive.focusModels');
           break;
+        case 'libReady':
+          if (!loadedLibrary) {
+            await this.loadLibrary();
+          } else {
+            this.syncLibraryState();
+          }
+          break;
+        case 'search':
+          this._libQuery = message.query || '';
+          this._libMode = message.mode || this._libMode;
+          this.performLibrarySearch(this._libQuery, this._libMode);
+          break;
+        case 'switchMode':
+          this._libMode = message.mode || 'family';
+          this.performLibrarySearch(this._libQuery, this._libMode);
+          break;
+        case 'openDetail':
+          if (message.skill) {
+            await showSkillDetail(String(message.skill));
+          }
+          break;
+        case 'addToBundle':
+          if (message.skill) {
+            await addToBundleWorkflow(message.skill);
+          }
+          break;
+        case 'applyBundle':
+          if (message.bundleId) {
+            await applyBundleWorkflow(message.bundleId);
+          }
+          break;
+        case 'newBundle':
+          await newBundleWorkflow();
+          break;
+        case 'editBundle':
+          if (message.bundleId) {
+            await editBundleWorkflow(message.bundleId);
+          }
+          break;
+        case 'deleteBundle':
+          if (message.bundleId) {
+            await deleteBundleWorkflow(message.bundleId);
+          }
+          break;
+        case 'openSettings':
+          void vscode.commands.executeCommand('workbench.action.openSettings', 'sfpHive.sfpPath');
+          break;
+        case 'notThisBundle':
+          if (message.skills && Array.isArray(message.skills)) {
+            for (const s of message.skills) {
+              if (!currentExclude.includes(s)) currentExclude.push(s);
+              currentInclude = currentInclude.filter((x) => x !== s);
+            }
+            if (this.liveSession) {
+              this.liveSession.steer('', { remove: message.skills });
+            }
+            await choose(selection?.task, { include: currentInclude, exclude: currentExclude, explain: true });
+          }
+          break;
+        case 'attachBundle':
+          if (message.bundleId) {
+            await applyBundleWorkflow(message.bundleId);
+          }
+          break;
+        case 'fillExample':
+          await choose('make the signup form accessible');
+          break;
+        case 'runDoctor':
+          await runDoctor(true);
+          break;
+        case 'copyFix':
+          if (message.fix) {
+            await vscode.env.clipboard.writeText(message.fix);
+            void vscode.window.showInformationMessage('Fix command copied to clipboard.');
+          }
+          break;
       }
+    });
+  }
+
+  public async loadLibrary(): Promise<void> {
+    const root = sfpRoot();
+    if (!root) {
+      this.postLibraryError('SFP checkout not found. Check sfpHive.sfpPath setting.');
+      return;
+    }
+    const cfg = config();
+    try {
+      const out = await hive.run(hive.pythonCommand(cfg.opts), hive.libraryArgs(root));
+      loadedLibrary = hive.parseLibrary(out);
+      this.syncLibraryState();
+    } catch (e) {
+      this.postLibraryError((e as Error).message);
+    }
+  }
+
+  public syncLibraryState(): void {
+    if (!this._view || !loadedLibrary) return;
+    const hits = this._libQuery.trim() ? library.searchLibrary(loadedLibrary, this._libQuery.trim()) : undefined;
+    const groups = library.groupBy(loadedLibrary, this._libMode, hits);
+    const summary = library.summary(loadedLibrary);
+
+    this._view.webview.postMessage({
+      type: 'update',
+      mode: this._libMode,
+      query: this._libQuery,
+      groups,
+      summary,
+      counts: loadedLibrary.counts,
+      skills: loadedLibrary.skills,
+      families: loadedLibrary.families,
+      purposes: loadedLibrary.purposes,
+      clusters: loadedLibrary.clusters,
+      bundles: loadedLibrary.bundles,
+      error: null,
+    });
+  }
+
+  public performLibrarySearch(query: string, mode: library.GroupMode): void {
+    if (!this._view || !loadedLibrary) return;
+    const trimmed = query.trim();
+    const hits = trimmed ? library.searchLibrary(loadedLibrary, trimmed) : undefined;
+    const groups = library.groupBy(loadedLibrary, mode, hits);
+
+    this._view.webview.postMessage({
+      type: 'searchResults',
+      query,
+      mode,
+      hits: hits ?? null,
+      groups,
+      matchCount: hits ? hits.length : loadedLibrary.counts.skills,
+      totalCount: loadedLibrary.counts.skills,
+    });
+  }
+
+  public postLibraryError(msg: string): void {
+    if (!this._view) return;
+    this._view.webview.postMessage({
+      type: 'error',
+      message: msg,
     });
   }
 
@@ -830,10 +1085,17 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     this._view?.webview.postMessage({ type: 'updateNeeds', needs });
   }
 
-  public showTab(tab: 'now' | 'choose' | 'insights') {
+  public showTab(tab: 'now' | 'choose' | 'insights' | 'library' | string) {
     if (this._view) {
       this._view.show?.(true);
       this._view.webview.postMessage({ type: 'switchTab', tab });
+      if (tab === 'library') {
+        if (!loadedLibrary) {
+          void this.loadLibrary();
+        } else {
+          this.syncLibraryState();
+        }
+      }
     }
   }
 
@@ -876,8 +1138,10 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   private getHtml(webview: vscode.Webview): string {
     const nonce = getNonce();
     const styleUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'studio.css')));
+    const libraryStyleUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'library.css')));
     const iconsUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'icons.js')));
     const scriptUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'studio.js')));
+    const libraryScriptUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'library.js')));
     const iconUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'hive.svg')));
     const root = sfpRoot();
     const catalogCount = root ? hive.catalogNames(root).length : 819;
@@ -890,6 +1154,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SFP Hive Studio</title>
   <link rel="stylesheet" href="${styleUri}">
+  <link rel="stylesheet" href="${libraryStyleUri}">
 </head>
 <body>
   <div class="studio-header ${this.isCollapsed ? 'collapsed' : ''}" id="studio-header">
@@ -911,6 +1176,10 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       <button class="tab-btn" data-tab="choose" role="tab" aria-selected="false" aria-controls="tab-choose" id="btn-tab-choose" tabindex="-1">
         <svg class="tab-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>
         <span>Choose</span>
+      </button>
+      <button class="tab-btn" data-tab="library" role="tab" aria-selected="false" aria-controls="tab-library" id="btn-tab-library" tabindex="-1">
+        <svg class="tab-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14 2H2v12h12V2zM3 3h10v10H3V3z"/><path fill="currentColor" d="M5 5h6v1H5zm0 3h6v1H5zm0 3h4v1H5z"/></svg>
+        <span>Library</span>
       </button>
       <button class="tab-btn" data-tab="insights" role="tab" aria-selected="false" aria-controls="tab-insights" id="btn-tab-insights" tabindex="-1">
         <svg class="tab-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M1 14h14v1H1v-1zm2-2h2V7H3v5zm4 0h2V3H7v9zm4 0h2V5h-2v7z"/></svg>
@@ -996,6 +1265,11 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
   <!-- Tab 2: Choose -->
   <div class="tab-content" id="tab-choose" role="tabpanel" aria-labelledby="btn-tab-choose">
+    <div class="choose-welcome ${isFirstRun() ? '' : 'hidden'}" id="choose-welcome">
+      <div class="welcome-title">Describe a task, see the skills, send it.</div>
+      <div class="welcome-desc">The hive chooses skills based on your project files, task words, and past feedback.</div>
+      <button class="btn btn-secondary btn-small" data-action="fillExample" id="btn-fill-example">Try an example</button>
+    </div>
     <div class="choose-bundle-banner hidden" id="choose-bundle-banner"></div>
     <div class="section">
       <div class="section-title">Task Prompt</div>
@@ -1043,6 +1317,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         <span>Failed to choose skills. Check that the SFP checkout exists in sfpHive.sfpPath.</span>
       </div>
       <div id="choose-stack-list" class="skills-list hidden"></div>
+      <div id="choose-preload-list" class="skills-list preload-section hidden"></div>
     </div>
     <div class="section relative hidden" id="choose-add-section">
       <div class="section-title">Add any skill from catalog</div>
@@ -1092,8 +1367,58 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     </div>
   </div>
 
-  <!-- Tab 3: Insights -->
+  <!-- Tab 3: Skill Library -->
+  <div class="tab-content" id="tab-library" role="tabpanel" aria-labelledby="btn-tab-library">
+    <div class="library-header">
+      <div class="search-box-row">
+        <svg class="search-icon" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>
+        <input type="text" id="lib-search-input" class="search-input" placeholder="Search skills or what you want to do" aria-label="Search skills" autocomplete="off" spellcheck="false">
+        <button id="lib-search-clear" class="search-clear-btn hidden" aria-label="Clear search" title="Clear search (Esc)">&times;</button>
+      </div>
+      <div class="search-count-badge"><span id="lib-search-count">Loading skills...</span></div>
+      <div class="mode-switch" id="lib-mode-switch" role="radiogroup" aria-label="How to browse the library">
+        <button class="mode-btn active" data-mode="family" role="radio" aria-checked="true" tabindex="0" title="Browse by area: design, security, agents...">Areas</button>
+        <button class="mode-btn" data-mode="purpose" role="radio" aria-checked="false" tabindex="-1" title="Browse by what you want to get done">Goals</button>
+        <button class="mode-btn" data-mode="bundle" role="radio" aria-checked="false" tabindex="-1" title="Ready-made sets of skills for one job">Bundles</button>
+        <button class="mode-btn" data-mode="cluster" role="radio" aria-checked="false" tabindex="-1" title="Skills grouped by topic">Clusters</button>
+      </div>
+    </div>
+
+    <div class="new-bundle-bar" id="lib-new-bundle-bar">
+      <button class="btn" id="lib-new-bundle-btn">+ New bundle</button>
+    </div>
+
+    <div class="state-box hidden" id="lib-state-loading">
+      <span>Loading skill library...</span>
+    </div>
+
+    <div class="state-box hidden" id="lib-state-empty">
+      <p class="state-msg">Nothing matches that. Try one word, like &ldquo;docker&rdquo; or &ldquo;tests&rdquo;, or clear the search.</p>
+    </div>
+
+    <div class="state-box error hidden" id="lib-state-error">
+      <p class="state-msg" id="lib-error-msg">Failed to load skill library.</p>
+      <button class="btn btn-primary" id="lib-error-btn">Open settings</button>
+    </div>
+
+    <div class="groups-container" id="lib-groups-container"></div>
+
+    <div class="library-footer">
+      <span class="footer-counts" id="lib-footer-counts"></span>
+    </div>
+  </div>
+
+  <!-- Tab 4: Insights -->
   <div class="tab-content" id="tab-insights" role="tabpanel" aria-labelledby="btn-tab-insights">
+    <div class="section">
+      <div class="section-title">
+        <span>Connection &amp; Health</span>
+        <button class="btn btn-secondary" data-action="runDoctor" id="btn-run-doctor">Check connection</button>
+      </div>
+      <div id="insights-doctor-container" class="doctor-container">
+        ${lastDoctorResult ? hive.renderDoctorHtml(lastDoctorResult) : '<div class="state-box"><span>Click Check connection to verify the hive.</span></div>'}
+      </div>
+    </div>
     <div class="section">
       <div class="section-title">
         <span>Learning &amp; Usage</span>
@@ -1117,6 +1442,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
   <script nonce="${nonce}" src="${iconsUri}"></script>
   <script nonce="${nonce}" src="${scriptUri}"></script>
+  <script nonce="${nonce}" src="${libraryScriptUri}"></script>
 </body>
 </html>`;
   }
@@ -1719,6 +2045,15 @@ export class ModelsViewProvider implements vscode.WebviewViewProvider {
           }
           break;
         }
+        case 'runDoctor':
+          await runDoctor(true);
+          break;
+        case 'copyFix':
+          if (message.fix) {
+            await vscode.env.clipboard.writeText(message.fix);
+            void vscode.window.showInformationMessage('Fix command copied to clipboard.');
+          }
+          break;
       }
     });
   }
@@ -1797,6 +2132,13 @@ export class ModelsViewProvider implements vscode.WebviewViewProvider {
   <link rel="stylesheet" href="${styleUri}">
 </head>
 <body>
+  <div class="models-top-bar">
+    <button id="models-check-conn-btn" class="btn btn-secondary btn-small" data-action="runDoctor">Check connection</button>
+  </div>
+  <div id="models-doctor-container" class="doctor-container">
+    ${lastDoctorResult ? hive.renderDoctorHtml(lastDoctorResult) : ''}
+  </div>
+
   <div class="models-header">
     <div class="models-title">
       <span id="status-dot" class="status-dot" title="Router status"></span>
@@ -1977,14 +2319,15 @@ export function activate(context: vscode.ExtensionContext) {
   flushInterval.unref?.();
   context.subscriptions.push({ dispose: () => clearInterval(flushInterval) });
 
+  reg('sfpHive.doctor', () => runDoctor(true));
   reg('sfpHive.choose', () => choose());
   reg('sfpHive.focusNow', async () => {
     await vscode.commands.executeCommand('sfpHive.stack.focus');
     studioProvider?.showTab('now');
   });
   reg('sfpHive.focusLibrary', async () => {
-    await vscode.commands.executeCommand('sfpHive.library.focus');
-    libraryProvider?.focus();
+    await vscode.commands.executeCommand('sfpHive.stack.focus');
+    studioProvider?.showTab('library');
   });
   reg('sfpHive.searchSkills', async () => {
     const root = sfpRoot();
@@ -2224,6 +2567,17 @@ export function activate(context: vscode.ExtensionContext) {
     } catch {
       // Chat API not available in this environment
     }
+  }
+
+  void runDoctor(false);
+  if ('onDidChangeConfiguration' in vscode.workspace && typeof (vscode.workspace as any).onDidChangeConfiguration === 'function') {
+    context.subscriptions.push(
+      (vscode.workspace as any).onDidChangeConfiguration((e: any) => {
+        if (e?.affectsConfiguration?.('sfpHive.sfpPath')) {
+          void runDoctor(false);
+        }
+      })
+    );
   }
 }
 

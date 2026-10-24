@@ -416,3 +416,72 @@ select:focus, input[type="text"]:focus {
     max-width: 120px;
   }
 }
+
+.models-top-bar {
+  margin-bottom: var(--grid-2);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Doctor Check Styles */
+.doctor-container {
+  margin-bottom: var(--grid-2);
+}
+.doctor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.doctor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  background: var(--vscode-sideBarSectionHeader-background, rgba(255, 255, 255, 0.03));
+  border-left: 3px solid transparent;
+}
+.doctor-ok {
+  border-left-color: var(--vscode-testing-iconPassed, #4ec9b0);
+}
+.doctor-ok .doctor-mark {
+  color: var(--vscode-testing-iconPassed, #4ec9b0);
+}
+.doctor-warn {
+  border-left-color: var(--vscode-editorWarning-foreground, #cca700);
+}
+.doctor-warn .doctor-mark {
+  color: var(--vscode-editorWarning-foreground, #cca700);
+}
+.doctor-fail {
+  border-left-color: var(--vscode-errorForeground, #f14c4c);
+}
+.doctor-fail .doctor-mark {
+  color: var(--vscode-errorForeground, #f14c4c);
+}
+.doctor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.doctor-name {
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+.doctor-detail {
+  color: var(--vscode-descriptionForeground);
+}
+.doctor-fix {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 3px 6px;
+  background: var(--vscode-textCodeBlock-background, rgba(0, 0, 0, 0.15));
+  border-radius: 3px;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 11px;
+}

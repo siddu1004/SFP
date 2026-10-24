@@ -248,7 +248,40 @@
         strength: nextStrength,
       });
     }
+
+    const fixBtn = e.target.closest('[data-action="copyFix"]');
+    if (fixBtn) {
+      const fix = fixBtn.getAttribute('data-fix');
+      if (fix) vscode.postMessage({ command: 'copyFix', fix });
+    }
   });
+
+  const checkConnBtn = document.getElementById('models-check-conn-btn');
+  if (checkConnBtn) {
+    checkConnBtn.addEventListener('click', () => {
+      vscode.postMessage({ command: 'runDoctor' });
+    });
+  }
+
+  function renderDoctorResultHtml(result) {
+    if (!result || !result.checks) return '';
+    const items = result.checks.map((c) => {
+      const mark = c.status === 'ok' ? '✔' : c.status === 'warn' ? '▲' : '✖';
+      const statusClass = c.status === 'ok' ? 'doctor-ok' : c.status === 'warn' ? 'doctor-warn' : 'doctor-fail';
+      const fixHtml = c.fix
+        ? `<div class="doctor-fix"><span>Fix: ${escapeHtml(c.fix)}</span><button class="btn btn-secondary btn-small" data-action="copyFix" data-fix="${escapeHtml(c.fix)}">Copy</button></div>`
+        : '';
+      return `<div class="doctor-item ${statusClass}">
+        <span class="doctor-mark">${mark}</span>
+        <div class="doctor-info">
+          <span class="doctor-name">${escapeHtml(c.name)}</span>
+          <span class="doctor-detail">${escapeHtml(c.detail)}</span>
+          ${fixHtml}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="doctor-list">${items}</div>`;
+  }
 
   // Incoming Messages
   window.addEventListener('message', (event) => {
@@ -293,6 +326,14 @@
         state.planOutput = '';
         state.testOutput = msg.result || null;
         renderTryOutput();
+        break;
+      }
+      case 'doctorResult': {
+        const container = document.getElementById('models-doctor-container');
+        if (container && msg.result) {
+          container.classList.remove('hidden');
+          container.innerHTML = renderDoctorResultHtml(msg.result);
+        }
         break;
       }
     }

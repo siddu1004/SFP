@@ -1023,3 +1023,126 @@ input:checked + .toggle-slider:before {
     padding: var(--grid-1);
   }
 }
+
+/* Welcome Card (first-run) */
+.choose-welcome {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: var(--radius-sm);
+  background: var(--vscode-sideBarSectionHeader-background, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--vscode-widget-border, rgba(127, 127, 127, 0.2));
+}
+.welcome-title {
+  font-weight: 600;
+  font-size: var(--font-sm);
+  margin-bottom: 4px;
+}
+.welcome-desc {
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+/* Bundle Banner */
+.choose-bundle-banner {
+  padding: 8px;
+  margin-bottom: 8px;
+  border-radius: var(--radius-sm);
+  background: var(--vscode-sideBarSectionHeader-background, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--vscode-widget-border, rgba(127, 127, 127, 0.2));
+}
+.bundle-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+.bundle-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.bundle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--vscode-badge-background, rgba(127, 127, 127, 0.15));
+  color: var(--vscode-foreground);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: var(--font-xs);
+}
+.bundle-chip-num {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Preloaded Skills */
+.preload-card {
+  opacity: 0.7;
+}
+
+/* Doctor Check Styles */
+.doctor-container {
+  margin-top: 6px;
+}
+.doctor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.doctor-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  background: var(--vscode-sideBarSectionHeader-background, rgba(255, 255, 255, 0.03));
+  border-left: 3px solid transparent;
+}
+.doctor-ok {
+  border-left-color: var(--vscode-testing-iconPassed, #4ec9b0);
+}
+.doctor-ok .doctor-mark {
+  color: var(--vscode-testing-iconPassed, #4ec9b0);
+}
+.doctor-warn {
+  border-left-color: var(--vscode-editorWarning-foreground, #cca700);
+}
+.doctor-warn .doctor-mark {
+  color: var(--vscode-editorWarning-foreground, #cca700);
+}
+.doctor-fail {
+  border-left-color: var(--vscode-errorForeground, #f14c4c);
+}
+.doctor-fail .doctor-mark {
+  color: var(--vscode-errorForeground, #f14c4c);
+}
+.doctor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+.doctor-name {
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+.doctor-detail {
+  color: var(--vscode-descriptionForeground);
+}
+.doctor-fix {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 3px 6px;
+  background: var(--vscode-textCodeBlock-background, rgba(0, 0, 0, 0.15));
+  border-radius: 3px;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 11px;
+}

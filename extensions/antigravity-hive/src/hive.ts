@@ -160,6 +160,10 @@ export function parseSelection(json: string): Selection {
     next: Array.isArray(raw.next) ? raw.next : [],
     explain: Array.isArray(raw.explain) ? raw.explain : undefined,
     intervention: raw.intervention,
+    bundle: raw.bundle,
+    bundles: Array.isArray(raw.bundles) ? raw.bundles : undefined,
+    preload: Array.isArray(raw.preload) ? raw.preload : undefined,
+    needs: Array.isArray(raw.needs) ? raw.needs : undefined,
   };
 }
 
@@ -510,7 +514,17 @@ export function bundleRemoveArgs(root: string, name: string): string[] {
 
 export interface LiveSkill { name: string; category: string; description: string; source: 'auto' | 'pinned' }
 export interface LiveState { anchor: string[]; auto: string[]; pinned: string[]; removed: string[] }
-export interface LiveResult { status: 'waiting' | 'kept' | 'updated' | 'committed'; changed: boolean; needs?: Need[]; bundles?: BundleMatch[]; attached: LiveSkill[]; state: LiveState; words: string[]; decision?: string }
+export interface LiveResult {
+  status: 'waiting' | 'kept' | 'updated' | 'committed';
+  changed: boolean;
+  needs?: Need[];
+  bundle?: { id: string; name: string };
+  bundles?: BundleMatch[];
+  attached: LiveSkill[];
+  state: LiveState;
+  words: string[];
+  decision?: string;
+}
 export interface LiveChange { pin?: string[]; unpin?: string[]; remove?: string[]; restore?: string[]; commit?: boolean }
 
 export function liveArgs(root: string, draft: string, state: LiveState | undefined, project: string | undefined, max: number, change: LiveChange = {}): string[] {
@@ -528,6 +542,9 @@ export function liveArgs(root: string, draft: string, state: LiveState | undefin
 export function parseLive(json: string): LiveResult {
   const r = JSON.parse(json);
   if (!r || !Array.isArray(r.attached) || !r.state) throw new Error('unexpected output from the hive live command');
+  if (r.bundles && !r.bundle && r.bundles[0]?.push) {
+    r.bundle = { id: r.bundles[0].id, name: r.bundles[0].name };
+  }
   return r as LiveResult;
 }
 
@@ -763,3 +780,79 @@ export function parseDoctor(json: string): DoctorResult {
   if (!r || !Array.isArray(r.checks)) throw new Error('unexpected output from the hive doctor command');
   return r as DoctorResult;
 }
+
+/**
+ * Renders the bundle banner for Choose and live chips.
+ * When a bundle was pushed (or attached): shows "Bundle: <name>", ordered numbered skills chips, and "Not this bundle".
+ * When a bundle is only suggested: shows "Looks like <name>" with "Attach whole bundle".
+ */
+export function renderBundleBanner(
+  bundle?: { id: string; name: string; skills?: string[] },
+  suggested?: BundleMatch
+): string {
+  if (bundle) {
+    const name = escapeHtml(bundle.name);
+    const id = escapeHtml(bundle.id);
+    const skills = bundle.skills || [];
+    const chipsHtml = skills.length
+      ? `<div class="bundle-chips-row">${skills
+          .map((s, i) => `<span class="bundle-chip"><span class="bundle-chip-num">${i + 1}</span> ${escapeHtml(s)}</span>`)
+          .join('')}</div>`
+      : '';
+    const skillsAttr = escapeHtml(skills.join(','));
+    return `<div class="choose-bundle-banner pushed" data-bundle-id="${id}">
+  <div class="bundle-banner-header">
+    <span class="bundle-banner-title">Bundle: <strong>${name}</strong></span>
+    <button class="btn btn-secondary btn-small" data-action="notThisBundle" data-bundle-skills="${skillsAttr}">Not this bundle</button>
+  </div>
+  ${chipsHtml}
+</div>`.trim();
+  }
+  if (suggested && !suggested.push) {
+    const name = escapeHtml(suggested.name);
+    const id = escapeHtml(suggested.id);
+    return `<div class="choose-bundle-banner suggested" data-bundle-id="${id}">
+  <div class="bundle-banner-header">
+    <span class="bundle-banner-title">Looks like <strong>${name}</strong></span>
+    <button class="btn btn-primary btn-small" data-action="attachBundle" data-bundle-id="${id}">Attach whole bundle</button>
+  </div>
+</div>`.trim();
+  }
+  return '';
+}
+
+/**
+ * Pure renderer for Doctor results list.
+ */
+export function renderDoctorHtml(result: DoctorResult): string {
+  const mark = (status: 'ok' | 'warn' | 'fail') => {
+    if (status === 'ok') return '<span class="doctor-mark doctor-ok" aria-label="OK">✔</span>';
+    if (status === 'warn') return '<span class="doctor-mark doctor-warn" aria-label="Warning">▲</span>';
+    return '<span class="doctor-mark doctor-fail" aria-label="Failed">✖</span>';
+  };
+
+  const rows = (result.checks || []).map((c) => {
+    const statusClass = `doctor-status-${c.status}`;
+    const name = escapeHtml(c.name);
+    const detail = escapeHtml(c.detail);
+    let fixHtml = '';
+    if (c.status !== 'ok' && c.fix) {
+      const fix = escapeHtml(c.fix);
+      fixHtml = `<div class="doctor-fix">
+  <span class="doctor-fix-text">${fix}</span>
+  <button class="btn btn-secondary btn-small" data-action="copyFix" data-fix="${fix}">Copy</button>
+</div>`;
+    }
+    return `<li class="doctor-item ${statusClass}">
+  <div class="doctor-line">
+    ${mark(c.status)}
+    <span class="doctor-name">${name}</span>
+    <span class="doctor-detail">${detail}</span>
+  </div>
+  ${fixHtml}
+</li>`;
+  }).join('');
+
+  return `<ul class="doctor-list">${rows}</ul>`;
+}
+

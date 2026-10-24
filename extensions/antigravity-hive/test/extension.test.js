@@ -189,7 +189,7 @@ test('Stage 2: registers the SFP Hive Studio webview provider and right status b
   assert.ok(html.includes('studio.js'), 'Must load studio.js');
   assert.ok(html.includes('data-tab="now"'), 'Must have Now tab');
   assert.ok(html.includes('data-tab="choose"'), 'Must have Choose tab');
-  assert.ok(!html.includes('data-tab="library"'), 'Must not have Library tab in Studio');
+  assert.ok(html.includes('data-tab="library"'), 'Must have Library tab in Studio');
   assert.ok(html.includes('data-tab="insights"'), 'Must have Insights tab');
 
   const right = state.statusBarItems.find((i) => i.alignment === 2);

@@ -1,7 +1,7 @@
 // SFP Skill Library sidebar. The extension host does the search and the grouping (src/library.ts); this file only draws
 // what it is sent and posts what the user does. Every dynamic string goes through escapeHtml.
 (function () {
-  const vscode = acquireVsCodeApi();
+  const vscode = window.vscode || (window.vscode = acquireVsCodeApi());
 
   const MODES = ['family', 'purpose', 'bundle', 'cluster'];
   let state = {

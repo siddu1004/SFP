@@ -1,6 +1,5 @@
-// SFP Hive Studio Frontend Script
 (function () {
-  const vscode = acquireVsCodeApi();
+  const vscode = window.vscode || (window.vscode = acquireVsCodeApi());
 
   // State
   let currentTab = 'now';
@@ -378,6 +377,36 @@
         }
         break;
       }
+      case 'notThisBundle': {
+        const skillsRaw = target.getAttribute('data-bundle-skills');
+        const skills = skillsRaw ? skillsRaw.split(',').filter(Boolean) : [];
+        vscode.postMessage({ command: 'notThisBundle', skills });
+        break;
+      }
+      case 'attachBundle': {
+        const bundleId = target.getAttribute('data-bundle-id');
+        if (bundleId) {
+          vscode.postMessage({ command: 'attachBundle', bundleId });
+        }
+        break;
+      }
+      case 'fillExample': {
+        const input = document.getElementById('choose-task-input');
+        if (input) input.value = 'make the signup form accessible';
+        vscode.postMessage({ command: 'fillExample' });
+        break;
+      }
+      case 'runDoctor': {
+        vscode.postMessage({ command: 'runDoctor' });
+        break;
+      }
+      case 'copyFix': {
+        const fix = target.getAttribute('data-fix');
+        if (fix) {
+          vscode.postMessage({ command: 'copyFix', fix });
+        }
+        break;
+      }
     }
   });
 
@@ -620,8 +649,35 @@
         }
         break;
       }
+      case 'doctorResult': {
+        const container = document.getElementById('insights-doctor-container');
+        if (container && msg.result) {
+          container.innerHTML = renderDoctorResultHtml(msg.result);
+        }
+        break;
+      }
     }
   });
+
+  function renderDoctorResultHtml(result) {
+    if (!result || !result.checks) return '';
+    const items = result.checks.map((c) => {
+      const mark = c.status === 'ok' ? '✔' : c.status === 'warn' ? '▲' : '✖';
+      const statusClass = c.status === 'ok' ? 'doctor-ok' : c.status === 'warn' ? 'doctor-warn' : 'doctor-fail';
+      const fixHtml = c.fix
+        ? `<div class="doctor-fix"><span>Fix: ${escapeHtml(c.fix)}</span><button class="btn btn-secondary btn-small" data-action="copyFix" data-fix="${escapeHtml(c.fix)}">Copy</button></div>`
+        : '';
+      return `<div class="doctor-item ${statusClass}">
+        <span class="doctor-mark">${mark}</span>
+        <div class="doctor-info">
+          <span class="doctor-name">${escapeHtml(c.name)}</span>
+          <span class="doctor-detail">${escapeHtml(c.detail)}</span>
+          ${fixHtml}
+        </div>
+      </div>`;
+    }).join('');
+    return `<div class="doctor-list">${items}</div>`;
+  }
 
   function renderSignalBars(signals) {
     if (!signals) return '';
@@ -690,15 +746,50 @@
       }
     }
 
+    // Welcome banner in Choose (first-run)
+    const welcome = document.getElementById('choose-welcome');
+    if (welcome) {
+      if ((sel && sel.stack && sel.stack.length) || (taskInput && taskInput.value.trim())) {
+        welcome.classList.add('hidden');
+      }
+    }
+
     // Bundle banner in Choose
     const bundleBanner = document.getElementById('choose-bundle-banner');
-    const bundleName = sel?.bundleName || (sel?.task?.startsWith('Bundle: ') ? sel.task.slice(8) : null);
     if (bundleBanner) {
-      if (bundleName) {
+      const pushedBundle = sel?.bundles?.find((b) => b.push) || (sel?.bundle ? { id: sel.bundle.id, name: sel.bundle.name, push: true, skills: sel.stack?.map((s) => s.name) } : null);
+      const suggestedBundle = sel?.bundles?.find((b) => !b.push);
+
+      if (pushedBundle) {
         bundleBanner.classList.remove('hidden');
-        bundleBanner.innerHTML = `<span class="badge badge-mine">Bundle</span> <strong>${escapeHtml(bundleName)}</strong>`;
+        const skills = pushedBundle.skills || [];
+        const chipsHtml = skills
+          .map((name, i) => `<span class="bundle-chip"><span class="bundle-chip-num">${i + 1}</span> ${escapeHtml(name)}</span>`)
+          .join('');
+        bundleBanner.innerHTML = `
+          <div class="bundle-banner-header">
+            <span class="badge badge-mine">Bundle: ${escapeHtml(pushedBundle.name)}</span>
+            <button class="btn btn-secondary btn-small" data-action="notThisBundle" data-bundle-skills="${escapeHtml(skills.join(','))}">Not this bundle</button>
+          </div>
+          <div class="bundle-chips-row">${chipsHtml}</div>
+        `;
+      } else if (suggestedBundle) {
+        bundleBanner.classList.remove('hidden');
+        bundleBanner.innerHTML = `
+          <div class="bundle-banner-header">
+            <span>Looks like <strong>${escapeHtml(suggestedBundle.name)}</strong></span>
+            <button class="btn btn-secondary btn-small" data-action="attachBundle" data-bundle-id="${escapeHtml(suggestedBundle.id)}">Attach whole bundle</button>
+          </div>
+        `;
       } else {
-        bundleBanner.classList.add('hidden');
+        const bundleName = sel?.bundleName || (sel?.task?.startsWith('Bundle: ') ? sel.task.slice(8) : null);
+        if (bundleName) {
+          bundleBanner.classList.remove('hidden');
+          bundleBanner.innerHTML = `<span class="badge badge-mine">Bundle</span> <strong>${escapeHtml(bundleName)}</strong>`;
+        } else {
+          bundleBanner.classList.add('hidden');
+          bundleBanner.innerHTML = '';
+        }
       }
     }
 
@@ -766,12 +857,35 @@
           })
           .join('');
       }
+
+      // Preloaded skills under the stack
+      const preloadList = document.getElementById('choose-preload-list');
+      if (preloadList) {
+        const preloads = sel.preload || [];
+        if (preloads.length) {
+          preloadList.classList.remove('hidden');
+          preloadList.innerHTML = `<div class="section-title">Preloaded skills</div>` + preloads.map((p) => `
+            <div class="skill-card preload-card">
+              <div class="card-header"><span class="card-title">${escapeHtml(p.name)}</span><span class="studio-badge">Preload</span></div>
+              <div class="card-meta"><span>${escapeHtml(p.why)}</span></div>
+            </div>
+          `).join('');
+        } else {
+          preloadList.classList.add('hidden');
+          preloadList.innerHTML = '';
+        }
+      }
     } else {
       if (emptyBox) emptyBox.classList.remove('hidden');
       if (addSection) addSection.classList.add('hidden');
       if (stackList) {
         stackList.classList.add('hidden');
         stackList.innerHTML = '';
+      }
+      const preloadList = document.getElementById('choose-preload-list');
+      if (preloadList) {
+        preloadList.classList.add('hidden');
+        preloadList.innerHTML = '';
       }
     }
 

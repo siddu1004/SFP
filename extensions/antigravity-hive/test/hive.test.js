@@ -419,6 +419,73 @@ test('parseRoutePlan parses plan output lines', () => {
   assert.strictEqual(plan.order[1].strength, 3);
   assert.strictEqual(plan.order[1].kind, 'free');
 });
+test('doctorArgs formats command and parseDoctor parses output', () => {
+  const args = hive.doctorArgs('/path/to/sfp', '/proj', 8787);
+  assert.ok(args[0].endsWith('sfp_hive.py'));
+  assert.strictEqual(args[1], 'doctor');
+  assert.ok(args.includes('--json'));
+  assert.ok(args.includes('--port'));
+  assert.ok(args.includes('8787'));
+  assert.ok(args.includes('--project'));
+  assert.ok(args.includes('/proj'));
 
+  const jsonSample = JSON.stringify({
+    status: 'warn',
+    checks: [
+      { name: 'Python', status: 'ok', detail: '3.13.14', fix: '' },
+      { name: 'Local models', status: 'warn', detail: 'none found', fix: 'Start Ollama' },
+    ],
+  });
+  const res = hive.parseDoctor(jsonSample);
+  assert.strictEqual(res.status, 'warn');
+  assert.strictEqual(res.checks.length, 2);
+  assert.strictEqual(res.checks[0].name, 'Python');
+  assert.throws(() => hive.parseDoctor('bad json'));
+  assert.throws(() => hive.parseDoctor('{}'));
+});
 
+test('renderDoctorHtml renders green/amber/red marks, details, and escaped fixes', () => {
+  const res = {
+    status: 'fail',
+    checks: [
+      { name: 'Python', status: 'ok', detail: '3.13', fix: '' },
+      { name: 'Router <script>', status: 'fail', detail: 'down & halted', fix: 'Run "sfp_route" & fix' },
+    ],
+  };
+  const html = hive.renderDoctorHtml(res);
+  assert.ok(html.includes('doctor-ok'));
+  assert.ok(html.includes('doctor-fail'));
+  assert.ok(html.includes('Router &lt;script&gt;'));
+  assert.ok(html.includes('down &amp; halted'));
+  assert.ok(html.includes('Run &quot;sfp_route&quot; &amp; fix'));
+  assert.ok(html.includes('data-action="copyFix"'));
+});
 
+test('renderBundleBanner renders pushed bundle with numbered chips and suggested bundle with attach', () => {
+  const pushed = {
+    id: 'b1',
+    name: 'Form & Access',
+    skills: ['ux-writing', 'react-patterns'],
+  };
+  const htmlPushed = hive.renderBundleBanner(pushed);
+  assert.ok(htmlPushed.includes('Bundle: <strong>Form &amp; Access</strong>'));
+  assert.ok(htmlPushed.includes('data-action="notThisBundle"'));
+  assert.ok(htmlPushed.includes('bundle-chip-num">1<'));
+  assert.ok(htmlPushed.includes('ux-writing'));
+  assert.ok(htmlPushed.includes('bundle-chip-num">2<'));
+  assert.ok(htmlPushed.includes('react-patterns'));
+
+  const suggested = {
+    id: 'b2',
+    name: 'Clean Code',
+    score: 0.5,
+    push: false,
+    skills: ['testing'],
+    missing: [],
+    why: '',
+  };
+  const htmlSuggested = hive.renderBundleBanner(undefined, suggested);
+  assert.ok(htmlSuggested.includes('Looks like <strong>Clean Code</strong>'));
+  assert.ok(htmlSuggested.includes('data-action="attachBundle"'));
+  assert.ok(htmlSuggested.includes('data-bundle-id="b2"'));
+});
