@@ -58,7 +58,34 @@ const browserPath = process.env.CHROMIUM || '/opt/pw-browsers/chromium';
   const liveChips = await webviewFrame.locator('.live-chip').allInnerTexts();
   assert.ok(liveChips.length > 0, 'live chips should appear when typing: ' + JSON.stringify(liveChips));
 
+  // L6 & L7: Test Skill Library bundles and apply
+  // Focus Skill Library webview
+  const libFrame = page.frameLocator('iframe.webview').nth(1).frameLocator('iframe#active-frame');
+  const bundleModeBtn = libFrame.locator('button.mode-btn[data-mode="bundle"]');
+  if (await bundleModeBtn.count()) {
+    await bundleModeBtn.click();
+    await page.waitForTimeout(1000);
+  }
+
+  // L6: Open bundle "Prepare a release" and verify five skills in order, token estimate
+  const releaseBundle = libFrame.locator('.bundle-card', { hasText: 'Prepare a release' }).first();
+  await releaseBundle.waitFor({ timeout: 10000 });
+  const bundleText = await releaseBundle.innerText();
+  assert.ok(bundleText.includes('tokens'), 'L6: bundle card must show token estimate: ' + bundleText);
+  const chips = await releaseBundle.locator('.bundle-chip').allInnerTexts();
+  assert.strictEqual(chips.length, 5, 'L6: bundle "Prepare a release" must have 5 skills in order: ' + JSON.stringify(chips));
+  assert.ok(chips[0].includes('verification-loop') && chips[1].includes('git-workflow'), 'L6: skills must be in order');
+
+  // L7: Apply it and verify Choose shows five pinned skills, "pinned by you", and the bundle name
+  await releaseBundle.locator('button[data-action="applyBundle"]').click();
+  await page.waitForTimeout(3000);
+
+  const chooseBanner = await webviewFrame.locator('.choose-bundle-banner, #choose-task-input').allInnerTexts();
+  assert.ok(chooseBanner.some((b) => b.includes('Prepare a release')), 'L7: Choose must display bundle name: ' + JSON.stringify(chooseBanner));
+  const reasonsText = await webviewFrame.locator('.skill-reasons').allInnerTexts();
+  assert.ok(reasonsText.some((r) => r.includes('pinned by you')), 'L7: skills must show "pinned by you"');
+
   assert.deepStrictEqual(errors.filter((e) => /sfp|hive/i.test(e)), [], 'no page error from the extension');
   await browser.close();
-  console.log('ok: activated at startup, command in palette, skills listed in webview, prompt copied, feedback sent, live chips verified');
+  console.log('ok: activated at startup, command in palette, skills listed in webview, prompt copied, feedback sent, live chips verified, L6 and L7 verified');
 })().catch((e) => { console.error('FAILED: ' + e.message); process.exit(1); });

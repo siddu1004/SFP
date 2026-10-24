@@ -55,6 +55,44 @@
     purposeDefault: '<svg class="group-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13A6 6 0 1 1 8 2a6 6 0 0 1 0 12z"/></svg>',
   };
 
+  const PURPOSE_ICONS = {
+    'symbol-color': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1a7 7 0 0 0-7 7c0 2.4 1.2 4.5 3 5.7V12a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1V9a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v.5a.5.5 0 0 0 1 0V9a3 3 0 0 0-3-3h-.5A2.5 2.5 0 0 1 7 3.5V2.1A6.98 6.98 0 0 0 8 1z"/></svg>',
+    'code': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M4.7 3.3L1 7l3.7 3.7.7-.7L2.4 7l3-3-.7-.7zm6.6 0l-.7.7 3 3-3 3 .7.7L15 7l-3.7-3.7zM9.1 2l-3.5 12h1.1l3.5-12H9.1z"/></svg>',
+    'beaker': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14.5 13.5L10 4V2h1V1H5v1h1v2L1.5 13.5A1.5 1.5 0 0 0 2.8 15h10.4a1.5 1.5 0 0 0 1.3-1.5zM6.8 5l3.2 6.8H2.8L6 5.2V2h4v3.2L6.8 5z"/></svg>',
+    'bug': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M15 8h-2.1a4.96 4.96 0 0 0-.6-2.1l1.5-1.5-.7-.7-1.7 1.7A4.95 4.95 0 0 0 9 4.1V2h1V1H6v1h1v2.1c-.8.1-1.6.4-2.4 1.1L3.9 3.5l-.7.7 1.5 1.5c-.3.7-.5 1.4-.6 2.3H1v1h2.1c0 .7.2 1.4.5 2l-1.5 1.5.7.7 1.7-1.7c.7.6 1.6.9 2.5 1v2H6v1h4v-1h-1v-2c.9-.1 1.8-.4 2.5-1l1.7 1.7.7-.7-1.5-1.5c.3-.6.5-1.3.5-2H15V8zM8 12c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z"/></svg>',
+    'shield': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1l6 2.5v4.8c0 4.2-3.3 7.2-6 7.7-2.7-.5-6-3.5-6-7.7V3.5L8 1zm0 1.1L3 4.2v4.1c0 3.5 2.7 6.1 5 6.6 2.3-.5 5-3.1 5-6.6V4.2L8 2.1z"/></svg>',
+    'checklist': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M2 3h2v2H2V3zm0 4h2v2H2V7zm0 4h2v2H2v-2zm4-8h8v1H6V3zm0 4h8v1H6V7zm0 4h8v1H6v-1z"/></svg>',
+    'dashboard': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 2a7 7 0 0 0-7 7c0 2 .8 3.8 2.1 5.1l.7-.7A6 6 0 1 1 14 9c0 1.7-.7 3.2-1.8 4.4l.7.7A7 7 0 0 0 8 2zm1 4H7v4.2l3 1.8.5-.9-2.5-1.5V6z"/></svg>',
+    'rocket': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8.5 1.5C9.9 2.9 11 5 11 7l3 3-1 2-2-1-3 3c-2 0-4.1-1.1-5.5-2.5l2-2-1.5-1.5-1.5 1.5-1-1 3-3c0-2 1.1-4.1 2.5-5.5l2 2 1.5-1.5-1.5-1.5 1.5-1.5zM4 14l-2 1 1-2 1 1z"/></svg>',
+    'map': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M10 2l-4 1.5L2 2v11l4-1.5L10 13l4-1.5V1l-4 1zM9 3.2v8.6l-3-1.1V2.1l3 1.1zm4 .8v8.2l-3 1.1V4.8l3-.8zM3 3.8l2 .7v8.7l-2-.7V3.8z"/></svg>',
+    'search': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>',
+    'book': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14 2H3a2 2 0 0 0-2 2v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zm0 10H3a1 1 0 0 1 0-2h11v2zm0-3H3a2 2 0 0 0-1 .3V4a1 1 0 0 1 1-1h11v6z"/></svg>',
+    'robot': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M7.5 1h1v2h-1V1zM3 4h10a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H3zm3 2a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm4 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm-5 4h6v1H5v-1z"/></svg>',
+    'extensions': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 2a2.5 2.5 0 0 0-2.4 1.8H6.5a2.5 2.5 0 0 0-4.7 1.4v2.6a2.5 2.5 0 0 0 1.8 2.4v2.3h2.3a2.5 2.5 0 0 0 2.4-1.8h2.6a2.5 2.5 0 0 0 2.4 1.8H15V9.7a2.5 2.5 0 0 0-1.8-2.4V4.7a2.5 2.5 0 0 0 1.8-2.4H11.5z"/></svg>',
+    'wand': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14.7.3a1 1 0 0 0-1.4 0L1 12.6l2.4 2.4L15.7 2.7a1 1 0 0 0 0-1.4L14.7.3zM10 5l1 1-7 7-1-1 7-7zM2 2l1 .5L3.5 4 4 3l1.5-.5L4 2l-.5-1.5L3 2H2zm8 8l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5.5-1z"/></svg>',
+    'briefcase': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14 4h-3V2a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zM6 2h4v2H6V2zm8 4l-6 3.5L2 6V5h12v1zm0 7H2V7.2l6 3.5 6-3.5V13z"/></svg>',
+    'design': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1a7 7 0 0 0-7 7c0 2.4 1.2 4.5 3 5.7V12a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1V9a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v.5a.5.5 0 0 0 1 0V9a3 3 0 0 0-3-3h-.5A2.5 2.5 0 0 1 7 3.5V2.1A6.98 6.98 0 0 0 8 1z"/></svg>',
+    'build': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M4.7 3.3L1 7l3.7 3.7.7-.7L2.4 7l3-3-.7-.7zm6.6 0l-.7.7 3 3-3 3 .7.7L15 7l-3.7-3.7zM9.1 2l-3.5 12h1.1l3.5-12H9.1z"/></svg>',
+    'test': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14.5 13.5L10 4V2h1V1H5v1h1v2L1.5 13.5A1.5 1.5 0 0 0 2.8 15h10.4a1.5 1.5 0 0 0 1.3-1.5zM6.8 5l3.2 6.8H2.8L6 5.2V2h4v3.2L6.8 5z"/></svg>',
+    'debug': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M15 8h-2.1a4.96 4.96 0 0 0-.6-2.1l1.5-1.5-.7-.7-1.7 1.7A4.95 4.95 0 0 0 9 4.1V2h1V1H6v1h1v2.1c-.8.1-1.6.4-2.4 1.1L3.9 3.5l-.7.7 1.5 1.5c-.3.7-.5 1.4-.6 2.3H1v1h2.1c0 .7.2 1.4.5 2l-1.5 1.5.7.7 1.7-1.7c.7.6 1.6.9 2.5 1v2H6v1h4v-1h-1v-2c.9-.1 1.8-.4 2.5-1l1.7 1.7.7-.7-1.5-1.5c.3-.6.5-1.3.5-2H15V8zM8 12c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z"/></svg>',
+    'secure': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1l6 2.5v4.8c0 4.2-3.3 7.2-6 7.7-2.7-.5-6-3.5-6-7.7V3.5L8 1zm0 1.1L3 4.2v4.1c0 3.5 2.7 6.1 5 6.6 2.3-.5 5-3.1 5-6.6V4.2L8 2.1z"/></svg>',
+    'review': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M2 3h2v2H2V3zm0 4h2v2H2V7zm0 4h2v2H2v-2zm4-8h8v1H6V3zm0 4h8v1H6V7zm0 4h8v1H6v-1z"/></svg>',
+    'speed': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 2a7 7 0 0 0-7 7c0 2 .8 3.8 2.1 5.1l.7-.7A6 6 0 1 1 14 9c0 1.7-.7 3.2-1.8 4.4l.7.7A7 7 0 0 0 8 2zm1 4H7v4.2l3 1.8.5-.9-2.5-1.5V6z"/></svg>',
+    'deploy': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8.5 1.5C9.9 2.9 11 5 11 7l3 3-1 2-2-1-3 3c-2 0-4.1-1.1-5.5-2.5l2-2-1.5-1.5-1.5 1.5-1-1 3-3c0-2 1.1-4.1 2.5-5.5l2 2 1.5-1.5-1.5-1.5 1.5-1.5zM4 14l-2 1 1-2 1 1z"/></svg>',
+    'plan': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M10 2l-4 1.5L2 2v11l4-1.5L10 13l4-1.5V1l-4 1zM9 3.2v8.6l-3-1.1V2.1l3 1.1zm4 .8v8.2l-3 1.1V4.8l3-.8zM3 3.8l2 .7v8.7l-2-.7V3.8z"/></svg>',
+    'research': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M11.5 7a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0zm-.8 3.9l3.6 3.6.7-.7-3.6-3.6a5.5 5.5 0 1 0-.7.7z"/></svg>',
+    'document': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14 2H3a2 2 0 0 0-2 2v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zm0 10H3a1 1 0 0 1 0-2h11v2zm0-3H3a2 2 0 0 0-1 .3V4a1 1 0 0 1 1-1h11v6z"/></svg>',
+    'create': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14.7.3a1 1 0 0 0-1.4 0L1 12.6l2.4 2.4L15.7 2.7a1 1 0 0 0 0-1.4L14.7.3zM10 5l1 1-7 7-1-1 7-7zM2 2l1 .5L3.5 4 4 3l1.5-.5L4 2l-.5-1.5L3 2H2zm8 8l.5 1 1 .5-1 .5-.5 1-.5-1-1-.5 1-.5.5-1z"/></svg>',
+    'business': '<svg class="purpose-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M14 4h-3V2a1 1 0 0 0-1-1H6a1 1 0 0 0-1 1v2H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1zM6 2h4v2H6V2zm8 4l-6 3.5L2 6V5h12v1zm0 7H2V7.2l6 3.5 6-3.5V13z"/></svg>',
+  };
+
+  function getPurposeIcon(purposeId) {
+    if (!purposeId) return ICONS.purposeDefault;
+    const p = (state.purposes || []).find((x) => x.id === purposeId);
+    const iconName = p?.icon || purposeId;
+    return PURPOSE_ICONS[iconName] || PURPOSE_ICONS[purposeId] || ICONS.purposeDefault;
+  }
+
   // DOM Elements
   const searchInput = document.getElementById('lib-search-input');
   const searchClearBtn = document.getElementById('lib-search-clear');
@@ -372,6 +410,8 @@
 
     const isMine = Boolean(bundle.mine);
     const mineBadge = isMine ? '<span class="badge badge-mine">yours</span>' : '';
+    const purposeSvg = getPurposeIcon(bundle.purpose);
+    const purposeName = (state.purposes || []).find((p) => p.id === bundle.purpose)?.name || bundle.purpose || '';
     const chipsHtml = (bundle.skills || [])
       .map((s, idx) => `<span class="bundle-chip" title="Step ${idx + 1}: ${escapeHtml(s)}"><span class="chip-num">${idx + 1}</span>${escapeHtml(s)}</span>`)
       .join('');
@@ -385,6 +425,7 @@
       <div class="bundle-card" tabindex="0">
         <div class="bundle-top">
           <span class="bundle-title">
+            <span class="bundle-purpose-icon" title="Purpose: ${escapeHtml(purposeName)}">${purposeSvg}</span>
             <strong>${escapeHtml(bundle.name)}</strong>
             ${mineBadge}
           </span>

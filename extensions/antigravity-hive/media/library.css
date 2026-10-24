@@ -386,6 +386,22 @@ input:focus-visible {
   white-space: nowrap;
 }
 
+.bundle-purpose-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--vscode-foreground);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.bundle-purpose-icon svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
 .bundle-tokens {
   font-size: 10px;
   color: var(--vscode-descriptionForeground);

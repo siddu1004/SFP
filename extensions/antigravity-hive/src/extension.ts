@@ -352,12 +352,14 @@ async function applyBundleWorkflow(bundleId: string) {
   if (!bundle) return;
   const cfg = config();
   try {
-    const task = selection?.task || `Bundle: ${bundle.name}`;
+    const task = `Bundle: ${bundle.name}`;
     const out = await hive.run(
       hive.pythonCommand(cfg.opts),
       hive.selectArgs(root, task, project(), cfg.max, { bundle: bundle.id })
     );
     const sel = hive.parseSelection(out);
+    sel.task = task;
+    (sel as any).bundleName = bundle.name;
     selection = sel;
     baselineSelection = sel;
     currentInclude = sel.stack.map((s) => s.name);
@@ -929,6 +931,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
   <!-- Tab 2: Choose -->
   <div class="tab-content" id="tab-choose" role="tabpanel" aria-labelledby="btn-tab-choose">
+    <div class="choose-bundle-banner hidden" id="choose-bundle-banner"></div>
     <div class="section">
       <div class="section-title">Task Prompt</div>
       <div class="flex-row">

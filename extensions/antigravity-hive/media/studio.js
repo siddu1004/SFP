@@ -593,6 +593,18 @@
       }
     }
 
+    // Bundle banner in Choose
+    const bundleBanner = document.getElementById('choose-bundle-banner');
+    const bundleName = sel?.bundleName || (sel?.task?.startsWith('Bundle: ') ? sel.task.slice(8) : null);
+    if (bundleBanner) {
+      if (bundleName) {
+        bundleBanner.classList.remove('hidden');
+        bundleBanner.innerHTML = `<span class="badge badge-mine">Bundle</span> <strong>${escapeHtml(bundleName)}</strong>`;
+      } else {
+        bundleBanner.classList.add('hidden');
+      }
+    }
+
     // Decision ID in Choose header
     const chooseDecision = document.getElementById('choose-decision-id');
     if (chooseDecision) {
@@ -618,7 +630,7 @@
             const layerLabel = layerName[0].toUpperCase() + layerName.slice(1);
             const cardsHtml = inLayer
               .map((s) => {
-                const isPinned = state.include.includes(s.name) || (sel.intervention?.pinned?.includes(s.name));
+                const isPinned = state.include.includes(s.name) || (sel.intervention?.pinned?.includes(s.name)) || Boolean(bundleName);
                 const reasons = (s.reasons || []).concat(isPinned ? ['pinned by you'] : []);
                 const reasonsHtml = reasons.length
                   ? `<ul class="skill-reasons">${reasons.map((r) => `<li>${escapeHtml(r)}</li>`).join('')}</ul>`

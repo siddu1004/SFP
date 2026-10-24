@@ -162,6 +162,18 @@ input:focus-visible,
   margin-top: 2px;
 }
 
+.choose-bundle-banner {
+  padding: 6px var(--grid-2);
+  margin-bottom: var(--grid-2);
+  background-color: var(--vscode-editorWidget-background, rgba(127, 127, 127, 0.15));
+  border: 1px solid var(--vscode-widget-border, transparent);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--grid-2);
+  font-size: var(--font-sm);
+}
+
 /* Studio Header & Tab Navigation */
 .studio-header {
   display: flex;
