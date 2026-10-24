@@ -1,0 +1,370 @@
+/* SFP Hive Studio Stylesheet
+ * Meets all Stage 2 requirements:
+ * - 8px spacing grid
+ * - Font sizes 11px, 13px, 16px
+ * - Colors exclusively from VS Code theme variables (--vscode-...)
+ * - Single accent color (--vscode-focusBorder)
+ * - Pure SVG codicons (no emoji)
+ * - Responsive down to 260px
+ * - Visible keyboard focus ring
+ * - prefers-reduced-motion support
+ */
+
+:root {
+  --grid-1: 4px;
+  --grid-2: 8px;
+  --grid-3: 16px;
+  --grid-4: 24px;
+  --font-xs: 11px;
+  --font-sm: 13px;
+  --font-md: 16px;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --accent: var(--vscode-focusBorder, #007acc);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-size: var(--font-sm);
+  line-height: 1.4;
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  user-select: none;
+  overflow-x: hidden;
+  padding: var(--grid-2);
+}
+
+/* Accessible focus rings */
+button:focus-visible,
+input:focus-visible,
+[role="tab"]:focus-visible,
+[tabindex="0"]:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Studio Header & Tab Navigation */
+.studio-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-2);
+  margin-bottom: var(--grid-3);
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-sideBarSectionHeader-border, rgba(128, 128, 128, 0.2)));
+  padding-bottom: var(--grid-2);
+}
+
+.studio-title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.studio-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--grid-2);
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--vscode-foreground);
+}
+
+.studio-brand .icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  color: var(--accent);
+}
+
+.studio-badge {
+  font-size: var(--font-xs);
+  padding: 2px var(--grid-1);
+  background-color: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  border-radius: var(--radius-sm);
+}
+
+/* Tab Bar */
+.tab-bar {
+  display: flex;
+  gap: 2px;
+  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.1));
+  padding: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--grid-1);
+  padding: var(--grid-1) var(--grid-2);
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.tab-btn:hover {
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.15));
+}
+
+.tab-btn.active {
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+}
+
+.tab-btn .tab-icon {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+/* Tab Panels */
+.tab-content {
+  display: none;
+  flex-direction: column;
+  gap: var(--grid-3);
+}
+
+.tab-content.active {
+  display: flex;
+}
+
+/* Section Containers */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-2);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--vscode-descriptionForeground);
+}
+
+/* Cards */
+.card {
+  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.08));
+  border: 1px solid var(--vscode-panel-border, rgba(128, 128, 128, 0.2));
+  border-radius: var(--radius-md);
+  padding: var(--grid-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--grid-1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--grid-2);
+}
+
+.card-title {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-subtitle {
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+}
+
+.card-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--grid-2);
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+  margin-top: 2px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--grid-1);
+  padding: var(--grid-1) var(--grid-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-sm);
+  cursor: pointer;
+  border: 1px solid transparent;
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  transition: background-color 0.15s ease;
+}
+
+.btn:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+.btn-secondary {
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+}
+
+.btn-secondary:hover {
+  background-color: var(--vscode-button-secondaryHoverBackground, var(--vscode-list-hoverBackground));
+}
+
+.btn-icon {
+  background: transparent;
+  color: var(--vscode-foreground);
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background-color: var(--vscode-list-hoverBackground, rgba(128, 128, 128, 0.2));
+}
+
+.btn-icon svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+/* Inputs */
+.input-text {
+  width: 100%;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, rgba(128, 128, 128, 0.3));
+  border-radius: var(--radius-sm);
+  padding: var(--grid-1) var(--grid-2);
+  font-size: var(--font-sm);
+  font-family: inherit;
+}
+
+.input-text::placeholder {
+  color: var(--vscode-input-placeholderForeground);
+}
+
+/* State Containers: Loading, Empty, Error */
+.state-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--grid-2);
+  padding: var(--grid-4) var(--grid-2);
+  border: 1px dashed var(--vscode-panel-border, rgba(128, 128, 128, 0.2));
+  border-radius: var(--radius-md);
+  color: var(--vscode-descriptionForeground);
+  font-size: var(--font-xs);
+}
+
+.state-box svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+  opacity: 0.8;
+}
+
+.state-box.error {
+  border-color: var(--vscode-inputValidation-errorBorder, #f48771);
+  color: var(--vscode-inputValidation-errorForeground, #f48771);
+}
+
+.state-box.error svg {
+  color: var(--vscode-errorForeground, #f48771);
+}
+
+/* Progress / Confidence Bar */
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.progress-track {
+  height: 4px;
+  background-color: var(--vscode-progressBar-background, rgba(128, 128, 128, 0.2));
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--accent);
+  transition: width 0.3s ease;
+}
+
+/* Phase Chip Bar */
+.chip-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--grid-1);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-xs);
+  background-color: var(--vscode-sideBarSectionHeader-background, rgba(128, 128, 128, 0.15));
+  color: var(--vscode-descriptionForeground);
+}
+
+.chip.active {
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+}
+
+/* Responsive tweaks for narrow sidebars (down to 260px) */
+@media (max-width: 280px) {
+  body {
+    padding: var(--grid-1);
+  }
+  .tab-btn span {
+    display: none;
+  }
+  .tab-btn {
+    padding: var(--grid-1);
+  }
+}

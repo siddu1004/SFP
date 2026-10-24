@@ -20,11 +20,17 @@ const note = (kind) => async (m) => { state.messages.push([kind, m]); };
 const vscode = {
   EventEmitter, TreeItem, ThemeIcon, MarkdownString,
   TreeItemCollapsibleState: { None: 0, Collapsed: 1, Expanded: 2 },
-  StatusBarAlignment: { Left: 1 },
+  StatusBarAlignment: { Left: 1, Right: 2 },
   ProgressLocation: { Window: 10 },
   window: {
-    createStatusBarItem: () => ({ show() {}, dispose() {} }),
+    createStatusBarItem: (alignment, priority) => {
+      const item = { alignment, priority, text: '', tooltip: '', command: '', show() {}, dispose() {} };
+      state.statusBarItems = state.statusBarItems || [];
+      state.statusBarItems.push(item);
+      return item;
+    },
     registerTreeDataProvider: (id, p) => { state.providers[id] = p; return { dispose() {} }; },
+    registerWebviewViewProvider: (id, p) => { state.webviewProviders = state.webviewProviders || {}; state.webviewProviders[id] = p; return { dispose() {} }; },
     showInputBox: async () => state.inputs.shift(),
     showQuickPick: async (items) => state.picks.length ? state.picks.shift() : undefined,
     showInformationMessage: note('info'), showErrorMessage: note('error'), showWarningMessage: note('warn'),
@@ -121,4 +127,36 @@ test('@hive chat participant responds with the skill selection prompt', async ()
   };
   await handler({ prompt: 'write table driven tests for a go parser' }, {}, stream);
   assert.ok(reply.includes('Use these SFP skills, in this order'));
+});
+
+test('Stage 2: registers the SFP Hive Studio webview provider and right status bar item', async () => {
+  assert.ok(state.webviewProviders['sfpHive.stack'], 'webview provider should be registered');
+  const provider = state.webviewProviders['sfpHive.stack'];
+  let html = '';
+  const webviewView = {
+    webview: {
+      options: {},
+      asWebviewUri: (uri) => uri.fsPath,
+      cspSource: 'vscode-webview:',
+      postMessage: (msg) => { state.lastPostedMessage = msg; },
+      onDidReceiveMessage: () => {},
+      set html(val) { html = val; },
+    },
+    show: () => {},
+  };
+  provider.resolveWebviewView(webviewView, {}, {});
+  assert.ok(html.includes('Content-Security-Policy'), 'Must have CSP');
+  assert.ok(html.includes('studio.css'), 'Must load studio.css');
+  assert.ok(html.includes('studio.js'), 'Must load studio.js');
+  assert.ok(html.includes('data-tab="now"'), 'Must have Now tab');
+  assert.ok(html.includes('data-tab="choose"'), 'Must have Choose tab');
+  assert.ok(html.includes('data-tab="library"'), 'Must have Library tab');
+  assert.ok(html.includes('data-tab="insights"'), 'Must have Insights tab');
+
+  const right = state.statusBarItems.find((i) => i.alignment === 2);
+  assert.ok(right, 'Right status bar item must exist');
+  assert.strictEqual(right.command, 'sfpHive.focusNow');
+
+  await commands.get('sfpHive.focusNow')();
+  assert.deepStrictEqual(state.lastPostedMessage, { type: 'switchTab', tab: 'now' });
 });
