@@ -48,6 +48,13 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (url === '/ide') {
+    const ideHtml = fs.readFileSync(path.join(__dirname, 'media', 'ideSimulation.html'), 'utf-8');
+    res.writeHead(200, { 'Content-Type': 'text/html' });
+    res.end(ideHtml);
+    return;
+  }
+
   // API Endpoints
   if (req.method === 'POST' && url === '/api/select') {
     let body = '';
