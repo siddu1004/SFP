@@ -46,6 +46,14 @@ const vscode = {
     openTextDocument: async (f) => f,
   },
   env: { clipboard: { writeText: async (t) => { state.clipboard = t; } } },
+  Uri: { file: (f) => ({ fsPath: f }) },
+  chat: {
+    createChatParticipant: (id, handler) => {
+      state.chatParticipants = state.chatParticipants || new Map();
+      state.chatParticipants.set(id, handler);
+      return { iconPath: undefined, dispose() {} };
+    },
+  },
 };
 
 const load = Module._load;
@@ -53,10 +61,11 @@ Module._load = function (request, ...rest) { return request === 'vscode' ? vscod
 const ext = require('../out/extension.js');
 
 test('activates and registers every command in package.json', () => {
-  ext.activate({ subscriptions: [] });
+  ext.activate({ subscriptions: [], extensionPath: REPO });
   const declared = require('../package.json').contributes.commands.map((c) => c.command);
   declared.forEach((id) => assert.ok(commands.has(id), id));
   assert.ok(state.providers['sfpHive.stack']);
+  assert.ok(state.chatParticipants && state.chatParticipants.has('sfp.hive'));
 });
 
 test('choosing skills fills the tree, copies the prompt and sets the context', async () => {
@@ -94,4 +103,22 @@ test('the install commands send a plan to the terminal, not a silent install', a
   state.picks.push({ label: 'OmniRoute', description: 'omniroute' });
   await commands.get('sfpHive.apps')();
   assert.match(state.messages.filter((m) => m[0] === 'terminal').pop()[1], /apps install omniroute$/);
+});
+
+test('the train command runs sfp_hive.py train in the terminal', async () => {
+  await commands.get('sfpHive.train')();
+  const lastTerminal = state.messages.filter((m) => m[0] === 'terminal').pop()[1];
+  assert.match(lastTerminal, /sfp_hive\.py["']?\s+train/);
+});
+
+test('@hive chat participant responds with the skill selection prompt', async () => {
+  const handler = state.chatParticipants.get('sfp.hive');
+  assert.ok(handler);
+  let reply = '';
+  const stream = {
+    progress: () => {},
+    markdown: (md) => { reply += md; },
+  };
+  await handler({ prompt: 'write table driven tests for a go parser' }, {}, stream);
+  assert.ok(reply.includes('Use these SFP skills, in this order'));
 });
