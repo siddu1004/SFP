@@ -3,6 +3,12 @@
 (function () {
   const vscode = window.vscode || (window.vscode = acquireVsCodeApi());
 
+  // Inside the SFP Hive studio this script shares one webview with the studio's own script, whose handlers already use
+  // 'ready', 'refresh' and 'copyPrompt'. The library's messages get their own names there.
+  const EMBEDDED = Boolean(document.getElementById('tab-library'));
+  const EMBED_NAMES = { ready: 'libReady', refresh: 'libRefresh', copyPrompt: 'copyBundlePrompt' };
+  const post = (m) => vscode.postMessage(EMBEDDED && EMBED_NAMES[m.command] ? Object.assign({}, m, { command: EMBED_NAMES[m.command] }) : m);
+
   const MODES = ['family', 'purpose', 'bundle', 'cluster'];
   let state = {
     mode: 'family',
@@ -90,6 +96,7 @@
 
   const iconFor = (name) => PURPOSE_ICONS[name] || PURPOSE_ICONS.package;
   const $ = (id) => document.getElementById(id);
+  const on = (id, ev, fn) => { const el = $(id); if (el) el.addEventListener(ev, fn); };   // a missing control must not stop the script
   const searchInput = $('lib-search-input');
   const searchClearBtn = $('lib-search-clear');
   const searchCountBadge = $('lib-search-count');
@@ -117,7 +124,7 @@
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
       state.query = q;
-      vscode.postMessage({ command: 'search', query: q, mode: state.mode });
+      post({ command: 'search', query: q, mode: state.mode });
     }, 80);
   });
   searchInput.addEventListener('keydown', (e) => {
@@ -134,14 +141,14 @@
     searchInput.value = '';
     state.query = '';
     searchClearBtn.classList.add('hidden');
-    vscode.postMessage({ command: 'search', query: '', mode: state.mode });
+    post({ command: 'search', query: '', mode: state.mode });
   }
   searchClearBtn.addEventListener('click', () => { clearSearch(); searchInput.focus(); });
 
   function setMode(mode) {
     state.mode = mode;
     paintModes();
-    vscode.postMessage({ command: 'switchMode', mode, query: state.query });
+    post({ command: 'switchMode', mode, query: state.query });
   }
   function paintModes() {
     modeSwitch.querySelectorAll('.mode-btn').forEach((b) => {
@@ -166,9 +173,9 @@
     if (b) b.focus();
     e.preventDefault();
   });
-  $('lib-new-bundle-btn').addEventListener('click', () => vscode.postMessage({ command: 'newBundle' }));
-  $('lib-refresh-btn').addEventListener('click', () => { showLoading(true); vscode.postMessage({ command: 'refresh' }); });
-  $('lib-error-btn').addEventListener('click', () => vscode.postMessage({ command: 'openSettings' }));
+  on('lib-new-bundle-btn', 'click', () => post({ command: 'newBundle' }));
+  on('lib-refresh-btn', 'click', () => { showLoading(true); post({ command: 'refresh' }); });
+  on('lib-error-btn', 'click', () => post({ command: 'openSettings' }));
 
   groupsContainer.addEventListener('click', (e) => {
     const act = e.target.closest('[data-action]');
@@ -177,17 +184,17 @@
       const skill = act.getAttribute('data-skill');
       const bundleId = act.getAttribute('data-bundle');
       if (a === 'toggle') return toggle(act.getAttribute('data-id'));
-      if (skill && ['openDetail', 'openSkill', 'pinSkill', 'addToBundle'].includes(a)) vscode.postMessage({ command: a, skill });
-      else if (bundleId && ['applyBundle', 'copyPrompt', 'editBundle', 'deleteBundle'].includes(a)) vscode.postMessage({ command: a, bundleId });
+      if (skill && ['openDetail', 'openSkill', 'pinSkill', 'addToBundle'].includes(a)) post({ command: a, skill });
+      else if (bundleId && ['applyBundle', 'copyPrompt', 'editBundle', 'deleteBundle'].includes(a)) post({ command: a, bundleId });
       e.stopPropagation();
       return;
     }
     const row = e.target.closest('.skill-row');
-    if (row) vscode.postMessage({ command: 'openDetail', skill: row.getAttribute('data-skill') });
+    if (row) post({ command: 'openDetail', skill: row.getAttribute('data-skill') });
   });
   groupsContainer.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && e.target.classList.contains('skill-row')) {
-      vscode.postMessage({ command: 'openDetail', skill: e.target.getAttribute('data-skill') });
+      post({ command: 'openDetail', skill: e.target.getAttribute('data-skill') });
     }
   });
 
@@ -376,5 +383,5 @@
     }
   });
 
-  vscode.postMessage({ command: 'ready' });
+  post({ command: 'ready' });
 })();

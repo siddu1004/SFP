@@ -935,6 +935,14 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         case 'focusModels':
           await vscode.commands.executeCommand('sfpHive.focusModels');
           break;
+        case 'libRefresh':
+          await this.loadLibrary();
+          break;
+        case 'copyBundlePrompt':
+          if (message.bundleId) {
+            await copyPromptWorkflow(message.bundleId);
+          }
+          break;
         case 'libReady':
           if (!loadedLibrary) {
             await this.loadLibrary();
@@ -1405,6 +1413,9 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
     <div class="library-footer">
       <span class="footer-counts" id="lib-footer-counts"></span>
+      <button class="icon-btn" id="lib-refresh-btn" aria-label="Refresh library" title="Refresh library">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.6 2.4A7 7 0 1 0 15 8h-1.5a5.5 5.5 0 1 1-1.1-4.4L10 6h5V1l-1.4 1.4z"/></svg>
+      </button>
     </div>
   </div>
 
