@@ -1,0 +1,412 @@
+{
+ "note": "Held-out agent sessions, written before the tracker was tuned. Do not tune on them.",
+ "sessions": [
+  {
+   "name": "rust cli: build, test, review, ship",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "add a --json flag to the list command",
+     "t": 1710000025,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "src/cli.rs",
+     "t": 1710000061,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "src/output.rs",
+     "t": 1710000108,
+     "truth": "build"
+    },
+    {
+     "kind": "run",
+     "command": "cargo build",
+     "exit": 0,
+     "t": 1710000166,
+     "truth": "build"
+    },
+    {
+     "kind": "open",
+     "path": "Cargo.toml",
+     "t": 1710000200,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "src/cli.rs",
+     "t": 1710000245,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "tests/list_json.rs",
+     "t": 1710000301,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "cargo test",
+     "exit": 0,
+     "t": 1710000333,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "cargo test list",
+     "exit": 0,
+     "t": 1710000376,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "cargo clippy",
+     "t": 1710000430,
+     "truth": "review"
+    },
+    {
+     "kind": "run",
+     "command": "git diff",
+     "t": 1710000460,
+     "truth": "review"
+    },
+    {
+     "kind": "run",
+     "command": "git commit -m \"json output\"",
+     "t": 1710000501,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "cargo publish",
+     "t": 1710000553,
+     "truth": "ship"
+    }
+   ]
+  },
+  {
+   "name": "vue form: design then build then test with failures",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "restyle the settings form to match the new design",
+     "t": 1710000025,
+     "truth": "design"
+    },
+    {
+     "kind": "save",
+     "path": "src/components/ui/Field.vue",
+     "t": 1710000061,
+     "truth": "design"
+    },
+    {
+     "kind": "save",
+     "path": "src/styles/forms.scss",
+     "t": 1710000108,
+     "truth": "design"
+    },
+    {
+     "kind": "save",
+     "path": "src/styles/forms.scss",
+     "t": 1710000166,
+     "truth": "design"
+    },
+    {
+     "kind": "save",
+     "path": "src/views/Settings.vue",
+     "t": 1710000200,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "src/store/settings.ts",
+     "t": 1710000245,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "src/views/Settings.vue",
+     "t": 1710000301,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "src/views/Settings.spec.ts",
+     "t": 1710000333,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "npx vitest",
+     "exit": 1,
+     "t": 1710000376,
+     "truth": "test"
+    },
+    {
+     "kind": "diagnostics",
+     "errors": 2,
+     "t": 1710000430,
+     "truth": "debug"
+    },
+    {
+     "kind": "save",
+     "path": "src/store/settings.ts",
+     "t": 1710000460,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "npx vitest",
+     "exit": 0,
+     "t": 1710000501,
+     "truth": "test"
+    }
+   ]
+  },
+  {
+   "name": "dependency audit and fix",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "check the dependencies for known vulnerabilities and fix them",
+     "t": 1710000025,
+     "truth": "secure"
+    },
+    {
+     "kind": "run",
+     "command": "npm audit",
+     "exit": 1,
+     "t": 1710000061,
+     "truth": "secure"
+    },
+    {
+     "kind": "open",
+     "path": "package.json",
+     "t": 1710000108,
+     "truth": "secure"
+    },
+    {
+     "kind": "run",
+     "command": "npm install lodash@4.17.21",
+     "t": 1710000166,
+     "truth": "secure"
+    },
+    {
+     "kind": "run",
+     "command": "npm audit",
+     "exit": 0,
+     "t": 1710000200,
+     "truth": "secure"
+    },
+    {
+     "kind": "run",
+     "command": "npm test",
+     "exit": 0,
+     "t": 1710000245,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "git commit -m \"deps: patch\"",
+     "t": 1710000301,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "git push",
+     "t": 1710000333,
+     "truth": "ship"
+    }
+   ]
+  },
+  {
+   "name": "onboarding: research, document",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "explain how the job queue works",
+     "t": 1710000025,
+     "truth": "research"
+    },
+    {
+     "kind": "run",
+     "command": "rg enqueue",
+     "t": 1710000061,
+     "truth": "research"
+    },
+    {
+     "kind": "open",
+     "path": "queue/worker.go",
+     "t": 1710000108,
+     "truth": "research"
+    },
+    {
+     "kind": "open",
+     "path": "queue/scheduler.go",
+     "t": 1710000166,
+     "truth": "research"
+    },
+    {
+     "kind": "run",
+     "command": "git log --oneline queue",
+     "t": 1710000200,
+     "truth": "research"
+    },
+    {
+     "kind": "create",
+     "path": "docs/queue.md",
+     "t": 1710000245,
+     "truth": "document"
+    },
+    {
+     "kind": "save",
+     "path": "docs/queue.md",
+     "t": 1710000301,
+     "truth": "document"
+    },
+    {
+     "kind": "save",
+     "path": "docs/queue.md",
+     "t": 1710000333,
+     "truth": "document"
+    }
+   ]
+  },
+  {
+   "name": "migration with a broken deploy",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "add a status column to the orders table",
+     "t": 1710000025,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "migrations/0042_order_status.py",
+     "t": 1710000061,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "orders/models.py",
+     "t": 1710000108,
+     "truth": "build"
+    },
+    {
+     "kind": "run",
+     "command": "pytest orders",
+     "exit": 0,
+     "t": 1710000166,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "git push",
+     "t": 1710000200,
+     "truth": "ship"
+    },
+    {
+     "kind": "save",
+     "path": ".github/workflows/deploy.yml",
+     "t": 1710000245,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "kubectl logs deploy/api",
+     "exit": 1,
+     "t": 1710000301,
+     "truth": "debug"
+    },
+    {
+     "kind": "diagnostics",
+     "errors": 1,
+     "t": 1710000333,
+     "truth": "debug"
+    },
+    {
+     "kind": "save",
+     "path": "migrations/0042_order_status.py",
+     "t": 1710000376,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "pytest orders",
+     "exit": 0,
+     "t": 1710000430,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "git push",
+     "t": 1710000460,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "kubectl rollout status deploy/api",
+     "t": 1710000501,
+     "truth": "ship"
+    }
+   ]
+  },
+  {
+   "name": "speed up the build",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "our ci builds are slow, make them faster",
+     "t": 1710000025,
+     "truth": "optimize"
+    },
+    {
+     "kind": "open",
+     "path": ".github/workflows/ci.yml",
+     "t": 1710000061,
+     "truth": "optimize"
+    },
+    {
+     "kind": "save",
+     "path": ".github/workflows/ci.yml",
+     "t": 1710000108,
+     "truth": "optimize"
+    },
+    {
+     "kind": "run",
+     "command": "hyperfine \"npm run build\"",
+     "t": 1710000166,
+     "truth": "optimize"
+    },
+    {
+     "kind": "save",
+     "path": "vite.config.ts",
+     "t": 1710000200,
+     "truth": "optimize"
+    },
+    {
+     "kind": "run",
+     "command": "hyperfine \"npm run build\"",
+     "t": 1710000245,
+     "truth": "optimize"
+    },
+    {
+     "kind": "run",
+     "command": "git diff",
+     "t": 1710000301,
+     "truth": "review"
+    },
+    {
+     "kind": "run",
+     "command": "git push",
+     "t": 1710000333,
+     "truth": "ship"
+    }
+   ]
+  }
+ ]
+}

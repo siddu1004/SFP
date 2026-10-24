@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.7.0
+
+- **Follow the agent.** `sfp_hive.py track` reads workspace events (saves, commands and their exit codes, errors, prompts), turns them into evidence for the eleven phases of work, smooths it with one Kalman filter per phase, and predicts the next phase with a Markov chain over phase changes, learned from your sessions on top of a prior for the usual order of work. The phase is passed to the hive as a hint, and also brings the phase's own words into the search, so the skills change when the work does. On hand-labelled sessions the filter is steadier than following the last event, and on the held-out set about 7 points less accurate; `docs/TRACKING.md` has the numbers.
+- **Clusters.** `clusters.json` groups all 819 skills into 40 named clusters (UI components, animation, testing, GSD workflow, Blender scenes and more); `sfp_hive.py clusters` lists them with usage, and `cluster-add` and `cluster-remove` manage clusters of your own.
+- The extension's bridge has the calls for tracking, an activity buffer and clusters, with tests (25). `docs/HIVE-STUDIO.md` is the prompt for Antigravity to merge the two SFP extensions into one, with the Now, Choose, Library and Insights tabs.
+
+## 3.6.0
+
+- **See and steer the choice.** `select --explain` lists the top candidates with their five signal votes, the signals that backed each, its learned preference, token cost, and the exact reason it was chosen or dropped (no agreement, overlap with a chosen skill, token budget, stack full, another technology). `--exclude` rules skills out and `--include` pins them in; pinned skills say so. With no options the choice is unchanged. The extension's `src/hive.ts` exposes them, and turns an intervention into feedback (removed is `unhelpful`, added is `missing`).
+- `docs/HIVE-INSPECTOR.md`: the prompt for Antigravity's agent to build a visible button and inspector on top of this, the checks to run, and how to evaluate the choosing process.
+- The extension's install and verify scripts also look for `antigravity-ide`, the command's name on Windows (found by Antigravity's own agent while checking the extension).
+- Recorded in `docs/HIVE.md`: the project's technologies are counted twice, so a skill named after the stack can pass for one the task asked for (`react-three-fiber` for a signup form in React). The fix tried cut the held-out hit rate from 86% to 64% and was reverted.
+
 ## 3.5.0
 
 - **The hive as an extension for Antigravity and other VS Code editors** (`extensions/antigravity-hive/`, TypeScript, MIT). A status-bar item and an activity-bar view choose the skills for a task, group them as base, check and finish, copy a ready prompt for the agent panel, open each skill, and record `helped`, `unhelpful`, `ignored` and `missing` feedback. Commands open the installer for skills, the standing instruction and programs such as OmniRoute, showing the plan first. `install.py` in that folder builds the `.vsix` and installs it with the editor's own command. 18 tests, including a real end-to-end run of the hive. It was run in a real VS Code 1.117 (code-server) with a browser-driven test, which found and fixed one bug; it has not been run inside Antigravity itself. `docs/ANTIGRAVITY.md` explains the design, why it is an extension and not a patch to the editor, and has seven implementation prompts for extending it.

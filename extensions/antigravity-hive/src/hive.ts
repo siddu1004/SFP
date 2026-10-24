@@ -16,6 +16,23 @@ export interface Skill {
   reasons?: string[];
 }
 
+export interface Candidate {
+  name: string;
+  status: string; // 'chosen', 'pinned by you', 'excluded by you', or 'dropped: <reason>'
+  quality: number;
+  signals: { words: number | null; project: number | null; role: number | null; category: number | null; history: number | null };
+  backers: string[];
+  relation?: string;
+  learned: number;
+  tokens: number;
+}
+
+export interface Steer {
+  include?: string[]; // skills the user pinned
+  exclude?: string[]; // skills the user ruled out
+  explain?: boolean; // ask for every top candidate and why it was or was not taken
+}
+
 export interface Selection {
   task: string;
   decision?: string; // absent when the user switched logging off (SFP_NO_USAGE_LOG)
@@ -23,6 +40,8 @@ export interface Selection {
   layers: { base: string[]; check: string[]; finish: string[] };
   tokens: number;
   next: { name: string; probability: number }[];
+  explain?: Candidate[];
+  intervention?: { pinned: string[]; excluded: string[] };
 }
 
 export type Verdict = 'helped' | 'unhelpful' | 'ignored' | 'missing';
@@ -51,10 +70,24 @@ export function pythonCommand(opts: Options = {}): string {
   return opts.python || (process.platform === 'win32' ? 'python' : 'python3');
 }
 
-export function selectArgs(root: string, task: string, project: string | undefined, max: number): string[] {
+export function selectArgs(root: string, task: string, project: string | undefined, max: number, steer: Steer = {}): string[] {
   const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'select', task, '--json', '--max', String(max)];
   if (project) args.push('--project', project);
+  if (steer.include && steer.include.length) args.push('--include', steer.include.join(','));
+  if (steer.exclude && steer.exclude.length) args.push('--exclude', steer.exclude.join(','));
+  if (steer.explain) args.push('--explain');
   return args;
+}
+
+/** The feedback an intervention implies: a chosen skill the user removed did not help; one they added was missing. */
+export function interventionFeedback(before: Selection, steer: Steer): { verdict: Verdict; skills: string[] }[] {
+  const chosen = new Set(before.stack.map((s) => s.name));
+  const removed = (steer.exclude ?? []).filter((n) => chosen.has(n));
+  const added = (steer.include ?? []).filter((n) => !chosen.has(n));
+  const out: { verdict: Verdict; skills: string[] }[] = [];
+  if (removed.length) out.push({ verdict: 'unhelpful', skills: removed });
+  if (added.length) out.push({ verdict: 'missing', skills: added });
+  return out;
 }
 
 export function feedbackArgs(root: string, decision: string, verdict: Verdict, skills: string[], task?: string): string[] {
@@ -63,10 +96,14 @@ export function feedbackArgs(root: string, decision: string, verdict: Verdict, s
   return args;
 }
 
-export function run(python: string, args: string[], timeoutMs = 60000): Promise<string> {
+export function run(python: string, args: string[], timeoutMs = 60000, input?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     // No shell: the task text is passed as one argument, never interpreted.
     const child = spawn(python, args, { env: process.env });
+    if (input !== undefined) {
+      child.stdin.write(input);
+    }
+    child.stdin.end();
     let out = '';
     let err = '';
     const timer = setTimeout(() => {
@@ -99,6 +136,8 @@ export function parseSelection(json: string): Selection {
     layers: raw.layers ?? { base: [], check: [], finish: [] },
     tokens: Number(raw.tokens ?? 0),
     next: Array.isArray(raw.next) ? raw.next : [],
+    explain: Array.isArray(raw.explain) ? raw.explain : undefined,
+    intervention: raw.intervention,
   };
 }
 
@@ -164,4 +203,124 @@ export function appList(root: string): { id: string; name: string; what: string 
 export function quote(arg: string): string {
   if (/^[\w@%+=:,./-]+$/.test(arg)) return arg;
   return process.platform === 'win32' ? `"${arg.replace(/"/g, '\\"')}"` : `'${arg.replace(/'/g, `'\\''`)}'`;
+}
+
+// ------------------------------------------------------------------ following the agent
+
+/** One thing that happened in the workspace, in the shape `sfp_hive.py track` reads. */
+export interface ActivityEvent {
+  t: number; // seconds since 1970
+  kind: 'prompt' | 'save' | 'edit' | 'create' | 'delete' | 'open' | 'run' | 'diagnostics' | 'git';
+  path?: string;
+  command?: string;
+  exit?: number;
+  errors?: number;
+  text?: string;
+}
+
+export interface TrackResult {
+  phase: string | null;
+  layer: 'base' | 'check' | 'finish' | null;
+  confidence: number; // 0..1, from the Kalman filter's variance
+  shares: Record<string, number>; // each phase's share of the current work
+  changed: boolean;
+  changes: { t: number; from: string; to: string }[];
+  next: { phase: string; probability: number }[]; // the Markov chain's prediction
+  words: string[];
+  skills?: Skill[];
+  upcoming?: { phase: string; skills: string[] };
+}
+
+export function trackArgs(root: string, project: string | undefined, max: number, select = true, reset = false): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'track', '--json', '--max', String(max)];
+  if (project) args.push('--project', project);
+  if (!select) args.push('--no-select');
+  if (reset) args.push('--reset');
+  return args;
+}
+
+export function parseTrack(json: string): TrackResult {
+  const raw = JSON.parse(json);
+  if (!raw || typeof raw !== 'object' || !('phase' in raw) || !raw.shares) throw new Error('unexpected answer from the tracker');
+  return raw as TrackResult;
+}
+
+/** Paths are sent relative to the workspace, so nothing outside it is described. */
+export function relative(workspace: string | undefined, file: string): string | undefined {
+  if (!workspace) return undefined;
+  const rel = path.relative(workspace, file);
+  if (!rel || rel.startsWith('..') || path.isAbsolute(rel)) return undefined;
+  return rel.split(path.sep).join('/');
+}
+
+/**
+ * Collects workspace events and hands them over in batches. Repeated saves of one file within a batch count
+ * once, opening files is ignored unless nothing else happened, and the buffer never grows past `limit`.
+ */
+export class ActivityBuffer {
+  private events: ActivityEvent[] = [];
+
+  constructor(private readonly limit = 200, private readonly clock: () => number = () => Date.now() / 1000) {}
+
+  add(e: Omit<ActivityEvent, 't'> & { t?: number }): void {
+    const ev = { ...e, t: e.t ?? this.clock() } as ActivityEvent;
+    const last = this.events[this.events.length - 1];
+    if (last && last.kind === ev.kind && ev.path && last.path === ev.path && (ev.kind === 'save' || ev.kind === 'edit')) {
+      last.t = ev.t; // the same file saved again: one event, the latest time
+      return;
+    }
+    this.events.push(ev);
+    if (this.events.length > this.limit) this.events.splice(0, this.events.length - this.limit);
+  }
+
+  get size(): number {
+    return this.events.length;
+  }
+
+  /** The batch to send, emptied. Opens are kept only when nothing more telling happened. */
+  take(): ActivityEvent[] {
+    const out = this.events.some((e) => e.kind !== 'open') ? this.events.filter((e) => e.kind !== 'open') : this.events;
+    this.events = [];
+    return out;
+  }
+}
+
+// ------------------------------------------------------------------ clusters
+
+export interface ClusterSkill {
+  name: string;
+  category: string;
+  also_in: string[];
+  description: string;
+  usage?: { chosen?: number; helped?: number; unhelpful?: number; ignored?: number; missing?: number };
+}
+
+export interface Cluster {
+  id: string;
+  name: string;
+  description: string;
+  mine: boolean;
+  count: number;
+  used?: number;
+  skills: ClusterSkill[];
+}
+
+export function clustersArgs(root: string): string[] {
+  return [path.join(root, 'mcp', 'sfp_hive.py'), 'clusters', '--json'];
+}
+
+export function clusterAddArgs(root: string, name: string, skills: string[], description = ''): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_hive.py'), 'cluster-add', name, '--skills', skills.join(',')];
+  if (description) args.push('--description', description);
+  return args;
+}
+
+export function clusterRemoveArgs(root: string, name: string): string[] {
+  return [path.join(root, 'mcp', 'sfp_hive.py'), 'cluster-remove', name];
+}
+
+export function parseClusters(json: string): Cluster[] {
+  const raw = JSON.parse(json);
+  if (!Array.isArray(raw)) throw new Error('unexpected answer for clusters');
+  return raw as Cluster[];
 }

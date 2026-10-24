@@ -1,0 +1,680 @@
+{
+ "note": "Hand-written agent sessions; each event carries the true phase of work. The dev set: Q_PER_MINUTE and SWITCH_MARGIN in sfp_track.py were tuned on it. tests/track_heldout.json is the held-out check.",
+ "sessions": [
+  {
+   "name": "go parser: build, test, debug, test, ship",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "add a duration parser to the cli",
+     "t": 1700000020,
+     "truth": "build"
+    },
+    {
+     "kind": "open",
+     "path": "cmd/main.go",
+     "t": 1700000047,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "internal/duration/parse.go",
+     "t": 1700000081,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "internal/duration/parse.go",
+     "t": 1700000122,
+     "truth": "build"
+    },
+    {
+     "kind": "run",
+     "command": "go build ./...",
+     "exit": 0,
+     "t": 1700000170,
+     "truth": "build"
+    },
+    {
+     "kind": "open",
+     "path": "README.md",
+     "t": 1700000225,
+     "truth": "build"
+    },
+    {
+     "kind": "create",
+     "path": "internal/duration/parse_test.go",
+     "t": 1700000247,
+     "truth": "test"
+    },
+    {
+     "kind": "save",
+     "path": "internal/duration/parse_test.go",
+     "t": 1700000276,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "go test ./...",
+     "exit": 1,
+     "t": 1700000312,
+     "truth": "test"
+    },
+    {
+     "kind": "diagnostics",
+     "errors": 3,
+     "t": 1700000355,
+     "truth": "debug"
+    },
+    {
+     "kind": "save",
+     "path": "internal/duration/parse.go",
+     "t": 1700000405,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "go test ./internal/duration -run TestParse",
+     "exit": 1,
+     "t": 1700000462,
+     "truth": "debug"
+    },
+    {
+     "kind": "save",
+     "path": "internal/duration/parse.go",
+     "t": 1700000486,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "go test ./...",
+     "exit": 0,
+     "t": 1700000517,
+     "truth": "test"
+    },
+    {
+     "kind": "save",
+     "path": "internal/duration/parse_test.go",
+     "t": 1700000555,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "go test ./...",
+     "exit": 0,
+     "t": 1700000600,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "git commit -m \"duration parser\"",
+     "t": 1700000652,
+     "truth": "ship"
+    },
+    {
+     "kind": "save",
+     "path": ".github/workflows/release.yml",
+     "t": 1700000711,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "git push origin main",
+     "t": 1700000737,
+     "truth": "ship"
+    }
+   ]
+  },
+  {
+   "name": "react page: design, build, test, review",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "design a pricing page with three tiers",
+     "t": 1700000020,
+     "truth": "design"
+    },
+    {
+     "kind": "save",
+     "path": "src/styles/pricing.css",
+     "t": 1700000047,
+     "truth": "design"
+    },
+    {
+     "kind": "save",
+     "path": "src/components/ui/PlanCard.tsx",
+     "t": 1700000081,
+     "truth": "design"
+    },
+    {
+     "kind": "save",
+     "path": "src/styles/pricing.css",
+     "t": 1700000122,
+     "truth": "design"
+    },
+    {
+     "kind": "save",
+     "path": "src/pages/pricing.tsx",
+     "t": 1700000170,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "src/lib/plans.ts",
+     "t": 1700000225,
+     "truth": "build"
+    },
+    {
+     "kind": "open",
+     "path": "package.json",
+     "t": 1700000247,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "src/pages/pricing.tsx",
+     "t": 1700000276,
+     "truth": "build"
+    },
+    {
+     "kind": "run",
+     "command": "npm run build",
+     "exit": 0,
+     "t": 1700000312,
+     "truth": "build"
+    },
+    {
+     "kind": "create",
+     "path": "src/pages/pricing.test.tsx",
+     "t": 1700000355,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "npx vitest run",
+     "exit": 0,
+     "t": 1700000405,
+     "truth": "test"
+    },
+    {
+     "kind": "save",
+     "path": "src/pages/pricing.test.tsx",
+     "t": 1700000462,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "npx vitest run",
+     "exit": 0,
+     "t": 1700000486,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "npx eslint src",
+     "t": 1700000517,
+     "truth": "review"
+    },
+    {
+     "kind": "run",
+     "command": "git diff",
+     "t": 1700000555,
+     "truth": "review"
+    },
+    {
+     "kind": "prompt",
+     "text": "review the pricing page changes before the pull request",
+     "t": 1700000600,
+     "truth": "review"
+    }
+   ]
+  },
+  {
+   "name": "api hardening: secure, test, ship",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "harden the login endpoint against brute force",
+     "t": 1700000020,
+     "truth": "secure"
+    },
+    {
+     "kind": "open",
+     "path": "app/auth/views.py",
+     "t": 1700000047,
+     "truth": "secure"
+    },
+    {
+     "kind": "save",
+     "path": "app/auth/views.py",
+     "t": 1700000081,
+     "truth": "secure"
+    },
+    {
+     "kind": "save",
+     "path": "app/auth/throttle.py",
+     "t": 1700000122,
+     "truth": "secure"
+    },
+    {
+     "kind": "run",
+     "command": "bandit -r app",
+     "exit": 1,
+     "t": 1700000170,
+     "truth": "secure"
+    },
+    {
+     "kind": "save",
+     "path": "app/auth/views.py",
+     "t": 1700000225,
+     "truth": "secure"
+    },
+    {
+     "kind": "run",
+     "command": "bandit -r app",
+     "exit": 0,
+     "t": 1700000247,
+     "truth": "secure"
+    },
+    {
+     "kind": "save",
+     "path": "tests/test_auth.py",
+     "t": 1700000276,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "pytest tests/test_auth.py",
+     "exit": 0,
+     "t": 1700000312,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "pytest",
+     "exit": 0,
+     "t": 1700000355,
+     "truth": "test"
+    },
+    {
+     "kind": "save",
+     "path": "Dockerfile",
+     "t": 1700000405,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "docker build -t api .",
+     "t": 1700000462,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "kubectl apply -f k8s/api.yaml",
+     "t": 1700000486,
+     "truth": "ship"
+    }
+   ]
+  },
+  {
+   "name": "research then plan then build",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "research how the payment retries work in this codebase",
+     "t": 1700000020,
+     "truth": "research"
+    },
+    {
+     "kind": "run",
+     "command": "rg retry",
+     "t": 1700000047,
+     "truth": "research"
+    },
+    {
+     "kind": "open",
+     "path": "billing/retry.py",
+     "t": 1700000081,
+     "truth": "research"
+    },
+    {
+     "kind": "run",
+     "command": "git log -p billing/retry.py",
+     "t": 1700000122,
+     "truth": "research"
+    },
+    {
+     "kind": "open",
+     "path": "billing/worker.py",
+     "t": 1700000170,
+     "truth": "research"
+    },
+    {
+     "kind": "create",
+     "path": "docs/adr/0007-retry-backoff.md",
+     "t": 1700000225,
+     "truth": "plan"
+    },
+    {
+     "kind": "save",
+     "path": "docs/adr/0007-retry-backoff.md",
+     "t": 1700000247,
+     "truth": "plan"
+    },
+    {
+     "kind": "run",
+     "command": "git checkout -b retry-backoff",
+     "t": 1700000276,
+     "truth": "plan"
+    },
+    {
+     "kind": "save",
+     "path": "billing/retry.py",
+     "t": 1700000312,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "billing/backoff.py",
+     "t": 1700000355,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "billing/retry.py",
+     "t": 1700000405,
+     "truth": "build"
+    },
+    {
+     "kind": "run",
+     "command": "python -m compileall billing",
+     "t": 1700000462,
+     "truth": "build"
+    }
+   ]
+  },
+  {
+   "name": "debugging a failing build",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "the build fails with a type error, fix it",
+     "t": 1700000020,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "npm run build",
+     "exit": 1,
+     "t": 1700000047,
+     "truth": "debug"
+    },
+    {
+     "kind": "diagnostics",
+     "errors": 7,
+     "t": 1700000081,
+     "truth": "debug"
+    },
+    {
+     "kind": "save",
+     "path": "src/api/client.ts",
+     "t": 1700000122,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "npm run build",
+     "exit": 1,
+     "t": 1700000170,
+     "truth": "debug"
+    },
+    {
+     "kind": "diagnostics",
+     "errors": 2,
+     "t": 1700000225,
+     "truth": "debug"
+    },
+    {
+     "kind": "save",
+     "path": "src/api/types.ts",
+     "t": 1700000247,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "npm run build",
+     "exit": 0,
+     "t": 1700000276,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "npm test",
+     "exit": 0,
+     "t": 1700000312,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "npm test",
+     "exit": 0,
+     "t": 1700000355,
+     "truth": "test"
+    }
+   ]
+  },
+  {
+   "name": "docs and release",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "document the new export command",
+     "t": 1700000020,
+     "truth": "document"
+    },
+    {
+     "kind": "save",
+     "path": "docs/export.md",
+     "t": 1700000047,
+     "truth": "document"
+    },
+    {
+     "kind": "save",
+     "path": "README.md",
+     "t": 1700000081,
+     "truth": "document"
+    },
+    {
+     "kind": "open",
+     "path": "src/export.py",
+     "t": 1700000122,
+     "truth": "document"
+    },
+    {
+     "kind": "save",
+     "path": "docs/export.md",
+     "t": 1700000170,
+     "truth": "document"
+    },
+    {
+     "kind": "save",
+     "path": "CHANGELOG.md",
+     "t": 1700000225,
+     "truth": "document"
+    },
+    {
+     "kind": "run",
+     "command": "git commit -m \"docs: export\"",
+     "t": 1700000247,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "python -m build",
+     "t": 1700000276,
+     "truth": "ship"
+    },
+    {
+     "kind": "run",
+     "command": "twine upload dist/*",
+     "t": 1700000312,
+     "truth": "ship"
+    }
+   ]
+  },
+  {
+   "name": "performance pass",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "the search endpoint is slow, profile and speed it up",
+     "t": 1700000020,
+     "truth": "optimize"
+    },
+    {
+     "kind": "run",
+     "command": "py-spy record -o profile.svg -- python serve.py",
+     "t": 1700000047,
+     "truth": "optimize"
+    },
+    {
+     "kind": "open",
+     "path": "search/index.py",
+     "t": 1700000081,
+     "truth": "optimize"
+    },
+    {
+     "kind": "save",
+     "path": "search/cache.py",
+     "t": 1700000122,
+     "truth": "optimize"
+    },
+    {
+     "kind": "run",
+     "command": "hyperfine \"curl localhost:8000/search?q=a\"",
+     "t": 1700000170,
+     "truth": "optimize"
+    },
+    {
+     "kind": "save",
+     "path": "search/index.py",
+     "t": 1700000225,
+     "truth": "optimize"
+    },
+    {
+     "kind": "run",
+     "command": "hyperfine \"curl localhost:8000/search?q=a\"",
+     "t": 1700000247,
+     "truth": "optimize"
+    },
+    {
+     "kind": "run",
+     "command": "pytest tests/test_search.py",
+     "exit": 0,
+     "t": 1700000276,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "pytest",
+     "exit": 0,
+     "t": 1700000312,
+     "truth": "test"
+    }
+   ]
+  },
+  {
+   "name": "feature with a detour",
+   "events": [
+    {
+     "kind": "prompt",
+     "text": "add csv export to the reports page",
+     "t": 1700000020,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "reports/export.py",
+     "t": 1700000047,
+     "truth": "build"
+    },
+    {
+     "kind": "open",
+     "path": "reports/tests/test_views.py",
+     "t": 1700000081,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "reports/views.py",
+     "t": 1700000122,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "reports/export.py",
+     "t": 1700000170,
+     "truth": "build"
+    },
+    {
+     "kind": "run",
+     "command": "git log --oneline -5",
+     "t": 1700000225,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "reports/templates/reports.html",
+     "t": 1700000247,
+     "truth": "build"
+    },
+    {
+     "kind": "save",
+     "path": "reports/tests/test_export.py",
+     "t": 1700000276,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "pytest reports",
+     "exit": 1,
+     "t": 1700000312,
+     "truth": "test"
+    },
+    {
+     "kind": "save",
+     "path": "reports/export.py",
+     "t": 1700000355,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "pytest reports/tests/test_export.py",
+     "exit": 1,
+     "t": 1700000405,
+     "truth": "debug"
+    },
+    {
+     "kind": "save",
+     "path": "reports/export.py",
+     "t": 1700000462,
+     "truth": "debug"
+    },
+    {
+     "kind": "run",
+     "command": "pytest reports",
+     "exit": 0,
+     "t": 1700000486,
+     "truth": "test"
+    },
+    {
+     "kind": "run",
+     "command": "pytest",
+     "exit": 0,
+     "t": 1700000517,
+     "truth": "test"
+    }
+   ]
+  }
+ ]
+}

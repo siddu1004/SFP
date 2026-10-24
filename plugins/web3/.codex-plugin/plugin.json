@@ -1,7 +1,7 @@
 {
   "name": "web3",
-  "version": "3.5.0",
-  "description": "DeFi, EVM, prediction markets, It\u00c3\u00b4 baskets and compute, and trading-agent security.",
+  "version": "3.7.0",
+  "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
   "author": {
     "name": "siddu1004"
   },
@@ -10,8 +10,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "SFP web3",
-    "shortDescription": "DeFi, EVM, prediction markets, It\u00c3\u00b4 baskets and compute, and trading-agent security.",
-    "longDescription": "DeFi, EVM, prediction markets, It\u00c3\u00b4 baskets and compute, and trading-agent security.",
+    "shortDescription": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
+    "longDescription": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
     "developerName": "siddu1004",
     "category": "Coding",
     "capabilities": [

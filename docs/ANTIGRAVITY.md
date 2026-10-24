@@ -43,7 +43,7 @@ Settings: `sfpHive.sfpPath`, `sfpHive.python`, `sfpHive.maxSkills`, `sfpHive.cop
 | `test/e2e/` | Drives a real VS Code in a headless browser (needs code-server). |
 | `install.py` | Build, test, package, install. |
 
-`npm test` inside the folder runs 18 tests, with the editor API stood in. `test/e2e/drive.js` goes further: it drives a real VS Code (code-server 4.117.0, VS Code 1.117.0) in a headless browser with the extension installed, and checks that it activates at startup, the command is in the palette, choosing skills lists them, the status bar counts them, the prompt is copied and feedback is recorded. That run found one bug (no status-bar item until first use), now fixed. What has not been run: the extension inside Antigravity itself, because the editor is not available where this was built. It uses only the standard extension API that Antigravity shares with VS Code, so it should behave the same, but that is an expectation, not a test.
+`npm test` inside the folder runs 21 tests, with the editor API stood in. `test/e2e/drive.js` goes further: it drives a real VS Code (code-server 4.117.0, VS Code 1.117.0) in a headless browser with the extension installed, and checks that it activates at startup, the command is in the palette, choosing skills lists them, the status bar counts them, the prompt is copied and feedback is recorded. That run found one bug (no status-bar item until first use), now fixed. What has not been run: the extension inside Antigravity itself, because the editor is not available where this was built. It uses only the standard extension API that Antigravity shares with VS Code, so it should behave the same, but that is an expectation, not a test.
 
 ## Check that it runs in Antigravity
 
@@ -113,6 +113,14 @@ A before-and-after check is stronger than one run: do V5 with the prompt and aga
 | M6 fails | The log line names the cause | Send me that line |
 
 Send the agent's report back and I will fix whatever it shows.
+
+## One extension that follows the agent
+
+[HIVE-STUDIO.md](HIVE-STUDIO.md) is the brief and prompt for merging the two SFP extensions into one, with tabs for following the agent (phase tracking with a Kalman filter and a Markov chain, [TRACKING.md](TRACKING.md)), choosing and steering, a library of skill clusters, and insights.
+
+## A visible button to see and steer the choice
+
+[HIVE-INSPECTOR.md](HIVE-INSPECTOR.md) is the build brief and prompt for the Hive Inspector: a status-bar button under the agent window that shows the chosen skills, every candidate that was considered with its signal votes and the reason it was dropped, and lets you remove, add and re-choose, with the change sent back as feedback. The hive side (`--explain`, `--include`, `--exclude`) is built and tested.
 
 ## Implementation prompts
 
