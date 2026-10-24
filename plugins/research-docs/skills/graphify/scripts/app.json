@@ -1,0 +1,83 @@
+{
+  "name": "Graphify",
+  "homepage": "https://github.com/Graphify-Labs/graphify",
+  "what": "Maps a project (code, docs, PDFs, images) into a knowledge graph you can query instead of grepping files.",
+  "sources": [
+    "Graphify-Labs/graphify"
+  ],
+  "needs": [
+    {
+      "tool": "python3",
+      "range": [
+        [
+          3,
+          10,
+          0
+        ],
+        [
+          4,
+          0,
+          0
+        ]
+      ],
+      "label": "Python 3.10 or newer",
+      "url": "https://www.python.org/downloads/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "graphify",
+      "--help"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "uv",
+        "tool",
+        "install",
+        "graphifyy"
+      ],
+      "requires": "uv",
+      "why": "installs the graphify command in its own environment (the package is named graphifyy, with two y)"
+    },
+    {
+      "os": "any",
+      "run": [
+        "pipx",
+        "install",
+        "graphifyy"
+      ],
+      "requires": "pipx",
+      "why": "the alternative when uv is missing"
+    }
+  ],
+  "update": [
+    {
+      "os": "any",
+      "run": [
+        "uv",
+        "tool",
+        "upgrade",
+        "graphifyy"
+      ],
+      "requires": "uv",
+      "why": "moves to the newest release"
+    },
+    {
+      "os": "any",
+      "run": [
+        "pipx",
+        "upgrade",
+        "graphifyy"
+      ],
+      "requires": "pipx",
+      "why": "moves to the newest release"
+    }
+  ],
+  "after": [
+    "Run `graphify install` once: it detects your assistant and registers the skill and hooks. If `graphify` is not found afterwards, run `uv tool update-shell` and restart the shell. Then type `/graphify .` in the project. Needs uv or pipx; with neither, install one first."
+  ],
+  "id": "graphify"
+}

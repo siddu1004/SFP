@@ -1,7 +1,7 @@
 {
   "name": "research-docs",
   "version": "3.4.0",
-  "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself.",
+  "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).",
   "author": {
     "name": "siddu1004"
   },
@@ -10,8 +10,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "SFP research-docs",
-    "shortDescription": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codeb",
-    "longDescription": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor and rederive, which teaches a codebase by making you design it yourself.",
+    "shortDescription": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase",
+    "longDescription": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).",
     "developerName": "siddu1004",
     "category": "Coding",
     "capabilities": [

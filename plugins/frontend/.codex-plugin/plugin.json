@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "3.4.0",
-  "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.",
+  "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.",
   "author": {
     "name": "siddu1004"
   },
@@ -11,7 +11,7 @@
   "interface": {
     "displayName": "SFP frontend",
     "shortDescription": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes ",
-    "longDescription": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills and the Vercel web interface guidelines.",
+    "longDescription": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.",
     "developerName": "siddu1004",
     "category": "Coding",
     "capabilities": [

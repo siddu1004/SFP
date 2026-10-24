@@ -436,7 +436,7 @@ Filters: `--auth none|apiKey|OAuth`, `--cors yes|no`, `--https yes|no` and `--js
 
 ## Skills That Need a Program
 
-A few skills only guide a program that is installed separately: OmniRoute (@@APP_OMNIROUTE@@ skills), claude-mem (@@APP_CLAUDE_MEM@@), Strix (@@APP_STRIX@@), FreeLLMAPI, Agent Reach and AgentShield. Each of these skills carries its own setup, so the skill that needs the program can install it. A note at the top of the skill tells the agent to run, from the skill's folder:
+A few skills only guide a program that is installed separately: OmniRoute (@@APP_OMNIROUTE@@ skills), claude-mem (@@APP_CLAUDE_MEM@@), Strix (@@APP_STRIX@@), Graphify, FreeLLMAPI, Agent Reach and AgentShield. Each of these skills carries its own setup, so the skill that needs the program can install it. A note at the top of the skill tells the agent to run, from the skill's folder:
 
 ```bash
 python3 scripts/sfp_app.py status            # installed? running? what is missing (Node version, Docker...)
@@ -534,6 +534,8 @@ SFP reads the original repos directly, and `sources.lock.json` records the exact
 | harry0703/MoneyPrinterTurbo | `content-media` |
 | marketing-psychology | `content-media`: 5 persuasion and behavior skills |
 | Anthropic example skills | 8 Apache-2.0 skills: algorithmic art, brand guidelines, canvas design, internal comms, MCP builder, Slack GIF creator, theme factory, web artifacts builder |
+| pmndrs/react-three-fiber, dashersw/liquid-glass-js, ruucm/shadergradient, collidingScopes/liquid-logo | `frontend`: a skill each, with the project's docs and source |
+| Graphify-Labs/graphify | `research-docs`: a queryable knowledge graph of a project (needs the `graphify` program) |
 | EricJujianZou/rederive | `research-docs`: teaches a codebase by Socratic questions |
 | teach-me | `research-docs` |
 | task-observer, headroom | `agent-dev` |

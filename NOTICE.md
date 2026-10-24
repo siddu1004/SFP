@@ -16,7 +16,12 @@ SFP collects skills written by other people. Each skill keeps the license of the
 | [harry0703/MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo) | MIT | |
 | [public-apis/public-apis](https://github.com/public-apis/public-apis) | MIT | https://github.com/public-apis/public-apis |
 | [tashfeenahmed/freellmapi](https://github.com/tashfeenahmed/freellmapi) | MIT | https://github.com/tashfeenahmed/freellmapi |
+| [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | Apache-2.0 | Safi Shamsi and the Graphify contributors (NOTICE kept in the licence file) |
 | [EricJujianZou/rederive](https://github.com/EricJujianZou/rederive) | MIT | Eric Zou |
+| [pmndrs/react-three-fiber](https://github.com/pmndrs/react-three-fiber) | MIT | Poimandres |
+| [dashersw/liquid-glass-js](https://github.com/dashersw/liquid-glass-js) | MIT | Armagan Amcalar |
+| [ruucm/shadergradient](https://github.com/ruucm/shadergradient) | MIT | ruucm and stone-skipper; the repo declares MIT in its README and package files but has no top-level LICENSE file |
+| [collidingScopes/liquid-logo](https://github.com/collidingScopes/liquid-logo) | MIT | Alan Ang; the shader began from XorDev's "Plasma" work |
 | [web-interface-guidelines](https://github.com/vercel-labs/web-interface-guidelines) | MIT | Vercel Labs |
 | teach-me | MIT | https://github.com/ahmed3bead/teach-me |
 | marketing-psychology | MIT | https://github.com/grayskripko/marketing-skills |
