@@ -10,6 +10,7 @@
   "categories": ["AI", "Other"],
   "keywords": ["skills", "agent", "antigravity", "sfp", "hive"],
   "main": "./out/extension.js",
+  "activationEvents": ["onStartupFinished"],
   "icon": "media/icon.png",
   "contributes": {
     "viewsContainers": {"activitybar": [{"id": "sfpHive", "title": "SFP Hive", "icon": "media/hive.svg"}]},

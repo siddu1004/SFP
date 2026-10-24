@@ -40,9 +40,10 @@ Settings: `sfpHive.sfpPath`, `sfpHive.python`, `sfpHive.maxSkills`, `sfpHive.cop
 | `src/extension.ts` | The glue: status bar, tree view, commands, terminal. |
 | `test/hive.test.js` | The pure parts and a real end-to-end run of the hive and its feedback log. |
 | `test/extension.test.js` | Loads the real extension against a stand-in for the `vscode` module and drives it. |
+| `test/e2e/` | Drives a real VS Code in a headless browser (needs code-server). |
 | `install.py` | Build, test, package, install. |
 
-`npm test` inside the folder runs 18 tests. What has not been run: the extension inside Antigravity itself, because the editor is not available where this was built. The glue is tested against a stand-in, not the real thing, so expect to fix small differences on first run.
+`npm test` inside the folder runs 18 tests, with the editor API stood in. `test/e2e/drive.js` goes further: it drives a real VS Code (code-server 4.117.0, VS Code 1.117.0) in a headless browser with the extension installed, and checks that it activates at startup, the command is in the palette, choosing skills lists them, the status bar counts them, the prompt is copied and feedback is recorded. That run found one bug (no status-bar item until first use), now fixed. What has not been run: the extension inside Antigravity itself, because the editor is not available where this was built. It uses only the standard extension API that Antigravity shares with VS Code, so it should behave the same, but that is an expectation, not a test.
 
 ## Implementation prompts
 
@@ -71,6 +72,6 @@ Paste these into your agent, one at a time, from the SFP checkout. Each ends wit
 
 ## Limits
 
-- It has not been run in Antigravity. Treat the first run as a test and send back what breaks.
+- It has been run in VS Code 1.117 (through code-server) but not in Antigravity. Treat the first run there as a test and send back what breaks.
 - It needs Python 3 and an SFP checkout on the same machine as the editor. In a remote or container workspace, the extension runs where the workspace runs, so SFP must be installed there.
 - It selects and records feedback; it does not run the skills. The agent panel does that.

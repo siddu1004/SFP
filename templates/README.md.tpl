@@ -226,7 +226,7 @@ The server is written under VS Code's `servers` key and your other servers are k
 python3 extensions/antigravity-hive/install.py
 ```
 
-It builds a `.vsix` and installs it with the editor's own command, so nothing inside the editor is changed. [docs/ANTIGRAVITY.md](docs/ANTIGRAVITY.md) has the details, what has not been tested (the extension has not been run inside Antigravity itself), and implementation prompts for extending it.
+It builds a `.vsix` and installs it with the editor's own command, so nothing inside the editor is changed. [docs/ANTIGRAVITY.md](docs/ANTIGRAVITY.md) has the details, what has not been tested (it was tested in a real VS Code 1.117, and has not been run inside Antigravity itself), and implementation prompts for extending it.
 </details>
 
 <details>
