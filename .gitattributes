@@ -1,0 +1,2 @@
+# catalog.json and index.json keep LF line endings on every platform, so their fingerprints match everywhere.
+*.json text eol=lf

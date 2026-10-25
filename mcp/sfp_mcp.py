@@ -37,7 +37,7 @@ import sys
 import threading
 
 SERVER_NAME = 'sfp'
-SERVER_VERSION = '3.16.0'
+SERVER_VERSION = '3.16.1'
 SUPPORTED_PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05']
 MAX_FILE_BYTES = 400000
 MAX_LISTED_FILES = 200
@@ -60,6 +60,13 @@ ROOT = find_root()
 _CATALOG_STAT = None
 
 
+def catalog_sha(raw):
+    """The catalog's fingerprint, the same on every platform: Git on Windows may check catalog.json out with CRLF line
+    endings, which must not make the saved index look stale."""
+    return hashlib.sha1(raw.replace(b'\r\n', b'\n')).hexdigest()
+
+
+
 def _load_catalog():
     global CATALOG, CATALOG_SHA, SKILLS, _CATALOG_STAT
     cat_path = os.path.join(ROOT, 'catalog.json')
@@ -73,7 +80,7 @@ def _load_catalog():
     with open(cat_path, 'rb') as _f:
         _RAW = _f.read()
     CATALOG = json.loads(_RAW.decode('utf-8'))
-    CATALOG_SHA = hashlib.sha1(_RAW).hexdigest()
+    CATALOG_SHA = catalog_sha(_RAW)
     for s in CATALOG['skills']:
         # A catalog synced on Windows may carry backslashes; paths in the catalog are always forward-slash.
         s['path'] = s['path'].replace('\\', '/')

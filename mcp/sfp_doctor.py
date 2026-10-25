@@ -38,7 +38,8 @@ def checks(router_port=8787, project=None):
     skills = len(v1.core.CATALOG['skills'])
     add('Catalog', 'ok' if skills > 500 else 'fail', '%d skills' % skills, 'Run python3 scripts/sync.py.')
     try:
-        key_ok = json.load(open(os.path.join(ROOT, 'index.json'), encoding='utf-8')).get('key') == v1.core.index_key()
+        with open(os.path.join(ROOT, 'index.json'), encoding='utf-8') as f:
+            key_ok = json.load(f).get('key') == v1.core.index_key()
         add('Search index', 'ok' if key_ok else 'warn', 'fresh' if key_ok else 'stale', 'Run python3 scripts/sync.py.')
     except (OSError, ValueError):
         add('Search index', 'warn', 'index.json missing or unreadable', 'Run python3 scripts/sync.py.')

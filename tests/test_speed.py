@@ -176,5 +176,14 @@ class SpeedBudgetTest(unittest.TestCase):
         self.assertLess(ms, 800, 'median %.1f ms' % ms)
 
 
+class LineEndingTest(unittest.TestCase):
+    def test_a_catalog_checked_out_with_crlf_has_the_same_fingerprint(self):
+        # Git on Windows can check catalog.json out with CRLF line endings; the saved index must still match it.
+        with open(os.path.join(ROOT, 'catalog.json'), 'rb') as f:
+            raw = f.read()
+        self.assertEqual(core.catalog_sha(raw.replace(b'\n', b'\r\n')), core.catalog_sha(raw))
+        self.assertEqual(core.catalog_sha(raw), core.index_key()['catalog'])
+
+
 if __name__ == '__main__':
     unittest.main()

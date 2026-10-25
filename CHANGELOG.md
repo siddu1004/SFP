@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.16.1
+
+- **Fixed: "search index stale" on Windows.** The index fingerprint was a hash of the raw bytes of `catalog.json`, and Git on Windows can check it out with CRLF line endings, so a correct index looked stale (and `doctor` warned). The fingerprint now ignores line endings, and `.gitattributes` keeps JSON files LF.
+
 ## 3.16.0
 
 - **The router follows your local models.** While it serves, `sfp_route.py` looks for local runtimes again every 30 seconds (`--rediscover N`): one that starts joins with its models, new models are added, and one that stops answering is switched off until it returns.
