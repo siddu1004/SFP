@@ -19,72 +19,107 @@ On Windows, use `python` where this guide says `python3`.
 If you have Node.js 18+ and Python 3:
 
 ```bash
-npx sfp-hive install
+# Via GitHub Packages (zero cloning needed):
+npx --registry=https://npm.pkg.github.com @siddu1004/sfp install
 ```
 
 This bootstraps SFP into `~/.sfp/SFP` and installs the starter skills into every detected tool in one command. For manual step-by-step setup, continue below.
 
 ## 1. Get SFP
 
+### Option A: Via GitHub Packages / npx
+```bash
+npx --registry=https://npm.pkg.github.com @siddu1004/sfp install
+```
+
+### Option B: Clone the Repository
 ```bash
 git clone https://github.com/siddu1004/SFP.git
 cd SFP
 ```
 
-Check: `python3 mcp/sfp_hive.py doctor` prints a list ending in "Everything is connected" or "Working, with things to look at". Router lines may warn for now; that is fine.
+**Check your environment in 5 seconds:**
+```bash
+# macOS / Linux
+python3 mcp/sfp_hive.py doctor
+
+# Windows (PowerShell / Command Prompt)
+python mcp/sfp_hive.py doctor
+```
+*(Prints a full health report across Python, catalog, index, selection, and tools).*
 
 ## 2. Install the skills into your tools
 
 ```bash
-python3 scripts/install.py install --profile starter   # a small set into every tool it finds
-python3 scripts/install.py list                        # the categories and presets, if you want more
+# Small curated starter set into every tool found on your machine
+python3 scripts/install.py install --profile starter
+
+# Or view all categories and presets
+python3 scripts/install.py list
 ```
 
-Restart your agent tools. Check: ask your agent "Use sfp-hive for this task: add tests for the checkout form." It should name a few skills and say why.
+Restart your agent tools. Check: ask your agent:
+> *"Use sfp-hive for this task: add tests for the checkout form."*
 
-To give tools without a skills folder the whole library, register the MCP server:
+It should name a few skills that fit your exact project stack, say why, and follow them in order.
+
+### Universal MCP Server (for Claude Code, Cursor, Antigravity & Windsurf)
+To give tools without a dedicated skills folder access to the entire 819-skill library:
 
 ```bash
 python3 scripts/install.py mcp
 ```
 
-## 3. Install the SFP Hive extension (the sidebar)
+## 3. Install the SFP Hive editor extension (the sidebar)
 
-The quickest way, from the SFP folder:
+From the `SFP` folder:
 
 ```bash
+# macOS / Linux
 python3 extensions/antigravity-hive/install.py
+
+# Windows (PowerShell)
+python extensions/antigravity-hive/install.py
 ```
 
-It builds and tests the extension, packages a `.vsix` and installs it into every editor it finds (`antigravity`, `antigravity-ide`, `code`, `cursor`, `windsurf`). If none is on your PATH, or you downloaded a `.vsix` from a release, install it by hand: open the editor's Extensions view, "..." menu, "Install from VSIX...", pick the file.
+It builds and tests the extension, packages a `.vsix` and installs it into every editor it finds (`antigravity`, `code`, `cursor`, `windsurf`). If you downloaded a `.vsix` from a GitHub release: open your editor's Extensions view, click the "..." menu, select **Install from VSIX...**, and choose the file.
 
-Then reload the window (Ctrl+Shift+P, "Developer: Reload Window").
+Then reload your editor window (Ctrl+Shift+P / Cmd+Shift+P → *"Developer: Reload Window"*).
 
-If the sidebar says the checkout cannot be found, set the setting **SFP Hive: Sfp Path** (`sfpHive.sfpPath`) to your SFP folder.
+**Check:** The SFP Hive icon appears in the activity bar. Open it, navigate to **Insights**, and click **Check connection**: all indicators will display green.
 
-Check: the SFP Hive icon is in the activity bar. Open it, go to **Insights**, press **Check connection**: every line except the router ones should be green.
+## 4. Automatic skills (zero copy-paste)
 
-## 4. Let the agent get its skills automatically
+This is enabled by default. When you choose a task in **Choose**, or the **Now** tab tracks your progress into a new phase (design, build, test, debug, review), the extension automatically updates `.agents/rules/sfp-active-skills.md` in your workspace. 
 
-This is on by default. When you choose a task in **Choose**, or the **Now** tab follows your work into a phase, the extension writes the chosen skills to `.agents/rules/sfp-active-skills.md` in your workspace. Antigravity's agent reads that folder on every turn.
+Your coding agent reads this rule file on every turn, giving it the exact skills needed without manually typing or copying prompts.
 
-Check: choose a task, then ask the agent "Which skills are active for this task?". It should list the same skills as the sidebar. **Insights → Skill history** shows what was given for which prompt.
+## 5. Local Model Router (127.0.0.1:8787) — Work Past Cloud Limits
 
-Turn it off with the command "SFP Hive: Turn automatic skills on or off"; then use **Copy prompt** by hand. Add `.agents/rules/sfp-active-skills.md` to your project's `.gitignore` if you do not want it committed.
-
-## 5. Optional: use your local models, and keep working past limits
-
-Start Ollama or LM Studio with a model loaded, then:
+SFP includes an OpenAI-compatible model router that prioritizes your local models (LM Studio, Ollama, llama.cpp), fails over automatically across free and cloud tiers, and protects you from 429 rate limits:
 
 ```bash
-python3 mcp/sfp_route.py discover        # lists the local models it finds
-python3 mcp/sfp_route.py setup --yes     # writes ~/.sfp/routes.json (adds cloud providers whose keys are set)
-python3 mcp/sfp_route.py serve           # leave this running
+# 1. Discover running local runtimes
+python3 mcp/sfp_route.py discover
+
+# 2. Setup model routes and cloud keys
+python3 mcp/sfp_route.py setup --yes
+
+# 3. Start the router server
+python3 mcp/sfp_route.py serve
 ```
 
-Point any OpenAI-compatible tool (Cline, Continue, Codex, Aider, your scripts) at `http://127.0.0.1:8787/v1`, any key, model `auto`. Local models go first; when one is rate limited or down, the next answers. Models you start later are found within 30 seconds.
+### Point any tool to the router:
+- **Base URL**: `http://127.0.0.1:8787/v1`
+- **API Key**: Any string (e.g. `sfp` or `local`)
+- **Model**: `auto` (or `sfp/light`, `sfp/normal`, `sfp/heavy`)
 
-Check: `python3 mcp/sfp_hive.py doctor` shows "Router running: N of N models ready". The router cannot redirect an editor's own built-in agent; [ROUTER.md](ROUTER.md) explains the limits.
+Supported clients:
+- **VS Code / Cursor / Windsurf / Antigravity**: Set as custom OpenAI provider.
+- **Cline / Continue / Roo Code**: Base URL `http://127.0.0.1:8787/v1`.
+- **Aider / OpenCode / Custom Python scripts**: Standard OpenAI client pointing to port 8787.
+
+Local models take the load first. When one model is cooling down or rate limited, the router seamlessly delegates the request to the next available provider.
 
 ## 6. Optional: turn a Git repository into a skill
 

@@ -19,23 +19,43 @@
   <img src="https://img.shields.io/badge/license-MIT-0f766e?style=flat-square&labelColor=3b4350" alt="MIT license">
 </p>
 
-## Try It in 60 Seconds
+## Up and Running in Three Steps
 
+### 1. Get SFP
 ```bash
-# Cross-platform (Windows, macOS, Linux via npm / npx):
-npx sfp-hive install
+# Option A: One-line install via npx (cross-platform)
+npx --registry=https://npm.pkg.github.com @siddu1004/sfp install
 
-# Or via curl (macOS and Linux):
-curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
+# Option B: Clone the repository
+git clone https://github.com/siddu1004/SFP.git
+cd SFP
 ```
 
-That installs the starter set into every IDE it finds (Windows, macOS, Linux). Restart your IDE, then ask your agent:
+### 2. Install Skills & the Editor Extension
+```bash
+# Installs the SFP Hive sidebar into Antigravity, VS Code, Cursor, and Windsurf
+python3 extensions/antigravity-hive/install.py
 
-> Use sfp-hive for this task: add tests for the checkout form.
+# Universal MCP server (serves all 819 skills into any MCP-capable tool)
+python3 scripts/install.py mcp
+```
 
-It should name the few skills that fit your project, say why, and follow them in order. When the task is done, tell it what helped and what did not, and it chooses better next time.
+### 3. Connect the Local Router & Start Working
+```bash
+# Start the local model router (runs on 127.0.0.1:8787)
+python3 mcp/sfp_route.py serve
+```
+Point any OpenAI-compatible tool to `http://127.0.0.1:8787/v1` with model `auto`. 
 
-**Not for you?** Undo it with one line: `~/.sfp/SFP/install.sh uninstall`. It removes only what it installed.
+**That's it!** Your agent receives the exact skills it needs automatically in `.agents/rules/sfp-active-skills.md` as you type or change phases. Nothing to copy or paste.
+
+**Verify in 5 seconds:**
+```bash
+python3 mcp/sfp_hive.py doctor
+```
+*(Prints `Everything is connected.` with green checks across all components).*
+
+**Not for you?** Undo everything with one command: `python3 scripts/install.py uninstall`. It removes only what it installed.
 
 ## The Problem
 
