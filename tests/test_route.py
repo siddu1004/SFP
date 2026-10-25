@@ -318,5 +318,45 @@ class DiscoveryTest(RouterCase):
         self.assertLess(text.index('l/a-7b'), text.index('c/b-70b'))
 
 
+class RediscoveryTest(RouterCase):
+    def test_a_runtime_that_starts_joins_and_one_that_stops_leaves(self):
+        cfg = {'policy': 'local-first', 'providers': [{'id': 'groq', 'kind': 'free', 'base_url': 'http://x/v1', 'api_key_env': 'GROQ_API_KEY',
+                                                       'models': [{'id': 'm', 'strength': 3, 'ctx': 8192}]}]}
+        found = [{'runtime': 'ollama', 'name': 'Ollama', 'base_url': 'http://127.0.0.1:11434/v1', 'models': ['llama3.2:3b']}]
+        self.assertTrue(rt.refresh_local(cfg, found))
+        self.assertEqual([p['id'] for p in cfg['providers']], ['groq', 'ollama'])
+        self.assertFalse(rt.refresh_local(cfg, found))                       # nothing new: no change
+        found[0]['models'].append('qwen2.5-coder:14b')
+        self.assertTrue(rt.refresh_local(cfg, found))
+        self.assertEqual([m['strength'] for m in cfg['providers'][1]['models']], [1, 2])
+        self.assertTrue(rt.refresh_local(cfg, []))                           # Ollama stopped
+        self.assertTrue(cfg['providers'][1]['disabled'])
+        self.assertFalse(cfg['providers'][0].get('disabled'))                # the cloud provider is never touched
+        self.assertTrue(rt.refresh_local(cfg, found))                        # and it came back
+        self.assertFalse(cfg['providers'][1].get('disabled'))
+
+    def test_a_disabled_provider_is_not_a_candidate(self):
+        a, b = self.fake('local-7b'), self.fake('cloud')
+        pa = provider('l', a, models=[{'id': 'local-7b', 'strength': 1, 'ctx': 8192}])
+        pa['disabled'] = True
+        self.router([pa, provider('c', b, 'free', [{'id': 'cloud', 'strength': 3, 'ctx': 32768}])])
+        r, _ = self.ask('rename this')
+        self.assertEqual(r.getheader('X-SFP-Model'), 'c/cloud')
+        self.assertEqual(a.calls, 0)
+
+    def test_the_background_loop_updates_the_live_config(self):
+        a = self.fake('qwen2.5-coder:7b')
+        runtimes = [('fake', 'Fake', a.base, a.base + '/models')]
+        cfg = {'policy': 'local-first', 'providers': []}
+        stop = rt.start_rediscovery(cfg, every=0.05, runtimes=runtimes)
+        try:
+            deadline = time.time() + 5
+            while time.time() < deadline and not cfg['providers']:
+                time.sleep(0.05)
+        finally:
+            stop.set()
+        self.assertEqual([p['id'] for p in cfg['providers']], ['fake'])
+
+
 if __name__ == '__main__':
     unittest.main()

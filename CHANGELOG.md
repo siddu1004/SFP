@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.16.0
+
+- **The router follows your local models.** While it serves, `sfp_route.py` looks for local runtimes again every 30 seconds (`--rediscover N`): one that starts joins with its models, new models are added, and one that stops answering is switched off until it returns.
+
 ## 3.15.0
 
 - **Loaded bundles for the current phase.** `sfp_hive.py track` now returns `bundles`: the bundles that hold the skills chosen for the phase of work, best first, each with the skills it covers and the rest that load with it (`sfp_library.phase_bundles`). The Now tab shows them under "Loaded bundles", with the numbered skills and an "Attach whole bundle" button. The Now tab's wording is plain ("Confidence 62%", "Based on recent workspace activity"), and it refreshes by itself every `sfpHive.autoRefreshSeconds` seconds (default 5, 0 for manual).
