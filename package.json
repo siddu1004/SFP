@@ -1,0 +1,41 @@
+{
+  "name": "sfp-hive",
+  "version": "3.17.3",
+  "description": "Give your AI coding agent the right skills for the job, not all of them. Curated library of 800+ agent skills across 16 IDEs with an intelligent hive that selects, orders, and learns from feedback.",
+  "author": "siddu1004",
+  "license": "MIT",
+  "homepage": "https://github.com/siddu1004/SFP#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siddu1004/SFP.git"
+  },
+  "bugs": {
+    "url": "https://github.com/siddu1004/SFP/issues"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "skills",
+    "mcp",
+    "claude-code",
+    "cursor",
+    "antigravity",
+    "copilot",
+    "developer-tools",
+    "productivity",
+    "hive",
+    "vibecoding"
+  ],
+  "bin": {
+    "sfp": "./bin/sfp.js",
+    "sfp-hive": "./bin/sfp.js"
+  },
+  "files": [
+    "bin/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}
