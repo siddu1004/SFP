@@ -3,6 +3,7 @@
 ## 3.17.3
 
 - **Installation guide.** New [docs/INSTALL.md](docs/INSTALL.md): SFP, the skills, the SFP Hive extension, automatic skills, local models and the router, and Git-to-skill, each step with a check, plus troubleshooting and removal.
+- **Cross-platform npm package & npx launcher.** `sfp-hive` on npm: run `npx sfp-hive install` to bootstrap and install SFP skills into all detected IDEs across Windows, macOS, and Linux without bash. Supports zero-config MCP server via `npx -y sfp-hive mcp`.
 - **README.** The extension section now describes what it does today (automatic skills, Now, Choose, Library, Models, Insights with skill history) and no longer says it has not been run in Antigravity: it has.
 
 ## 3.17.2

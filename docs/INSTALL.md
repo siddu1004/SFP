@@ -14,6 +14,16 @@ This guide takes you from nothing to an agent that gets the right skills automat
 
 On Windows, use `python` where this guide says `python3`.
 
+## Quickest install (Windows, macOS, Linux)
+
+If you have Node.js 18+ and Python 3:
+
+```bash
+npx sfp-hive install
+```
+
+This bootstraps SFP into `~/.sfp/SFP` and installs the starter skills into every detected tool in one command. For manual step-by-step setup, continue below.
+
 ## 1. Get SFP
 
 ```bash

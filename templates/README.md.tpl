@@ -22,10 +22,14 @@
 ## Try It in 60 Seconds
 
 ```bash
+# Cross-platform (Windows, macOS, Linux via npm / npx):
+npx sfp-hive install
+
+# Or via curl (macOS and Linux):
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
 ```
 
-That installs the starter set into every IDE it finds (macOS and Linux). On Windows or in Claude Code, see [Install](#install). Restart your IDE, then ask your agent:
+That installs the starter set into every IDE it finds (Windows, macOS, Linux). Restart your IDE, then ask your agent:
 
 > Use sfp-hive for this task: add tests for the checkout form.
 
