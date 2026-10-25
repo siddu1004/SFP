@@ -35,6 +35,7 @@
       {"command": "sfpHive.choose", "title": "Choose skills for a task", "category": "SFP Hive", "icon": "$(search)"},
       {"command": "sfpHive.focusNow", "title": "Show current agent skills and phase", "category": "SFP Hive"},
       {"command": "sfpHive.showSkill", "title": "Show a skill's details", "category": "SFP Hive"},
+      {"command": "sfpHive.addFromGit", "title": "Add a skill from Git", "category": "SFP Hive"},
       {"command": "sfpHive.focusLibrary", "title": "Focus skill library", "category": "SFP Hive"},
       {"command": "sfpHive.searchSkills", "title": "Search skills", "category": "SFP Hive", "icon": "$(search)"},
       {"command": "sfpHive.applyBundle", "title": "Apply a bundle", "category": "SFP Hive"},

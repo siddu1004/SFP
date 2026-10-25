@@ -873,3 +873,26 @@ export function doctorSummaryHtml(result: DoctorResult): string {
   return `<div class="doctor-summary doctor-${level}"><span class="doctor-summary-text">${escapeHtml(text)}</span>`
     + `<button class="btn btn-secondary btn-small" data-action="showInsights">Details</button></div>`;
 }
+
+/** `scripts/repo_to_skill.py`: turn a Git repository (URL, owner/repo or folder) into a skill and copy it into a tool's skills folder. */
+export interface RepoSkillResult { skill_name: string; category: string; skill_path: string; status: 'ok'; installed: Record<string, string>; registered: boolean }
+
+export function repoToSkillArgs(root: string, source: string, tools: string[] = []): string[] {
+  const args = [path.join(root, 'scripts', 'repo_to_skill.py'), source.trim(), '--json'];
+  if (tools.length) args.push('--install', tools.join(','));
+  return args;
+}
+
+/** The script prints its JSON on success and on failure (`{error, status: 'fail'}`), and exits 1 on failure. */
+export function parseRepoSkill(json: string): RepoSkillResult {
+  const r = JSON.parse(json);
+  if (r && r.status === 'fail') throw new Error(String(r.error || 'The repository could not be converted.'));
+  if (!r || typeof r.skill_path !== 'string') throw new Error('unexpected output from the converter');
+  return r as RepoSkillResult;
+}
+
+/** Whether the text typed for "Add a skill from Git" can be a repository: a URL, owner/repo, or a path. */
+export function looksLikeRepo(text: string): boolean {
+  const t = text.trim();
+  return /^(https?:\/\/|git@)\S+$/.test(t) || /^[\w.-]+\/[\w.-]+$/.test(t) || /^([a-zA-Z]:)?[\\/~.]/.test(t);
+}

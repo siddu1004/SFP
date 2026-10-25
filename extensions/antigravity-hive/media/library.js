@@ -174,6 +174,7 @@
     e.preventDefault();
   });
   on('lib-new-bundle-btn', 'click', () => post({ command: 'newBundle' }));
+  on('lib-git-btn', 'click', () => post({ command: 'addFromGit' }));
   on('lib-refresh-btn', 'click', () => { showLoading(true); post({ command: 'refresh' }); });
   on('lib-error-btn', 'click', () => post({ command: 'openSettings' }));
 

@@ -224,7 +224,10 @@ mark {
   font-size: 11px; color: var(--muted);
 }
 .library-footer .icon-btn svg { width: 13px; height: 13px; }
+.library-footer .footer-actions { display: flex; gap: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+#lib-git-btn { margin-left: auto; }

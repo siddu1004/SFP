@@ -536,6 +536,47 @@ async function copyPromptWorkflow(bundleId: string) {
   }
 }
 
+/** "Add a skill from Git": convert a repository into a skill, install it for the chosen tool, and offer to open it. */
+async function addSkillFromGitWorkflow(initial?: string) {
+  const root = sfpRoot();
+  if (!root) {
+    void vscode.window.showWarningMessage('SFP checkout not found. Set sfpHive.sfpPath.');
+    return;
+  }
+  const source = initial ?? await vscode.window.showInputBox({
+    title: 'Add a skill from Git',
+    prompt: 'A repository URL, owner/repo, or a folder on this computer',
+    placeHolder: 'https://github.com/owner/repo',
+    ignoreFocusOut: true,
+    validateInput: (v) => (v.trim() && !hive.looksLikeRepo(v) ? 'Enter a URL, owner/repo, or a folder path.' : undefined),
+  });
+  if (!source || !source.trim()) return;
+  const cfg = config();
+  try {
+    const result = await vscode.window.withProgress(
+      { location: vscode.ProgressLocation.Notification, title: `Creating a skill from ${source.trim()}…` },
+      async () => {
+        let out = '';
+        try {
+          out = await hive.run(hive.pythonCommand(cfg.opts), hive.repoToSkillArgs(root, source, [cfg.tool]), 180000);
+        } catch (e) {
+          out = (e as Error).message;                       // the script prints its JSON error, which hive.run wraps in the message
+          const m = out.match(/\{[\s\S]*\}/);
+          if (m) out = m[0];
+        }
+        return hive.parseRepoSkill(out);
+      }
+    );
+    const where = Object.keys(result.installed).length ? ` and installed it for ${Object.keys(result.installed).join(', ')}` : '';
+    const pick = await vscode.window.showInformationMessage(`Created the skill "${result.skill_name}" (${result.category})${where}.`, 'Open SKILL.md');
+    if (pick === 'Open SKILL.md') {
+      await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(result.skill_path), { preview: true });
+    }
+  } catch (e) {
+    void vscode.window.showErrorMessage(`Could not create a skill from that repository. ${(e as Error).message.slice(0, 300)}`);
+  }
+}
+
 async function newBundleWorkflow(initialSkill?: string) {
   const root = sfpRoot();
   if (!root) return;
@@ -981,6 +1022,9 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
           break;
         case 'newBundle':
           await newBundleWorkflow();
+          break;
+        case 'addFromGit':
+          await addSkillFromGitWorkflow();
           break;
         case 'editBundle':
           if (message.bundleId) {
@@ -1440,6 +1484,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
     <div class="library-footer">
       <span class="footer-counts" id="lib-footer-counts"></span>
+      <button class="icon-btn" id="lib-git-btn" aria-label="Add a skill from Git" title="Add a skill from a Git repository"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7.5 3h1v4.5H13v1H8.5V13h-1V8.5H3v-1h4.5V3z"/></svg></button>
       <button class="icon-btn" id="lib-refresh-btn" aria-label="Refresh library" title="Refresh library">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M13.6 2.4A7 7 0 1 0 15 8h-1.5a5.5 5.5 0 1 1-1.1-4.4L10 6h5V1l-1.4 1.4z"/></svg>
       </button>
@@ -1563,6 +1608,9 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
           break;
         case 'newBundle':
           await newBundleWorkflow();
+          break;
+        case 'addFromGit':
+          await addSkillFromGitWorkflow();
           break;
         case 'editBundle':
           if (message.bundleId) {
@@ -1702,7 +1750,8 @@ export class LibraryViewProvider implements vscode.WebviewViewProvider {
 
   <div class="library-footer">
     <span class="footer-counts" id="lib-footer-counts"></span>
-    <button class="icon-btn" id="lib-refresh-btn" aria-label="Refresh library" title="Refresh library">
+    <button class="icon-btn" id="lib-git-btn" aria-label="Add a skill from Git" title="Add a skill from a Git repository"><svg viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M7.5 3h1v4.5H13v1H8.5V13h-1V8.5H3v-1h4.5V3z"/></svg></button>
+      <button class="icon-btn" id="lib-refresh-btn" aria-label="Refresh library" title="Refresh library">
       <svg viewBox="0 0 16 16"><path fill="currentColor" d="M13.6 2.4A7 7 0 1 0 15 8h-1.5a5.5 5.5 0 1 1-1.1-4.4L10 6h5V1l-1.4 1.4z"/></svg>
     </button>
   </div>
@@ -2384,6 +2433,7 @@ export function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand('sfpHive.stack.focus');
     studioProvider?.showTab('now');
   });
+  reg('sfpHive.addFromGit', (source?: string) => addSkillFromGitWorkflow(typeof source === 'string' ? source : undefined));
   reg('sfpHive.focusLibrary', async () => {
     await vscode.commands.executeCommand('sfpHive.stack.focus');
     studioProvider?.showTab('library');

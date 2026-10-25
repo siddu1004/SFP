@@ -87,3 +87,23 @@ test('the Now tab says what it shows in plain words, loads bundles, and refreshe
   const setting = pkg.contributes.configuration.properties['sfpHive.autoRefreshSeconds'];
   assert.ok(setting && setting.default > 0 && setting.minimum === 0);
 });
+
+test('adding a skill from Git: the arguments, the result, and the typed text are checked', async () => {
+  assert.deepStrictEqual(hive.repoToSkillArgs('/r', ' owner/repo ', ['claude', 'antigravity']).slice(1), ['owner/repo', '--json', '--install', 'claude,antigravity']);
+  assert.ok(!hive.repoToSkillArgs('/r', 'a/b').includes('--install'));
+  for (const ok of ['https://github.com/o/r', 'git@github.com:o/r.git', 'owner/repo', '/home/me/code/repo', '~/code/repo', 'C:\\code\\repo', './repo']) assert.ok(hive.looksLikeRepo(ok), ok);
+  for (const bad of ['', 'hello world', 'just-a-word', 'a b/c']) assert.ok(!hive.looksLikeRepo(bad), bad);
+  assert.strictEqual(hive.parseRepoSkill('{"skill_name":"x","skill_path":"/p/SKILL.md","status":"ok","installed":{},"category":"c","registered":false}').skill_name, 'x');
+  assert.throws(() => hive.parseRepoSkill('{"status":"fail","error":"Could not clone x"}'), /Could not clone x/);
+  assert.throws(() => hive.parseRepoSkill('{}'));
+});
+
+test('the real converter turns a folder into a skill that has its README commands', async () => {
+  const repo = fs.mkdtempSync(path.join(os.tmpdir(), 'repo-'));
+  fs.writeFileSync(path.join(repo, 'README.md'), '# Demo\n\nDemo is a tool that formats logs nicely for you.\n\n## Install\n\n```bash\nnpm install -g demo-logs\n```\n');
+  const out = await hive.run(hive.pythonCommand(), hive.repoToSkillArgs(REPO, repo, []));
+  const res = hive.parseRepoSkill(out);
+  assert.ok(res.skill_path.startsWith(process.env.SFP_DATA_DIR), 'it writes to the data folder, not the checkout');
+  const md = fs.readFileSync(res.skill_path, 'utf8');
+  assert.ok(md.startsWith('---') && md.includes('npm install -g demo-logs'));
+});
