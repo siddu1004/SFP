@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.17.3
+
+- **Installation guide.** New [docs/INSTALL.md](docs/INSTALL.md): SFP, the skills, the SFP Hive extension, automatic skills, local models and the router, and Git-to-skill, each step with a check, plus troubleshooting and removal.
+- **README.** The extension section now describes what it does today (automatic skills, Now, Choose, Library, Models, Insights with skill history) and no longer says it has not been run in Antigravity: it has.
+
 ## 3.17.2
 
 - **Sharper automatic skills from activity.** When the agent's skills come from the phase the hive follows (not a task you typed), it now gets the phase's best bundle, in order, plus at most two other skills the hive is sure of (score 0.9 or more). Activity is weak evidence, and file names in a skills repository had brought in unrelated skills (an n8n skill and a web3 hashing skill while debugging). A task you type keeps the full choice.

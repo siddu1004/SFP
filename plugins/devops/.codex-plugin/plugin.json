@@ -1,6 +1,6 @@
 {
   "name": "devops",
-  "version": "3.17.2",
+  "version": "3.17.3",
   "description": "Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation.",
   "author": {
     "name": "siddu1004"

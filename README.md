@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.17.2-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.17.2">
+  <img src="https://img.shields.io/badge/version-3.17.3-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.17.3">
   <img src="https://img.shields.io/badge/skills-819-0f766e?style=flat-square&labelColor=3b4350" alt="819 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
@@ -122,7 +122,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 **Does it pick the right skill, before any learning?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive 3.17.2 | Earlier engine | Plain search |
+| Task set | Hive 3.17.3 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 64% | 9% |
 | 24 tasks in 10 sample projects | 79% | 75% | 25% |
@@ -166,7 +166,7 @@ Measured on small tests, with the checklists written before any agent ran. On co
 
 ## Install
 
-You need `git`, and Python 3 outside Claude Code's plugin route.
+You need `git`, and Python 3 outside Claude Code's plugin route. [docs/INSTALL.md](docs/INSTALL.md) walks through the whole setup, extension and local models included, with a check after each step.
 
 <details open>
 <summary><b>macOS and Linux</b></summary>
@@ -234,13 +234,20 @@ The server is written under VS Code's `servers` key and your other servers are k
 <details>
 <summary><b>Antigravity and other VS Code editors, with the hive inside the editor</b></summary>
 
-`extensions/antigravity-hive` is a TypeScript extension for Antigravity, VS Code, Cursor and Windsurf. It adds a status-bar item and a view: type a task, get the few skills it needs in order, copy a ready prompt for the agent panel, and mark each skill helped, unhelpful, ignored or missing.
+`extensions/antigravity-hive` (SFP Hive) is a TypeScript extension for Antigravity, VS Code, Cursor and Windsurf. It has been run in Antigravity and in a real VS Code.
+
+- **Automatic skills.** When you choose a task, or the hive follows your work into a phase, it writes the chosen skills to `.agents/rules/sfp-active-skills.md`. Antigravity's agent reads that file on every turn, so it gets its skills without a copied prompt. Copy prompt still works by hand.
+- **Now.** The current phase and its confidence, the loaded bundles, and the skills in use. It refreshes on its own.
+- **Choose.** Type a task; the skills it needs arrive as you type, with whole bundles when one fits. Pin or remove any of them.
+- **Library.** All skills grouped by area (interface, prompting, security...), by goal, by bundle and by cluster, with search and a detail window for each skill. **+** turns a Git repository into a skill.
+- **Models.** Your local models and the router that fails over between them.
+- **Insights.** A connection check with the fix for each problem, and the skill history: which prompt received which skills.
 
 ```bash
 python3 extensions/antigravity-hive/install.py
 ```
 
-It builds a `.vsix` and installs it with the editor's own command, so nothing inside the editor is changed. [docs/ANTIGRAVITY.md](docs/ANTIGRAVITY.md) has the details, what has not been tested (it was tested in a real VS Code 1.117, and has not been run inside Antigravity itself), and implementation prompts for extending it.
+It builds a `.vsix` and installs it with the editor's own command, so nothing inside the editor is changed. [docs/INSTALL.md](docs/INSTALL.md) is the step-by-step installation guide; [docs/ANTIGRAVITY.md](docs/ANTIGRAVITY.md) has the design and implementation prompts for extending it.
 </details>
 
 <details>
