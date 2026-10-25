@@ -1,6 +1,6 @@
 {
   "name": "ai-ml",
-  "version": "3.17.6",
+  "version": "3.17.7",
   "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
   "author": {
     "name": "siddu1004"

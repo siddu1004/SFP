@@ -11,12 +11,26 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.17.6-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.17.6">
+  <img src="https://img.shields.io/badge/version-3.17.7-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.17.7">
   <img src="https://img.shields.io/badge/skills-819-0f766e?style=flat-square&labelColor=3b4350" alt="819 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
   <img src="https://img.shields.io/badge/needs-Python_3-0f766e?style=flat-square&labelColor=3b4350" alt="Needs Python 3">
   <img src="https://img.shields.io/badge/license-MIT-0f766e?style=flat-square&labelColor=3b4350" alt="MIT license">
+</p>
+
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/results-numbers-dark.svg">
+  <img src="assets/results-numbers-light.svg" alt="86% right skill on unseen tasks (plain search 9%); 5 of 6 pages shipped with SFP against 4 of 6 without skills; 819 skills" width="100%">
+</picture>
+</p>
+
+<p align="center">
+  <a href="#try-it-in-60-seconds"><b>Try it in 60 seconds</b></a> ·
+  <a href="#does-it-make-the-agent-better"><b>See the results</b></a> ·
+  <a href="docs/INSTALL.md"><b>Install guide</b></a> ·
+  <a href="#supported-ides"><b>16 IDEs</b></a>
 </p>
 
 ## Try It in 60 Seconds
@@ -36,6 +50,33 @@ That installs the starter set into every IDE it finds (Windows, macOS, Linux). R
 It should name the few skills that fit your project, say why, and follow them in order. When the task is done, tell it what helped and what did not, and it chooses better next time.
 
 **Not for you?** Undo it with one line: `~/.sfp/SFP/install.sh uninstall`. It removes only what it installed.
+
+> [!TIP]
+> **It learns from you.** When a task is done, your agent reports which skills helped and which did not. In testing, **94% of reported mistakes were fixed** the next time the same task came up. On new kinds of task the gain is still small (+0.7 points), so the benefit grows with how much of your own work it has seen. Your history stays on your machine, in `~/.sfp`.
+
+## Does It Make the Agent Better?
+
+Picking the right skill is half of it; the other half is whether the agent's work improves. We test both, in the open, and publish what does not go our way too.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/results-rounds-dark.svg">
+  <img src="assets/results-rounds-light.svg" alt="Review rounds until a reviewer would ship the page: 2.8 with SFP, 3.7 with no skills, 3.7 with hand-picked design skills" width="100%">
+</picture>
+
+**Design work, the way you actually do it.** You prompt, look, and ask for changes until it is right. We simulated that: an agent builds a page, a reviewer model scores screenshots without knowing which setup made them, and its requested changes go back as the next prompt. With SFP choosing the skills, pages were ready about **one round sooner** and **5 of 6 shipped** within four rounds, against 4 of 6 without skills. It is a first sample of 18 runs, so treat it as a strong signal, not proof; the bigger run is next.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/results-accuracy-dark.svg">
+  <img src="assets/results-accuracy-light.svg" alt="Right skill on held-out tasks: SFP hive 86%, earlier engine 64%, plain search 9%" width="100%">
+</picture>
+
+**Choosing the skill.** On 22 tasks written in advance and scored once, the hive put a right skill in the stack 86% of the time; plain search managed 9%.
+
+**Tools the model has never seen.** Asked to run FreeLLMAPI and call it with the fastest routing, a plain agent met none of seven checks and wrote placeholders; with the skill it met all seven. A skill carries knowledge that is not in the model's training, and that is where the gap is widest ([docs/EFFECT.md](docs/EFFECT.md)).
+
+**Where it does not help yet.** On small, well-defined coding tasks (a rate limiter, a bug fix, a security fix), today's models score 100% with or without skills, and skills only add reading time. Skills pay off where taste, house rules and many steps matter. Every run, prompt and score is in [docs/AGENT-BENCH.md](docs/AGENT-BENCH.md); rerun them with `python3 bench/agent/run.py` and `python3 bench/design/run.py`.
+
+**Try it on your own work for a week** and tell us what changed: [open an issue](https://github.com/siddu1004/SFP/issues) with what helped and what did not. That feedback is how the next version chooses better.
 
 ## The Problem
 
@@ -126,7 +167,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 **Does it pick the right skill, before any learning?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive 3.17.6 | Earlier engine | Plain search |
+| Task set | Hive 3.17.7 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 64% | 9% |
 | 24 tasks in 10 sample projects | 79% | 79% | 25% |
@@ -147,13 +188,9 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,197 tokens, and 90% are under 4,295. A selection averages 1.9 skills when there is no project.
 
-**How fast is it?** About 5 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
+**How fast is it?** About 6 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost, choice and learning, not quality of results. Learning is measured on a simulated user, not on real long-run use. The tasks and their correct answers were written by one person. The hive's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the held-out set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
-
-## Does It Change the Agent?
-
-Measured on small tests, with the checklists written before any agent ran. On common engineering tasks (Django, Go, Flask, React, FastAPI) a plain agent and a skill-guided one scored the same, because a strong model already knows those practices; the skill-guided answers did follow the skill's structure, such as tests first and a service layer. On a tool the model cannot know from training, the difference was large: asked to run FreeLLMAPI and call it with the fastest routing, the plain agent met none of seven checks and gave placeholders, and the skill-guided agent met all seven. The tests also found a hive bug (a Docker-tagged skill ruled out by a mention of Python), now fixed, and a miss that feedback is meant to fix. These are single runs on one model, so treat them as evidence, not a benchmark. [docs/EFFECT.md](docs/EFFECT.md) has every task, score and caveat.
 
 ## Who It Is For
 
@@ -364,7 +401,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 
 ## Questions
 
-**Does selection slow my agent down?** No. A decision takes about 5 ms and happens once per phase of work. It also loads fewer skills: 1.9 on average with no project.
+**Does selection slow my agent down?** No. A decision takes about 6 ms and happens once per phase of work. It also loads fewer skills: 1.9 on average with no project.
 
 **Does it always pick right?** No. The right skill was in the selection 86% of the time on held-out tasks, and the misses are listed in [docs/HIVE.md](docs/HIVE.md#where-it-fails). When it misses, tell it with feedback, name the skill, or ask for a category.
 

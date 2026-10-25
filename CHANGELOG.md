@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.17.7
+
+- **README.** New hero tile of three numbers under the banner, a "Does It Make the Agent Better?" section with charts of the design test and of held-out accuracy (light and dark), a tip on how the feedback loop learns (94% of reported mistakes fixed on the same task, +0.7 points on new ones), and an honest note on where skills do not help yet. `bench/charts.py` draws the charts from the saved results.
+
 ## 3.17.6
 
 - **A page is design work, whatever it is about.** "Design a pricing page for a webhook tool" chose `price-framing` and `omni-webhooks` and no design skill: the task's subject outweighed what was being built. When a task asks to design or build a UI artifact (a page, screen, dashboard, form, empty state, or HTML/CSS), the hive now also searches for UI design skills and gives the design phase a job in the stack. Those skills join as candidates below a precise match, so "brutalist website design" still gets the brutalist styles. Benchmark 89.0%, projects 79.2%, held-out 86.4%: unchanged.

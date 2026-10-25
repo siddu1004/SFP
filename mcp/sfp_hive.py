@@ -56,7 +56,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.17.6'
+VERSION = '3.17.7'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 # Catalog skills whose description names every domain (public-apis lists 51 kinds of API): words always match them, so
 # they are candidates only when their capability in capabilities.json fires ("is there a free API for...").
