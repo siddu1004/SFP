@@ -1213,7 +1213,8 @@ body { padding: 0; }
 .auto-skills-line .btn { flex: none; white-space: nowrap; }
 
 /* The Insights list uses the mark-then-text layout too. */
-.doctor-item:has(> .doctor-info) { display: grid; grid-template-columns: 16px 1fr; column-gap: 8px; align-items: start; }
+.doctor-item:has(> .doctor-info) { display: grid; grid-template-columns: 16px minmax(0, 1fr); grid-template-areas: "mark info"; column-gap: 8px; align-items: start; }
+.doctor-item > .doctor-info { grid-area: info; }
 .doctor-item > .doctor-mark { height: 17px; }
 
 /* Skill history */
