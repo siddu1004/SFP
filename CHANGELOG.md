@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.17.0
+
+- **The agent gets its skills automatically.** The extension writes the skills the hive chose, in order and with the path of each `SKILL.md`, plus the rest of any loaded bundle, to `.agents/rules/sfp-active-skills.md` in the workspace, and rewrites it whenever the choice changes: a task you chose or the phase the hive follows. The agent reads that rule on every turn. The sidebar says "The agent has N skills automatically" with a switch; Copy prompt and pins still work by hand. Settings `sfpHive.autoSkills` and `sfpHive.autoSkillsFile`, command "Turn automatic skills on or off".
+- Skills a bundle or a need brought in now say so ("part of the \"Accessible form\" bundle", "needed to make 3D models...") instead of "pinned by you".
+- The Insights connection list shows a fix only for checks that need one.
+
 ## 3.16.1
 
 - **Fixed: "search index stale" on Windows.** The index fingerprint was a hash of the raw bytes of `catalog.json`, and Git on Windows can check it out with CRLF line endings, so a correct index looked stale (and `doctor` warned). The fingerprint now ignores line endings, and `.gitattributes` keeps JSON files LF.

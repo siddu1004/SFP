@@ -896,3 +896,81 @@ export function looksLikeRepo(text: string): boolean {
   const t = text.trim();
   return /^(https?:\/\/|git@)\S+$/.test(t) || /^[\w.-]+\/[\w.-]+$/.test(t) || /^([a-zA-Z]:)?[\\/~.]/.test(t);
 }
+
+// ---------------------------------------------------------------- automatic skills for the agent
+
+const pathCache = new Map<string, { mtime: number; paths: Record<string, string> }>();
+
+/** {skill name: path relative to the checkout}, from catalog.json, re-read only when the catalog changes. */
+export function catalogPaths(root: string): Record<string, string> {
+  const file = path.join(root, 'catalog.json');
+  try {
+    const mtime = fs.statSync(file).mtimeMs;
+    const hit = pathCache.get(file);
+    if (hit && hit.mtime === mtime) return hit.paths;
+    const cat = JSON.parse(fs.readFileSync(file, 'utf8')) as { skills: { name: string; path: string }[] };
+    const paths: Record<string, string> = {};
+    for (const s of cat.skills) paths[s.name] = s.path.replace(/\\/g, '/');
+    pathCache.set(file, { mtime, paths });
+    return paths;
+  } catch {
+    return {};
+  }
+}
+
+export interface ActiveSkills {
+  source: 'task' | 'activity';
+  task?: string;
+  phase?: string | null;
+  confidence?: number;
+  skills: Skill[];
+  bundles?: { name: string; skills: string[] }[];
+}
+
+/**
+ * The rule file the agent reads on every turn: the skills chosen for the current work, in order, with the file to read
+ * for each. Pure: the caller decides where it goes. Skills of a loaded bundle that the stack does not hold are added
+ * after it, so the whole bundle reaches the agent.
+ */
+export function activeSkillsRule(a: ActiveSkills, root: string, now: Date = new Date()): string {
+  const paths = catalogPaths(root);
+  const fileOf = (name: string, p?: string) => {
+    const rel = p || paths[name];
+    return rel ? path.join(root, rel) : '';
+  };
+  const lines: string[] = [
+    '---',
+    'trigger: always_on',
+    '---',
+    '',
+    '# Skills for the current work',
+    '',
+    '<!-- Written by the SFP Hive extension and kept up to date automatically. Change the selection in the SFP Hive sidebar, not here. -->',
+    '',
+  ];
+  const what = a.source === 'task' && a.task ? `Task: ${a.task}` : a.phase ? `Current phase: ${a.phase}${typeof a.confidence === 'number' ? ` (confidence ${Math.round(a.confidence * 100)}%)` : ''}` : '';
+  if (what) lines.push(what, '');
+  if (!a.skills.length && !(a.bundles || []).length) {
+    lines.push('No skills are selected right now.', '');
+    return lines.join('\n');
+  }
+  lines.push('Before you start, read the SKILL.md file of each skill below and follow it. Use them in this order.', '');
+  const listed = new Set<string>();
+  a.skills.forEach((s, i) => {
+    listed.add(s.name);
+    const f = fileOf(s.name, s.path);
+    lines.push(`${i + 1}. **${s.name}**${s.layer ? ` (${s.layer})` : ''}${f ? ` — \`${f}\`` : ''}`);
+    if (s.reasons && s.reasons.length) lines.push(`   Why: ${s.reasons.slice(0, 2).join('; ')}`);
+  });
+  for (const b of a.bundles || []) {
+    const extra = b.skills.filter((n) => !listed.has(n));
+    lines.push('', `Bundle **${b.name}**: ${b.skills.join(' → ')}`);
+    for (const n of extra) {
+      listed.add(n);
+      const f = fileOf(n);
+      lines.push(`- **${n}** (from the bundle)${f ? ` — \`${f}\`` : ''}`);
+    }
+  }
+  lines.push('', `Updated ${now.toISOString().replace('T', ' ').slice(0, 16)} UTC.`, '');
+  return lines.join('\n');
+}

@@ -153,6 +153,16 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             res['preload'] += [{'name': n, 'why': 'rest of the "%s" bundle' % m['name']} for n in m['missing']
                                if n not in {p['name'] for p in res['preload']}]
     res['bundles'] = matches
+    # Skills a need or a bundle brought in are not the user's pins: say where they came from.
+    origin = {}
+    if matches and matches[0].get('applied'):
+        for n in matches[0]['skills']:
+            origin.setdefault(n, 'part of the "%s" bundle' % matches[0]['name'])
+    for n in found:
+        origin.setdefault(n['attach'], 'needed to %s' % n['name'][0].lower() + n['name'][1:])
+    for c in res['stack']:
+        if c['name'] in origin and c['name'] not in set(include):
+            c['reasons'] = [origin[c['name']] if r == 'pinned by you' else r for r in c.get('reasons', [])]
     iv = res.get('intervention')
     if iv is not None:
         # `pinned` and `excluded` are the user's own choices; what a need or a bundle added is reported under `needs` and `bundles`.

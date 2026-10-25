@@ -177,6 +177,9 @@
     const decision = target.getAttribute('data-decision');
 
     switch (action) {
+      case 'toggleAutoSkills':
+        vscode.postMessage({ command: 'toggleAutoSkills' });
+        break;
       case 'choose': {
         const input = document.getElementById('choose-task-input');
         const text = input ? input.value.trim() : '';
@@ -614,6 +617,7 @@
           if (typeof msg.payload.follow === 'boolean') {
             state.follow = msg.payload.follow;
           }
+          if (msg.payload.autoSkills) renderAutoSkills(msg.payload.autoSkills);
           if (msg.payload.track) {
             state.track = msg.payload.track;
             renderTrack(state.track, state.follow);
@@ -664,7 +668,7 @@
     const items = result.checks.map((c) => {
       const mark = c.status === 'ok' ? '✔' : c.status === 'warn' ? '▲' : '✖';
       const statusClass = c.status === 'ok' ? 'doctor-ok' : c.status === 'warn' ? 'doctor-warn' : 'doctor-fail';
-      const fixHtml = c.fix
+      const fixHtml = c.fix && c.status !== 'ok'
         ? `<div class="doctor-fix"><span>Fix: ${escapeHtml(c.fix)}</span><button class="btn btn-secondary btn-small" data-action="copyFix" data-fix="${escapeHtml(c.fix)}">Copy</button></div>`
         : '';
       return `<div class="doctor-item ${statusClass}">
@@ -938,6 +942,21 @@
   }
 
 
+
+  // One line that says whether the agent is getting its skills automatically, and a switch.
+  function renderAutoSkills(info) {
+    const time = info.updated ? new Date(info.updated).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+    const text = !info.enabled
+      ? 'Automatic skills are off. Use Copy prompt to give the agent its skills.'
+      : info.count
+        ? `The agent has ${info.count} skill${info.count === 1 ? '' : 's'} automatically${time ? ` (updated ${time})` : ''}.`
+        : 'The agent will get its skills automatically once some are chosen.';
+    const btn = `<button class="btn btn-secondary btn-small" data-action="toggleAutoSkills">${info.enabled ? 'Turn off' : 'Turn on'}</button>`;
+    document.querySelectorAll('[data-auto-line]').forEach((el) => {
+      el.classList.toggle('auto-off', !info.enabled);
+      el.innerHTML = `<span class="auto-dot" aria-hidden="true"></span><span class="auto-text" title="${escapeHtml(info.file || '')}">${escapeHtml(text)}</span>${btn}`;
+    });
+  }
 
   function renderTrack(track, follow) {
     if (followToggle && typeof follow === 'boolean') {

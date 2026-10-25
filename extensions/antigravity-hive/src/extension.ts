@@ -48,6 +48,8 @@ function config() {
     autoAttach: c.get<boolean>('autoAttach', true),
     autoAttachDelayMs: c.get<number>('autoAttachDelayMs', 200),
     autoRefreshSeconds: c.get<number>('autoRefreshSeconds', 5),
+    autoSkills: c.get<boolean>('autoSkills', true),
+    autoSkillsFile: c.get<string>('autoSkillsFile', '.agents/rules/sfp-active-skills.md'),
   };
 }
 
@@ -66,6 +68,48 @@ function project(): string | undefined {
 }
 
 export let lastDoctorResult: hive.DoctorResult | undefined;
+
+// ---- automatic skills: keep the agent's rule file in step with what the hive chose
+let autoSeenSelection: unknown;
+let autoSeenTrack: unknown;
+let autoSource: 'task' | 'activity' | undefined;
+let autoLastText = '';
+export let autoSkillsInfo: { enabled: boolean; file?: string; count: number; updated?: number; source?: string } = { enabled: false, count: 0 };
+
+/** Write the rule file if what the agent should have has changed. The newest of the two decides: a task you chose, or the
+ * phase the hive follows. Returns the file written, if any. */
+export function writeActiveSkills(): string | undefined {
+  const cfg = config();
+  const root = sfpRoot();
+  const ws = project();
+  autoSkillsInfo = { ...autoSkillsInfo, enabled: cfg.autoSkills };
+  if (!cfg.autoSkills || !root || !ws) return undefined;
+  if (selection !== autoSeenSelection) { autoSeenSelection = selection; if (selection) autoSource = 'task'; }
+  if (lastTrackResult !== autoSeenTrack) { autoSeenTrack = lastTrackResult; if (lastTrackResult?.skills?.length) autoSource = 'activity'; }
+  let active: hive.ActiveSkills | undefined;
+  if (autoSource === 'task' && selection) {
+    active = { source: 'task', task: selection.task, skills: selection.stack };
+  } else if (autoSource === 'activity' && lastTrackResult) {
+    const t = lastTrackResult;
+    active = { source: 'activity', phase: t.phase, confidence: t.confidence, skills: t.skills || [], bundles: (t.bundles || []).map((b) => ({ name: b.name, skills: b.skills })) };
+  }
+  if (!active) return undefined;
+  const text = hive.activeSkillsRule(active, root);
+  const body = text.replace(/^Updated .*$/m, '');                  // the time alone is not a change
+  const file = path.resolve(ws, cfg.autoSkillsFile);
+  if (!file.startsWith(path.resolve(ws) + path.sep)) return undefined;   // never outside the workspace
+  if (body === autoLastText) return undefined;
+  try {
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(file, text, 'utf8');
+    autoLastText = body;
+    const names = new Set([...active.skills.map((s) => s.name), ...(active.bundles || []).flatMap((b) => b.skills)]);
+    autoSkillsInfo = { enabled: true, file: path.relative(ws, file), count: names.size, updated: Date.now(), source: active.source };
+    return file;
+  } catch {
+    return undefined;
+  }
+}
 
 export function isFirstRun(): boolean {
   try {
@@ -871,6 +915,9 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
             }
           }
           break;
+        case 'toggleAutoSkills':
+          await vscode.commands.executeCommand('sfpHive.toggleAutoSkills');
+          break;
         case 'toggleFollow':
           await vscode.workspace.getConfiguration('sfpHive').update('follow', Boolean(message.value), vscode.ConfigurationTarget.Global);
           break;
@@ -1179,6 +1226,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
   }
 
   public syncState() {
+    writeActiveSkills();
     if (!this._view) return;
     const root = sfpRoot();
     this._view.webview.postMessage({
@@ -1202,6 +1250,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         live: this.lastLiveResult,
         collapsed: this.isCollapsed,
         needs: this.lastNeeds,
+        autoSkills: autoSkillsInfo,
       },
     });
   }
@@ -1303,6 +1352,8 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       <div class="chip-bar" id="now-next-chips"></div>
     </div>
 
+    <div class="auto-skills-line" data-auto-line></div>
+
     <div class="section hidden" id="now-bundles-section">
       <div class="section-title">
         <span>Loaded bundles</span>
@@ -1344,6 +1395,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
   <!-- Tab 2: Choose -->
   <div class="tab-content" id="tab-choose" role="tabpanel" aria-labelledby="btn-tab-choose">
+    <div class="auto-skills-line" data-auto-line></div>
     <div class="choose-welcome ${isFirstRun() ? '' : 'hidden'}" id="choose-welcome">
       <div class="welcome-title">Describe a task, see the skills, send it.</div>
       <div class="welcome-desc">The hive chooses skills based on your project files, task words, and past feedback.</div>
@@ -2432,6 +2484,14 @@ export function activate(context: vscode.ExtensionContext) {
   reg('sfpHive.focusNow', async () => {
     await vscode.commands.executeCommand('sfpHive.stack.focus');
     studioProvider?.showTab('now');
+  });
+  reg('sfpHive.toggleAutoSkills', async () => {
+    const c = vscode.workspace.getConfiguration('sfpHive');
+    const on = !c.get<boolean>('autoSkills', true);
+    await c.update('autoSkills', on, vscode.ConfigurationTarget.Workspace);
+    autoLastText = '';
+    studioProvider?.syncState();
+    void vscode.window.showInformationMessage(on ? 'SFP Hive now gives the agent its skills automatically.' : 'Automatic skills are off. Use Copy prompt to give the agent its skills.');
   });
   reg('sfpHive.addFromGit', (source?: string) => addSkillFromGitWorkflow(typeof source === 'string' ? source : undefined));
   reg('sfpHive.focusLibrary', async () => {

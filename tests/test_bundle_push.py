@@ -76,6 +76,9 @@ class PushTest(Case):
         self.assertEqual(res['bundle']['id'], 'accessible-form')
         self.assertTrue(set(want) <= {c['name'] for c in res['stack']})
         self.assertTrue(res['bundles'][0]['applied'])
+        for c in res['stack']:
+            self.assertNotIn('pinned by you', c['reasons'], 'a bundle is not the user pinning skills')
+        self.assertIn('part of the "Accessible form" bundle', res['stack'][0]['reasons'])
 
     def test_suggest_only_preloads_the_rest(self):
         res = nd.decide('make the signup form accessible', bundles='suggest')

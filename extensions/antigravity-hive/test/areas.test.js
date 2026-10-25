@@ -107,3 +107,28 @@ test('the real converter turns a folder into a skill that has its README command
   const md = fs.readFileSync(res.skill_path, 'utf8');
   assert.ok(md.startsWith('---') && md.includes('npm install -g demo-logs'));
 });
+
+test('the automatic skills rule lists the chosen skills in order, with their files, and adds the rest of a loaded bundle', () => {
+  const paths = hive.catalogPaths(REPO);
+  assert.ok(paths['golang-testing'] && !paths['golang-testing'].includes('\\'));
+  const text = hive.activeSkillsRule({ source: 'activity', phase: 'test', confidence: 0.69,
+    skills: [{ name: 'golang-testing', layer: 'base', reasons: ['task words: test'] }, { name: 'tdd-workflow', layer: 'check' }],
+    bundles: [{ name: 'Table-driven Go tests', skills: ['golang-testing', 'tdd-workflow', 'verification-loop'] }] }, REPO, new Date('2026-10-25T09:00:00Z'));
+  assert.ok(text.startsWith('---\ntrigger: always_on\n---'));
+  assert.ok(text.includes('Current phase: test (confidence 69%)'));
+  assert.ok(text.indexOf('1. **golang-testing** (base)') < text.indexOf('2. **tdd-workflow** (check)'));
+  assert.ok(text.includes(path.join(REPO, paths['golang-testing'])), 'each skill names the file to read');
+  assert.ok(text.includes('**verification-loop** (from the bundle)'), 'the rest of the bundle reaches the agent');
+  assert.strictEqual((text.match(/\*\*golang-testing\*\*/g) || []).length, 1, 'no skill twice');
+  assert.ok(text.includes('Updated 2026-10-25 09:00 UTC.'));
+  const task = hive.activeSkillsRule({ source: 'task', task: 'add tests', skills: [] }, REPO);
+  assert.ok(task.includes('Task: add tests') && task.includes('No skills are selected right now.'));
+});
+
+test('the automatic skills setting, file and command are declared', () => {
+  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+  const props = pkg.contributes.configuration.properties;
+  assert.strictEqual(props['sfpHive.autoSkills'].default, true);
+  assert.strictEqual(props['sfpHive.autoSkillsFile'].default, '.agents/rules/sfp-active-skills.md');
+  assert.ok(pkg.contributes.commands.some((c) => c.command === 'sfpHive.toggleAutoSkills'));
+});
