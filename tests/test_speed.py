@@ -181,7 +181,9 @@ class LineEndingTest(unittest.TestCase):
         # Git on Windows can check catalog.json out with CRLF line endings; the saved index must still match it.
         with open(os.path.join(ROOT, 'catalog.json'), 'rb') as f:
             raw = f.read()
-        self.assertEqual(core.catalog_sha(raw.replace(b'\n', b'\r\n')), core.catalog_sha(raw))
+        lf = raw.replace(b'\r\n', b'\n')
+        crlf = lf.replace(b'\n', b'\r\n')
+        self.assertEqual(core.catalog_sha(crlf), core.catalog_sha(lf))
         self.assertEqual(core.catalog_sha(raw), core.index_key()['catalog'])
 
 

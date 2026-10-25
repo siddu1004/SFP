@@ -5,7 +5,7 @@ description: Open-source AI job search agent -- evaluate offers, generate CVs, s
 
 # career-ops (SFP launcher)
 
-career-ops is a full application: scripts, modes and templates, not a single skill file. This launcher sets it up and then hands over to the project's own router skill. Its source is [career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops), pinned to commit `cf72768a98fa6521911d0bdf30e8d7f6ce07a502` with a small SFP patch.
+career-ops is a full application: scripts, modes and templates, not a single skill file. This launcher sets it up and then hands over to the project's own router skill. Its source is [career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops), pinned to commit `09a554802d4254942aeaf151682e3c824fc2684b` with a small SFP patch.
 
 ## Before any mode
 

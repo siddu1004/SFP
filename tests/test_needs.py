@@ -139,9 +139,14 @@ class DecideTest(unittest.TestCase):
         self.assertTrue({'image-to-3d', 'multi-image-to-3d'} & {c['name'] for c in res['stack']})
 
     def test_running_out_of_tokens_points_to_the_router_first(self):
-        found = nd.needs('we hit the rate limit, use free models', check=True)[0]
-        self.assertFalse(found['router']['running'])
-        self.assertIn('sfp_route.py', found['action'])
+        orig = nd.router_state
+        nd.router_state = lambda port=8787: {'configured': False, 'models': 0, 'running': False, 'port': port}
+        try:
+            found = nd.needs('we hit the rate limit, use free models', check=True)[0]
+            self.assertFalse(found['router']['running'])
+            self.assertIn('sfp_route.py', found['action'])
+        finally:
+            nd.router_state = orig
 
     def test_the_command_line(self):
         hive = os.path.join(ROOT, 'mcp', 'sfp_hive.py')
