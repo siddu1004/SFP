@@ -166,8 +166,8 @@ mark {
 .skill-sub { font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .skill-tags { grid-area: tags; display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
 .skill-tags:empty { display: none; }
-.skill-actions { grid-area: actions; display: flex; gap: 1px; opacity: 0; transition: opacity 100ms; }
-.skill-row:hover .skill-actions, .skill-row:focus-within .skill-actions { opacity: 1; }
+.row-actions { grid-area: actions; display: flex; gap: 1px; opacity: 0; transition: opacity 100ms; }
+.skill-row:hover .row-actions, .skill-row:focus-within .row-actions { opacity: 1; }
 .icon-btn {
   display: grid; place-items: center; width: 24px; height: 24px; padding: 0;
   border: 0; border-radius: 5px; background: transparent; color: var(--muted);

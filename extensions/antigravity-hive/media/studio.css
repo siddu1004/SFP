@@ -1201,3 +1201,5 @@ body { padding: 0; }
 /* Loaded bundles: the skills the hive chose for the phase are marked, the rest of the bundle loads with it. */
 .bundle-chip { background: transparent; border: 1px solid var(--vscode-widget-border, rgba(127, 127, 127, 0.3)); border-radius: 10px; padding: 1px 8px 1px 4px; }
 .bundle-chip-chosen { border-color: var(--vscode-focusBorder, var(--accent)); }
+
+.section-title .btn { flex: none; white-space: nowrap; }

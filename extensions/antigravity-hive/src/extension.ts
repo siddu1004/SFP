@@ -1118,13 +1118,10 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     }
   }
 
-  public updateTrackResult(track: hive.TrackResult) {
-    if (!this._view) return;
-    this._view.webview.postMessage({
-      type: 'updateTrack',
-      track,
-      follow: config().follow,
-    });
+  public updateTrackResult(_track: hive.TrackResult) {
+    // The page draws the Now tab from the full state message (it has no handler for a bare track message), so a new
+    // track result is sent that way. `lastTrackResult` was set by the caller just before this.
+    this.syncState();
   }
 
   private sent = new Map<string, unknown>();
@@ -1272,7 +1269,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
     <div class="section">
       <div class="section-title">
-        <span>Skills for the current phase</span>
+        <span>Skills for this phase</span>
         <button class="btn btn-secondary hidden" data-action="copyPrompt" id="now-copy-btn">Copy prompt</button>
       </div>
       <div class="state-box hidden" id="now-loading-state">

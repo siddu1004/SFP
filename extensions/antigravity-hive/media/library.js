@@ -309,7 +309,7 @@
             <span class="skill-sub">${escapeHtml(purposeName(s.purpose))}${s.cluster ? ' · ' + escapeHtml(clusterName(s.cluster)) : ''}</span>
           </div>
           <div class="skill-tags">${used}${app}</div>
-          <div class="skill-actions">
+          <div class="row-actions">
             <button class="icon-btn" data-action="openDetail" data-skill="${n}" aria-label="Details of ${n}" title="Details">${ICONS.info}</button>
             <button class="icon-btn" data-action="pinSkill" data-skill="${n}" aria-label="Pin ${n} to the task" title="Pin to the current task">${ICONS.pin}</button>
             <button class="icon-btn" data-action="addToBundle" data-skill="${n}" aria-label="Add ${n} to a bundle" title="Add to a bundle">${ICONS.plus}</button>
