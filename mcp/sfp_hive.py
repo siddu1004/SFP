@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.17.3'
+VERSION = '3.17.4'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language
@@ -140,6 +140,16 @@ def detect_missing(words, said=None):
     return None
 
 
+def names_skill(name, tech, words):
+    """Whether the task names the skill: one of its technologies, or a word of its name that few skills share.
+    "rate limiting for the payments API" does not name x-api: many skills say "api", and it never says X or Twitter."""
+    said = set(words)
+    if tech & said:
+        return True
+    rare = 0.05 * len(core.SKILLS)
+    return any(len(core.POSTINGS.get(t, ())) <= rare for t in v1.NAME_TOKENS.get(name, set()) & said)
+
+
 def collect_signals(sit, after, history, recalled=None, phase_queries=(), missing=None):
     """Every signal votes on every candidate it knows about. Votes are 0..1; None means the signal abstains."""
     words, ctx, ctx_tech = sit['words'], sit['ctx'], sit['ctx_tech']
@@ -177,7 +187,7 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
             continue
         tech = v1.SKILL_TECH.get(name, set())
         rel = relation(tech, ctx_tech)
-        if rel == 'mismatch' and found.get(name, 0) >= NAMED * top:
+        if rel == 'mismatch' and found.get(name, 0) >= NAMED * top and names_skill(name, tech, words):
             rel = 'named'   # the project cannot veto what the task asks for by name (a 3D skill in a web project)
         if rel == 'fit':
             project = max(ctx[t] for t in tech & ctx_tech) / top_ctx

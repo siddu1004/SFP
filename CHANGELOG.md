@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.17.4
+
+- **A platform skill needs its platform named.** "Add rate limiting to the payments API" chose `x-api` (an X/Twitter skill whose description mentions X's own rate limits). X/Twitter and the other social platforms are now technologies, so a skill for one platform counts against a task that never names it; a description that lists many platforms stays general. The "named by the task" rule, which lets a skill past the project's veto, now also needs the task to use one of the skill's distinctive words: its technology, or a word of its name that at most 5% of skills share ("api" is in 65). Benchmark, project and held-out scores are unchanged (87.9%, 79.2%, 86.4%).
+- **A task you chose stays chosen.** The agent's skills file went to whichever came last, so a routine activity refresh replaced a task you had just typed within seconds. Now the task holds until you choose another, or until the hive sees the work move to a new phase at least five minutes later.
+- **Insights layout.** The health list no longer wraps one letter per line in a wide sidebar.
+
 ## 3.17.3
 
 - **Installation guide.** New [docs/INSTALL.md](docs/INSTALL.md): SFP, the skills, the SFP Hive extension, automatic skills, local models and the router, and Git-to-skill, each step with a check, plus troubleshooting and removal.

@@ -73,6 +73,7 @@ export let lastDoctorResult: hive.DoctorResult | undefined;
 let autoSeenSelection: unknown;
 let autoSeenTrack: unknown;
 let autoSource: 'task' | 'activity' | undefined;
+let autoTaskAt = 0;
 let autoLastText = '';
 export let autoSkillsInfo: { enabled: boolean; file?: string; count: number; updated?: number; source?: string } = { enabled: false, count: 0 };
 
@@ -105,8 +106,11 @@ export function writeActiveSkills(): string | undefined {
   const ws = project();
   autoSkillsInfo = { ...autoSkillsInfo, enabled: cfg.autoSkills };
   if (!cfg.autoSkills || !root || !ws) return undefined;
-  if (selection !== autoSeenSelection) { autoSeenSelection = selection; if (selection) autoSource = 'task'; }
-  if (lastTrackResult !== autoSeenTrack) { autoSeenTrack = lastTrackResult; if (lastTrackResult?.skills?.length) autoSource = 'activity'; }
+  if (selection !== autoSeenSelection) { autoSeenSelection = selection; if (selection) { autoSource = 'task'; autoTaskAt = Date.now(); } }
+  if (lastTrackResult !== autoSeenTrack) {
+    autoSeenTrack = lastTrackResult;
+    if (lastTrackResult?.skills?.length && hive.activityTakesOver(autoSource, autoTaskAt, Date.now(), !!lastTrackResult.changed)) autoSource = 'activity';
+  }
   let active: hive.ActiveSkills | undefined;
   if (autoSource === 'task' && selection) {
     active = { source: 'task', task: selection.task, skills: selection.stack,

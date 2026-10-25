@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "sfp",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/sfp"
@@ -19,7 +19,7 @@
     },
     {
       "name": "frontend",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/frontend"
@@ -32,7 +32,7 @@
     },
     {
       "name": "design-styles",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/design-styles"
@@ -45,7 +45,7 @@
     },
     {
       "name": "backend",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/backend"
@@ -58,7 +58,7 @@
     },
     {
       "name": "mobile",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/mobile"
@@ -71,7 +71,7 @@
     },
     {
       "name": "languages",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/languages"
@@ -84,7 +84,7 @@
     },
     {
       "name": "testing-quality",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/testing-quality"
@@ -97,7 +97,7 @@
     },
     {
       "name": "devops",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/devops"
@@ -110,7 +110,7 @@
     },
     {
       "name": "security",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/security"
@@ -123,7 +123,7 @@
     },
     {
       "name": "agents",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/agents"
@@ -136,7 +136,7 @@
     },
     {
       "name": "agent-dev",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/agent-dev"
@@ -149,7 +149,7 @@
     },
     {
       "name": "ai-ml",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/ai-ml"
@@ -162,7 +162,7 @@
     },
     {
       "name": "ai-gateway",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/ai-gateway"
@@ -175,7 +175,7 @@
     },
     {
       "name": "data-apis",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/data-apis"
@@ -188,7 +188,7 @@
     },
     {
       "name": "content-media",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/content-media"
@@ -201,7 +201,7 @@
     },
     {
       "name": "business-ops",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/business-ops"
@@ -214,7 +214,7 @@
     },
     {
       "name": "industry",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/industry"
@@ -227,7 +227,7 @@
     },
     {
       "name": "networking",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/networking"
@@ -240,7 +240,7 @@
     },
     {
       "name": "research-docs",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/research-docs"
@@ -253,7 +253,7 @@
     },
     {
       "name": "web3",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/web3"
@@ -266,7 +266,7 @@
     },
     {
       "name": "engineering",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/engineering"
@@ -279,7 +279,7 @@
     },
     {
       "name": "science-hardware",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/science-hardware"
@@ -292,7 +292,7 @@
     },
     {
       "name": "career",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/career"
@@ -305,7 +305,7 @@
     },
     {
       "name": "memory",
-      "version": "3.17.3",
+      "version": "3.17.4",
       "source": {
         "source": "local",
         "path": "./plugins/memory"

@@ -936,6 +936,15 @@ export interface ActiveSkills {
  * most two other skills the hive is sure of; a task you typed keeps the full choice. */
 export const ACTIVITY_STRONG = 0.9;
 
+/** A task you chose says what you want; activity only guesses it. So the task holds until you choose another, or until
+ * the hive sees the work move to a new phase, and even then not within TASK_HOLD_MS of your choice. */
+export const TASK_HOLD_MS = 5 * 60 * 1000;
+
+export function activityTakesOver(current: 'task' | 'activity' | undefined, taskChosenAt: number, now: number, phaseChanged: boolean): boolean {
+  if (current !== 'task') return true;
+  return phaseChanged && now - taskChosenAt >= TASK_HOLD_MS;
+}
+
 export function focusActivity(a: ActiveSkills): ActiveSkills {
   if (a.source !== 'activity') return a;
   const bundle = (a.bundles || [])[0];

@@ -125,6 +125,18 @@ class SelectionRulesTest(unittest.TestCase):
             names = {c['name'] for c in self.select(task)['stack']}
             self.assertFalse(names & {'sfp', 'sfp-hive'}, task)
 
+    def test_a_platform_skill_needs_its_platform_named(self):
+        # x-api mentions rate limits (X's own), but a task that never names X is not about it.
+        self.assertNotIn('x-api', {c['name'] for c in self.select('add rate limiting to the payments API')['stack']})
+        self.assertIn('x-api', {c['name'] for c in self.select('post a thread to twitter')['stack']})
+        # A project of another language must not let it in as "named" either: "api" is a word many skills share.
+        proj = tempfile.mkdtemp()
+        with open(os.path.join(proj, 'go.mod'), 'w') as f:
+            f.write('module shop\n\ngo 1.22\n')
+        names = {c['name'] for c in sel.select('add rate limiting to the payments API', proj, history=self.hist)['stack']}
+        self.assertNotIn('x-api', names)
+        self.assertTrue(sel.names_skill('image-to-3d', v1.SKILL_TECH['image-to-3d'], ['photo', '3d', 'model']))
+
     def test_empty_for_filler(self):
         self.assertEqual(self.select('for the of a')['stack'], [])
 

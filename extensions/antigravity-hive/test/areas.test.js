@@ -159,3 +159,13 @@ test('from activity alone the agent gets the bundle in order plus only the skill
   const typed = { source: 'task', task: 't', skills: a.skills };
   assert.strictEqual(hive.focusActivity(typed), typed, 'a task you typed keeps the full choice');
 });
+
+test('a task you chose is not replaced by activity seconds later', () => {
+  const t0 = 1_000_000, hold = hive.TASK_HOLD_MS;
+  assert.strictEqual(hive.activityTakesOver('task', t0, t0 + 2000, false), false, 'a routine refresh keeps the task');
+  assert.strictEqual(hive.activityTakesOver('task', t0, t0 + 2000, true), false, 'even a phase change waits');
+  assert.strictEqual(hive.activityTakesOver('task', t0, t0 + hold, false), false, 'time alone is not enough');
+  assert.strictEqual(hive.activityTakesOver('task', t0, t0 + hold, true), true, 'a new phase after the hold takes over');
+  assert.strictEqual(hive.activityTakesOver('activity', t0, t0, false), true);
+  assert.strictEqual(hive.activityTakesOver(undefined, 0, t0, false), true);
+});
