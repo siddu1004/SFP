@@ -56,7 +56,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.17.5'
+VERSION = '3.17.6'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 # Catalog skills whose description names every domain (public-apis lists 51 kinds of API): words always match them, so
 # they are candidates only when their capability in capabilities.json fires ("is there a free API for...").
@@ -80,6 +80,11 @@ SIGNALS = ('words', 'project', 'role', 'category', 'history')
 
 BACKING = 0.3            # a signal backs a skill when its vote is at least this
 PLATFORMS = {v1._one(t) for t in ('twitter', 'linkedin', 'facebook', 'instagram', 'reddit', 'n8n')}
+UI_ARTIFACT = re.compile(r'\b(pages?|screens?|landing|dashboards?|forms?|modals?|dialogs?|components?|empty states?|onboarding|'
+                         r'layouts?|ui|ux|html|css|website|homepage|hero|navbar|sidebar)\b', re.I)
+UI_VERB = re.compile(r'\b(design|designs|redesign|style|restyle|polish)\b', re.I)
+UI_QUERY = 'frontend ui design page layout visual typography'
+UI_WEIGHT = 0.75         # design skills join a page task as candidates, below a precise match ("brutalist")
 LEAD_WEIGHT = 1.0        # the first clause of a longer task, searched alone, against the whole task
 NAMED = 0.97             # a skill whose words score this close to the best match is named by the task, whatever the project
 STRONG_WORDS = 0.8       # the task's words alone are enough when this strong
@@ -136,7 +141,12 @@ def read_situation(task, goal, scan_result):
     # requests..."). In a longer task the first clause is searched on its own too, so the details cannot drown it.
     lead = v1.task_words(re.split(r'(?<=[.!?])\s+|[:;]\s|\n', (task or '').strip(), maxsplit=1)[0])
     lead = lead if 2 <= len(lead) < len(words) else []
-    return {'text': text, 'words': words, 'ctx': ctx, 'ctx_tech': ctx_tech, 'demand': demand, 'said': said, 'lead': lead}
+    # A page, screen or form to design is design work whatever it is about, and the design phase gets a job in the stack.
+    ui = bool((demand.get('design') or UI_VERB.search(text)) and UI_ARTIFACT.search(text))
+    if ui:
+        demand['design'] = max(demand.get('design', 0), max(demand.values() or [0]), 0.5)
+    return {'text': text, 'words': words, 'ctx': ctx, 'ctx_tech': ctx_tech, 'demand': demand, 'said': said, 'lead': lead,
+            'ui': ui}
 
 
 def detect_missing(words, said=None):
@@ -178,6 +188,12 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
         for score, s in core.scored_search(query, limit=150):
             found[s['name']] = max(found.get(s['name'], 0), score)
             direct_hits += 1
+        if sit.get('ui'):
+            ui = core.scored_search(UI_QUERY, limit=40)
+            if ui:
+                full_top, ui_top = max(found.values() or [1.0]), ui[0][0]
+                for score, s in ui:
+                    found[s['name']] = max(found.get(s['name'], 0), UI_WEIGHT * full_top * score / ui_top)
         first = core.scored_search(' '.join(sit.get('lead') or ()), limit=80) if sit.get('lead') else []
         if first:
             full_top, first_top = max(found.values() or [1.0]), first[0][0]

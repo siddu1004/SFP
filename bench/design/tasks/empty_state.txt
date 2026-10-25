@@ -1,0 +1,1 @@
+Design the empty state of an analytics dashboard for a new user who has no data yet, guiding them to connect their first data source. Write it as one self-contained HTML file, index.html.

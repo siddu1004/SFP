@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.17.5-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.17.5">
+  <img src="https://img.shields.io/badge/version-3.17.6-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.17.6">
   <img src="https://img.shields.io/badge/skills-819-0f766e?style=flat-square&labelColor=3b4350" alt="819 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
@@ -126,7 +126,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 **Does it pick the right skill, before any learning?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive 3.17.5 | Earlier engine | Plain search |
+| Task set | Hive 3.17.6 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 64% | 9% |
 | 24 tasks in 10 sample projects | 79% | 79% | 25% |

@@ -1,0 +1,1 @@
+Build a notification settings page for a project management app: email, push and Slack notifications for each kind of event, and a save button. Write it as one self-contained HTML file, index.html.

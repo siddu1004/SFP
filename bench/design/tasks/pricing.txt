@@ -1,0 +1,1 @@
+Design a pricing page for Relay, a developer tool that delivers and retries webhooks. Three plans: Free, Pro ($19 a month) and Team ($49 a month). Write it as one self-contained HTML file, index.html.

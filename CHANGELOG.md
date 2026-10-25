@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.17.6
+
+- **A page is design work, whatever it is about.** "Design a pricing page for a webhook tool" chose `price-framing` and `omni-webhooks` and no design skill: the task's subject outweighed what was being built. When a task asks to design or build a UI artifact (a page, screen, dashboard, form, empty state, or HTML/CSS), the hive now also searches for UI design skills and gives the design phase a job in the stack. Those skills join as candidates below a precise match, so "brutalist website design" still gets the brutalist styles. Benchmark 89.0%, projects 79.2%, held-out 86.4%: unchanged.
+- **Design benchmark.** `bench/design/run.py` measures design work over rounds: a reviewer model scores screenshots of the page, and its requested changes go back to the agent until it would ship the page. Three arms: no skills, SFP's choice, and two design skills picked by hand.
+
 ## 3.17.5
 
 Three wrong choices found by the agent benchmark (docs/AGENT-BENCH.md), fixed by rules that hold beyond those tasks.

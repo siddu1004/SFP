@@ -1,6 +1,6 @@
 {
   "name": "engineering",
-  "version": "3.17.5",
+  "version": "3.17.6",
   "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
   "author": {
     "name": "siddu1004"
