@@ -74,6 +74,7 @@
         "sfpHive.installTool": {"type": "string", "default": "antigravity", "description": "The SFP installer tool name used by the install commands (antigravity, copilot for VS Code, cursor, windsurf...)."},
         "sfpHive.follow": {"type": "boolean", "default": true, "description": "Follow workspace activity and update skills to match the current phase of work."},
         "sfpHive.followCommands": {"type": "boolean", "default": true, "description": "Include terminal commands in workspace activity when shell integration is available."},
+        "sfpHive.autoRefreshSeconds": {"type": "number", "default": 5, "minimum": 0, "description": "How often, in seconds, the Now tab refreshes while it is visible. Set to 0 to refresh manually."},
         "sfpHive.autoAttach": {"type": "boolean", "default": true, "description": "Automatically attach skills while typing a prompt or message."},
         "sfpHive.autoAttachDelayMs": {"type": "number", "default": 200, "description": "Debounce delay in milliseconds before asking the hive for live attached skills."}
       }

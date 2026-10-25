@@ -76,3 +76,14 @@ test('the Models view shows one line about the connection check, escaped, and a 
   assert.ok(bad.includes('4 things to look at') && bad.includes('&lt;b&gt;Router') && bad.includes('…'));
   assert.ok(!bad.includes('<b>Router'));
 });
+
+test('the Now tab says what it shows in plain words, loads bundles, and refreshes by itself', () => {
+  const studio = fs.readFileSync(path.join(__dirname, '..', 'media', 'studio.js'), 'utf8');
+  const ext = fs.readFileSync(path.join(__dirname, '..', 'src', 'extension.ts'), 'utf8');
+  for (const text of [studio, ext]) assert.ok(!/kalman/i.test(text.replace(/\/\/.*$/gm, '')), 'no filter jargon in what the user reads');
+  assert.ok(ext.includes('Loaded bundles') && ext.includes('now-bundles-list'));
+  assert.ok(studio.includes('track.bundles') && studio.includes('Confidence ${pct}%'));
+  const pkg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+  const setting = pkg.contributes.configuration.properties['sfpHive.autoRefreshSeconds'];
+  assert.ok(setting && setting.default > 0 && setting.minimum === 0);
+});

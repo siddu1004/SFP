@@ -310,6 +310,13 @@ export interface TrackResult {
   words: string[];
   skills?: Skill[];
   upcoming?: { phase: string; skills: string[] };
+  bundles?: LoadedBundle[]; // bundles that hold the skills chosen for this phase, best first
+}
+
+/** A bundle loaded for the current phase: `covered` are the skills the hive chose, `missing` the rest of the bundle. */
+export interface LoadedBundle {
+  id: string; name: string; goal: string; purpose: string; skills: string[];
+  covered: string[]; missing: string[]; score: number; tokens: number;
 }
 
 export function trackArgs(root: string, project: string | undefined, max: number, select = true, reset = false): string[] {

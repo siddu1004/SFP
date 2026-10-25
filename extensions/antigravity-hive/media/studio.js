@@ -958,12 +958,10 @@
     const pct = Math.round((track.confidence || 0) * 100);
 
     if (phaseName) phaseName.textContent = `${phase}${layer}`;
-    if (confBadge) confBadge.textContent = `${pct}% conf`;
+    if (confBadge) confBadge.textContent = `Confidence ${pct}%`;
     if (confFill) confFill.style.width = `${pct}%`;
     if (phaseDetail) {
-      phaseDetail.textContent = track.phase
-        ? `Estimated from workspace activity with Kalman filter`
-        : `Watching workspace events`;
+      phaseDetail.textContent = track.phase ? 'Based on recent workspace activity' : 'Awaiting workspace activity';
     }
 
     const decisionId = track.decision || state.decision || state.selection?.decision;
@@ -1008,6 +1006,35 @@
       } else {
         nextSection.classList.add('hidden');
       }
+    }
+
+    // Loaded bundles: whole sequences for this phase, so more than one skill is in play
+    const bundlesSection = document.getElementById('now-bundles-section');
+    const bundlesList = document.getElementById('now-bundles-list');
+    const bundlesCount = document.getElementById('now-bundles-count');
+    if (bundlesSection && bundlesList) {
+      const loaded = track.bundles || [];
+      bundlesSection.classList.toggle('hidden', loaded.length === 0);
+      if (bundlesCount) bundlesCount.textContent = loaded.length ? String(loaded.length) : '';
+      bundlesList.innerHTML = loaded.map((b) => {
+        const chips = b.skills.map((n, i) => {
+          const have = b.covered.includes(n);
+          return `<span class="bundle-chip ${have ? 'bundle-chip-chosen' : ''}" title="${have ? 'Chosen for this phase' : 'Loaded with the bundle'}"><span class="bundle-chip-num">${i + 1}</span>${escapeHtml(n)}</span>`;
+        }).join('');
+        return `
+          <div class="skill-card">
+            <div class="card-header">
+              <span class="card-title">${escapeHtml(b.name)}</span>
+              <span class="studio-badge">${escapeHtml(String(b.skills.length))} skills</span>
+            </div>
+            <div class="card-meta"><span>${escapeHtml(b.goal)}</span></div>
+            <div class="bundle-chips-row">${chips}</div>
+            <div class="card-meta"><span>About ${escapeHtml(String(b.tokens))} tokens</span></div>
+            <div class="skill-actions">
+              <button class="btn btn-secondary" data-action="attachBundle" data-bundle-id="${escapeHtml(b.id)}">Attach whole bundle</button>
+            </div>
+          </div>`;
+      }).join('');
     }
 
     // Skills for this phase

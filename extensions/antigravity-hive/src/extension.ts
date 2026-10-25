@@ -47,6 +47,7 @@ function config() {
     followCommands: c.get<boolean>('followCommands', true),
     autoAttach: c.get<boolean>('autoAttach', true),
     autoAttachDelayMs: c.get<number>('autoAttachDelayMs', 200),
+    autoRefreshSeconds: c.get<number>('autoRefreshSeconds', 5),
   };
 }
 
@@ -1235,7 +1236,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
     <div class="section">
       <div class="section-title">
-        <span>Current Phase &amp; Activity</span>
+        <span>Current phase</span>
         <button class="btn-icon" data-action="refresh" aria-label="Refresh Phase" title="Refresh">
           <svg viewBox="0 0 16 16"><path fill="currentColor" d="M13.6 2.4A7 7 0 1 0 15 8h-1.5a5.5 5.5 0 1 1-1.1-4.4L10 6h5V1l-1.4 1.4z"/></svg>
         </button>
@@ -1243,36 +1244,44 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
       <div class="card" id="now-phase-card">
         <div class="card-header">
           <span class="card-title" id="now-phase-name">Idle</span>
-          <span class="studio-badge" id="now-confidence-badge">0% conf</span>
+          <span class="studio-badge" id="now-confidence-badge">Confidence 0%</span>
         </div>
         <div class="progress-container">
           <div class="progress-track"><div class="progress-fill" id="now-confidence-fill"></div></div>
         </div>
-        <div class="stacked-phase-bar" id="now-stacked-shares" title="Phase shares by layer"></div>
+        <div class="stacked-phase-bar" id="now-stacked-shares" title="Share of recent activity by phase"></div>
         <div class="card-meta">
-          <span id="now-phase-detail">Watching workspace events</span>
+          <span id="now-phase-detail">Awaiting workspace activity</span>
           <span id="now-decision-id" class="decision-id"></span>
         </div>
       </div>
     </div>
 
     <div class="section hidden" id="now-next-section">
-      <div class="section-title">Next likely</div>
+      <div class="section-title">Likely next</div>
       <div class="chip-bar" id="now-next-chips"></div>
+    </div>
+
+    <div class="section hidden" id="now-bundles-section">
+      <div class="section-title">
+        <span>Loaded bundles</span>
+        <span class="decision-id" id="now-bundles-count"></span>
+      </div>
+      <div id="now-bundles-list" class="skills-list"></div>
     </div>
 
     <div class="section">
       <div class="section-title">
-        <span>Skills for this phase</span>
-        <button class="btn btn-secondary hidden" data-action="copyPrompt" id="now-copy-btn">Copy for the agent</button>
+        <span>Skills for the current phase</span>
+        <button class="btn btn-secondary hidden" data-action="copyPrompt" id="now-copy-btn">Copy prompt</button>
       </div>
       <div class="state-box hidden" id="now-loading-state">
         <svg class="spin-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1.5a6.5 6.5 0 1 0 6.5 6.5h-1.5A5 5 0 1 1 8 3v-1.5z"/></svg>
-        <span>Watching workspace activity...</span>
+        <span>Monitoring workspace activity…</span>
       </div>
       <div class="state-box" id="now-empty-state">
         <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm-.5-9h1v2h-1V5zm0 3h1v4h-1V8z"/></svg>
-        <span>No workspace activity recorded yet. Edit a file, run a test, or start a task.</span>
+        <span>No activity detected yet. Edit a file, run a test or start a task, and the matching skills and bundles will load here.</span>
       </div>
       <div class="state-box error-state hidden" id="now-error-state">
         <svg viewBox="0 0 16 16"><path fill="currentColor" d="M8.865 1.52c-.418-.723-1.312-.723-1.73 0L.14 13.56c-.418.723.03 1.64.865 1.64h14c.836 0 1.283-.917.865-1.64L8.865 1.52zM8 4a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 8 4zm0 8.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
@@ -1282,7 +1291,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     </div>
 
     <div class="section hidden" id="now-upcoming-section">
-      <div class="section-title">Coming up</div>
+      <div class="section-title">Next phase</div>
       <div id="now-upcoming-skills" class="skills-list"></div>
     </div>
 
@@ -2349,11 +2358,28 @@ export function activate(context: vscode.ExtensionContext) {
     }
   }
 
-  const flushInterval = setInterval(() => {
-    if (activity.size > 0) void flushActivity();
-  }, 20000);
-  flushInterval.unref?.();
-  context.subscriptions.push({ dispose: () => clearInterval(flushInterval) });
+  // Auto refresh: while the Now tab is on screen, apply new activity every few seconds (sfpHive.autoRefreshSeconds; 0 = manual).
+  let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+  let stopped = false;
+  const scheduleRefresh = () => {
+    if (stopped) return;
+    const secs = config().autoRefreshSeconds;
+    refreshTimer = setTimeout(async () => {
+      try {
+        if (secs > 0 && studioProvider?._view?.visible !== false) {
+          if (activity.size > 0) await flushActivity();
+          else studioProvider?.syncState();
+        } else if (activity.size > 0) {
+          await flushActivity();      // manual mode and a hidden view still apply pending activity, just not often
+        }
+      } finally {
+        scheduleRefresh();
+      }
+    }, Math.max(secs > 0 ? secs : 20, 2) * 1000);
+    refreshTimer.unref?.();
+  };
+  scheduleRefresh();
+  context.subscriptions.push({ dispose: () => { stopped = true; if (refreshTimer) clearTimeout(refreshTimer); } });
 
   reg('sfpHive.doctor', () => runDoctor(true));
   reg('sfpHive.choose', () => choose());

@@ -111,7 +111,7 @@ def user_bundles():
     return _read(_user_bundles_path(), {'bundles': []})['bundles']
 
 
-ACRONYMS = {'ui': 'UI', 'ux': 'UX', 'api': 'API', 'mcp': 'MCP', 'ci': 'CI', 'sql': 'SQL', 'e2e': 'E2E', 'css': 'CSS', 'seo': 'SEO'}
+ACRONYMS = {'ui': 'UI', 'ux': 'UX', 'api': 'API', 'mcp': 'MCP', 'ci': 'CI', 'sql': 'SQL', 'e2e': 'E2E', 'css': 'CSS', 'seo': 'SEO', 'fastapi': 'FastAPI', '3d': '3D', 'ci': 'CI', 'go': 'Go'}
 
 
 def _humanize(recipe_id):
@@ -365,5 +365,32 @@ def match_bundles(task, chosen=(), limit=2, exclude=()):
         out.append({'id': b['id'], 'name': b['name'], 'score': round(score, 2), 'push': score >= PUSH_MIN,
                     'skills': b['skills'], 'missing': [n for n in b['skills'] if n not in chosen],
                     'why': 'matches ' + ', '.join(hit[:4]) if hit else 'the hive already chose %d of its skills' % int(have * len(b['skills']))})
+    out.sort(key=lambda m: -m['score'])
+    return out[:limit]
+
+
+PHASE_MIN = 0.3     # below this the overlap is a coincidence, not a fit
+
+
+def phase_bundles(phase, chosen=(), limit=2, exclude=()):
+    """The bundles to have loaded for the current phase of work, best first: [{id, name, goal, purpose, skills, covered,
+    missing, score}]. A bundle qualifies when the hive's own choice for the phase already holds some of its skills; one whose
+    purpose is the phase's purpose ranks higher."""
+    purpose = rules().get('phase_purpose', {}).get(phase)
+    chosen = set(chosen)
+    skip = set(exclude)
+    out = []
+    for b in bundles():
+        if not b['skills'] or b['id'] in skip:
+            continue
+        covered = [n for n in b['skills'] if n in chosen]
+        if not covered:
+            continue
+        score = 0.55 * len(covered) / len(b['skills']) + (0.45 if purpose and b['purpose'] == purpose else 0.0)
+        if score < PHASE_MIN:
+            continue
+        out.append({'id': b['id'], 'name': b['name'], 'goal': b['goal'], 'purpose': b['purpose'], 'skills': b['skills'],
+                    'covered': covered, 'missing': [n for n in b['skills'] if n not in chosen], 'score': round(score, 2),
+                    'tokens': b['tokens']})
     out.sort(key=lambda m: -m['score'])
     return out[:limit]
