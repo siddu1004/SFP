@@ -125,7 +125,8 @@ export function writeActiveSkills(): string | undefined {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, text, 'utf8');
     autoLastText = body;
-    const names = new Set([...active.skills.map((s) => s.name), ...(active.bundles || []).flatMap((b) => b.skills)]);
+    const given = hive.focusActivity(active);
+    const names = new Set([...given.skills.map((s) => s.name), ...(given.bundles || []).flatMap((b) => b.skills)]);
     autoSkillsInfo = { enabled: true, file: path.relative(ws, file), count: names.size, updated: Date.now(), source: active.source };
     recordHistory(active);
     return file;

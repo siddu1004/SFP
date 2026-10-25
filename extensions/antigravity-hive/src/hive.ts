@@ -932,7 +932,22 @@ export interface ActiveSkills {
  * for each. Pure: the caller decides where it goes. Skills of a loaded bundle that the stack does not hold are added
  * after it, so the whole bundle reaches the agent.
  */
-export function activeSkillsRule(a: ActiveSkills, root: string, now: Date = new Date()): string {
+/** Activity alone is weak evidence (file names, not intent), so the agent gets the phase's best bundle in order and at
+ * most two other skills the hive is sure of; a task you typed keeps the full choice. */
+export const ACTIVITY_STRONG = 0.9;
+
+export function focusActivity(a: ActiveSkills): ActiveSkills {
+  if (a.source !== 'activity') return a;
+  const bundle = (a.bundles || [])[0];
+  const strong = a.skills.filter((s) => (s.score ?? 0) >= ACTIVITY_STRONG);
+  if (!bundle) return { ...a, skills: (strong.length ? strong : a.skills.slice(0, 1)).slice(0, 3) };
+  const inBundle = new Set(bundle.skills);
+  const lead: Skill[] = bundle.skills.map((n) => a.skills.find((s) => s.name === n) || { name: n });
+  return { ...a, skills: [...lead, ...strong.filter((s) => !inBundle.has(s.name)).slice(0, 2)], bundles: [bundle] };
+}
+
+export function activeSkillsRule(input: ActiveSkills, root: string, now: Date = new Date()): string {
+  const a = focusActivity(input);
   const paths = catalogPaths(root);
   const fileOf = (name: string, p?: string) => {
     const rel = p || paths[name];
@@ -978,7 +993,8 @@ export function activeSkillsRule(a: ActiveSkills, root: string, now: Date = new 
 /** One line of the skill history: what the agent was given, for which task or phase, and when. */
 export interface HistoryEntry { t: number; source: 'task' | 'activity'; what: string; skills: string[]; bundles: string[] }
 
-export function historyEntry(a: ActiveSkills, t = Date.now()): HistoryEntry {
+export function historyEntry(input: ActiveSkills, t = Date.now()): HistoryEntry {
+  const a = focusActivity(input);
   const what = a.source === 'task' ? (a.task || '') : `Phase: ${a.phase || 'unknown'}`;
   return { t, source: a.source, what: what.slice(0, 300), skills: a.skills.map((s) => s.name), bundles: (a.bundles || []).map((b) => b.name) };
 }

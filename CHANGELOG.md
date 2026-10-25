@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.17.2
+
+- **Sharper automatic skills from activity.** When the agent's skills come from the phase the hive follows (not a task you typed), it now gets the phase's best bundle, in order, plus at most two other skills the hive is sure of (score 0.9 or more). Activity is weak evidence, and file names in a skills repository had brought in unrelated skills (an n8n skill and a web3 hashing skill while debugging). A task you type keeps the full choice.
+
 ## 3.17.1
 
 - **Skill history.** Each time the agent is given skills, the extension records which ones, for which prompt or phase, and when, in `skill_history.jsonl` in your data folder (local only). The Insights tab lists the latest 15.

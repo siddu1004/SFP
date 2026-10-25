@@ -55,7 +55,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.17.1'
+VERSION = '3.17.2'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 
 # Languages, as opposed to frameworks. A project that shows only a language

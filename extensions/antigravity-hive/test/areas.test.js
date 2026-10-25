@@ -118,7 +118,9 @@ test('the automatic skills rule lists the chosen skills in order, with their fil
   assert.ok(text.includes('Current phase: test (confidence 69%)'));
   assert.ok(text.indexOf('1. **golang-testing** (base)') < text.indexOf('2. **tdd-workflow** (check)'));
   assert.ok(text.includes(path.join(REPO, paths['golang-testing'])), 'each skill names the file to read');
-  assert.ok(text.includes('**verification-loop** (from the bundle)'), 'the rest of the bundle reaches the agent');
+  assert.ok(text.includes('3. **verification-loop**'), 'the rest of the bundle reaches the agent, in the bundle order');
+  const typed = hive.activeSkillsRule({ source: 'task', task: 't', skills: [{ name: 'golang-testing' }], bundles: [{ name: 'B', skills: ['golang-testing', 'tdd-workflow'] }] }, REPO);
+  assert.ok(typed.includes('**tdd-workflow** (from the bundle)'), 'for a typed task the bundle extras are added after the stack');
   assert.strictEqual((text.match(/\*\*golang-testing\*\*/g) || []).length, 1, 'no skill twice');
   assert.ok(text.includes('Updated 2026-10-25 09:00 UTC.'));
   const task = hive.activeSkillsRule({ source: 'task', task: 'add tests', skills: [] }, REPO);
@@ -141,4 +143,19 @@ test('the skill history keeps what the agent was given, newest first, and skips 
   const text = JSON.stringify(a) + '\nnot json\n' + JSON.stringify(b) + '\n';
   assert.deepStrictEqual(hive.readHistory(text).map((e) => e.t), [2000, 1000]);
   assert.strictEqual(hive.readHistory(text, 1).length, 1);
+});
+
+test('from activity alone the agent gets the bundle in order plus only the skills the hive is sure of', () => {
+  const a = { source: 'activity', phase: 'debug', confidence: 0.55,
+    skills: [{ name: 'using-n8n-mcp-skills', score: 0.83 }, { name: 'orch-fix-defect', score: 1.0 }, { name: 'nodejs-keccak256', score: 0.71 }, { name: 'python-testing', score: 0.93 }],
+    bundles: [{ name: 'Fix a bug properly', skills: ['investigate-first', 'orch-fix-defect', 'surgical-patch', 'verify-and-stop'] }, { name: 'Other', skills: ['x'] }] };
+  const f = hive.focusActivity(a);
+  assert.deepStrictEqual(f.skills.map((s) => s.name), ['investigate-first', 'orch-fix-defect', 'surgical-patch', 'verify-and-stop', 'python-testing']);
+  assert.strictEqual(f.bundles.length, 1);
+  const text = hive.activeSkillsRule(a, REPO);
+  assert.ok(!text.includes('using-n8n-mcp-skills') && !text.includes('nodejs-keccak256'), 'weak guesses stay out');
+  const noBundle = hive.focusActivity({ ...a, bundles: [] });
+  assert.deepStrictEqual(noBundle.skills.map((s) => s.name), ['orch-fix-defect', 'python-testing']);
+  const typed = { source: 'task', task: 't', skills: a.skills };
+  assert.strictEqual(hive.focusActivity(typed), typed, 'a task you typed keeps the full choice');
 });
