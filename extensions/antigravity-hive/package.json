@@ -2,7 +2,7 @@
   "name": "sfp-hive",
   "displayName": "SFP Hive",
   "description": "Choose the few agent skills a task needs, in order, from the SFP library. Works in VS Code and in Antigravity and other VS Code forks.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "publisher": "siddu1004",
   "license": "MIT",
   "repository": {"type": "git", "url": "https://github.com/siddu1004/SFP.git", "directory": "extensions/antigravity-hive"},
