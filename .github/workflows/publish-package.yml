@@ -26,6 +26,12 @@ jobs:
           scope: '@siddu1004'
 
       - name: Publish to GitHub Packages
-        run: npm publish
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          if npm view @siddu1004/sfp@$CURRENT_VERSION version --registry=https://npm.pkg.github.com > /dev/null 2>&1; then
+            echo "Version $CURRENT_VERSION is already published to GitHub Packages. Skipping."
+          else
+            npm publish
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

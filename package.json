@@ -7,7 +7,7 @@
   "homepage": "https://github.com/siddu1004/SFP#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/siddu1004/SFP.git"
+    "url": "git+https://github.com/siddu1004/SFP.git"
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
