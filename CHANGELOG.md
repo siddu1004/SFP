@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.17.1
+
+- **Skill history.** Each time the agent is given skills, the extension records which ones, for which prompt or phase, and when, in `skill_history.jsonl` in your data folder (local only). The Insights tab lists the latest 15.
+- Removed Antigravity's `hive-chat.md` rule and its section in `AGENTS.md`, which made the agent re-run the hive and print a banner on every reply; automatic skills replace it.
+- The extension tests no longer write the automatic skills rule into the checkout, and `.gitignore` keeps it out.
+
 ## 3.17.0
 
 - **The agent gets its skills automatically.** The extension writes the skills the hive chose, in order and with the path of each `SKILL.md`, plus the rest of any loaded bundle, to `.agents/rules/sfp-active-skills.md` in the workspace, and rewrites it whenever the choice changes: a task you chose or the phase the hive follows. The agent reads that rule on every turn. The sidebar says "The agent has N skills automatically" with a switch; Copy prompt and pins still work by hand. Settings `sfpHive.autoSkills` and `sfpHive.autoSkillsFile`, command "Turn automatic skills on or off".

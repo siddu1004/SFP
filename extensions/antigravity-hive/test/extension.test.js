@@ -69,7 +69,7 @@ const vscode = {
   workspace: {
     workspaceFolders: [{ uri: { fsPath: REPO } }],
     getConfiguration: () => ({
-      get: (k, d) => ({ sfpPath: REPO, maxSkills: 3, follow: true, followCommands: true }[k] ?? d),
+      get: (k, d) => ({ sfpPath: REPO, maxSkills: 3, follow: true, followCommands: true, autoSkills: false }[k] ?? d),
       update: async (k, v) => { state.settings = state.settings || {}; state.settings[k] = v; },
     }),
     openTextDocument: async (f) => f,

@@ -618,6 +618,7 @@
             state.follow = msg.payload.follow;
           }
           if (msg.payload.autoSkills) renderAutoSkills(msg.payload.autoSkills);
+          if (Array.isArray(msg.payload.history)) renderHistory(msg.payload.history);
           if (msg.payload.track) {
             state.track = msg.payload.track;
             renderTrack(state.track, state.follow);
@@ -942,6 +943,19 @@
   }
 
 
+
+  // Skill history: for which prompt or phase the agent was given which skills, newest first.
+  function renderHistory(items) {
+    const list = document.getElementById('history-list');
+    if (!list) return;
+    if (!items.length) { list.innerHTML = '<div class="empty-text">No skills have been given to the agent yet.</div>'; return; }
+    list.innerHTML = items.map((h) => {
+      const when = new Date(h.t).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      const chips = h.skills.map((n) => `<span class="history-chip">${escapeHtml(n)}</span>`).join('');
+      const bundle = h.bundles && h.bundles.length ? `<div class="history-meta">Bundle: ${escapeHtml(h.bundles.join(', '))}</div>` : '';
+      return `<div class="history-item"><div class="history-head"><span class="history-what">${escapeHtml(h.what || '')}</span><span class="history-when">${escapeHtml(when)}</span></div>${bundle}<div class="history-chips">${chips}</div></div>`;
+    }).join('');
+  }
 
   // One line that says whether the agent is getting its skills automatically, and a switch.
   function renderAutoSkills(info) {

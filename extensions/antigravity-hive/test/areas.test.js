@@ -132,3 +132,13 @@ test('the automatic skills setting, file and command are declared', () => {
   assert.strictEqual(props['sfpHive.autoSkillsFile'].default, '.agents/rules/sfp-active-skills.md');
   assert.ok(pkg.contributes.commands.some((c) => c.command === 'sfpHive.toggleAutoSkills'));
 });
+
+test('the skill history keeps what the agent was given, newest first, and skips bad lines', () => {
+  const a = hive.historyEntry({ source: 'task', task: 'make the signup form accessible', skills: [{ name: 'frontend-a11y' }], bundles: [{ name: 'Accessible form', skills: [] }] }, 1000);
+  const b = hive.historyEntry({ source: 'activity', phase: 'test', skills: [{ name: 'golang-testing' }] }, 2000);
+  assert.deepStrictEqual(a, { t: 1000, source: 'task', what: 'make the signup form accessible', skills: ['frontend-a11y'], bundles: ['Accessible form'] });
+  assert.strictEqual(b.what, 'Phase: test');
+  const text = JSON.stringify(a) + '\nnot json\n' + JSON.stringify(b) + '\n';
+  assert.deepStrictEqual(hive.readHistory(text).map((e) => e.t), [2000, 1000]);
+  assert.strictEqual(hive.readHistory(text, 1).length, 1);
+});

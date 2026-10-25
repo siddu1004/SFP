@@ -974,3 +974,24 @@ export function activeSkillsRule(a: ActiveSkills, root: string, now: Date = new 
   lines.push('', `Updated ${now.toISOString().replace('T', ' ').slice(0, 16)} UTC.`, '');
   return lines.join('\n');
 }
+
+/** One line of the skill history: what the agent was given, for which task or phase, and when. */
+export interface HistoryEntry { t: number; source: 'task' | 'activity'; what: string; skills: string[]; bundles: string[] }
+
+export function historyEntry(a: ActiveSkills, t = Date.now()): HistoryEntry {
+  const what = a.source === 'task' ? (a.task || '') : `Phase: ${a.phase || 'unknown'}`;
+  return { t, source: a.source, what: what.slice(0, 300), skills: a.skills.map((s) => s.name), bundles: (a.bundles || []).map((b) => b.name) };
+}
+
+/** The newest entries first, from the JSON lines of the history file; bad lines are skipped. */
+export function readHistory(text: string, limit = 20): HistoryEntry[] {
+  const out: HistoryEntry[] = [];
+  for (const line of text.split('\n')) {
+    if (!line.trim()) continue;
+    try {
+      const e = JSON.parse(line);
+      if (e && typeof e.t === 'number' && Array.isArray(e.skills)) out.push(e as HistoryEntry);
+    } catch { /* skip */ }
+  }
+  return out.reverse().slice(0, limit);
+}

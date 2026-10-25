@@ -1215,3 +1215,13 @@ body { padding: 0; }
 /* The Insights list uses the mark-then-text layout too. */
 .doctor-item:has(> .doctor-info) { display: grid; grid-template-columns: 16px 1fr; column-gap: 8px; align-items: start; }
 .doctor-item > .doctor-mark { height: 17px; }
+
+/* Skill history */
+.history-item { padding: 8px 0; border-bottom: 1px solid var(--vscode-widget-border, rgba(127, 127, 127, 0.2)); }
+.history-item:last-child { border-bottom: 0; }
+.history-head { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
+.history-what { font-weight: 600; min-width: 0; overflow-wrap: anywhere; }
+.history-when { flex: none; color: var(--vscode-descriptionForeground); font-size: 11px; }
+.history-meta { font-size: 11px; color: var(--vscode-descriptionForeground); margin-top: 2px; }
+.history-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.history-chip { padding: 0 7px; border: 1px solid var(--vscode-widget-border, rgba(127, 127, 127, 0.3)); border-radius: 9px; font-size: 11px; line-height: 17px; }

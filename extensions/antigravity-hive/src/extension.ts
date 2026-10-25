@@ -76,6 +76,27 @@ let autoSource: 'task' | 'activity' | undefined;
 let autoLastText = '';
 export let autoSkillsInfo: { enabled: boolean; file?: string; count: number; updated?: number; source?: string } = { enabled: false, count: 0 };
 
+function historyFile(): string {
+  return path.join(process.env.SFP_DATA_DIR || path.join(os.homedir(), '.sfp'), 'skill_history.jsonl');
+}
+
+/** Keep a local record of what the agent was given, for which prompt or phase (in the data folder, never shared). */
+function recordHistory(active: hive.ActiveSkills) {
+  try {
+    const f = historyFile();
+    fs.mkdirSync(path.dirname(f), { recursive: true });
+    fs.appendFileSync(f, JSON.stringify(hive.historyEntry(active)) + '\n', 'utf8');
+  } catch { /* history is a convenience; never block the agent on it */ }
+}
+
+export function loadHistory(limit = 20): hive.HistoryEntry[] {
+  try {
+    return hive.readHistory(fs.readFileSync(historyFile(), 'utf8'), limit);
+  } catch {
+    return [];
+  }
+}
+
 /** Write the rule file if what the agent should have has changed. The newest of the two decides: a task you chose, or the
  * phase the hive follows. Returns the file written, if any. */
 export function writeActiveSkills(): string | undefined {
@@ -88,7 +109,8 @@ export function writeActiveSkills(): string | undefined {
   if (lastTrackResult !== autoSeenTrack) { autoSeenTrack = lastTrackResult; if (lastTrackResult?.skills?.length) autoSource = 'activity'; }
   let active: hive.ActiveSkills | undefined;
   if (autoSource === 'task' && selection) {
-    active = { source: 'task', task: selection.task, skills: selection.stack };
+    active = { source: 'task', task: selection.task, skills: selection.stack,
+      bundles: selection.bundle ? [{ name: selection.bundle.name, skills: selection.stack.map((x) => x.name) }] : [] };
   } else if (autoSource === 'activity' && lastTrackResult) {
     const t = lastTrackResult;
     active = { source: 'activity', phase: t.phase, confidence: t.confidence, skills: t.skills || [], bundles: (t.bundles || []).map((b) => ({ name: b.name, skills: b.skills })) };
@@ -105,6 +127,7 @@ export function writeActiveSkills(): string | undefined {
     autoLastText = body;
     const names = new Set([...active.skills.map((s) => s.name), ...(active.bundles || []).flatMap((b) => b.skills)]);
     autoSkillsInfo = { enabled: true, file: path.relative(ws, file), count: names.size, updated: Date.now(), source: active.source };
+    recordHistory(active);
     return file;
   } catch {
     return undefined;
@@ -1251,6 +1274,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
         collapsed: this.isCollapsed,
         needs: this.lastNeeds,
         autoSkills: autoSkillsInfo,
+        history: loadHistory(15),
       },
     });
   }
@@ -1545,6 +1569,10 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
 
   <!-- Tab 4: Insights -->
   <div class="tab-content" id="tab-insights" role="tabpanel" aria-labelledby="btn-tab-insights">
+    <div class="section">
+      <div class="section-title"><span>Skill history</span></div>
+      <div id="history-list" class="changes-list"><div class="empty-text">No skills have been given to the agent yet.</div></div>
+    </div>
     <div class="section">
       <div class="section-title">
         <span>Connection &amp; Health</span>
