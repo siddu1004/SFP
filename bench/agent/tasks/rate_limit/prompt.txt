@@ -1,0 +1,1 @@
+Add rate limiting to the payments API in payments.py: each client may make at most 5 charge requests in any rolling 60-second window. Past that, respond with status 429 and a Retry-After header giving the seconds to wait as an integer string. handle() takes an optional now (seconds) for testing; use it when given. Keep the public function signatures.

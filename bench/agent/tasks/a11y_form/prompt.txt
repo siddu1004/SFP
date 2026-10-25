@@ -1,0 +1,1 @@
+Make the signup form in signup.html accessible.

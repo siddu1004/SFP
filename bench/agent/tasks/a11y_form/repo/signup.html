@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Sign up</title>
+  <style>
+    .error { color: red; display: none; }
+    .btn { background: #36c; color: #fff; padding: 8px 16px; cursor: pointer; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="title">Create your account</div>
+  <form id="signup">
+    <input id="name" placeholder="Full name">
+    <input id="email" placeholder="Email">
+    <input id="password" placeholder="Password">
+    <div class="error" id="err">Please fill in every field.</div>
+    <div class="btn" onclick="submitForm()">Sign up</div>
+  </form>
+  <script>
+    function submitForm() {
+      const ok = ['name', 'email', 'password'].every((id) => document.getElementById(id).value);
+      document.getElementById('err').style.display = ok ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>

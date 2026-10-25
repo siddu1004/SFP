@@ -1,0 +1,1 @@
+Bug: parse_duration in duration.py handles "1h30m", but parse_duration("90") returns 0 and parse_duration("abc") returns 0 instead of failing. A bare number should mean seconds, and invalid input should raise ValueError. Please fix it.
