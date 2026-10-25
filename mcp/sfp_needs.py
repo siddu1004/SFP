@@ -30,10 +30,16 @@ def capabilities():
             _CAPS = json.load(f)['capabilities']
         for c in _CAPS:
             c['_rx'] = [(re.compile(rx, re.I), w) for rx, w in c['triggers']]
+            c['_unless'] = [re.compile(rx, re.I) for rx in c.get('unless', [])]
+            c['_context'] = re.compile(c['unless_context'], re.I) if c.get('unless_context') else None
     return _CAPS
 
 
 def score(cap, task, project_terms=()):
+    # "Add rate limiting to our API" builds a limiter; it does not hit one. An `unless` pattern cancels the need,
+    # unless the task also speaks of models, tokens or providers.
+    if any(rx.search(task or '') for rx in cap.get('_unless', ())) and not (cap['_context'] and cap['_context'].search(task or '')):
+        return 0.0
     s = sum(w for rx, w in cap['_rx'] if rx.search(task or ''))
     if s and project_terms and set(cap.get('project', [])) & set(project_terms):
         s += PROJECT_BOOST
@@ -117,10 +123,18 @@ def plan_bundles(task, project=None, exclude=(), include=(), terms=None, preview
     A bundle fit well enough (score >= PUSH_MIN) is `push`: its skills all join the stack."""
     import sfp_hive as sel
     import sfp_library
+    import sfp_stack as v1
+    res = sel.select(task, project, max_skills=6, exclude=exclude)
     if preview is None:
-        preview = [c['name'] for c in sel.select(task, project, max_skills=6, exclude=exclude)['stack']]
+        preview = [c['name'] for c in res['stack']]
+    tech = {v1._one(t) for t in res['project']['technologies']}
+    # A bundle made only of one capability's skills (keep-going is the never-run-out providers) fits only when that
+    # capability does: "add rate limiting to our API" shares its words but not its meaning.
+    fired = {n['id'] for n in needs(task, terms or ())}
+    quiet = [b['id'] for b in sfp_library.bundles() for c in capabilities()
+             if c['id'] not in fired and b['skills'] and set(b['skills']) <= set(c['skills'])]
     return sfp_library.match_bundles(task, chosen=list(preview) + list(include), limit=2,
-                                     exclude=())
+                                     exclude=quiet, tech=tech)
 
 
 def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, include=(), exclude=(), explain=False,

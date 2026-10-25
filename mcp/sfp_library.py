@@ -336,12 +336,13 @@ def _bundle_terms(b):
     return words
 
 
-def match_bundles(task, chosen=(), limit=2, exclude=()):
+def match_bundles(task, chosen=(), limit=2, exclude=(), tech=None):
     """The bundles that fit a task, best first: [{id, name, score, push, missing, skills, why}].
 
     Two kinds of evidence: how much of the task's meaning (rarer words count more) the bundle's name, goal, when-to-use
     and skill names cover, and how many of the bundle's skills the hive already chose on its own. A bundle with a
-    score of PUSH_MIN or more is worth attaching whole; from MATCH_MIN it is only suggested."""
+    score of PUSH_MIN or more is worth attaching whole; from MATCH_MIN it is only suggested. `tech` is the project's
+    and task's technologies: a bundle built on others (Go skills in a Python project) does not fit, as a skill would not."""
     q = [t for t in dict.fromkeys(core.tokens(task or '')) if len(t) > 2 and t in core.DF]   # words no skill uses say nothing
     if not q:
         return []
@@ -353,6 +354,11 @@ def match_bundles(task, chosen=(), limit=2, exclude=()):
     for b in bundles():
         if not b['skills'] or b['id'] in skip:
             continue
+        if tech:
+            import sfp_hive
+            btech = set().union(*(v1.SKILL_TECH.get(n, set()) for n in b['skills']))
+            if sfp_hive.relation(btech, set(tech)) == 'mismatch':
+                continue
         terms = _bundle_terms(b)
         hit = [t for t in q if t in terms]
         words = min(1.0, sum(weight[t] for t in hit) / min(total, WORDS_CAP))

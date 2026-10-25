@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.17.5
+
+Three wrong choices found by the agent benchmark (docs/AGENT-BENCH.md), fixed by rules that hold beyond those tasks.
+
+- **Building a rate limiter is not running out of tokens.** "Add rate limiting to the payments API" got the LLM-quota skills, because "rate limit" and "429" triggered `never-run-out`. A capability can now list `unless` patterns (add, implement or enforce rate limiting; per client or endpoint; Retry-After) that cancel it unless the task also speaks of models, tokens or providers. A bundle made only of one capability's skills (`keep-going`) now fits only when that capability fires.
+- **Bundles respect the project.** "Write tests for cart.py" in a Python project got the Go service bundle: bundles were matched on words alone. A bundle whose skills belong to technologies the project and task do not use is no longer attached, as a single skill would not be.
+- **Platform skills need their platform.** n8n is now a technology, and a skill for a platform (n8n, X/Twitter, LinkedIn and others) needs that platform in the task or project even when its language matches: the bug fix in a Python project no longer gets `n8n-code-python`.
+- **The request comes first.** In a longer task the first clause ("Add rate limiting to the payments API") is also searched on its own, so the details after it cannot drown it.
+- **public-apis joins when asked for.** Its description lists 51 kinds of API, so words matched it for any task that said "API"; it is now a candidate only when the find-an-API capability fires.
+
+Scores: benchmark 87.9% to 89.0%, projects 79.2% (unchanged), held-out 86.4% (unchanged).
+
 ## 3.17.4
 
 - **A platform skill needs its platform named.** "Add rate limiting to the payments API" chose `x-api` (an X/Twitter skill whose description mentions X's own rate limits). X/Twitter and the other social platforms are now technologies, so a skill for one platform counts against a task that never names it; a description that lists many platforms stays general. The "named by the task" rule, which lets a skill past the project's veto, now also needs the task to use one of the skill's distinctive words: its technology, or a word of its name that at most 5% of skills share ("api" is in 65). Benchmark, project and held-out scores are unchanged (87.9%, 79.2%, 86.4%).

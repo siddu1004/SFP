@@ -46,6 +46,7 @@ CLI
 import json
 import math
 import os
+import re
 import sys
 import time
 
@@ -55,8 +56,17 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.17.4'
+VERSION = '3.17.5'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
+# Catalog skills whose description names every domain (public-apis lists 51 kinds of API): words always match them, so
+# they are candidates only when their capability in capabilities.json fires ("is there a free API for...").
+NEED_ONLY = {'public-apis': 'find-api'}
+
+
+def need_fires(cap_id, text):
+    import sfp_needs
+    cap = next((c for c in sfp_needs.capabilities() if c['id'] == cap_id), None)
+    return bool(cap) and sfp_needs.score(cap, text) >= sfp_needs.THRESHOLD
 
 # Languages, as opposed to frameworks. A project that shows only a language
 # (a Package.swift, a go.mod) may use any framework of it.
@@ -69,6 +79,8 @@ IMPLIES = {v1._one(k): {v1._one(x) for x in vs} for k, vs in v1.IMPLIES.items()}
 SIGNALS = ('words', 'project', 'role', 'category', 'history')
 
 BACKING = 0.3            # a signal backs a skill when its vote is at least this
+PLATFORMS = {v1._one(t) for t in ('twitter', 'linkedin', 'facebook', 'instagram', 'reddit', 'n8n')}
+LEAD_WEIGHT = 1.0        # the first clause of a longer task, searched alone, against the whole task
 NAMED = 0.97             # a skill whose words score this close to the best match is named by the task, whatever the project
 STRONG_WORDS = 0.8       # the task's words alone are enough when this strong
 OVERLAP_PENALTY = 0.5    # how much a chosen skill lowers a similar skill's quality, per unit of overlap
@@ -90,6 +102,8 @@ def relation(tech, ctx_tech):
         return 'general'
     if not ctx_tech:
         return 'unasked'
+    if tech & PLATFORMS and not tech & PLATFORMS & ctx_tech:
+        return 'mismatch'   # an n8n skill for Python code is still an n8n skill: Python alone does not fit it
     if tech & ctx_tech:
         return 'fit'
     if tech <= TOOLS:
@@ -118,7 +132,11 @@ def read_situation(task, goal, scan_result):
     for raw in core.raw_words(text):
         for s in core.tokens(raw):
             said.setdefault(v1.SYNONYMS.get(s, s), raw)
-    return {'text': text, 'words': words, 'ctx': ctx, 'ctx_tech': ctx_tech, 'demand': demand, 'said': said}
+    # People put the request first and the details after ("Add rate limiting to the API: each client may make five
+    # requests..."). In a longer task the first clause is searched on its own too, so the details cannot drown it.
+    lead = v1.task_words(re.split(r'(?<=[.!?])\s+|[:;]\s|\n', (task or '').strip(), maxsplit=1)[0])
+    lead = lead if 2 <= len(lead) < len(words) else []
+    return {'text': text, 'words': words, 'ctx': ctx, 'ctx_tech': ctx_tech, 'demand': demand, 'said': said, 'lead': lead}
 
 
 def detect_missing(words, said=None):
@@ -160,6 +178,11 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
         for score, s in core.scored_search(query, limit=150):
             found[s['name']] = max(found.get(s['name'], 0), score)
             direct_hits += 1
+        first = core.scored_search(' '.join(sit.get('lead') or ()), limit=80) if sit.get('lead') else []
+        if first:
+            full_top, first_top = max(found.values() or [1.0]), first[0][0]
+            for score, s in first:
+                found[s['name']] = max(found.get(s['name'], 0), LEAD_WEIGHT * full_top * score / first_top)
         if ctx_tech and direct_hits and not missing:
             lead = sorted(ctx_tech, key=lambda t: (-ctx[t], t))[:3]
             for score, s in core.scored_search(query + ' ' + ' '.join(lead), limit=80):
@@ -183,7 +206,7 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
 
     votes = {}
     for name in set(found) | set(follows):
-        if name in after or name in INTERNAL_SKILLS:
+        if name in after or name in INTERNAL_SKILLS or (name in NEED_ONLY and not need_fires(NEED_ONLY[name], sit['text'])):
             continue
         tech = v1.SKILL_TECH.get(name, set())
         rel = relation(tech, ctx_tech)

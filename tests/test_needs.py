@@ -138,6 +138,27 @@ class DecideTest(unittest.TestCase):
         res = sel.select('turn this photo of a chair into a 3d model', proj, max_skills=4)
         self.assertTrue({'image-to-3d', 'multi-image-to-3d'} & {c['name'] for c in res['stack']})
 
+    def test_building_a_rate_limiter_is_not_running_out(self):
+        self.assertEqual(nd.needs('add rate limiting to the login endpoint'), [])
+        self.assertEqual(nd.needs('enforce 5 requests per client and send a Retry-After header'), [])
+        self.assertEqual([n['id'] for n in nd.needs('our openai calls get 429 errors')], ['never-run-out'])
+        self.assertEqual([n['id'] for n in nd.needs('we keep hitting the rate limit on claude, route to other models')],
+                         ['never-run-out'])
+
+    def test_bundles_and_platform_skills_respect_the_project(self):
+        proj = tempfile.mkdtemp()
+        with open(os.path.join(proj, 'cart.py'), 'w') as f:
+            f.write('def total(items):\n    return sum(items)\n')
+        res = nd.decide('Write tests for cart.py.', proj)
+        self.assertNotEqual((res.get('bundle') or {}).get('name'), 'Go service')   # Go skills in a Python project
+        self.assertFalse({c['name'] for c in res['stack']} & {'golang-testing', 'golang-patterns'})
+        res = nd.decide('Bug: parse_duration in duration.py returns 0 for bad input; it should raise ValueError.', proj)
+        self.assertFalse([c['name'] for c in res['stack'] if c['name'].startswith('n8n-')])
+        res = nd.decide('Add rate limiting to the payments API in payments.py: at most 5 requests per client.', proj)
+        names = {c['name'] for c in res['stack']}
+        self.assertIn('api-design', names)
+        self.assertFalse(names & {'public-apis', 'freellmapi', 'omni-budget'})
+
     def test_running_out_of_tokens_points_to_the_router_first(self):
         orig = nd.router_state
         nd.router_state = lambda port=8787: {'configured': False, 'models': 0, 'running': False, 'port': port}

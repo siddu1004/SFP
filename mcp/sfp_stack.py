@@ -95,7 +95,7 @@ TECH = ('react nextjs vue nuxt angular svelte vite tailwind typescript javascrip
         'python django fastapi flask celery pytorch golang rust java spring springboot quarkus kotlin android ios '
         'swift swiftui flutter dart php laravel ruby rails csharp dotnet fsharp cpp perl postgres postgresql mysql '
         'redis mongodb clickhouse prisma supabase docker kubernetes terraform playwright jest vitest pytest '
-        'solidity evm ethereum electron expo compose harmonyos arkts jpa mybatis ktor remotion blender twitter linkedin facebook instagram reddit').split()
+        'solidity evm ethereum electron expo compose harmonyos arkts jpa mybatis ktor remotion blender twitter linkedin facebook instagram reddit n8n').split()
 TECH_STEMS = {_one(t) for t in TECH}
 # Readable names for output: terms are compared stemmed ("postgr"), but shown whole ("postgres").
 SHOW = {_one(t): t for t in TECH + ['migration', 'database', 'skill', 'plugin', 'mcp', 'llm', 'ci', 'animation']}

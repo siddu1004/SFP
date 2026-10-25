@@ -102,7 +102,13 @@
         "omniroute"
       ],
       "env": [],
-      "router": true
+      "router": true,
+      "unless": [
+        "\\b(add|adds|adding|implement|implementing|build|enforce|write)\\b[^.]{0,40}\\brate.?limit",
+        "\\brate.?limit(s|ing|er)?\\b[^.]{0,40}\\b(per (client|user|ip|key|minute|second)|endpoint|middleware|route)\\b",
+        "\\bretry-after\\b"
+      ],
+      "unless_context": "\\b(llms?|models?|tokens?|credits?|providers?|claude|gpt|openai|gemini|anthropic|ollama|free tier)\\b"
     },
     {
       "id": "find-api",
