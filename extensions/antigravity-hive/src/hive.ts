@@ -160,6 +160,10 @@ export function parseSelection(json: string): Selection {
     next: Array.isArray(raw.next) ? raw.next : [],
     explain: Array.isArray(raw.explain) ? raw.explain : undefined,
     intervention: raw.intervention,
+    bundle: raw.bundle,
+    bundles: Array.isArray(raw.bundles) ? raw.bundles : undefined,
+    preload: Array.isArray(raw.preload) ? raw.preload : undefined,
+    needs: Array.isArray(raw.needs) ? raw.needs : undefined,
   };
 }
 
@@ -171,6 +175,61 @@ export function byLayer(sel: Selection): { layer: string; skills: Skill[] }[] {
   const other = sel.stack.filter((s) => !known.has(s.layer ?? 'base'));
   if (other.length) groups.push({ layer: 'other', skills: other });
   return groups.filter((g) => g.skills.length > 0);
+}
+
+/** Diff between two selections: returns added and removed skill names. */
+export function selectionDiff(before: Selection | undefined, after: Selection): { added: string[]; removed: string[] } {
+  const beforeNames = new Set((before?.stack || []).map((s) => s.name));
+  const afterNames = new Set((after?.stack || []).map((s) => s.name));
+  const added = Array.from(afterNames).filter((n) => !beforeNames.has(n));
+  const removed = Array.from(beforeNames).filter((n) => !afterNames.has(n));
+  return { added, removed };
+}
+
+export interface SessionStats {
+  decisions: number;
+  interventions: number;
+  chosenTotal: number;
+  keptTotal: number;
+  addedSkills: number;
+  helped: number;
+  unhelpful: number;
+}
+
+export function defaultSessionStats(): SessionStats {
+  return {
+    decisions: 0,
+    interventions: 0,
+    chosenTotal: 0,
+    keptTotal: 0,
+    addedSkills: 0,
+    helped: 0,
+    unhelpful: 0,
+  };
+}
+
+export function updateSessionStats(
+  current: SessionStats,
+  event:
+    | { type: 'decision'; chosenCount: number }
+    | { type: 'intervention'; beforeCount: number; keptCount: number; addedCount: number }
+    | { type: 'feedback'; verdict: 'helped' | 'unhelpful' }
+): SessionStats {
+  const stats = { ...current };
+  if (event.type === 'decision') {
+    stats.decisions += 1;
+    stats.chosenTotal += event.chosenCount;
+    stats.keptTotal += event.chosenCount;
+  } else if (event.type === 'intervention') {
+    stats.interventions += 1;
+    const droppedFromBefore = Math.max(0, event.beforeCount - event.keptCount);
+    stats.keptTotal = Math.max(0, stats.keptTotal - droppedFromBefore);
+    stats.addedSkills += event.addedCount;
+  } else if (event.type === 'feedback') {
+    if (event.verdict === 'helped') stats.helped += 1;
+    else if (event.verdict === 'unhelpful') stats.unhelpful += 1;
+  }
+  return stats;
 }
 
 /** A prompt to paste into an agent panel: which skills to read, in what order, and how to report back. */
@@ -251,6 +310,13 @@ export interface TrackResult {
   words: string[];
   skills?: Skill[];
   upcoming?: { phase: string; skills: string[] };
+  bundles?: LoadedBundle[]; // bundles that hold the skills chosen for this phase, best first
+}
+
+/** A bundle loaded for the current phase: `covered` are the skills the hive chose, `missing` the rest of the bundle. */
+export interface LoadedBundle {
+  id: string; name: string; goal: string; purpose: string; skills: string[];
+  covered: string[]; missing: string[]; score: number; tokens: number;
 }
 
 export function trackArgs(root: string, project: string | undefined, max: number, select = true, reset = false): string[] {
@@ -305,6 +371,87 @@ export class ActivityBuffer {
     this.events = [];
     return out;
   }
+}
+
+export const PHASE_LAYERS: Record<string, 'base' | 'check' | 'finish'> = {
+  research: 'base',
+  plan: 'base',
+  design: 'base',
+  build: 'base',
+  debug: 'base',
+  test: 'check',
+  secure: 'check',
+  review: 'check',
+  optimize: 'finish',
+  document: 'finish',
+  ship: 'finish',
+};
+
+/**
+ * Throttle phase change notifications: at most one every 2 minutes (minIntervalMs),
+ * and only when the phase changed with a confidence of at least 0.6 (minConfidence).
+ */
+export function shouldNotifyPhaseChange(
+  lastNotifyTime: number,
+  now: number,
+  changed: boolean,
+  confidence: number,
+  minIntervalMs = 120000,
+  minConfidence = 0.6
+): boolean {
+  return changed && confidence >= minConfidence && (now - lastNotifyTime >= minIntervalMs);
+}
+
+export interface PhaseBarSegment {
+  phase: string;
+  share: number;
+  percent: number;
+  layer: 'base' | 'check' | 'finish';
+}
+
+export function phaseBarViewModel(shares: Record<string, number>): PhaseBarSegment[] {
+  const entries = Object.entries(shares || {}).filter(([_, s]) => s > 0.005);
+  const total = entries.reduce((acc, [_, s]) => acc + s, 0) || 1;
+  return entries.map(([phase, share]) => ({
+    phase,
+    share,
+    percent: Math.round((share / total) * 100),
+    layer: PHASE_LAYERS[phase] ?? 'base',
+  }));
+}
+
+export interface NextChip {
+  phase: string;
+  probability: number;
+  percent: number;
+  label: string;
+  layer: 'base' | 'check' | 'finish';
+}
+
+export function chipsViewModel(next: { phase: string; probability: number }[]): NextChip[] {
+  return (next || []).map((n) => ({
+    phase: n.phase,
+    probability: n.probability,
+    percent: Math.round(n.probability * 100),
+    label: `${n.phase[0].toUpperCase() + n.phase.slice(1)} ${Math.round(n.probability * 100)}%`,
+    layer: PHASE_LAYERS[n.phase] ?? 'base',
+  }));
+}
+
+export interface PhaseChangeItem {
+  from: string;
+  to: string;
+  t: number;
+  label: string;
+}
+
+export function phaseChangesViewModel(changes: { t: number; from: string; to: string }[]): PhaseChangeItem[] {
+  return (changes || []).slice(-5).reverse().map((c) => ({
+    from: c.from,
+    to: c.to,
+    t: c.t,
+    label: `${c.from} → ${c.to}`,
+  }));
 }
 
 // ------------------------------------------------------------------ clusters
@@ -374,7 +521,17 @@ export function bundleRemoveArgs(root: string, name: string): string[] {
 
 export interface LiveSkill { name: string; category: string; description: string; source: 'auto' | 'pinned' }
 export interface LiveState { anchor: string[]; auto: string[]; pinned: string[]; removed: string[] }
-export interface LiveResult { status: 'waiting' | 'kept' | 'updated' | 'committed'; changed: boolean; needs?: Need[]; bundles?: BundleMatch[]; attached: LiveSkill[]; state: LiveState; words: string[]; decision?: string }
+export interface LiveResult {
+  status: 'waiting' | 'kept' | 'updated' | 'committed';
+  changed: boolean;
+  needs?: Need[];
+  bundle?: { id: string; name: string };
+  bundles?: BundleMatch[];
+  attached: LiveSkill[];
+  state: LiveState;
+  words: string[];
+  decision?: string;
+}
 export interface LiveChange { pin?: string[]; unpin?: string[]; remove?: string[]; restore?: string[]; commit?: boolean }
 
 export function liveArgs(root: string, draft: string, state: LiveState | undefined, project: string | undefined, max: number, change: LiveChange = {}): string[] {
@@ -392,7 +549,20 @@ export function liveArgs(root: string, draft: string, state: LiveState | undefin
 export function parseLive(json: string): LiveResult {
   const r = JSON.parse(json);
   if (!r || !Array.isArray(r.attached) || !r.state) throw new Error('unexpected output from the hive live command');
+  if (r.bundles && !r.bundle && r.bundles[0]?.push) {
+    r.bundle = { id: r.bundles[0].id, name: r.bundles[0].name };
+  }
   return r as LiveResult;
+}
+
+export function escapeHtml(str: string): string {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 export function needsArgs(root: string, task: string, project?: string, check = false): string[] {
@@ -400,6 +570,205 @@ export function needsArgs(root: string, task: string, project?: string, check = 
   if (project) args.push('--project', project);
   if (check) args.push('--check');
   return args;
+}
+
+export function parseNeeds(json: string): Need[] {
+  const r = JSON.parse(json);
+  if (!Array.isArray(r)) throw new Error('unexpected output from the hive needs command');
+  return r as Need[];
+}
+
+export function renderNeedCard(need: Need): string {
+  const name = escapeHtml(need.name);
+  const why = escapeHtml(need.why);
+  const attach = escapeHtml(need.attach);
+  const preloadHtml = (need.preload || [])
+    .map((s) => `<span class="badge badge-preload">${escapeHtml(s)}</span>`)
+    .join(' ');
+  const action = need.action || '';
+  let actionHtml = '';
+  if (action && action !== 'ready') {
+    const isRouter = need.id === 'never-run-out';
+    const actionBtn = isRouter
+      ? `<button class="btn-small btn-primary" data-action="focusModels">Open Models</button>`
+      : `<button class="btn-small btn-primary" data-action="runNeedAction" data-action-cmd="${escapeHtml(action)}">Run in terminal</button>`;
+    actionHtml = `
+      <div class="need-action-bar">
+        <span class="need-action-cmd" title="${escapeHtml(action)}">${escapeHtml(action)}</span>
+        <div class="need-action-btns">
+          <button class="btn-small btn-secondary" data-action="copyNeedAction" data-action-cmd="${escapeHtml(action)}">Copy</button>
+          ${actionBtn}
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="need-card" data-need-id="${escapeHtml(need.id)}">
+      <div class="need-header">
+        <span class="need-title">${name}</span>
+        <span class="badge badge-attached">Attached: ${attach}</span>
+      </div>
+      <div class="need-why">${why}</div>
+      ${preloadHtml ? `<div class="need-preload"><span class="need-preload-label">Preload:</span> ${preloadHtml}</div>` : ''}
+      ${actionHtml}
+    </div>`.trim();
+}
+
+// ------------------------------------------------------------------ the router
+
+export interface RouteModel {
+  id: string;
+  strength: number;
+  ctx?: number;
+  tools?: boolean;
+}
+
+export interface RouteProvider {
+  id: string;
+  name: string;
+  kind: 'local' | 'free' | 'paid' | string;
+  base_url: string;
+  api_key_env: string;
+  models: RouteModel[];
+}
+
+export interface RouteConfig {
+  policy: 'local-first' | 'cheap-first' | 'strong-first' | string;
+  providers: RouteProvider[];
+}
+
+export interface RouteStatusModel {
+  model: string;
+  kind: string;
+  strength: number;
+  state: string;
+  ok: number;
+  failed: number;
+  last_error: string;
+}
+
+export interface RouteStatus {
+  policy: string;
+  models: RouteStatusModel[];
+}
+
+export interface RoutePlanItem {
+  num: number;
+  model: string;
+  strength: number;
+  kind: string;
+}
+
+export interface RoutePlan {
+  tier: string;
+  tokens: number;
+  order: RoutePlanItem[];
+}
+
+export function routeArgs(root: string, cmd: string, ...extra: (string | number)[]): string[] {
+  const args = [path.join(root, 'mcp', 'sfp_route.py'), cmd];
+  for (const a of extra) {
+    if (a !== undefined && a !== null) args.push(String(a));
+  }
+  return args;
+}
+
+export function parseRouteConfig(raw: string): RouteConfig {
+  const match = raw.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('no JSON config found in router setup output');
+  const cfg = JSON.parse(match[0]);
+  if (!cfg || !Array.isArray(cfg.providers)) throw new Error('invalid router config format');
+  return cfg as RouteConfig;
+}
+
+export function parseRouteStatus(json: string): RouteStatus {
+  const raw = JSON.parse(json);
+  if (!raw || !Array.isArray(raw.models)) throw new Error('invalid router status format');
+  return raw as RouteStatus;
+}
+
+export function parseRoutePlan(text: string): RoutePlan {
+  const lines = text.trim().split('\n');
+  let tier = 'normal';
+  let tokens = 0;
+  const order: RoutePlanItem[] = [];
+  const reqMatch = lines[0]?.match(/request:\s*(\w+)\s*\(about\s*(\d+)\s*tokens\)/);
+  if (reqMatch) {
+    tier = reqMatch[1];
+    tokens = parseInt(reqMatch[2], 10);
+  }
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    const m = line.match(/^(\d+)\.\s+([^\s]+)\s+strength\s+(\d+)\s+(.*)$/);
+    if (m) {
+      order.push({
+        num: parseInt(m[1], 10),
+        model: m[2],
+        strength: parseInt(m[3], 10),
+        kind: m[4].trim(),
+      });
+    }
+  }
+  return { tier, tokens, order };
+}
+
+
+
+/** Everything the skill detail window shows, from `sfp_hive.py skill NAME --json`. */
+export interface SkillDetail {
+  name: string;
+  description: string;
+  use_when: string;
+  category: string;
+  family: { id: string; name: string };
+  cluster: { id: string; name: string };
+  purpose: { id: string; name: string };
+  also: { id: string; name: string }[];
+  bundles: { id: string; name: string }[];
+  similar: string[];
+  tokens: number;
+  path: string;
+  usage?: { chosen?: number; helped?: number; unhelpful?: number; ignored?: number; missing?: number };
+  app?: string;
+}
+
+export function skillArgs(root: string, name: string): string[] {
+  return [path.join(root, 'mcp', 'sfp_hive.py'), 'skill', name, '--json'];
+}
+
+export function parseSkillDetail(json: string): SkillDetail {
+  const d = JSON.parse(json);
+  if (!d || typeof d.name !== 'string' || typeof d.description !== 'string' || !d.family) throw new Error('unexpected answer for a skill');
+  return d as SkillDetail;
+}
+
+/** The page of the skill detail window. Pure, so it is unit tested; every string is escaped. */
+export function skillDetailHtml(d: SkillDetail, cspSource: string, nonce: string, styleUri: string, scriptUri: string): string {
+  const e = escapeHtml;
+  const btn = (action: string, label: string, extra = '', cls = 'btn') => `<button class="${cls}" data-action="${action}" ${extra}>${label}</button>`;
+  const chip = (action: string, key: string, value: string, text: string) =>
+    `<button class="chip" data-action="${action}" data-${key}="${e(value)}">${e(text)}</button>`;
+  const u = d.usage && (d.usage.chosen ?? 0) > 0
+    ? `<li><b>Used</b> ${e(String(d.usage.chosen))} time${d.usage.chosen === 1 ? '' : 's'}${d.usage.helped ? `, helped ${e(String(d.usage.helped))}` : ''}</li>` : '';
+  const when = d.use_when ? `<section><h2>Use it when</h2><p>${e(d.use_when.replace(/^Use (this skill )?(when|for|to)\s*/i, ''))}</p></section>` : '';
+  const what = d.use_when ? d.description.slice(0, d.description.length - d.use_when.length).trim() || d.description : d.description;
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource}; script-src 'nonce-${nonce}'; img-src ${cspSource} data:;">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${e(d.name)}</title>
+<link rel="stylesheet" href="${styleUri}"></head>
+<body><main>
+  <header>
+    <p class="crumbs">${e(d.family.name)}${d.cluster.name.toLowerCase() === d.family.name.toLowerCase() ? '' : ` <span>/</span> ${e(d.cluster.name)}`}</p>
+    <h1>${e(d.name)}</h1>
+    <p class="tags"><span class="tag tag-purpose">${e(d.purpose.name)}</span>${d.also.map((a) => `<span class="tag">${e(a.name)}</span>`).join('')}${d.app ? `<span class="tag tag-app" title="Needs the program ${e(d.app)}">needs a program</span>` : ''}</p>
+    <div class="actions">${btn('openFile', 'Open SKILL.md', '', 'btn')}${btn('pin', 'Pin to current task', '', 'btn btn-primary')}${btn('addToBundle', '+ Add to a bundle')}</div>
+  </header>
+  <section><h2>What it does</h2><p>${e(what)}</p></section>
+  ${when}
+  ${d.bundles.length ? `<section><h2>In these bundles</h2><div class="chips">${d.bundles.map((b) => chip('showBundle', 'bundle', b.id, b.name)).join('')}</div></section>` : ''}
+  ${d.similar.length ? `<section><h2>Similar skills</h2><div class="chips">${d.similar.map((n) => chip('showSkill', 'skill', n, n)).join('')}</div></section>` : ''}
+  <section><h2>Details</h2><ul class="facts"><li><b>Area</b> ${e(d.family.name)}</li><li><b>Topic</b> ${e(d.cluster.name)}</li><li><b>Category</b> ${e(d.category)}</li><li><b>Size</b> about ${e(String(d.tokens))} tokens</li>${u}</ul></section>
+</main><script nonce="${nonce}" src="${scriptUri}"></script></body></html>`;
 }
 
 /** One line of `sfp_hive.py doctor --json`: a part of the hive and whether it works. */
@@ -417,4 +786,113 @@ export function parseDoctor(json: string): DoctorResult {
   const r = JSON.parse(json);
   if (!r || !Array.isArray(r.checks)) throw new Error('unexpected output from the hive doctor command');
   return r as DoctorResult;
+}
+
+/**
+ * Renders the bundle banner for Choose and live chips.
+ * When a bundle was pushed (or attached): shows "Bundle: <name>", ordered numbered skills chips, and "Not this bundle".
+ * When a bundle is only suggested: shows "Looks like <name>" with "Attach whole bundle".
+ */
+export function renderBundleBanner(
+  bundle?: { id: string; name: string; skills?: string[] },
+  suggested?: BundleMatch
+): string {
+  if (bundle) {
+    const name = escapeHtml(bundle.name);
+    const id = escapeHtml(bundle.id);
+    const skills = bundle.skills || [];
+    const chipsHtml = skills.length
+      ? `<div class="bundle-chips-row">${skills
+          .map((s, i) => `<span class="bundle-chip"><span class="bundle-chip-num">${i + 1}</span> ${escapeHtml(s)}</span>`)
+          .join('')}</div>`
+      : '';
+    const skillsAttr = escapeHtml(skills.join(','));
+    return `<div class="choose-bundle-banner pushed" data-bundle-id="${id}">
+  <div class="bundle-banner-header">
+    <span class="bundle-banner-title">Bundle: <strong>${name}</strong></span>
+    <button class="btn btn-secondary btn-small" data-action="notThisBundle" data-bundle-skills="${skillsAttr}">Not this bundle</button>
+  </div>
+  ${chipsHtml}
+</div>`.trim();
+  }
+  if (suggested && !suggested.push) {
+    const name = escapeHtml(suggested.name);
+    const id = escapeHtml(suggested.id);
+    return `<div class="choose-bundle-banner suggested" data-bundle-id="${id}">
+  <div class="bundle-banner-header">
+    <span class="bundle-banner-title">Looks like <strong>${name}</strong></span>
+    <button class="btn btn-primary btn-small" data-action="attachBundle" data-bundle-id="${id}">Attach whole bundle</button>
+  </div>
+</div>`.trim();
+  }
+  return '';
+}
+
+/**
+ * Pure renderer for Doctor results list.
+ */
+export function renderDoctorHtml(result: DoctorResult): string {
+  const mark = (status: 'ok' | 'warn' | 'fail') => {
+    if (status === 'ok') return '<span class="doctor-mark doctor-ok" aria-label="OK">✔</span>';
+    if (status === 'warn') return '<span class="doctor-mark doctor-warn" aria-label="Warning">▲</span>';
+    return '<span class="doctor-mark doctor-fail" aria-label="Failed">✖</span>';
+  };
+
+  const rows = (result.checks || []).map((c) => {
+    const statusClass = `doctor-status-${c.status}`;
+    const name = escapeHtml(c.name);
+    const detail = escapeHtml(c.detail);
+    let fixHtml = '';
+    if (c.status !== 'ok' && c.fix) {
+      const fix = escapeHtml(c.fix);
+      fixHtml = `<div class="doctor-fix">
+  <span class="doctor-fix-text">${fix}</span>
+  <button class="btn btn-secondary btn-small" data-action="copyFix" data-fix="${fix}">Copy</button>
+</div>`;
+    }
+    return `<li class="doctor-item ${statusClass}">
+  <div class="doctor-line">
+    ${mark(c.status)}
+    <span class="doctor-name">${name}</span>
+    <span class="doctor-detail">${detail}</span>
+  </div>
+  ${fixHtml}
+</li>`;
+  }).join('');
+
+  return `<ul class="doctor-list">${rows}</ul>`;
+}
+
+
+/** The one line the Models view shows about the connection check; the full list lives in Insights. */
+export function doctorSummaryHtml(result: DoctorResult): string {
+  const bad = result.checks.filter((c) => c.status !== 'ok');
+  const level = result.status === 'ok' ? 'ok' : result.status;
+  const text = !bad.length ? 'Everything is connected.'
+    : `${bad.length} thing${bad.length === 1 ? '' : 's'} to look at: ${bad.slice(0, 3).map((c) => c.name).join(', ')}${bad.length > 3 ? '…' : ''}`;
+  return `<div class="doctor-summary doctor-${level}"><span class="doctor-summary-text">${escapeHtml(text)}</span>`
+    + `<button class="btn btn-secondary btn-small" data-action="showInsights">Details</button></div>`;
+}
+
+/** `scripts/repo_to_skill.py`: turn a Git repository (URL, owner/repo or folder) into a skill and copy it into a tool's skills folder. */
+export interface RepoSkillResult { skill_name: string; category: string; skill_path: string; status: 'ok'; installed: Record<string, string>; registered: boolean }
+
+export function repoToSkillArgs(root: string, source: string, tools: string[] = []): string[] {
+  const args = [path.join(root, 'scripts', 'repo_to_skill.py'), source.trim(), '--json'];
+  if (tools.length) args.push('--install', tools.join(','));
+  return args;
+}
+
+/** The script prints its JSON on success and on failure (`{error, status: 'fail'}`), and exits 1 on failure. */
+export function parseRepoSkill(json: string): RepoSkillResult {
+  const r = JSON.parse(json);
+  if (r && r.status === 'fail') throw new Error(String(r.error || 'The repository could not be converted.'));
+  if (!r || typeof r.skill_path !== 'string') throw new Error('unexpected output from the converter');
+  return r as RepoSkillResult;
+}
+
+/** Whether the text typed for "Add a skill from Git" can be a repository: a URL, owner/repo, or a path. */
+export function looksLikeRepo(text: string): boolean {
+  const t = text.trim();
+  return /^(https?:\/\/|git@)\S+$/.test(t) || /^[\w.-]+\/[\w.-]+$/.test(t) || /^([a-zA-Z]:)?[\\/~.]/.test(t);
 }

@@ -14,6 +14,7 @@ export interface LibrarySkill {
   category: string;
   cluster: string; // the home cluster id
   purpose: string; // the primary purpose id
+  family: string; // the area it belongs to
   also: string[]; // secondary purpose ids
   n: string[]; // stemmed words of the name
   t: string[]; // stemmed words of the description that say the most
@@ -30,8 +31,20 @@ export interface Purpose {
   used: number;
 }
 
+export interface Family {
+  id: string;
+  name: string;
+  icon: string; // a codicon name
+  blurb: string; // one vague line about what the area is for
+  count: number;
+  used: number;
+  clusters: string[];
+  bundles: string[];
+}
+
 export interface LibraryCluster {
   id: string;
+  family: string; // a family id, or 'mine'
   name: string;
   description: string;
   mine: boolean;
@@ -50,11 +63,13 @@ export interface Bundle {
   mine: boolean;
   recipe: boolean;
   tokens: number;
+  family: string;
 }
 
 export interface Library {
   version: number;
-  counts: { skills: number; purposes: number; clusters: number; bundles: number };
+  counts: { skills: number; families: number; purposes: number; clusters: number; bundles: number };
+  families: Family[];
   purposes: Purpose[];
   clusters: LibraryCluster[];
   bundles: Bundle[];
@@ -203,7 +218,7 @@ export function searchLibrary(lib: Library, query: string, opts: SearchOptions =
 
 // ---------------------------------------------------------------- grouping
 
-export type GroupMode = 'purpose' | 'cluster' | 'bundle';
+export type GroupMode = 'family' | 'purpose' | 'cluster' | 'bundle';
 
 export interface Group {
   id: string;
@@ -214,6 +229,10 @@ export interface Group {
   skills: string[];
   total: number; // how many skills the group has before any search
   bundle?: Bundle;
+  family?: string; // the area a cluster or bundle group sits under, so the view can put area headings between them
+  blurb?: string;
+  bundles?: Bundle[]; // in an area: its ready-made bundles
+  children?: Group[]; // in an area: its clusters, each with its skills
 }
 
 const byUsageThenName = (lib: Library) => (a: string, b: string) =>
@@ -226,20 +245,47 @@ export function groupBy(lib: Library, mode: GroupMode, hits?: Hit[]): Group[] {
     const list = rank ? names.filter((n) => rank.has(n)).sort((a, b) => rank.get(a)! - rank.get(b)!) : [...names].sort(byUsageThenName(lib));
     return list;
   };
+  const order = new Map(lib.families.map((f, i) => [f.id, i]));
+  const byFamily = <T extends { family?: string }>(list: T[]) =>
+    list.map((x, i) => [x, i] as const).sort((a, b) => (order.get(a[0].family ?? '') ?? 99) - (order.get(b[0].family ?? '') ?? 99) || a[1] - b[1]).map((x) => x[0]);
+  const clusterGroup = (c: LibraryCluster): Group => ({ id: c.id, name: c.name, description: c.description, mine: c.mine, skills: keep(c.skills), total: c.count, family: c.family });
+  const bundleGroup = (b: Bundle): Group => {
+    // A bundle keeps its own order: it is a sequence, not a set.
+    const list = rank ? b.skills.filter((n) => rank.has(n)) : b.skills;
+    return { id: b.id, name: b.name, description: b.goal, mine: b.mine, skills: list, total: b.skills.length, bundle: b, family: b.family };
+  };
   let groups: Group[];
-  if (mode === 'purpose') {
+  if (mode === 'family') {
+    const clusters = new Map(lib.clusters.map((c) => [c.id, c]));
+    const bundles = new Map(lib.bundles.map((b) => [b.id, b]));
+    groups = lib.families.map((f) => {
+      const children = f.clusters.map((id) => clusters.get(id)).filter((c): c is LibraryCluster => !!c).map(clusterGroup)
+        .filter((g) => !rank || g.skills.length > 0);
+      const mine = lib.clusters.filter((c) => c.mine && f.id === 'mine');
+      const bl = f.bundles.map((id) => bundles.get(id)).filter((b): b is Bundle => !!b).map(bundleGroup)
+        .filter((g) => !rank || g.skills.length > 0).map((g) => g.bundle!);
+      const flat = [...new Set(children.concat(mine.map(clusterGroup)).flatMap((g) => g.skills))];
+      return { id: f.id, name: f.name, description: f.blurb, blurb: f.blurb, icon: f.icon, skills: rank ? flat.sort((a, b) => rank.get(a)! - rank.get(b)!) : flat,
+        total: f.count, family: f.id, bundles: bl, children };
+    });
+    const mineClusters = lib.clusters.filter((c) => c.mine);
+    if (mineClusters.length) {
+      const children = mineClusters.map(clusterGroup).filter((g) => !rank || g.skills.length > 0);
+      groups.push({ id: 'mine', name: 'Your clusters', description: 'Sets of skills you made', icon: 'account', skills: [...new Set(children.flatMap((g) => g.skills))], total: mineClusters.reduce((n, c) => n + c.count, 0), family: 'mine', bundles: [], children });
+    }
+    if (!rank) return groups;
+    // While searching, the area holding the best match comes first.
+    const best = (g: Group) => Math.min(99999, ...g.skills.map((n) => rank.get(n) ?? 99999));
+    return groups.filter((g) => g.skills.length > 0 || (g.bundles?.length ?? 0) > 0).sort((a, b) => best(a) - best(b));
+  } else if (mode === 'purpose') {
     groups = lib.purposes.map((p) => {
       const members = Object.keys(lib.skills).filter((n) => lib.skills[n].purpose === p.id);
       return { id: p.id, name: p.name, description: p.description, icon: p.icon, skills: keep(members), total: members.length };
     });
   } else if (mode === 'cluster') {
-    groups = lib.clusters.map((c) => ({ id: c.id, name: c.name, description: c.description, mine: c.mine, skills: keep(c.skills), total: c.count }));
+    groups = byFamily(lib.clusters.map(clusterGroup));
   } else {
-    groups = lib.bundles.map((b) => {
-      // A bundle keeps its own order: it is a sequence, not a set.
-      const list = rank ? b.skills.filter((n) => rank.has(n)) : b.skills;
-      return { id: b.id, name: b.name, description: b.goal, mine: b.mine, skills: list, total: b.skills.length, bundle: b };
-    });
+    groups = byFamily(lib.bundles.map(bundleGroup));
   }
   return rank ? groups.filter((g) => g.skills.length > 0) : groups;
 }

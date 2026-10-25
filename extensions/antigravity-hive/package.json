@@ -2,7 +2,7 @@
   "name": "sfp-hive",
   "displayName": "SFP Hive",
   "description": "Choose the few agent skills a task needs, in order, from the SFP library. Works in VS Code and in Antigravity and other VS Code forks.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "siddu1004",
   "license": "MIT",
   "repository": {"type": "git", "url": "https://github.com/siddu1004/SFP.git", "directory": "extensions/antigravity-hive"},
@@ -14,10 +14,31 @@
   "icon": "media/icon.png",
   "contributes": {
     "viewsContainers": {"activitybar": [{"id": "sfpHive", "title": "SFP Hive", "icon": "media/hive.svg"}]},
-    "views": {"sfpHive": [{"id": "sfpHive.stack", "name": "Chosen skills"}]},
-    "viewsWelcome": [{"view": "sfpHive.stack", "contents": "No skills chosen yet.\n[Choose skills for a task](command:sfpHive.choose)\n[Install SFP skills](command:sfpHive.install)"}],
+    "views": {
+      "sfpHive": [
+        {"type": "webview", "id": "sfpHive.stack", "name": "SFP Hive"},
+        {"type": "webview", "id": "sfpHive.library", "name": "Skill Library", "when": "false"},
+        {"type": "webview", "id": "sfpHive.models", "name": "Models", "visibility": "collapsed"}
+      ]
+    },
+    "chatParticipants": [
+      {
+        "id": "sfp.hive",
+        "name": "hive",
+        "fullName": "SFP Hive",
+        "description": "Agent skills advisor powered by SFP Hive",
+        "isDefault": false
+      }
+    ],
     "commands": [
+      {"command": "sfpHive.doctor", "title": "Check connection", "category": "SFP Hive"},
       {"command": "sfpHive.choose", "title": "Choose skills for a task", "category": "SFP Hive", "icon": "$(search)"},
+      {"command": "sfpHive.focusNow", "title": "Show current agent skills and phase", "category": "SFP Hive"},
+      {"command": "sfpHive.showSkill", "title": "Show a skill's details", "category": "SFP Hive"},
+      {"command": "sfpHive.addFromGit", "title": "Add a skill from Git", "category": "SFP Hive"},
+      {"command": "sfpHive.focusLibrary", "title": "Focus skill library", "category": "SFP Hive"},
+      {"command": "sfpHive.searchSkills", "title": "Search skills", "category": "SFP Hive", "icon": "$(search)"},
+      {"command": "sfpHive.applyBundle", "title": "Apply a bundle", "category": "SFP Hive"},
       {"command": "sfpHive.copyPrompt", "title": "Copy the agent prompt", "category": "SFP Hive", "icon": "$(copy)"},
       {"command": "sfpHive.openSkill", "title": "Open skill", "category": "SFP Hive"},
       {"command": "sfpHive.helped", "title": "This skill helped", "category": "SFP Hive", "icon": "$(thumbsup)"},
@@ -25,21 +46,18 @@
       {"command": "sfpHive.ignored", "title": "Chosen but never used", "category": "SFP Hive", "icon": "$(circle-slash)"},
       {"command": "sfpHive.missing", "title": "Report a missing skill", "category": "SFP Hive", "icon": "$(add)"},
       {"command": "sfpHive.status", "title": "Show what the hive has learned", "category": "SFP Hive"},
+      {"command": "sfpHive.train", "title": "Train the hive model", "category": "SFP Hive"},
       {"command": "sfpHive.install", "title": "Install SFP skills into this workspace", "category": "SFP Hive"},
       {"command": "sfpHive.rules", "title": "Add the standing hive instruction to this workspace", "category": "SFP Hive"},
-      {"command": "sfpHive.apps", "title": "Set up a program a skill needs (OmniRoute, Strix...)", "category": "SFP Hive"}
+      {"command": "sfpHive.apps", "title": "Set up a program a skill needs (OmniRoute, Strix...)", "category": "SFP Hive"},
+      {"command": "sfpHive.clusterAdd", "title": "Create a new skill cluster", "category": "SFP Hive"},
+      {"command": "sfpHive.clusterRemove", "title": "Remove a skill cluster of your own", "category": "SFP Hive"},
+      {"command": "sfpHive.focusModels", "title": "Focus models view", "category": "SFP Hive"},
+      {"command": "sfpHive.routerStart", "title": "Start model router", "category": "SFP Hive"},
+      {"command": "sfpHive.routerStop", "title": "Stop model router", "category": "SFP Hive"},
+      {"command": "sfpHive.routerSetup", "title": "Set up model router", "category": "SFP Hive"}
     ],
     "menus": {
-      "view/title": [
-        {"command": "sfpHive.choose", "when": "view == sfpHive.stack", "group": "navigation@1"},
-        {"command": "sfpHive.copyPrompt", "when": "view == sfpHive.stack && sfpHive.hasSelection", "group": "navigation@2"},
-        {"command": "sfpHive.missing", "when": "view == sfpHive.stack && sfpHive.hasSelection", "group": "navigation@3"}
-      ],
-      "view/item/context": [
-        {"command": "sfpHive.helped", "when": "view == sfpHive.stack && viewItem == skill", "group": "inline@1"},
-        {"command": "sfpHive.unhelpful", "when": "view == sfpHive.stack && viewItem == skill", "group": "inline@2"},
-        {"command": "sfpHive.ignored", "when": "view == sfpHive.stack && viewItem == skill", "group": "inline@3"}
-      ],
       "commandPalette": [
         {"command": "sfpHive.openSkill", "when": "false"},
         {"command": "sfpHive.helped", "when": "false"},
@@ -54,7 +72,12 @@
         "sfpHive.python": {"type": "string", "default": "", "description": "Python 3 command. Empty uses python3 (python on Windows)."},
         "sfpHive.maxSkills": {"type": "number", "default": 4, "minimum": 1, "maximum": 8, "description": "The most skills to choose for one task."},
         "sfpHive.copyPromptAfterChoosing": {"type": "boolean", "default": true, "description": "Copy the agent prompt to the clipboard after choosing, ready to paste into the agent panel."},
-        "sfpHive.installTool": {"type": "string", "default": "antigravity", "description": "The SFP installer tool name used by the install commands (antigravity, copilot for VS Code, cursor, windsurf...)."}
+        "sfpHive.installTool": {"type": "string", "default": "antigravity", "description": "The SFP installer tool name used by the install commands (antigravity, copilot for VS Code, cursor, windsurf...)."},
+        "sfpHive.follow": {"type": "boolean", "default": true, "description": "Follow workspace activity and update skills to match the current phase of work."},
+        "sfpHive.followCommands": {"type": "boolean", "default": true, "description": "Include terminal commands in workspace activity when shell integration is available."},
+        "sfpHive.autoRefreshSeconds": {"type": "number", "default": 5, "minimum": 0, "description": "How often, in seconds, the Now tab refreshes while it is visible. Set to 0 to refresh manually."},
+        "sfpHive.autoAttach": {"type": "boolean", "default": true, "description": "Automatically attach skills while typing a prompt or message."},
+        "sfpHive.autoAttachDelayMs": {"type": "number", "default": 200, "description": "Debounce delay in milliseconds before asking the hive for live attached skills."}
       }
     }
   },

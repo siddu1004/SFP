@@ -38,6 +38,10 @@ class ExtensionManifestTest(unittest.TestCase):
         views = [v['id'] for vs in self.pkg['contributes']['views'].values() for v in vs]
         self.assertIn('sfpHive.stack', views)
         self.assertIn("'sfpHive.stack'", self.code)
+        self.assertIn('sfpHive.library', views)
+        self.assertIn("'sfpHive.library'", self.code)
+        self.assertIn('sfpHive.models', views)
+        self.assertIn("'sfpHive.models'", self.code)
 
     def test_settings_the_code_reads_are_declared(self):
         declared = {k.split('.', 1)[1] for k in self.pkg['contributes']['configuration']['properties']}

@@ -33,8 +33,8 @@ def find_installed(home=HOME):
 
 def log_files(home=HOME):
     """Extension-host logs the editors write, wherever the platform keeps them."""
-    roots = [os.path.join(home, '.config'), os.path.join(home, 'Library', 'Application Support'),
-             os.environ.get('APPDATA') or os.path.join(home, 'AppData', 'Roaming')]
+    appdata = os.path.join(home, 'AppData', 'Roaming') if home != HOME else (os.environ.get('APPDATA') or os.path.join(home, 'AppData', 'Roaming'))
+    roots = [os.path.join(home, '.config'), os.path.join(home, 'Library', 'Application Support'), appdata]
     files = []
     for root in roots:
         files += glob.glob(os.path.join(root, '*', 'logs', '*', '*', 'exthost*', '*.log'))
