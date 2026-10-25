@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.14.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.14.0">
+  <img src="https://img.shields.io/badge/version-3.15.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.15.0">
   <img src="https://img.shields.io/badge/skills-819-0f766e?style=flat-square&labelColor=3b4350" alt="819 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
@@ -122,7 +122,7 @@ Everything here is computed from this repository when the README is rebuilt. Run
 
 **Does it pick the right skill, before any learning?** "Right" means the stack holds a skill that a person marked as correct for the task. Plain search gets about as many results as the hive's average stack.
 
-| Task set | Hive 3.14.0 | Earlier engine | Plain search |
+| Task set | Hive 3.15.0 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 64% | 9% |
 | 24 tasks in 10 sample projects | 79% | 75% | 25% |
@@ -141,9 +141,9 @@ Everything here is computed from this repository when the README is rebuilt. Run
 | `agent-builder` preset | 298 | about 19,876 tokens | 9.9% |
 | `everything` | 819 | about 58,363 tokens | 29.2% |
 
-With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,212 tokens, and 90% are under 4,299. A selection averages 1.9 skills when there is no project.
+With `sfp` and the MCP server you still reach every skill, and you pay for a skill's full text only when it is used: a median of about 1,197 tokens, and 90% are under 4,295. A selection averages 1.9 skills when there is no project.
 
-**How fast is it?** About 20 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
+**How fast is it?** About 4 ms per decision, inside the process that asks, once per phase of work. Search takes about 0.1 ms. A call through the running MCP server takes 3 to 5 ms once the project has been scanned. [docs/HIVE.md](docs/HIVE.md#speed) has the before and after.
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better. I have not run a benchmark of real tasks with and without SFP, so these figures show cost, choice and learning, not quality of results. Learning is measured on a simulated user, not on real long-run use. The tasks and their correct answers were written by one person. The hive's settings were tuned on the 10-project and no-project sets, so those rows are optimistic; the held-out set was written first and opened once. Token counts are an estimate (characters divided by 4). Search is keyword-based, so a task that shares no words with the right skill can miss it: "scrape product prices" does not surface `data-scraper-agent`.
 
@@ -353,7 +353,7 @@ The analogy is functional, not literal. Quorum and stop signals follow honeybee 
 
 ## Questions
 
-**Does selection slow my agent down?** No. A decision takes about 20 ms and happens once per phase of work. It also loads fewer skills: 1.9 on average with no project.
+**Does selection slow my agent down?** No. A decision takes about 4 ms and happens once per phase of work. It also loads fewer skills: 1.9 on average with no project.
 
 **Does it always pick right?** No. The right skill was in the selection 86% of the time on held-out tasks, and the misses are listed in [docs/HIVE.md](docs/HIVE.md#where-it-fails). When it misses, tell it with feedback, name the skill, or ask for a category.
 

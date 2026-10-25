@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.15.0
+
+- **Loaded bundles for the current phase.** `sfp_hive.py track` now returns `bundles`: the bundles that hold the skills chosen for the phase of work, best first, each with the skills it covers and the rest that load with it (`sfp_library.phase_bundles`). The Now tab shows them under "Loaded bundles", with the numbered skills and an "Attach whole bundle" button. The Now tab's wording is plain ("Confidence 62%", "Based on recent workspace activity"), and it refreshes by itself every `sfpHive.autoRefreshSeconds` seconds (default 5, 0 for manual).
+
 ## 3.14.0
 
 - **`sfp_hive.py doctor`** checks that everything is connected: catalog and search index, data folder, selection, live attaching, needs, the skill library, local models, the router and the MCP server, each as ok, warn or fail with the command that fixes it. `--json` for the editor.
