@@ -121,23 +121,44 @@ def read_situation(task, goal, scan_result):
     return {'text': text, 'words': words, 'ctx': ctx, 'ctx_tech': ctx_tech, 'demand': demand, 'said': said}
 
 
-def collect_signals(sit, after, history, recalled=None, phase_queries=()):
+def detect_missing(words, said=None):
+    """Detects when a task is asking for domain concepts absent from the entire 819-skill catalog."""
+    if not words:
+        return None
+    content = [w for w in words if len(w) > 2]
+    if not content:
+        return None
+    unknown = [w for w in content if w not in core.POSTINGS]
+    if len(unknown) / len(content) >= 0.5:
+        terms = [said.get(w, w) if said else w for w in unknown]
+        return {
+            'is_missing': True,
+            'unknown_words': terms,
+            'coverage': round((len(content) - len(unknown)) / len(content), 2),
+            'action': 'python3 scripts/repo_to_skill.py <repo-url>'
+        }
+    return None
+
+
+def collect_signals(sit, after, history, recalled=None, phase_queries=(), missing=None):
     """Every signal votes on every candidate it knows about. Votes are 0..1; None means the signal abstains."""
     words, ctx, ctx_tech = sit['words'], sit['ctx'], sit['ctx_tech']
     found = {}
-    if words:
+    direct_hits = 0
+    if words and not (missing and missing.get('coverage', 1.0) == 0.0):
         query = ' '.join(words)
         for score, s in core.scored_search(query, limit=150):
             found[s['name']] = max(found.get(s['name'], 0), score)
-        if ctx_tech:
+            direct_hits += 1
+        if ctx_tech and direct_hits and not missing:
             lead = sorted(ctx_tech, key=lambda t: (-ctx[t], t))[:3]
             for score, s in core.scored_search(query + ' ' + ' '.join(lead), limit=80):
                 found[s['name']] = max(found.get(s['name'], 0), 0.8 * score)
     for extra, weight in phase_queries:
-        # The observed phase of work, as words: skills for that job can join even if the task did not name it.
-        for score, s in core.scored_search(' '.join(words) + ' ' + extra, limit=60):
-            if relation(v1.SKILL_TECH.get(s['name'], set()), ctx_tech) != 'mismatch':
-                found[s['name']] = max(found.get(s['name'], 0), weight * score)
+        if direct_hits or not missing:
+            for score, s in core.scored_search(' '.join(words) + ' ' + extra, limit=60):
+                if relation(v1.SKILL_TECH.get(s['name'], set()), ctx_tech) != 'mismatch':
+                    found[s['name']] = max(found.get(s['name'], 0), weight * score)
     top = max(found.values()) if found else 1.0
     for skill, z in (recalled or {}).items():
         # A skill that feedback has tied to this task's words, even if the search did not find it.
@@ -368,10 +389,11 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     tech = sorted(sit['ctx_tech'], key=lambda t: (-sit['ctx'][t], t))[:3]
 
     words = sit['words'][:sel_words()]
+    missing = detect_missing(sit['words'], sit.get('said'))
     recalled = {}
     if model is not None and model.w:
         recalled = {n: z for n, z in model.recall(words).items() if z >= RECALL and n not in after and n not in INTERNAL_SKILLS}
-    votes = collect_signals(sit, after, hist, recalled, phase_queries)
+    votes = collect_signals(sit, after, hist, recalled, phase_queries, missing=missing)
     learned = {}
     quality = {}
     for n, v in votes.items():
@@ -451,6 +473,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     res = {
         'engine': 'sfp-hive ' + VERSION,
         'task': task, 'goal': goal,
+        'missing': missing,
         'project': {'technologies': v1.show(sorted(sit['ctx_tech'], key=lambda t: (-ctx[t], t))[:8]),
                     'evidence': sc['signals'][:8], 'files_scanned': sc['files']},
         'phases': {p: round(v, 2) for p, v in sorted(sit['demand'].items(), key=lambda kv: -kv[1])},
@@ -588,6 +611,11 @@ def evaluate(tests_dir=None, only=None):
 
 def format_stack(res):
     lines = v1.format_stack(res).split('\n')
+    if res.get('missing'):
+        m = res['missing']
+        lines.insert(2, '[Notice] The catalog has no skill for: %s' % ', '.join(m['unknown_words']))
+        lines.insert(3, '  To add a skill from Git: python3 scripts/repo_to_skill.py <url>')
+        lines.insert(4, '')
     info = res.get('analysis') or {}
     if info:
         lines.insert(-1, 'Hive: %d scouted, %d reached quorum, %d took a job.' % (info['candidates'], info['agreed'], len(res['stack'])))
