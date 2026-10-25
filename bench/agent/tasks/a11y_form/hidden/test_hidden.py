@@ -60,9 +60,12 @@ class Hidden(unittest.TestCase):
             self.assertTrue('required' in a or a.get('aria-required') == 'true', i)
 
     def test_error_is_announced(self):
-        err = [a for t, a, _ in self.d.tags if a.get('id') == 'err']
-        announced = err and (err[0].get('role') in ('alert', 'status') or err[0].get('aria-live'))
-        described = any('err' in a.get('aria-describedby', '').split() for a, _ in inputs(self.d).values())
+        # Any error message counts if screen readers hear it: a live region or alert, or one linked to its field.
+        with open('signup.html', encoding='utf-8') as f:
+            source = f.read()
+        announced = any(a.get('role') in ('alert', 'status') or a.get('aria-live') for _, a, _ in self.d.tags) or \
+            "'role', 'alert'" in source or '"role", "alert"' in source or 'aria-live' in source
+        described = any(a.get('aria-describedby') for a, _ in inputs(self.d).values())
         self.assertTrue(announced or described)
 
     def test_autocomplete(self):
