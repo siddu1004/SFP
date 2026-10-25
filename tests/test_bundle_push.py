@@ -115,5 +115,30 @@ class PushTest(Case):
             self.assertEqual('bundle' in json.loads(out.stdout), expect, mode)
 
 
+class PhaseBundlesTest(Case):
+    def test_a_phase_loads_the_bundles_that_hold_its_skills(self):
+        stack = ['golang-testing', 'tdd-workflow']
+        got = lib.phase_bundles('test', stack)
+        self.assertTrue(got)
+        for b in got:
+            self.assertTrue(set(b['covered']) <= set(stack) and set(b['covered']) <= set(b['skills']))
+            self.assertEqual(sorted(b['covered'] + b['missing']), sorted(b['skills']))
+            self.assertGreaterEqual(b['score'], lib.PHASE_MIN)
+        self.assertEqual(got[0]['id'], 'go-tests')
+
+    def test_no_overlap_loads_nothing_and_the_limit_holds(self):
+        self.assertEqual(lib.phase_bundles('test', ['no-such-skill']), [])
+        self.assertLessEqual(len(lib.phase_bundles('test', ['golang-testing', 'tdd-workflow', 'e2e-testing'], limit=1)), 1)
+
+    def test_tracking_reports_loaded_bundles(self):
+        import sfp_track
+        with open(os.path.join(ROOT, 'tests', 'track_sessions.json'), encoding='utf-8') as f:
+            sessions = json.load(f)
+        sessions = sessions['sessions'] if isinstance(sessions, dict) and 'sessions' in sessions else sessions
+        out = sfp_track.track(sessions[4]['events'], select=True, persist=False)
+        self.assertIn('bundles', out)
+        self.assertTrue(all(b['covered'] for b in out['bundles']))
+
+
 if __name__ == '__main__':
     unittest.main()

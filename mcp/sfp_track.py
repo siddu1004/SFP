@@ -304,6 +304,8 @@ def track(events, select=True, max_skills=4, project=None, persist=True, now=Non
         task = ' '.join(out['words']) or new['current']
         hint = {p: v for p, v in out['shares'].items() if v >= 0.05}
         out['skills'] = sfp_hive.select(task, project, max_skills=max_skills, phase_hint=hint)['stack']
+        import sfp_library
+        out['bundles'] = sfp_library.phase_bundles(new['current'], [c['name'] for c in out['skills']])
         if out['next']:
             nxt = out['next'][0]['phase']
             out['upcoming'] = {'phase': nxt, 'skills': [c['name'] for c in sfp_hive.select(
