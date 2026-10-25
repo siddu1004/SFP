@@ -1,6 +1,6 @@
 {
   "name": "memory",
-  "version": "3.15.0",
+  "version": "3.16.0",
   "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
   "author": {
     "name": "siddu1004"

@@ -17,6 +17,10 @@ python3 mcp/sfp_route.py status          # ready, cooling down and why, requests
 3. **Order.** Policy `local-first` (default): local before cloud, and the weakest model that is strong enough (strength 1 to 3, guessed from the name: `7b` is 1, `14b` is 2, `70b` is 3). Models that are too weak come last, as a last resort. `cheap-first` and `strong-first` are the other policies. Ask for a size with the model name `sfp/light`, `sfp/normal` or `sfp/heavy`, or name one model.
 4. **Fail over.** On 429, 5xx, 401/402/403, a timeout or an unreachable server the model cools down (Retry-After honoured, else 30 s doubling to 10 min) and the next one answers, before any byte has gone to your tool. A stream already started cannot be moved. If every model fails you get a 503 that says why for each.
 
+## Local models are found while it runs
+
+While `serve` is running it looks for local models again every 30 seconds (`--rediscover N`, 0 to turn it off). A runtime you start later joins with its models and their strengths, new models on a running runtime are added, and a local runtime that stops answering is switched off and switched back on when it returns. Cloud providers are never touched.
+
 ## What it is not (yet)
 
 - It routes `/v1/chat/completions` only. Tools that speak the Anthropic API (Claude Code itself) cannot use it; it works for OpenAI-compatible clients such as Cline, Continue, Codex, Cursor's custom endpoint, Aider and your own scripts. The IDE's own built-in agent model (Antigravity's "Gemini 3.8 Flash") is chosen by the IDE, not by SFP, and cannot be re-routed from outside.

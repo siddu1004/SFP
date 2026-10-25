@@ -127,6 +127,49 @@ def build_config(found, env=None, policy='local-first'):
     return {'policy': policy, 'providers': providers}
 
 
+def refresh_local(cfg, found):
+    """Bring the local providers in line with what is running now, in place: a runtime that appeared is added, its new models
+    are added, and a local runtime that stopped answering is switched off (and back on when it returns). Cloud providers
+    are never touched. Returns True if anything changed."""
+    changed = False
+    by_id = {p['id']: p for p in cfg.setdefault('providers', [])}
+    seen = set()
+    for f in found:
+        seen.add(f['runtime'])
+        p = by_id.get(f['runtime'])
+        if p is None:
+            cfg['providers'].append(build_config([f], env={})['providers'][0])
+            changed = True
+            continue
+        if p.get('disabled'):
+            p['disabled'] = False
+            changed = True
+        have = {m['id'] for m in p.get('models', [])}
+        for mid in f['models']:
+            if mid not in have:
+                p.setdefault('models', []).append({'id': mid, 'strength': strength_of(mid), 'ctx': 8192, 'tools': True})
+                changed = True
+    for p in cfg['providers']:
+        if p.get('kind') == 'local' and p['id'] not in seen and not p.get('disabled') and p['id'] in {r[0] for r in LOCAL_RUNTIMES}:
+            p['disabled'] = True
+            changed = True
+    return changed
+
+
+def start_rediscovery(cfg, every=30, runtimes=None):
+    """A daemon thread that runs refresh_local every `every` seconds while the router serves. Returns the stop event."""
+    stop = threading.Event()
+
+    def loop():
+        while not stop.wait(every):
+            try:
+                refresh_local(cfg, discover(runtimes, timeout=0.6))
+            except Exception:  # noqa: BLE001 - a failed probe must never stop the router
+                pass
+    threading.Thread(target=loop, daemon=True).start()
+    return stop
+
+
 def load_config(path=None):
     try:
         with open(path or routes_path(), encoding='utf-8') as f:
@@ -429,6 +472,7 @@ def main(argv=None):
     sub.add_parser('status')
     sv = sub.add_parser('serve')
     sv.add_argument('--port', type=int, default=8787)
+    sv.add_argument('--rediscover', type=int, default=30, help='look for local models again every N seconds while serving (0 = never)')
     sv.add_argument('--token', default=os.environ.get('SFP_ROUTE_TOKEN'), help='require this bearer token (or set SFP_ROUTE_TOKEN)')
     pl = sub.add_parser('plan')
     pl.add_argument('task')
@@ -457,6 +501,8 @@ def main(argv=None):
         if not cfg['providers']:
             sys.exit('no models configured: run `sfp_route.py setup --yes` first')
         srv, _ = make_server(cfg, a.port, a.token)
+        if a.rediscover > 0:
+            start_rediscovery(cfg, a.rediscover)
         print('SFP router on http://127.0.0.1:%d/v1  (model: auto)' % a.port, flush=True)
         try:
             srv.serve_forever()
