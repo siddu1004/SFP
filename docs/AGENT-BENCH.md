@@ -47,3 +47,31 @@ Tasks where the skill carries knowledge the model lacks or would skip: larger co
 framework release newer than the model, multi-step work (migrations, release checklists) where a checklist skill
 prevents a missed step, and longer sessions where the agent would otherwise drift. That is the next set to write,
 again before looking at what the hive picks for it.
+
+## Design work over rounds (2026-10-25)
+
+Your point about design: you re-prompt until a page looks right, so the measure is how many rounds that takes.
+`bench/design/run.py` simulates it. The agent (Sonnet) builds a page; it is screenshotted at desktop and phone width; a
+reviewer model (Opus) scores the screenshots against `bench/design/rubric.md` without seeing the code, the rule file or
+which arm made it, and says whether it would ship. If not, its three requested changes go back to the agent as the
+next prompt, for up to four rounds. Three pages: a pricing page, a notification settings page and the empty state of
+an analytics dashboard. Three arms, two runs each: 18 runs.
+
+| Arm | Shipped within 4 rounds | Rounds to ship (5 = never) | First-round score | Final score | Agent cost per run |
+|---|---:|---:|---:|---:|---:|
+| No skills | 4 of 6 | 3.67 | 6.5 | 7.5 | $0.73 |
+| SFP's choice | **5 of 6** | **2.83** | 6.8 | 7.8 | $0.85 |
+| Two design skills picked by hand | 4 of 6 | 3.67 | 6.3 | 7.8 | $1.42 |
+
+With SFP's skills the pages reached "ship" in fewer rounds: 2.8 against 3.7, and 5 of 6 against 4 of 6. Read it with
+care:
+
+- Six runs per arm. One run more or less moves "shipped" by a sixth, so this is a signal worth testing at scale, not
+  proof.
+- The settings run that shipped in two rounds had poor skills (a Slack GIF skill, an MCP app skill), so not all of the
+  gain can be the skills' content. The first SFP settings run did not ship either.
+- The hand-picked design skills (impeccable, frontend-design) did not help here, cost the most (their instructions
+  are long), and once broke the page's script in the first round.
+- The three page prompts were also used to improve how SFP recognises design work (3.17.6), so they are not held out.
+
+Next: more runs per arm, fresh prompts written before looking at SFP's choice, and a second reviewer model.

@@ -1,0 +1,1208 @@
+[
+ {
+  "task": "empty_state",
+  "arm": "baseline",
+  "rep": 1,
+  "skills": [],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 6,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Give the page more of its own look. The indigo-on-gray cards read as a stock SaaS template. Use brand color, real source logos, or a more confident preview illustration so it feels like Lumen.",
+     "Fix the rhythm: the hero card has a dead band of empty space under the CTA on desktop, and on mobile there's a large gap between 'Explore with sample data' and the preview. The 'CSV' text also spills out of its badge.",
+     "Phone has no navigation at all. The sidebar just disappears. Add a header with the Lumen logo and a menu button. Also make the CTA full-width and give the sample-data link a bigger tap area."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 9,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 8,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [
+     "Line up the 'Explore with sample data' link with the left edge of the button above it on desktop; it currently sits a few pixels further right.",
+     "Make the 'Your charts will light up here' caption and the metric labels in the preview panel brighter so they're easier to read on the dark background.",
+     "On mobile, shrink the preview chart or move it below the steps so the three onboarding steps show up sooner."
+    ],
+    "round": 2
+   }
+  ],
+  "agent_cost": 0.2854588,
+  "review_cost": 0.11226459999999999,
+  "rounds_to_ship": 2,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "pricing",
+  "arm": "sfp",
+  "rep": 1,
+  "skills": [
+   "price-framing",
+   "frontend-design",
+   "ui-ux-pro-max",
+   "omni-webhooks"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 6,
+    "distinct": 8,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "The terminal panel in the hero is mostly empty: it shows one failed attempt and then a big blank area. Fill it with the full retry sequence ending in a delivered 200, or make the panel shorter so it isn't dead space.",
+     "On mobile the comparison table cuts off after the Free column, so Pro and Team can't be seen. Stack it per plan or pin the row labels and make the sideways scroll obvious.",
+     "Remove or fix the blue bar that hangs below the Pro card, which looks like a rendering glitch. Also make the mobile nav links bigger tap targets, since 'Compare plans' and 'Questions' are small and close together."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [],
+    "round": 2
+   }
+  ],
+  "agent_cost": 0.5754933000000001,
+  "review_cost": 0.1267938,
+  "rounds_to_ship": 2,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "pricing",
+  "arm": "baseline",
+  "rep": 1,
+  "skills": [],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 6,
+    "distinct": 5,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On phone, the compare table shows only the Free column, and Pro and Team are cut off with no sign that it scrolls. Stack it per plan, or pin the feature column and add a clear scroll hint.",
+     "Give it a look that belongs to Relay, not a stock SaaS pricing template. Bring in something from the product, like a small delivery/retry timeline, code-style figures for volumes, or a stronger brand color and type treatment.",
+     "Line up the price and button rows across all three cards on desktop, since the Pro card's two-line description pushes its price and button lower. Also fix the broken bottom-left border on the compare table."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 9,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 8,
+    "distinct": 9,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [
+     "Keep the retry dot meter on the same line as its text in the Pro card, or drop it; it wraps onto its own line and looks like a stray decoration.",
+     "On phone, shorten the compare section. Group the nine stacked tables into one compact table, or collapse them behind a 'Compare all features' toggle, because the page gets very long.",
+     "Darken the light grey helper text (plan descriptions, '/ month', FAQ answers) a little so it clearly passes contrast on the cream background."
+    ],
+    "round": 2
+   }
+  ],
+  "agent_cost": 0.39162389999999997,
+  "review_cost": 0.1327238,
+  "rounds_to_ship": 2,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "pricing",
+  "arm": "picked",
+  "rep": 1,
+  "skills": [
+   "frontend-design",
+   "impeccable"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 7,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 8,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "The hero terminal is a big dark box with only one line in it ('attempt 1 failed'). Show the whole retry sequence when the page loads, ending in a 200, or shrink the panel so it isn't mostly empty, on both desktop and phone.",
+     "The retry timeline labels (30s, 5m, 1h, 1d, 3d) are too small and faint to read, especially on the phone. Make them at least 11\u201312px with stronger contrast, and make the red and green marks a bit thicker so the chart can be read at a glance.",
+     "The 'On every plan' and 'Questions' headings sit alone in a wide empty left column on desktop. Put the heading above the content, or move the content left to close the gap, and give the Pro card's 'Most teams start here' badge a little more room from the plan name."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 6,
+    "mobile": 8,
+    "distinct": 9,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "In the retry charts, green means the event failed for good, but in the hero log green means delivered. Use a neutral or warning color for the final attempt so green only ever means success.",
+     "The '1d' and '3d' axis labels run together at the end of each chart. Space them out or label only '3d' so the time scale is readable.",
+     "'On every plan' and 'Questions' only fill the left two-thirds of the desktop width, leaving a large empty area on the right. Make them full width or center them on the pricing grid, and make the small footer links bigger to tap on phone."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 8,
+    "distinct": 9,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [
+     "Make the retry-timeline tick labels (30s, 5m, 1h, 3d) bigger and darker. Right now they are the smallest, faintest text on the page, and they carry the main comparison.",
+     "Line up the Pro card's price and CTA with the Free and Team cards. Right now the badge pushes them a few pixels lower, which shows when the cards sit side by side.",
+     "On mobile, add Docs and Questions back to the header, or add a menu, and make the footer links into larger tap targets."
+    ],
+    "round": 3
+   }
+  ],
+  "agent_cost": 0.9898839000000001,
+  "review_cost": 0.20579959999999997,
+  "rounds_to_ship": 3,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "empty_state",
+  "arm": "picked",
+  "rep": 1,
+  "skills": [
+   "frontend-design",
+   "impeccable"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 3,
+    "typography": 5,
+    "spacing": 3,
+    "color": 5,
+    "mobile": 2,
+    "distinct": 5,
+    "complete": 2,
+    "overall": 3,
+    "ship": false,
+    "feedback": [
+     "The script is broken. Raw JavaScript and template literals like ${s.name} and ${s.cta} show up as page text below the layout, and the source list and setup panel never render. Fix it. A '<script>' or '</' inside a string is probably closing the script tag early.",
+     "The 'Where does your data live?' list and the panel next to it are empty, so there's no visible way to connect a data source. Render the source options (website, store, database, CSV) with a clear primary 'Connect' button above the fold.",
+     "Once the page renders, fix the details. Lighten or remove the leftover text below the sidebar so 'Trial: 14 days left' doesn't float, label the chart's right axis properly (it shows a stray '1'), and make the 'Last 30 days' control and the sample-data link at least 44px tall on phones."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 6,
+    "color": 7,
+    "mobile": 3,
+    "distinct": 7,
+    "complete": 8,
+    "overall": 6,
+    "ship": false,
+    "feedback": [
+     "The snippet code block doesn't wrap, so it runs out of the card on desktop and pushes the phone page to about 810px wide. Let the code wrap or scroll inside its own box, and keep the Copy button inside the card.",
+     "On phone, the source list and the snippet card spread past the screen while the preview cards stay at 375. Keep everything inside the viewport, give it the same side padding, and add a way to reach Traffic/Audience/Goals, since the sidebar nav is gone on phone.",
+     "Make the light-grey text easier to read. The disabled nav items, the 'needs data' tags, the chart axis labels and the 'Today' label all look lighter than AA allows. Shrink the gap between the setup row and the 'What fills in' section, and line the preview cards up to the same grid as the content above them."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [],
+    "round": 3
+   }
+  ],
+  "agent_cost": 0.9925487000000002,
+  "review_cost": 0.2032844,
+  "rounds_to_ship": 3,
+  "first_overall": 3,
+  "final_overall": 8
+ },
+ {
+  "task": "empty_state",
+  "arm": "sfp",
+  "rep": 1,
+  "skills": [
+   "deep-research",
+   "blueprint",
+   "theme-factory",
+   "search-first"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 6,
+    "distinct": 8,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Make the primary action obvious. Give the recommended Website card a clear accent border or fill, or add a 'Connect website' button, so it doesn't look the same as the other three grey cards with muted titles.",
+     "Fix the source cards: center each icon in its white tile, since right now it sits in the top-left corner, make all four cards the same height, and darken the card titles and descriptions so they contrast better against the grey fill.",
+     "On mobile, put the source picker above the sample chart preview, keep the 3-step indicator on one line instead of letting it wrap, and move Theme and Invite teammate out of the space above the headline."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On desktop, the 'Recommended' pill spills past the right edge of the Website card. Put it on its own line or below the title so it sits inside the card.",
+     "Database, Payments and Upload a file have no visible action, and there's a big empty gap at the bottom of each card. Give each one a secondary 'Connect' button or a chevron at the bottom so they look clickable and the cards feel filled.",
+     "Make the low-contrast text darker, especially the 'Needs data' sidebar tags and the skeleton labels in the preview. On mobile, add labels or tooltips to the icon-only top nav, and move Theme and Invite teammate out of the footer."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 9,
+    "typography": 8,
+    "spacing": 6,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 8,
+    "ship": false,
+    "feedback": [
+     "Fix the desktop sidebar: the 'Needs data' pills wrap onto two lines next to Overview and Audiences, and the sidebar stops short of the bottom of the window. Keep the pills on one line, or use a small dot instead, and make the sidebar run the full height.",
+     "On phone, move Theme and Invite teammate out of the middle of the page, into the top bar or the very end. Right now they sit between the source list and the preview and break the flow.",
+     "On phone, put the sample-data preview, or at least its 'Show sample data' toggle, near the top. Then the footer line 'Turn on sample data above' points to something the user has actually seen. Also tidy the footer links so they don't wrap awkwardly around the '\u00b7'."
+    ],
+    "round": 3
+   },
+   {
+    "hierarchy": 9,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 8,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [],
+    "round": 4
+   }
+  ],
+  "agent_cost": 1.3443148999999999,
+  "review_cost": 0.2360282,
+  "rounds_to_ship": 4,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "empty_state",
+  "arm": "sfp",
+  "rep": 2,
+  "skills": [
+   "deep-research",
+   "blueprint",
+   "theme-factory",
+   "search-first"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 9,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 6,
+    "distinct": 7,
+    "complete": 7,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Replace the letter-monogram tiles (GA, S, S, H\u2026) with real brand logos or distinct icons. Three different 'S' tiles look like placeholders, and you can't tell them apart at a glance.",
+     "Phone has no navigation at all because the sidebar just disappears. Add a compact top bar with the Northlight logo and a menu button, and turn the 10-row connector list into a 2-column grid or show the top 4 with a 'Show all' so the page isn't so long.",
+     "Darken the greyed-out sidebar items (Reports, Audiences, Data sources) and the small grey helper text so they pass AA contrast. If those items are locked until a source is connected, say so with a lock icon or tooltip rather than just fading them."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [
+     "On phone, move the source picker above the skeleton chart preview, or shrink the preview, so users reach the real action sooner.",
+     "Give the phone source cards equal content heights so the Google Analytics and Stripe cards don't leave large empty gaps inside, or use one card per row.",
+     "Put the standalone 'Theme' button in the top bar or user menu so it stops pulling attention away from the main CTA."
+    ],
+    "round": 2
+   }
+  ],
+  "agent_cost": 0.4645567,
+  "review_cost": 0.1183884,
+  "rounds_to_ship": 2,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "settings",
+  "arm": "baseline",
+  "rep": 1,
+  "skills": [],
+  "rounds": [
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 6,
+    "color": 6,
+    "mobile": 7,
+    "distinct": 5,
+    "complete": 7,
+    "overall": 6,
+    "ship": false,
+    "feedback": [
+     "Fix the save bar on desktop. It floats partway up the page while the card shows through underneath, and the buttons stick out past the card's right edge. Pin it to the bottom of the viewport and line the buttons up with the card.",
+     "The disabled 'Save changes' button has white text on pale lavender, which fails contrast. Use a readable disabled style, and add a line like 'No unsaved changes' or 'You have unsaved changes' so the button's state makes sense.",
+     "Make it feel like a real product: add a channel header showing Slack is connected (workspace or channel) and push is enabled on a device, and add per-column 'all on/off' controls. On mobile, give the toggles more room so they're easier to tap."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 6,
+    "distinct": 5,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "The save bar sits in the middle of the page and covers rows: 'Due date reminders' on desktop, and the first task rows on phone. Pin it to the bottom of the viewport, or add bottom padding so it never hides a setting.",
+     "The disabled 'Save changes' button is low-contrast gray and reads as broken. Keep it clearly labeled and readable when disabled, and give it the strong indigo primary style once something changes. On phone, also make the email/push/Slack column labels and 'All on' links bigger; right now they're tiny and hard to tap.",
+     "It looks like a stock indigo-toggle template. Give it some product identity, such as channel icons (mail, bell, Slack logo) in the column headers and source cards. Also bring back the short event descriptions on phone, or put them in a tap-to-expand row."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 6,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On phone, the event descriptions wrap to three or four lines next to the toggles. Make the toggles and their gaps smaller, or put the description on its own line under the title, so the rows stop looking squeezed.",
+     "The phone nav only shows 'Notifications', so Profile, Integrations and Billing can't be reached. Add a menu button or a scrollable tab row. Also make sure the sticky save bar sits at the very bottom and never covers the column headers, the 'All on' links or the section labels.",
+     "The disabled 'Save changes' button is grey on grey and looks broken, not just inactive. Give it a clearer disabled look and a strong primary color once there are changes. Also keep '#project-updates' from breaking across lines in the Slack card on desktop."
+    ],
+    "round": 3
+   },
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 6,
+    "color": 7,
+    "mobile": 5,
+    "distinct": 6,
+    "complete": 8,
+    "overall": 6,
+    "ship": false,
+    "feedback": [
+     "The save bar sits on top of the content: on desktop it hides the 'Status changes' and 'Due date reminders' rows, and on phone it hides the Email/Push/Slack column headers. Pin it to the bottom of the viewport and add bottom padding so it never covers rows.",
+     "On phone, the toggles have no column labels once the header scrolls away. Make the Email/Push/Slack header sticky, or put a small channel label or icon above each toggle so people know which switch is which.",
+     "The phone nav runs off the right edge ('Billing' is cut off) and the disabled Save button is so pale it looks broken. Make the nav a scrollable or wrapping row with visible overflow, and give Save a clearer disabled state that becomes solid indigo once something changes."
+    ],
+    "round": 4
+   }
+  ],
+  "agent_cost": 0.8879695,
+  "review_cost": 0.25181339999999997,
+  "rounds_to_ship": null,
+  "first_overall": 6,
+  "final_overall": 6
+ },
+ {
+  "task": "empty_state",
+  "arm": "baseline",
+  "rep": 2,
+  "skills": [],
+  "rounds": [
+   {
+    "hierarchy": 7,
+    "typography": 7,
+    "spacing": 6,
+    "color": 7,
+    "mobile": 6,
+    "distinct": 5,
+    "complete": 8,
+    "overall": 6,
+    "ship": false,
+    "feedback": [
+     "The only primary action is a gray, disabled Continue button, so nothing stands out at first glance. Make the source cards the obvious call to action, or connect on click, and give the selected state a strong brand color. Move 'Load sample data' up next to the cards as a visible secondary button instead of a link at the very bottom.",
+     "Fix the source grid: on desktop, 6 cards in a 4-column grid leave two cards alone on the second row, and the Stripe and PostgreSQL subtitles wrap onto awkward second lines. Use 3 columns, or shorten the subtitles, so all cards are the same height. On mobile, Revenue and Top sources sit alone in half-width cells; make them full width or keep the grid balanced.",
+     "Replace the single-letter avatar icons and generic gray skeleton blocks with real brand logos and a preview that looks more like the product. On mobile, the top nav is cut off at the right edge ('A\u2026') and the 3-step stepper wraps onto two lines; fix both."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 7,
+    "typography": 7,
+    "spacing": 8,
+    "color": 6,
+    "mobile": 6,
+    "distinct": 6,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "The secondary 'Explore with sample data' button is the strongest button in the card, so it pulls attention from connecting a source. Make it a quieter text link, or recommend one source (e.g. Website) with a filled primary button.",
+     "Source names are cut off ('Google Analy\u2026', 'Postgre\u2026', 'Add a snip\u2026'), and on phone the nav runs off the edge with 'Settings' cramped. Let names wrap or use one column on phone, and make the nav scroll or collapse into a menu.",
+     "The faded example-data text (Top sources rows, 'Traffic' label, green deltas) is well below AA contrast. Keep the preview's muted look with an overlay or a lighter chart, but make the text itself readable."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 6,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Make the example-data preview look clearly like a placeholder: fade or desaturate it, or add a 'Sample' watermark. Right now the real-looking numbers (24,810 visitors, $18,420) could make a new user think they already have data.",
+     "Fix the cramped source cards. On desktop, the 'Recommended' badge squeezes the Website card and makes 'Google Analytics' wrap. Give the recommended source its own larger, highlighted tile, and make the whole card the tap target instead of the small 'Connect \u2192' link.",
+     "On phone, the top nav cuts off 'Audiences' and hides 'Settings' with no hint that it scrolls, and the stepper loses its labels. Add a scroll fade or a menu button, and keep at least the current step's label next to the numbers."
+    ],
+    "round": 3
+   },
+   {
+    "hierarchy": 9,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [],
+    "round": 4
+   }
+  ],
+  "agent_cost": 0.9104184000000001,
+  "review_cost": 0.23656480000000002,
+  "rounds_to_ship": 4,
+  "first_overall": 6,
+  "final_overall": 8
+ },
+ {
+  "task": "settings",
+  "arm": "picked",
+  "rep": 1,
+  "skills": [
+   "frontend-design",
+   "impeccable"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 5,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On phone, make the sticky save bar compact: put Discard and Save on one row at full height and keep 'Discard changes' from wrapping, because right now it covers about a quarter of the screen.",
+     "On phone, show the Email/Push/Slack labels above the column toggles, or stack the toggles under each event as labeled rows. The icons alone aren't clear, and the event text is squeezed into a narrow column. Also make the top nav scroll or collapse so Security and the other links aren't cut off.",
+     "Make the column 'select all' toggles look clearly different from the faded, disabled-looking light-blue toggles. Use a proper mixed state or a 'Turn all on/off' link. Also extend the dark sidebar to the full page height on desktop."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 3,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 6,
+    "ship": false,
+    "feedback": [
+     "Fix the horizontal overflow on phone. The top nav row (Profile through Integrations) and the content are about 716px wide, but the sticky save bar is only 375px, so the page scrolls sideways. Make the nav scroll inside its own row or collapse it into a menu, and keep the content within the 375px screen.",
+     "On phone, make the sticky save bar span the full width at the bottom of the screen, the way it does on desktop. Right now it sits as a half-width box over the 'task you own changes status' row and hides the toggles there. Also stack the 'Pause push notifications at night' time pickers under the description so that row fits.",
+     "Make the disabled 'Save changes' and 'Discard changes' buttons and the light grey helper text easier to read. Disabled is fine, but the white-on-grey label and the faint row descriptions look below AA contrast. Use a clearer disabled style, such as a darker label on a light fill, so the main action is still visible before any edits."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 8,
+    "ship": false,
+    "feedback": [
+     "Pin the save bar to the bottom of the viewport. In both screenshots it sits in the middle of the page and covers the 'Conversations' rows ('You are @mentioned' and its toggles are hidden on desktop). If it stays sticky, add bottom padding so it never covers the last row.",
+     "Make the Save button look clearly like the primary action. The pale lavender fill with blue text reads as disabled even when there are unsaved changes, so use a solid brand-blue button with white text when there's something to save, and a clearly muted disabled state otherwise.",
+     "Fix the phone top nav: 'Security' is cut off at the right edge with no sign you can scroll. Add a fade or overflow hint, or switch to a menu button. Also make the 'Turn all on' links and the toggles on the phone at least 44px tall to tap."
+    ],
+    "round": 3
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Line the sticky save bar up with the content column: on desktop its buttons stick out past the right edge of the cards. Give it a top border or shadow so it clearly sits above the rows it covers.",
+     "Fix the phone top nav: 'Notifications' gets cut off to 'Notifica' behind a scroll arrow. Use a compact menu or a title for the current section instead of a clipped tab strip.",
+     "Make the disabled 'Save changes' button easier to read; grey text on grey is low contrast. Use a solid primary-colour Save once there are changes, and show the unsaved state more strongly, such as a coloured dot and a change count."
+    ],
+    "round": 4
+   }
+  ],
+  "agent_cost": 1.6097321,
+  "review_cost": 0.284499,
+  "rounds_to_ship": null,
+  "first_overall": 7,
+  "final_overall": 7
+ },
+ {
+  "task": "empty_state",
+  "arm": "picked",
+  "rep": 2,
+  "skills": [
+   "frontend-design",
+   "impeccable"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 7,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 6,
+    "distinct": 8,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On phone, the Copy button sits on top of the script and the code is cut off at the right edge. Put Copy above the code block or give the code its own row, and wrap the code or let it scroll.",
+     "The chart's axis is backwards: 'Today' is on the left and '30 days ago' on the right. Put 'Today' on the right. Also raise the chart labels ('Waiting for your first visit', the axis dates) to at least 12px, because they're unreadable on phone.",
+     "The phone layout has no navigation: Traffic, Revenue and Customers disappear. Add a compact tab row or a menu button, and give the left column on desktop something to fill the empty space under 'Look around with sample data' so it doesn't look unfinished next to the tall setup card."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 6,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On mobile, put the 'Add Plainview to your website' setup panel right after the source list and move 'After you connect' below it. Right now someone who picks a source has to scroll past reassurance copy and an empty chart before they reach the steps and the 'I've added it' button.",
+     "Fix how the script snippet wraps on phone. The break inside the src URL ('p.js / \"></script>') looks broken. Let the code block scroll sideways, or break it cleanly at the attribute boundaries.",
+     "Darken the small light-gray text so it clearly passes AA: the 'after first data' sidebar tags, the '2 min' time estimates and the 'Fills in as data arrives' note. Also keep the time estimates on the mobile source cards; they currently disappear there."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [],
+    "round": 3
+   }
+  ],
+  "agent_cost": 1.0190219,
+  "review_cost": 0.1890132,
+  "rounds_to_ship": 3,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "settings",
+  "arm": "sfp",
+  "rep": 1,
+  "skills": [
+   "slack-gif-creator",
+   "build-mcp-app",
+   "unified-notifications-ops",
+   "web-app-penetration-testing"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 6,
+    "color": 6,
+    "mobile": 6,
+    "distinct": 6,
+    "complete": 8,
+    "overall": 6,
+    "ship": false,
+    "feedback": [
+     "The save bar sits in the middle of the page and covers content. On desktop it hides the 'Due soon' row, and on phone it covers the Events header and the first row. Pin it to the bottom of the viewport with a solid background and a top shadow, and add bottom padding so the last rows are never hidden. On phone, keep 'No changes' on one line or drop it.",
+     "Slack shows 'Not connected', yet some Slack toggles look half-on in pale lavender. Show them all as clearly disabled (grey, off) with a 'Connect Slack to enable' hint. Also fix contrast: white text on the pale 'Save changes' button and the light grey disabled toggles and select text don't meet AA.",
+     "Give the page more identity and make it easier to scan. Show the priority labels (HIGH, CRITICAL and so on) as tinted pills, not small colored text. On phone, put a sticky Email/Push/Slack header over each group instead of repeating the labels under every toggle."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 6,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Make Save changes look like the primary action: a filled indigo button. When there's nothing to save, disable it with a light tint rather than the grey dashed outline, which looks broken next to Discard.",
+     "Fix the sticky save bar so it doesn't cover the event rows. On desktop it hides the 'Comments on your tasks' row, so add bottom padding or dock the bar to the bottom of the viewport with a clear shadow, and do the same on mobile.",
+     "Stop using dashed borders for disabled elements like the Slack switches, the Slack select and the quiet-hours time fields. Fade them with solid, muted styling, and make the quiet-hours times look editable once the toggle is on. Also tidy the header block, whose clipped tinted edge doesn't line up with the cards below."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 6,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Restyle the plain browser dropdowns (Delivery, Post to) so they match the rounded cards and purple accent, because right now they look unfinished.",
+     "Make the 'not connected' Slack state easier to see: the off switches and the 'Slack' column header are so faint they look broken, so use a clearer locked style with a short label, and turn 'Connect Slack' into a real button instead of a text link.",
+     "Add something that fits a project management app and lifts it above a stock settings template, such as a per-project override or a quiet-hours row. On phone, make sure the event toggles stay in a clear three-column grid with tap targets of at least 44px, and add bottom padding so the sticky save bar doesn't cover the 'Connect Slack' link."
+    ],
+    "round": 3
+   },
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 6,
+    "distinct": 7,
+    "complete": 7,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Bring the events matrix higher. Right now the channels card pushes it almost entirely below the fold, so only one event row shows on desktop and none on phone. Tighten or collapse the channels section so people see the per-event email/push/Slack toggles first.",
+     "Keep one 'Connect Slack' call to action. The button in the channels card and the one in the events banner say the same thing, so drop one or make the banner a short inline note.",
+     "On phone, give the scroll area bottom padding equal to the sticky save bar's height. The bar currently covers content ('Connect Slack to enable' is cut off). Also check that the event toggle table fits at 375px without scrolling sideways and that the switches are at least 44px tap targets."
+    ],
+    "round": 4
+   }
+  ],
+  "agent_cost": 1.6652666999999999,
+  "review_cost": 0.2493528,
+  "rounds_to_ship": null,
+  "first_overall": 6,
+  "final_overall": 7
+ },
+ {
+  "task": "pricing",
+  "arm": "sfp",
+  "rep": 2,
+  "skills": [
+   "price-framing",
+   "frontend-design",
+   "ui-ux-pro-max",
+   "omni-webhooks"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 7,
+    "color": 6,
+    "mobile": 6,
+    "distinct": 7,
+    "complete": 7,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Fix the hero card 'One event, four attempts': it shows only one faded attempt and then a big empty box. Render all four attempts (503s, then a 200) at full contrast so it works in a static screenshot, and darken the faded mono text and pink 503 badge until they pass AA.",
+     "Make the comparison table work on a phone. Right now the Pro and Team columns are cut off at the right edge. Stack it into a card per plan, or pin the label column and add a visible scroll cue.",
+     "Make Pro stand out more than just its darker border: add a 'Most popular' label or a tinted background. Also line up the 'Everything in Free/Pro, plus:' headings with the check-list text (they're indented with no icon), and drop the 'Pricing' nav link, which points to the page you're already on."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [],
+    "round": 2
+   }
+  ],
+  "agent_cost": 0.5432272,
+  "review_cost": 0.1358874,
+  "rounds_to_ship": 2,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "pricing",
+  "arm": "baseline",
+  "rep": 2,
+  "skills": [],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 5,
+    "distinct": 6,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On phone, the compare table cuts off after the Free column, so Pro and Team are hidden with no hint that you can scroll. Turn it into stacked per-plan lists or a plan switcher, or at least show a clear scroll cue.",
+     "On phone, the retry code block is clipped at '200 deliver'. Let the lines wrap, shorten them, or shrink the monospace text so the success line fits.",
+     "The page reads like a standard SaaS pricing template. Bring more of Relay's webhook character into the hero and the cards, for example a live delivery and retry timeline or event-log styling, so it doesn't look generic."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 7,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 8,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "The delivery log under the hero shows one row and then a big empty box, so it looks broken. Fill it with 4\u20135 rows, including a failed attempt and its retry, or shrink it to fit the content.",
+     "The muted gray copy is too light and small to read easily: the retry captions under the prices, the table header labels and the footer. Make it darker and bump the mono captions up to at least 12\u201313px.",
+     "On phone, the compare section turns into ten tall stacked cards that are a long scroll. Collapse it behind a 'Compare all features' toggle or use a compact 3-column table, and make the tiny FAQ link in the header a proper tap target."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 7,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 6,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On phone, the compare table breaks words mid-word ('2,000,00 / 0', 'Communi / ty'). Turn it into a stacked list per plan, or let it scroll sideways with a sticky feature column, so values never wrap inside a word.",
+     "The yellow-green 'Yes' text in the compare table and the light grey mono captions under the prices ('1 try + 3 retries') look too faint. Darken them so they clearly pass AA contrast, and make the mono captions a little bigger.",
+     "Draw more attention to the Pro price block on desktop. Make the prices larger than the plan descriptions, and keep the plan name, price and CTA aligned across all three cards: right now Free's button sits higher than Pro's and Team's because the descriptions differ in length."
+    ],
+    "round": 3
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 8,
+    "distinct": 8,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [],
+    "round": 4
+   }
+  ],
+  "agent_cost": 0.9125308000000001,
+  "review_cost": 0.24239660000000002,
+  "rounds_to_ship": 4,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "settings",
+  "arm": "sfp",
+  "rep": 2,
+  "skills": [
+   "slack-gif-creator",
+   "build-mcp-app",
+   "unified-notifications-ops",
+   "web-app-penetration-testing"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 6,
+    "distinct": 6,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Make the save bar stop covering the event rows. On desktop it hides the Deadlines header, and on phone it hides 'Assigned to you'. Pin it to the bottom of the viewport with a top border or shadow, and add bottom padding to the page so the last rows can scroll clear of it.",
+     "Fix the phone save bar. Right now Save changes wraps onto its own line under Discard, left-aligned. Put Discard and Save side by side, or stack them full-width with Save first, and keep the 'unsaved changes' text short or drop it.",
+     "Give the page more of the product's own character, and bring the 'Toggle all' controls back on phone. A short app header or nav, plus a less uniform look for the badges, would help. On phone, also keep the badges on the same line as the event title so the rows look consistent."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [
+     "Show the 'Unsaved changes' bar only after the user changes something. Right now it appears on load and takes up space while showing the wrong state.",
+     "On phone, keep the event priority tags ('Digest-friendly', 'HIGH') next to the title instead of pushing them to the right edge, where long titles wrap awkwardly.",
+     "Bring the 'Toggle all' controls to the phone layout and make the small grey channel labels under the toggles a bit larger."
+    ],
+    "round": 2
+   }
+  ],
+  "agent_cost": 0.5339387,
+  "review_cost": 0.13334200000000002,
+  "rounds_to_ship": 2,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "settings",
+  "arm": "baseline",
+  "rep": 2,
+  "skills": [],
+  "rounds": [
+   {
+    "hierarchy": 7,
+    "typography": 7,
+    "spacing": 5,
+    "color": 6,
+    "mobile": 7,
+    "distinct": 4,
+    "complete": 8,
+    "overall": 6,
+    "ship": false,
+    "feedback": [
+     "Fix the table grid: the row dividers in the event column sit about 10px higher than the ones under the Email/Push/Slack toggles, and the header row is offset the same way. Every row looks broken. Put the label and the toggles in one row so they share a single border.",
+     "The Save changes button is white text on pale lavender and fails contrast. Even if it's meant to look disabled, add a 'No unsaved changes' hint or keep it readable. Make it a sticky footer bar so people can save without scrolling past every section, especially on phone.",
+     "Give the page some product identity so it isn't a stock settings template. Add an app header or nav, channel icons on the Email/Push/Slack columns, and a quick 'turn all on/off' per channel. Make the Slack connection card look like a real integration, with the Slack logo and the workspace name."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 6,
+    "distinct": 7,
+    "complete": 8,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Fix the sticky save bar: it sits over the middle of the list and hides rows (Status changes on desktop, Comments on phone). Pin it to the bottom of the viewport and add bottom padding so the last rows can scroll clear of it.",
+     "Clean up the phone layout: stop 'Save changes' and 'No unsaved changes' from wrapping onto two lines, make it obvious the Settings tab is cut off and can be scrolled to, and add 'Email / Push / Slack' text labels above the icon-only column headers.",
+     "Make the column header row clearer: the 'All' toggles are smaller and fainter than the row toggles and don't quite line up with their columns. Use the same toggle size and align each one to its column. Also give the disabled Save button enough contrast to read as a button."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "The column master toggles in the header row are pale lavender with the knob in the middle, so they look disabled or broken. Give them a clear mixed state, like a dash or a 'Some' label, or replace them with 'All on / All off' text buttons.",
+     "The sticky save bar floats in the middle of the list and cuts a row in half ('Status changes' / 'Due date reminders'). Pin it to the bottom of the viewport with a clear top border or shadow, and add bottom padding to the page so the bar never covers a row.",
+     "On mobile the save bar is cramped: 'No unsaved changes', Discard and Save are squeezed onto one line. Hide the status text when nothing has changed, or put it on its own line, and make Save a full-width primary button. Also fix the top nav so it doesn't start cut off at 'ts'."
+    ],
+    "round": 3
+   },
+   {
+    "hierarchy": 8,
+    "typography": 7,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Make the Email/Push/Slack column headers stick to the top while scrolling. Once the header card scrolls away, the rows further down, like Reports, have no labels, and on the phone you just see three unlabeled toggles.",
+     "Raise the contrast of the disabled 'Save changes' button and of the tiny '6 of 10 on' counter text. Both are too faint to read right now, and the 'All on' pills are too small to tap on mobile; make them at least 32\u201344px tall.",
+     "Make the save bar look like it belongs on the page. Give it a top border or shadow and keep the 'No unsaved changes' status on mobile. Also stop the phone nav from cutting off 'Projects' at the left edge, either with a fade or by moving the nav into a menu."
+    ],
+    "round": 4
+   }
+  ],
+  "agent_cost": 0.9661005999999999,
+  "review_cost": 0.266606,
+  "rounds_to_ship": null,
+  "first_overall": 6,
+  "final_overall": 7
+ },
+ {
+  "task": "pricing",
+  "arm": "picked",
+  "rep": 2,
+  "skills": [
+   "frontend-design",
+   "impeccable"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 7,
+    "distinct": 9,
+    "complete": 6,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "The sample delivery table in the hero shows one 503 row, then two empty rows and an empty Result column. It looks broken. Show the full retry sequence ending in a 200 delivered row, at least as the static state.",
+     "Remove the 'Plan limits shown are placeholders until confirmed' note and commit to real numbers. That line makes the whole pricing table hard to believe.",
+     "Make the dim text on the dark panels brighter (table headers, footnote, the muted labels in the Pro column) so it clearly passes AA. Give the phone nav links larger tap targets, and spread out the tries bunched at the end of the Team timeline so they don't merge into a blob on mobile."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 9,
+    "complete": 7,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "The sample delivery log in the hero ends in an empty third row and never shows a success. Fill in the final try (for example '200 OK \u00b7 Delivered') so the story pays off and the box doesn't look broken.",
+     "On the phone, the nav crowds the logo, and the footer links and timeline labels are tiny. Collapse or space out the nav, make the footer links at least 44px tap targets, and make the retry timeline labels bigger.",
+     "The phone page runs very long because all three plans stack with their full 7-row spec lists. Shorten the rows on mobile (two columns or tighter rows) or put Pro first, so the recommended plan and its button show up sooner."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 9,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 8,
+    "distinct": 9,
+    "complete": 9,
+    "overall": 8,
+    "ship": true,
+    "feedback": [
+     "Make the small labels in the plan cards and the 'Most people start here' badge bigger; they are near the minimum readable size.",
+     "On the phone, give the top nav links bigger tap targets, and spread out the Team retry timeline so the diamonds don't run together.",
+     "Make the timeline axis labels (Start, 1 min, 1 hour, 1 day, 3 days) larger and higher contrast against the yellow."
+    ],
+    "round": 3
+   }
+  ],
+  "agent_cost": 2.0016741000000002,
+  "review_cost": 0.1806438,
+  "rounds_to_ship": 3,
+  "first_overall": 7,
+  "final_overall": 8
+ },
+ {
+  "task": "settings",
+  "arm": "picked",
+  "rep": 2,
+  "skills": [
+   "frontend-design",
+   "impeccable"
+  ],
+  "rounds": [
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 6,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On the phone, the top nav only shows Profile and Notifications. Security, Members and Billing are cut off, and there's no sign that it scrolls or a menu to reach them. Add a scroll hint or a menu so every section can be reached.",
+     "The 'Save changes' button is washed-out lavender with white text, and the 'All changes saved' gray status is hard to see. Make the disabled button readable, and give the enabled button a clearly stronger look so the main action stands out once something changes.",
+     "The sticky save bar sits on top of content. On mobile it covers the Slack card's dropdown, and on desktop it cuts off the 'Due date reminders' row. Add bottom padding and a shadow or top border to the bar so it's clearly separate from the content and never hides a control."
+    ],
+    "round": 1
+   },
+   {
+    "hierarchy": 6,
+    "typography": 8,
+    "spacing": 8,
+    "color": 7,
+    "mobile": 8,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "Make 'Save changes' a filled indigo primary button and 'Discard changes' a quiet text or ghost button. Right now they look the same, so the main action doesn't stand out. Show a disabled state only when nothing has changed.",
+     "Merge the 'Pause push when I'm away' overnight setting into the Quiet hours card. Having two separate quiet-time controls with overlapping windows is confusing.",
+     "Make the off-state toggles and the small 'Turn all on' links more visible: use a darker track or border on the off toggles, and give the column actions bigger tap targets. On mobile, keep the sticky save bar from covering the Slack card content."
+    ],
+    "round": 2
+   },
+   {
+    "hierarchy": 7,
+    "typography": 8,
+    "spacing": 7,
+    "color": 8,
+    "mobile": 8,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 7,
+    "ship": false,
+    "feedback": [
+     "On desktop the dark sidebar stops at about 800px and leaves a bare grey strip below it. Make it run the full height of the page, or keep it fixed in place while the page scrolls.",
+     "The Save button is a pale grey outline, so it looks weaker than the three 'Turn all on' buttons. Make it the one solid indigo primary button, show it as disabled while nothing has changed, and make the 'Turn all on' buttons quieter text links.",
+     "The four channel cards above the matrix differ in height, which leaves a lot of empty space inside them, and the Quiet hours and Mentions panels at the bottom don't match either. Align their heights and content. Also add a little more space between each group heading and its first row so the groups stand apart."
+    ],
+    "round": 3
+   },
+   {
+    "hierarchy": 8,
+    "typography": 8,
+    "spacing": 8,
+    "color": 8,
+    "mobile": 7,
+    "distinct": 7,
+    "complete": 9,
+    "overall": 8,
+    "ship": false,
+    "feedback": [
+     "Fix the cut-off dropdown text: 'Mentions and assignme\u2026' on desktop and 'All your channe\u2026' on phone. Widen the selects or use shorter option labels.",
+     "Make the Save button clearly look disabled or enabled. Right now the faded purple looks broken. Use full-strength indigo when there are unsaved changes, and keep the muted style only when everything is saved.",
+     "On phone, the sticky footer is cramped, with 'All changes saved' and 'Save changes' both wrapping to two lines. Shorten the labels or stack the status above the buttons so the tap targets get full width."
+    ],
+    "round": 4
+   }
+  ],
+  "agent_cost": 1.9309989,
+  "review_cost": 0.2959348,
+  "rounds_to_ship": null,
+  "first_overall": 7,
+  "final_overall": 8
+ }
+]
