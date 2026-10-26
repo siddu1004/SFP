@@ -1,0 +1,7 @@
+{
+    "python.defaultInterpreterPath": "C:\\Users\\saisi\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe",
+    "flake8.enabled": false,
+    "flake8.interpreter": [
+        "C:\\Users\\saisi\\AppData\\Roaming\\uv\\python\\cpython-3.12-windows-x86_64-none\\python.exe"
+    ]
+}
