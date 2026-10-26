@@ -38,6 +38,12 @@ git clone https://github.com/siddu1004/SFP.git
 cd SFP
 ```
 
+### Option C: Via Cargo (Rust)
+```bash
+cargo install --git https://github.com/siddu1004/SFP.git
+sfp install
+```
+
 **Check your environment in 5 seconds:**
 ```bash
 # macOS / Linux

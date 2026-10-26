@@ -1,0 +1,23 @@
+[package]
+name = "sfp"
+version = "3.17.7"
+edition = "2021"
+authors = ["siddu1004"]
+description = "Give your AI coding agent the right skills for the job, not all of them. Curated library of 800+ agent skills across 16 IDEs with an intelligent hive that selects, orders, and learns from feedback."
+homepage = "https://github.com/siddu1004/SFP#readme"
+repository = "https://github.com/siddu1004/SFP"
+license = "MIT"
+readme = "README.md"
+keywords = ["ai", "agent", "skills", "mcp", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+
+[[bin]]
+name = "sfp"
+path = "src/main.rs"
+
+[[bin]]
+name = "sfp-hive"
+path = "src/main.rs"
+
+[dependencies]
+# Pure Rust standard library implementation — zero external dependencies for instant compilation.
