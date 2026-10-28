@@ -112,9 +112,6 @@ Notice that plain keyword search yields identical, generic results everywhere. T
 
 SFP supports 16 IDEs and provides three flexible delivery modes:
 
-<p align="center">
-  <img src="assets/extension-preview.png" alt="SFP Hive Studio: Visual Bundle Inspector, Keyword Attribution, and Model Router" width="100%">
-</p>
 
 ### 1. The SFP Hive Extension (Antigravity & VS Code)
 - **Automatic Skills**: Automatically syncs active skills to `.agents/rules/sfp-active-skills.md`. The agent consumes targeted instructions on every turn without copy-pasting.

@@ -118,9 +118,6 @@ Notice that plain keyword search yields identical, generic results everywhere. T
 
 SFP supports 16 IDEs and provides three flexible delivery modes:
 
-<p align="center">
-  <img src="assets/extension-preview.png" alt="SFP Hive Studio: Visual Bundle Inspector, Keyword Attribution, and Model Router" width="100%">
-</p>
 
 ### 1. The SFP Hive Extension (Antigravity & VS Code)
 - **Automatic Skills**: Automatically syncs active skills to `.agents/rules/sfp-active-skills.md`. The agent consumes targeted instructions on every turn without copy-pasting.
@@ -200,7 +197,7 @@ Figures below are computed directly from this repository during the build. Repro
 
 **How fast is it?**
 
-Decisions take about 6 ms inside the host process. Search takes about 0.1 ms. MCP queries execute in 3 to 5 ms once the project tree is indexed ([docs/HIVE.md](docs/HIVE.md#speed)).
+Decisions take about 4 ms inside the host process. Search takes about 0.1 ms. MCP queries execute in 3 to 5 ms once the project tree is indexed ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better across every domain. Learning is measured on a simulated user, not on real long-run use. Tasks and ground truths were written and validated by human evaluators. Token counts are estimated at 4 characters per token.
 
