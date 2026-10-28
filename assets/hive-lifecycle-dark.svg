@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="t d">
+  <title id="t">SFP Hive vs Traditional Agent Tooling</title>
+  <desc id="d">Flow comparison showing traditional static skill dumping versus SFP Hive dynamic contextual orchestration.</desc>
+  <defs>
+    <linearGradient id="bad-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ef4444" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#b91c1c" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="good-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0f766e" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="420" rx="16" fill="#12171f"/>
+  <rect x="0.5" y="0.5" width="1279" height="419" rx="15.5" fill="none" stroke="#2c3643" stroke-width="1"/>
+
+  <!-- Header -->
+  <text x="64" y="48" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#e6edf3" letter-spacing="-0.02em">Why Choose SFP Hive: The Architecture Advantage</text>
+  <text x="64" y="74" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="14" font-weight="400" fill="#9aa4b0">Stop burning 30% of your context window before the first prompt. Hive selects the exact 3-4 skills needed in sub-3ms.</text>
+
+  <!-- TOP PATH: TRADITIONAL -->
+  <g transform="translate(64, 100)">
+    <rect width="1152" height="120" rx="12" fill="#18202b" stroke="#3b2727" stroke-width="1" filter="url(#card-shadow)"/>
+    <rect width="6" height="120" rx="3" fill="#ef4444"/>
+    <text x="24" y="28" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#f87171" letter-spacing="0.06em">TRADITIONAL AGENT SETUP (STATIC INJECTION)</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(24, 42)">
+      <rect width="240" height="60" rx="6" fill="#241b1d" stroke="#ef4444" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#fca5a5">Dump All 800+ Skills</text>
+      <text x="14" y="44" font-family="ui-monospace, monospace" font-size="11" fill="#f87171">58,000 token overhead</text>
+    </g>
+
+    <!-- Arrow 1 -->
+    <path d="M 276 72 L 316 72" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 3"/>
+    <polygon points="316,68 324,72 316,76" fill="#ef4444"/>
+
+    <!-- Step 2 -->
+    <g transform="translate(328, 42)">
+      <rect width="240" height="60" rx="6" fill="#241b1d" stroke="#ef4444" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#fca5a5">Blind Keyword Search</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">9% accuracy on new tasks</text>
+    </g>
+
+    <!-- Arrow 2 -->
+    <path d="M 580 72 L 620 72" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 3"/>
+    <polygon points="620,68 628,72 620,76" fill="#ef4444"/>
+
+    <!-- Step 3 -->
+    <g transform="translate(632, 42)">
+      <rect width="240" height="60" rx="6" fill="#241b1d" stroke="#ef4444" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#fca5a5">Conflicting Instructions</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Agent hallucinates &amp; stalls</text>
+    </g>
+
+    <!-- Arrow 3 -->
+    <path d="M 884 72 L 924 72" stroke="#ef4444" stroke-width="2" stroke-dasharray="3 3"/>
+    <polygon points="924,68 932,72 924,76" fill="#ef4444"/>
+
+    <!-- Step 4 Outcome -->
+    <g transform="translate(936, 42)">
+      <rect width="192" height="60" rx="6" fill="#361717" stroke="#ef4444" stroke-width="1"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#fca5a5">Slow Convergence</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#fca5a5">3.7 review rounds</text>
+    </g>
+  </g>
+
+  <!-- BOTTOM PATH: SFP HIVE -->
+  <g transform="translate(64, 240)">
+    <rect width="1152" height="150" rx="12" fill="#18202b" stroke="#134e4a" stroke-width="1" filter="url(#card-shadow)"/>
+    <rect width="6" height="150" rx="3" fill="#10b981"/>
+    <text x="24" y="28" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#34d399" letter-spacing="0.06em">THE SFP HIVE ADVANTAGE (COLLECTIVE INTELLIGENCE + RL)</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(24, 46)">
+      <rect width="240" height="84" rx="6" fill="#122724" stroke="#10b981" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">5-Signal Quorum</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Words, Files, Phase, Cat, Hist</text>
+      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">Sub-3ms Local Fingerprint</text>
+    </g>
+
+    <!-- Arrow 1 -->
+    <path d="M 276 88 L 316 88" stroke="#10b981" stroke-width="2"/>
+    <polygon points="316,84 324,88 316,92" fill="#10b981"/>
+
+    <!-- Step 2 -->
+    <g transform="translate(328, 46)">
+      <rect width="240" height="84" rx="6" fill="#122724" stroke="#10b981" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">LinUCB Bandit &amp; Bundles</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Explores &amp; stacks any bundles</text>
+      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">Unlimited Multi-Bundle Support</text>
+    </g>
+
+    <!-- Arrow 2 -->
+    <path d="M 580 88 L 620 88" stroke="#10b981" stroke-width="2"/>
+    <polygon points="620,84 628,88 620,92" fill="#10b981"/>
+
+    <!-- Step 3 -->
+    <g transform="translate(632, 46)">
+      <rect width="240" height="84" rx="6" fill="#122724" stroke="#10b981" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">Targeted Context Delivery</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Exact role order: plan-base-check</text>
+      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">266 tokens (218x leaner)</text>
+    </g>
+
+    <!-- Arrow 3 -->
+    <path d="M 884 88 L 924 88" stroke="#10b981" stroke-width="2"/>
+    <polygon points="924,84 932,88 924,92" fill="#10b981"/>
+
+    <!-- Step 4 Outcome -->
+    <g transform="translate(936, 46)">
+      <rect width="192" height="84" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">Ready in 1 Round Less</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#a7f3d0">2.8 review rounds</text>
+      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">86% selection accuracy</text>
+    </g>
+  </g>
+</svg>

@@ -69,6 +69,13 @@ High-quality agent skills exist, but using them today forces a painful tradeoff:
 - **Fragmented Ecosystem**: 52 upstream repositories use different file layouts, paths, and metadata formats across 16 IDEs.
 - **Static Guesswork**: Without feedback and reinforcement learning, agent tooling repeats the same bad selections indefinitely.
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/hive-lifecycle-dark.svg">
+    <img src="assets/hive-lifecycle-light.svg" alt="Why Choose SFP Hive: Architecture Advantage" width="100%">
+  </picture>
+</p>
+
 ---
 
 ## What SFP Does
@@ -81,6 +88,8 @@ SFP brings biological collective intelligence to agent skill orchestration:
 | **Dynamic Hive Selection** | 5 scout signals (task words, project files, work phase, category, history) reach quorum | **@@SFP_TOKENS@@ tokens** carried instead of @@ALL_TOKENS@@: **@@RATIO@@x reduction** |
 | **LinUCB Bandit & RL** | Contextual bandit exploration plus implicit reward harvesting from test runs and git commits | **@@LC_FIXED@@ of reported mistakes fixed** on retry |
 | **Universal Delivery** | Native folder injection for 16 IDEs + zero-install MCP server + VS Code / Antigravity extension | Install once, run anywhere |
+| **Unlimited Multi-Bundle Stacking** | Stack multiple workflow recipes concurrently (e.g. testing + frontend + security) with auto-deduplication | Zero limits on active bundle depth |
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/hive-architecture-dark.svg">
@@ -95,6 +104,17 @@ SFP brings biological collective intelligence to agent skill orchestration:
 3. **Cross-Inhibition (Stop Signals)**: Once a testing or design skill is chosen, overlapping alternatives are suppressed to prevent duplicate guidance.
 4. **Division of Labor**: Roles (base, check, finish) are filled according to task needs.
 5. **Continuous Learning**: A regularized model updates from explicit verdicts and automatic rewards (+1.0 for passing test suites, +0.5 for git commits, -0.6 for test failures).
+
+### Dynamic Multi-Bundle Stacking (No Limits)
+
+Combine any number of bundles for complex, full-lifecycle workflows. Hive seamlessly stacks and deduplicates skills into clear agent execution phases:
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/hive-multibundle-dark.svg">
+    <img src="assets/hive-multibundle-light.svg" alt="Dynamic Multi-Bundle Stacking Engine" width="100%">
+  </picture>
+</p>
 
 ---
 

@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="420" viewBox="0 0 1280 420" role="img" aria-labelledby="t d">
+  <title id="t">SFP Hive Multi-Bundle Stacking Engine</title>
+  <desc id="d">Stack multiple bundles concurrently without limits, automatically ordered and deduplicated into active agent roles.</desc>
+  <defs>
+    <filter id="card-shadow-ml" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.06"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="420" rx="16" fill="#f8fafc"/>
+  <rect x="0.5" y="0.5" width="1279" height="419" rx="15.5" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Header -->
+  <text x="64" y="48" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#0f172a" letter-spacing="-0.02em">Dynamic Multi-Bundle Stacking: Unlimited Combinations</text>
+  <text x="64" y="74" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="14" font-weight="400" fill="#64748b">Attach multiple workflow bundles simultaneously. Hive deduplicates skills and orders them by role in real time.</text>
+
+  <!-- BUNDLE 1: Frontend Polish -->
+  <g transform="translate(64, 105)">
+    <rect width="320" height="150" rx="10" fill="#ffffff" stroke="#0891b2" stroke-width="1" filter="url(#card-shadow-ml)"/>
+    <text x="20" y="30" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="700" fill="#0e7490">Bundle A: Frontend Polish</text>
+    <text x="20" y="50" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#64748b">UX review, animation, and responsive craft</text>
+    <g transform="translate(20, 66)">
+      <rect width="280" height="24" rx="4" fill="#ecfeff" stroke="#a5f3fc" stroke-width="0.75"/>
+      <text x="10" y="16" font-family="ui-monospace, monospace" font-size="11" fill="#0e7490">1. impeccable</text>
+    </g>
+    <g transform="translate(20, 94)">
+      <rect width="280" height="24" rx="4" fill="#ecfeff" stroke="#a5f3fc" stroke-width="0.75"/>
+      <text x="10" y="16" font-family="ui-monospace, monospace" font-size="11" fill="#0e7490">2. design-taste-frontend</text>
+    </g>
+    <g transform="translate(20, 122)">
+      <rect width="280" height="24" rx="4" fill="#ecfeff" stroke="#a5f3fc" stroke-width="0.75"/>
+      <text x="10" y="16" font-family="ui-monospace, monospace" font-size="11" fill="#0e7490">3. animate</text>
+    </g>
+  </g>
+
+  <!-- BUNDLE 2: Bug Fix Pipeline -->
+  <g transform="translate(64, 275)">
+    <rect width="320" height="125" rx="10" fill="#ffffff" stroke="#9333ea" stroke-width="1" filter="url(#card-shadow-ml)"/>
+    <text x="20" y="28" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="700" fill="#7e22ce">Bundle B: Fix A Bug Properly</text>
+    <text x="20" y="48" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#64748b">Root-cause diagnosis and regression proof</text>
+    <g transform="translate(20, 62)">
+      <rect width="280" height="24" rx="4" fill="#faf5ff" stroke="#e9d5ff" stroke-width="0.75"/>
+      <text x="10" y="16" font-family="ui-monospace, monospace" font-size="11" fill="#7e22ce">1. investigate-first</text>
+    </g>
+    <g transform="translate(20, 90)">
+      <rect width="280" height="24" rx="4" fill="#faf5ff" stroke="#e9d5ff" stroke-width="0.75"/>
+      <text x="10" y="16" font-family="ui-monospace, monospace" font-size="11" fill="#7e22ce">2. surgical-patch</text>
+    </g>
+  </g>
+
+  <!-- CONVERGENCE CONDUITS -->
+  <path d="M 384 180 C 470 180, 480 230, 560 230" stroke="#0891b2" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+  <path d="M 384 335 C 470 335, 480 260, 560 260" stroke="#9333ea" stroke-width="2" fill="none" stroke-dasharray="4 4"/>
+
+  <!-- MIDDLE: HIVE STACKING ENGINE -->
+  <g transform="translate(560, 140)">
+    <rect width="260" height="210" rx="12" fill="#ffffff" stroke="#0f766e" stroke-width="1.5" filter="url(#card-shadow-ml)"/>
+    <text x="20" y="34" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="700" fill="#0f766e">Hive Stacking Engine</text>
+    
+    <g transform="translate(16, 52)">
+      <rect width="228" height="38" rx="6" fill="#f1f5f9"/>
+      <text x="12" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="600" fill="#0f172a">Deduplication Layer</text>
+    </g>
+    <g transform="translate(16, 98)">
+      <rect width="228" height="38" rx="6" fill="#f1f5f9"/>
+      <text x="12" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="600" fill="#0f172a">Role Allocation (Plan-Base-Check)</text>
+    </g>
+    <g transform="translate(16, 144)">
+      <rect width="228" height="48" rx="6" fill="#ccfbf1" stroke="#5eead4" stroke-width="0.75"/>
+      <text x="12" y="20" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="700" fill="#0f766e">No Hard Limit on Bundles</text>
+      <text x="12" y="36" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#065f46">Stack 2, 4, or 10 bundles</text>
+    </g>
+  </g>
+
+  <!-- ARROW TO ACTIVE OUTPUT -->
+  <path d="M 820 245 L 870 245" stroke="#0f766e" stroke-width="2.5"/>
+  <polygon points="870,240 880,245 870,250" fill="#0f766e"/>
+
+  <!-- OUTPUT: UNIFIED AGENT CONTEXT -->
+  <g transform="translate(880, 105)">
+    <rect width="336" height="295" rx="12" fill="#ffffff" stroke="#059669" stroke-width="1.5" filter="url(#card-shadow-ml)"/>
+    <text x="24" y="32" font-family="ui-sans-serif, system-ui, sans-serif" font-size="14" font-weight="700" fill="#047857">Unified Agent Memory</text>
+    <text x="24" y="52" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#64748b">Injected via .agents/rules/sfp-active-skills.md</text>
+
+    <!-- Ordered Execution Stack -->
+    <g transform="translate(20, 68)">
+      <rect width="296" height="34" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="0.75"/>
+      <text x="12" y="21" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#065f46">1. investigate-first</text>
+      <text x="236" y="21" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#059669">plan</text>
+    </g>
+    <g transform="translate(20, 108)">
+      <rect width="296" height="34" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="0.75"/>
+      <text x="12" y="21" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#065f46">2. impeccable</text>
+      <text x="236" y="21" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#059669">base</text>
+    </g>
+    <g transform="translate(20, 148)">
+      <rect width="296" height="34" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="0.75"/>
+      <text x="12" y="21" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#065f46">3. design-taste-frontend</text>
+      <text x="236" y="21" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#059669">style</text>
+    </g>
+    <g transform="translate(20, 188)">
+      <rect width="296" height="34" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="0.75"/>
+      <text x="12" y="21" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#065f46">4. surgical-patch</text>
+      <text x="236" y="21" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#059669">fix</text>
+    </g>
+    <g transform="translate(20, 228)">
+      <rect width="296" height="34" rx="6" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="0.75"/>
+      <text x="12" y="21" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#065f46">5. animate</text>
+      <text x="236" y="21" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#059669">polish</text>
+    </g>
+    <text x="24" y="280" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="600" fill="#059669">Both bundles active simultaneously</text>
+  </g>
+</svg>

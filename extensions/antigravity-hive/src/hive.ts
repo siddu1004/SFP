@@ -975,12 +975,21 @@ export function activityTakesOver(current: 'task' | 'activity' | undefined, task
 
 export function focusActivity(a: ActiveSkills): ActiveSkills {
   if (a.source !== 'activity') return a;
-  const bundle = (a.bundles || [])[0];
+  const attached = (a.bundles || []).filter((b: any) => b.attached);
+  const activeBundles = attached.length ? attached : (a.bundles || []).slice(0, 1);
   const strong = a.skills.filter((s) => (s.score ?? 0) >= ACTIVITY_STRONG);
-  if (!bundle) return { ...a, skills: (strong.length ? strong : a.skills.slice(0, 1)).slice(0, 3) };
-  const inBundle = new Set(bundle.skills);
-  const lead: Skill[] = bundle.skills.map((n) => a.skills.find((s) => s.name === n) || { name: n });
-  return { ...a, skills: [...lead, ...strong.filter((s) => !inBundle.has(s.name)).slice(0, 2)], bundles: [bundle] };
+  if (!activeBundles.length) return { ...a, skills: (strong.length ? strong : a.skills.slice(0, 1)).slice(0, 3) };
+  const inBundles = new Set<string>();
+  const lead: Skill[] = [];
+  for (const b of activeBundles) {
+    for (const n of b.skills) {
+      if (!inBundles.has(n)) {
+        inBundles.add(n);
+        lead.push(a.skills.find((s) => s.name === n) || { name: n });
+      }
+    }
+  }
+  return { ...a, skills: [...lead, ...strong.filter((s) => !inBundles.has(s.name)).slice(0, 2)], bundles: activeBundles };
 }
 
 export function activeSkillsRule(input: ActiveSkills, root: string, now: Date = new Date()): string {

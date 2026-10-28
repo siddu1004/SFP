@@ -19,6 +19,7 @@ let status: vscode.StatusBarItem;
 export const activity = new hive.ActivityBuffer();
 export let lastTrackResult: hive.TrackResult | undefined;
 export let lastNeeds: hive.Need[] = [];
+export const attachedBundlesMap = new Map<string, { id: string; name: string; skills: string[]; goal?: string; purpose?: string; tokens?: number }>();
 let lastNotificationTime = 0;
 const excludedNowSkills = new Set<string>();
 
@@ -117,7 +118,35 @@ export function writeActiveSkills(): string | undefined {
       bundles: selection.bundle ? [{ name: selection.bundle.name, skills: selection.stack.map((x) => x.name) }] : [] };
   } else if (autoSource === 'activity' && lastTrackResult) {
     const t = lastTrackResult;
-    active = { source: 'activity', phase: t.phase, confidence: t.confidence, skills: t.skills || [], bundles: (t.bundles || []).map((b) => ({ name: b.name, skills: b.skills })) };
+    active = { source: 'activity', phase: t.phase, confidence: t.confidence, skills: t.skills || [], bundles: (t.bundles || []).map((b) => ({ name: b.name, skills: b.skills, attached: (b as any).attached })) };
+  }
+  if (attachedBundlesMap.size > 0) {
+    const attachedList = Array.from(attachedBundlesMap.values());
+    const allBundleSkills = new Set<string>();
+    const stackSkills: hive.Skill[] = [];
+    for (const b of attachedList) {
+      for (const sname of b.skills) {
+        if (!allBundleSkills.has(sname)) {
+          allBundleSkills.add(sname);
+          stackSkills.push({ name: sname, layer: 'bundle' });
+        }
+      }
+    }
+    if (active) {
+      for (const s of active.skills) {
+        if (!allBundleSkills.has(s.name)) {
+          stackSkills.push(s);
+        }
+      }
+    }
+    active = {
+      source: active?.source || 'task',
+      task: active?.task || attachedList.map((b) => b.name).join(' + '),
+      phase: active?.phase,
+      confidence: active?.confidence,
+      skills: stackSkills,
+      bundles: attachedList.map((b) => ({ name: b.name, skills: b.skills, attached: true } as any))
+    };
   }
   if (!active) return undefined;
   const text = hive.activeSkillsRule(active, root);
@@ -287,6 +316,29 @@ export async function flushActivity(): Promise<hive.TrackResult | undefined> {
       JSON.stringify(events)
     );
     const result = hive.parseTrack(out);
+    if (attachedBundlesMap.size > 0) {
+      if (!result.bundles) result.bundles = [];
+      for (const att of attachedBundlesMap.values()) {
+        const found = result.bundles.find((b) => b.id === att.id);
+        if (found) {
+          (found as any).attached = true;
+        } else {
+          result.bundles.unshift({
+            id: att.id,
+            name: att.name,
+            goal: att.goal || '',
+            purpose: att.purpose || 'build',
+            skills: att.skills,
+            covered: att.skills,
+            missing: [],
+            score: 1.0,
+            tokens: att.tokens || att.skills.length * 250,
+            why: 'Attached by user',
+            ...({ attached: true } as any)
+          });
+        }
+      }
+    }
     lastTrackResult = result;
     studioProvider?.updateTrackResult(result);
     if (result.phase) {
@@ -558,76 +610,117 @@ async function applyBundleWorkflow(bundleId: string) {
   const root = sfpRoot();
   if (!root) return;
   if (!loadedLibrary) await libraryProvider?.loadLibrary();
-  const bundle = loadedLibrary?.bundles.find((b) => b.id === bundleId);
+  let bundle = loadedLibrary?.bundles.find((b) => b.id === bundleId);
+  if (!bundle && lastTrackResult?.bundles) {
+    bundle = lastTrackResult.bundles.find((b) => b.id === bundleId) as any;
+  }
   if (!bundle) return;
   const cfg = config();
   try {
-    const task = `Bundle: ${bundle.name}`;
+    attachedBundlesMap.set(bundle.id, {
+      id: bundle.id,
+      name: bundle.name,
+      skills: bundle.skills,
+      goal: bundle.goal,
+      purpose: bundle.purpose,
+      tokens: bundle.tokens || bundle.skills.length * 250,
+    });
+
     const out = await hive.run(
       hive.pythonCommand(cfg.opts),
-      hive.selectArgs(root, task, project(), cfg.max, { bundle: bundle.id })
+      hive.selectArgs(root, `Bundle: ${bundle.name}`, project(), cfg.max, { bundle: bundle.id })
     );
     const sel = hive.parseSelection(out);
-    sel.task = task;
     (sel as any).bundleName = bundle.name;
     if (!sel.bundle) {
       sel.bundle = { id: bundle.id, name: bundle.name };
     }
+
+    const combinedSkillNames = new Set<string>();
+    const combinedStack: hive.Skill[] = [];
+    for (const b of attachedBundlesMap.values()) {
+      for (const sn of b.skills) {
+        if (!combinedSkillNames.has(sn)) {
+          combinedSkillNames.add(sn);
+          const found = sel.stack.find((x) => x.name === sn);
+          combinedStack.push(found || { name: sn, layer: 'bundle' });
+        }
+      }
+    }
+    sel.stack = combinedStack;
+    sel.task = `Bundles: ${Array.from(attachedBundlesMap.values()).map((b) => b.name).join(' + ')}`;
     selection = sel;
     baselineSelection = sel;
-    currentInclude = sel.stack.map((s) => s.name);
+    currentInclude = Array.from(combinedSkillNames);
     currentExclude = [];
     currentDiff = undefined;
     sessionStats = hive.updateSessionStats(sessionStats, { type: 'decision', chosenCount: sel.stack.length });
     void extContext?.workspaceState?.update('sfpHive.sessionStats', sessionStats);
-    showStatus();
-    writeActiveSkills();
 
-    // Mark as attached in lastTrackResult so Now tab immediately reflects it
     if (lastTrackResult) {
       if (!lastTrackResult.bundles) lastTrackResult.bundles = [];
-      const found = lastTrackResult.bundles.find((b) => b.id === bundle.id);
-      if (found) {
-        (found as any).attached = true;
-      } else {
-        lastTrackResult.bundles.unshift({
-          id: bundle.id,
-          name: bundle.name,
-          goal: bundle.goal || '',
-          purpose: bundle.purpose || 'build',
-          skills: bundle.skills,
-          covered: bundle.skills,
-          missing: [],
-          score: 1.0,
-          tokens: bundle.tokens || bundle.skills.length * 250,
-          why: 'Attached by user',
-          ...({ attached: true } as any)
-        });
+      for (const att of attachedBundlesMap.values()) {
+        const found = lastTrackResult.bundles.find((b) => b.id === att.id);
+        if (found) {
+          (found as any).attached = true;
+        } else {
+          lastTrackResult.bundles.unshift({
+            id: att.id,
+            name: att.name,
+            goal: att.goal || '',
+            purpose: att.purpose || 'build',
+            skills: att.skills,
+            covered: att.skills,
+            missing: [],
+            score: 1.0,
+            tokens: att.tokens || att.skills.length * 250,
+            why: 'Attached by user',
+            ...({ attached: true } as any)
+          });
+        }
       }
       studioProvider?.updateTrackResult(lastTrackResult);
     }
 
+    showStatus();
+    writeActiveSkills();
     studioProvider?.syncState();
     studioProvider?.showTab('now');
     if (cfg.copy) {
       await vscode.env.clipboard.writeText(hive.buildPrompt(sel, root));
     }
-    void vscode.window.showInformationMessage(`Attached bundle "${bundle.name}". Skills are now active for your agent.`);
+    void vscode.window.showInformationMessage(`Attached bundle "${bundle.name}". Total active bundles: ${attachedBundlesMap.size}.`);
   } catch (e) {
     void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
   }
 }
 
 async function detachBundleWorkflow(bundleId: string) {
+  attachedBundlesMap.delete(bundleId);
   if (lastTrackResult?.bundles) {
     const found = lastTrackResult.bundles.find((b) => b.id === bundleId);
     if (found) (found as any).attached = false;
   }
-  if (selection?.bundle?.id === bundleId || selection?.task?.includes(bundleId)) {
+  if (attachedBundlesMap.size === 0) {
     selection = undefined;
     baselineSelection = undefined;
     currentInclude = [];
     currentExclude = [];
+  } else if (selection) {
+    const combinedSkillNames = new Set<string>();
+    const combinedStack: hive.Skill[] = [];
+    for (const b of attachedBundlesMap.values()) {
+      for (const sn of b.skills) {
+        if (!combinedSkillNames.has(sn)) {
+          combinedSkillNames.add(sn);
+          const found = selection.stack.find((x) => x.name === sn);
+          combinedStack.push(found || { name: sn, layer: 'bundle' });
+        }
+      }
+    }
+    selection.stack = combinedStack;
+    selection.task = `Bundles: ${Array.from(attachedBundlesMap.values()).map((b) => b.name).join(' + ')}`;
+    currentInclude = Array.from(combinedSkillNames);
   }
   showStatus();
   writeActiveSkills();
@@ -635,7 +728,11 @@ async function detachBundleWorkflow(bundleId: string) {
     studioProvider?.updateTrackResult(lastTrackResult);
   }
   studioProvider?.syncState();
-  void vscode.window.showInformationMessage('Detached bundle. Reverted to automatic phase skills.');
+  void vscode.window.showInformationMessage(
+    attachedBundlesMap.size > 0
+      ? `Detached bundle. ${attachedBundlesMap.size} bundle(s) still active.`
+      : 'Detached bundle. Reverted to automatic phase skills.'
+  );
 }
 
 async function autoTrainSilently() {
