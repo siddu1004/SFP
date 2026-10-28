@@ -152,6 +152,29 @@ class HiveTest(unittest.TestCase):
             self.assertEqual(res2['phase'], 'ship')
             self.assertEqual(res2['changes'][-1]['from'], 'test')
 
+    def test_implicit_reward_harvesting(self):
+        with tempfile.TemporaryDirectory() as data:
+            env = dict(os.environ, SFP_DATA_DIR=data)
+            env.pop('SFP_NO_USAGE_LOG', None)
+            env.pop('SFP_NO_LEARNING', None)
+            import sfp_track
+            import sfp_learn
+            old_data = os.environ.get('SFP_DATA_DIR')
+            os.environ['SFP_DATA_DIR'] = data
+            try:
+                events = [{'t': 100, 'kind': 'run', 'cmd': 'pytest', 'code': 0}]
+                sfp_track.harvest_implicit_rewards(events, ['python-testing'], ['test', 'view'], {'failing': True})
+                fb = sfp_learn.load_feedback()
+                self.assertEqual(len(fb), 1)
+                self.assertEqual(fb[0]['skill'], 'python-testing')
+                self.assertEqual(fb[0]['verdict'], 'helped')
+                self.assertEqual(fb[0]['reward'], 1.0)
+            finally:
+                if old_data is not None:
+                    os.environ['SFP_DATA_DIR'] = old_data
+                else:
+                    os.environ.pop('SFP_DATA_DIR', None)
+
 
 if __name__ == '__main__':
     unittest.main()

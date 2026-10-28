@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="480" viewBox="0 0 1280 480" role="img" aria-labelledby="t d">
+  <title id="t">SFP Hive Collective Intelligence Pipeline</title>
+  <desc id="d">5 scout signals feed into quorum consensus, LinUCB exploration, and role allocation, producing a lean 266-token stack with autonomous reinforcement learning.</desc>
+  <defs>
+    <linearGradient id="g-teal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0f766e" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="g-amber" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#b45309" stop-opacity="0.05"/>
+    </linearGradient>
+    <linearGradient id="g-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#0369a1" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="1280" height="480" rx="16" fill="#12171f"/>
+  <rect x="0.5" y="0.5" width="1279" height="479" rx="15.5" fill="none" stroke="#2c3643" stroke-width="1"/>
+
+  <!-- Header Section -->
+  <text x="64" y="52" font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="22" font-weight="700" fill="#e6edf3" letter-spacing="-0.02em">Hive Collective Intelligence &amp; Autonomous RL Pipeline</text>
+  <text x="64" y="78" font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="400" fill="#9aa4b0">Sub-3ms consensus over 819 skills delivering targeted context without the 58k token tax</text>
+
+  <!-- COLUMN 1: 5 Scout Signals -->
+  <g transform="translate(64, 110)">
+    <rect width="240" height="310" rx="12" fill="#18202b" stroke="#2c3643" stroke-width="1" filter="url(#shadow)"/>
+    <text x="20" y="32" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#2dd4bf" letter-spacing="0.05em">1. FIVE SCOUT SIGNALS</text>
+    
+    <!-- Signal Cards -->
+    <g transform="translate(16, 48)">
+      <rect width="208" height="42" rx="6" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <circle cx="18" cy="21" r="5" fill="#2dd4bf"/>
+      <text x="32" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Prompt Task Words</text>
+      <text x="160" y="25" font-family="ui-monospace, monospace" font-size="10" fill="#9aa4b0">TF-IDF</text>
+    </g>
+
+    <g transform="translate(16, 98)">
+      <rect width="208" height="42" rx="6" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <circle cx="18" cy="21" r="5" fill="#38bdf8"/>
+      <text x="32" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Project Fingerprint</text>
+      <text x="165" y="25" font-family="ui-monospace, monospace" font-size="10" fill="#9aa4b0">Files</text>
+    </g>
+
+    <g transform="translate(16, 148)">
+      <rect width="208" height="42" rx="6" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <circle cx="18" cy="21" r="5" fill="#a78bfa"/>
+      <text x="32" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Phase (Kalman Smoothed)</text>
+      <text x="172" y="25" font-family="ui-monospace, monospace" font-size="10" fill="#9aa4b0">Dev</text>
+    </g>
+
+    <g transform="translate(16, 198)">
+      <rect width="208" height="42" rx="6" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <circle cx="18" cy="21" r="5" fill="#f59e0b"/>
+      <text x="32" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Domain Category</text>
+      <text x="150" y="25" font-family="ui-monospace, monospace" font-size="10" fill="#9aa4b0">Priority</text>
+    </g>
+
+    <g transform="translate(16, 248)">
+      <rect width="208" height="42" rx="6" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <circle cx="18" cy="21" r="5" fill="#ec4899"/>
+      <text x="32" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="600" fill="#e6edf3">Sequence &amp; Markov</text>
+      <text x="156" y="25" font-family="ui-monospace, monospace" font-size="10" fill="#9aa4b0">History</text>
+    </g>
+  </g>
+
+  <!-- CONNECTOR 1 -> 2 -->
+  <path d="M 304 265 L 348 265" stroke="#2dd4bf" stroke-width="2" stroke-dasharray="4 4"/>
+  <polygon points="348,261 356,265 348,269" fill="#2dd4bf"/>
+
+  <!-- COLUMN 2: Hive Consensus & Overlap Suppression -->
+  <g transform="translate(356, 110)">
+    <rect width="250" height="310" rx="12" fill="#18202b" stroke="#2c3643" stroke-width="1" filter="url(#shadow)"/>
+    <text x="20" y="32" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#38bdf8" letter-spacing="0.05em">2. QUORUM &amp; SUPPRESSION</text>
+
+    <g transform="translate(16, 48)">
+      <rect width="218" height="72" rx="8" fill="url(#g-blue)" stroke="#38bdf8" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#e6edf3">Quorum Agreement</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Skills backed by &gt;= 2 signals</text>
+      <text x="14" y="60" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">or decisive role match advance</text>
+    </g>
+
+    <g transform="translate(16, 132)">
+      <rect width="218" height="72" rx="8" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#e6edf3">Overlap Suppression</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Removes duplicate skills</text>
+      <text x="14" y="60" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">across categories &amp; presets</text>
+    </g>
+
+    <g transform="translate(16, 216)">
+      <rect width="218" height="74" rx="8" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#e6edf3">Capability &amp; Need Check</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Detects external tools needed</text>
+      <text x="14" y="60" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">(3D, browser, memory, pen-test)</text>
+    </g>
+  </g>
+
+  <!-- CONNECTOR 2 -> 3 -->
+  <path d="M 606 265 L 650 265" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 4"/>
+  <polygon points="650,261 658,265 650,269" fill="#38bdf8"/>
+
+  <!-- COLUMN 3: LinUCB Bandit & Role Allocation -->
+  <g transform="translate(658, 110)">
+    <rect width="260" height="310" rx="12" fill="#18202b" stroke="#2c3643" stroke-width="1" filter="url(#shadow)"/>
+    <text x="20" y="32" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#f59e0b" letter-spacing="0.05em">3. REINFORCEMENT LEARNING</text>
+
+    <g transform="translate(16, 48)">
+      <rect width="228" height="82" rx="8" fill="url(#g-amber)" stroke="#f59e0b" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#e6edf3">LinUCB Contextual Bandit</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Explores under-tested skills</text>
+      <text x="14" y="60" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Balances certainty vs discovery</text>
+      <text x="14" y="74" font-family="ui-monospace, monospace" font-size="10" fill="#f59e0b">Upper Confidence Bound</text>
+    </g>
+
+    <g transform="translate(16, 142)">
+      <rect width="228" height="74" rx="8" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#e6edf3">Autonomous Reward Loop</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Harvests implicit outcomes</text>
+      <text x="14" y="60" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Tests pass (+1), git reverts (-1)</text>
+    </g>
+
+    <g transform="translate(16, 228)">
+      <rect width="228" height="62" rx="8" fill="#202a37" stroke="#2c3643" stroke-width="0.75"/>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#e6edf3">Role Ordering</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">plan -> base -> verify -> check</text>
+    </g>
+  </g>
+
+  <!-- CONNECTOR 3 -> 4 -->
+  <path d="M 918 265 L 962 265" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
+  <polygon points="962,261 970,265 962,269" fill="#f59e0b"/>
+
+  <!-- COLUMN 4: Active Output Stack -->
+  <g transform="translate(970, 110)">
+    <rect width="246" height="310" rx="12" fill="#18202b" stroke="#2c3643" stroke-width="1" filter="url(#shadow)"/>
+    <text x="20" y="32" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="700" fill="#2dd4bf" letter-spacing="0.05em">4. LEAN ACTIVE STACK</text>
+
+    <!-- Stack Chips -->
+    <g transform="translate(16, 48)">
+      <rect width="214" height="42" rx="6" fill="url(#g-teal)" stroke="#2dd4bf" stroke-width="1"/>
+      <text x="12" y="25" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#2dd4bf">1. react-testing</text>
+      <text x="160" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#9aa4b0">base</text>
+    </g>
+
+    <g transform="translate(16, 98)">
+      <rect width="214" height="42" rx="6" fill="url(#g-teal)" stroke="#2dd4bf" stroke-width="1"/>
+      <text x="12" y="25" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#2dd4bf">2. e2e-testing</text>
+      <text x="156" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#9aa4b0">check</text>
+    </g>
+
+    <g transform="translate(16, 148)">
+      <rect width="214" height="42" rx="6" fill="url(#g-teal)" stroke="#2dd4bf" stroke-width="1"/>
+      <text x="12" y="25" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#2dd4bf">3. surgical-patch</text>
+      <text x="162" y="25" font-family="ui-sans-serif, system-ui, sans-serif" font-size="10" fill="#9aa4b0">fix</text>
+    </g>
+
+    <g transform="translate(16, 202)">
+      <rect width="214" height="90" rx="8" fill="#141a23" stroke="#2c3643" stroke-width="0.75"/>
+      <text x="12" y="22" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="700" fill="#e6edf3">Injected Automatically Into:</text>
+      <text x="12" y="42" font-family="ui-monospace, monospace" font-size="10" fill="#9aa4b0">- .agents/rules/*.md</text>
+      <text x="12" y="58" font-family="ui-monospace, monospace" font-size="10" fill="#9aa4b0">- Antigravity Hive Studio</text>
+      <text x="12" y="74" font-family="ui-monospace, monospace" font-size="10" fill="#2dd4bf">Total Token Load: ~266 tokens</text>
+    </g>
+  </g>
+
+  <!-- REINFORCEMENT LEARNING RETURN PATH -->
+  <path d="M 1093 420 C 1093 460, 788 460, 788 420" stroke="#f59e0b" stroke-width="2" fill="none" stroke-dasharray="5 5"/>
+  <polygon points="784,422 788,414 792,422" fill="#f59e0b"/>
+  <text x="940" y="456" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" font-weight="600" fill="#f59e0b" text-anchor="middle">Autonomous feedback loop updates LinUCB weights in background</text>
+</svg>

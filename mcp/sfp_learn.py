@@ -150,19 +150,41 @@ def features(skill, words):
     return {'%s|%s' % (w, skill): _rarity(w) for w in (words or ())[:WORDS_PER_DECISION]}
 
 
-class Model:
-    """Regularised logistic regression from (word, skill) pairs to 'this skill helped'. Zero weights mean no opinion."""
+def exploration_factor():
+    try:
+        return max(0.0, float(os.environ.get('SFP_EXPLORE', '0.0')))
+    except ValueError:
+        return 0.0
 
-    def __init__(self, weights=None, examples=0):
+
+class Model:
+    """Regularised logistic regression and contextual bandit policy from (word, skill) pairs
+    to 'this skill helped'. Zero weights mean no opinion."""
+
+    def __init__(self, weights=None, examples=0, precision=None):
         self.w = dict(weights or {})
         self.examples = examples
+        self.precision = dict(precision or {})
         self._by_word = None
 
-    def preference(self, skill, words):
-        """The bounded log-scale change to the skill's quality: 0 for a model that has learned nothing."""
+    def uncertainty(self, skill, words):
+        """Standard deviation of the preference estimate under the contextual bandit model."""
+        feats = features(skill, words)
+        if not feats or not self.examples:
+            return 0.0
+        var = sum((v * v) / self.precision.get(f, REGULARISE) for f, v in feats.items())
+        return math.sqrt(max(0.0, var))
+
+    def preference(self, skill, words, explore=None):
+        """The bounded log-scale change to the skill's quality: 0 for a model that has learned nothing.
+        When explore > 0 (or SFP_EXPLORE > 0), applies an Upper Confidence Bound (LinUCB) exploration bonus."""
         if not self.w:
             return 0.0
         z = sum(self.w.get(f, 0.0) * x for f, x in features(skill, words).items())
+        c = exploration_factor() if explore is None else float(explore)
+        if c > 0.0 and self.examples > 0:
+            sigma = self.uncertainty(skill, words)
+            z += c * min(MAX_PREFERENCE, sigma)
         return max(-MAX_PREFERENCE, min(MAX_PREFERENCE, z))
 
     def recall(self, words):
@@ -196,6 +218,7 @@ def fit(examples):
     for x, _, _ in examples:
         names.update(x)
     w = {f: 0.0 for f in names}
+    final_hess = {f: 0.0 for f in names}
     for _ in range(FIT_ITERATIONS):
         grad = {f: 0.0 for f in names}
         hess = {f: 0.0 for f in names}
@@ -204,6 +227,7 @@ def fit(examples):
             for f, v in x.items():
                 grad[f] += weight * (p - y) * v
                 hess[f] += weight * 0.25 * v * v
+        final_hess = hess
         biggest = 0.0
         for f in names:
             step = 0.6 * (grad[f] + REGULARISE * w[f]) / (hess[f] + REGULARISE)
@@ -211,7 +235,8 @@ def fit(examples):
             biggest = max(biggest, abs(step))
         if biggest < 1e-5:
             break
-    return Model({f: round(v, 6) for f, v in w.items() if abs(v) > 1e-6}, len(examples))
+    precision = {f: round(final_hess[f] + REGULARISE, 4) for f in names}
+    return Model({f: round(v, 6) for f, v in w.items() if abs(v) > 1e-6}, len(examples), precision)
 
 
 def build_examples(decisions, feedback, now=None):
@@ -294,12 +319,12 @@ def keep_words():
     return os.environ.get('SFP_LEARN_WORDS', '1') not in ('0', 'false', 'no')
 
 
-def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, learn=True, include=(), exclude=(), explain=False):
+def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, learn=True, include=(), exclude=(), explain=False, explore=None):
     """Select skills, apply what has been learned, and log the decision so feedback can refer to it."""
     use = learn and enabled()
     res = sel.select(task, project, goal, after, budget, max_skills,
                      history=load_history(), model=load_model() if use else None, want_signals=True,
-                     include=include, exclude=exclude, explain=explain)
+                     include=include, exclude=exclude, explain=explain, explore=explore)
     record = res.pop('_record')
     res['learning'] = {'enabled': use, 'examples': load_model().examples if use else 0, 'words_kept': keep_words()}
     res['decision'] = None
@@ -382,6 +407,26 @@ def give_feedback(decision=None, helped=(), unhelpful=(), ignored=(), missing=()
         out['note'] = ('No task words are stored for this decision, so this feedback cannot teach the hive which words '
                        'go with which skills. Pass the task text, or leave SFP_LEARN_WORDS on.')
     return out
+
+
+def record_reward(skill, reward, decision=None, task=None, source='rl'):
+    """Record an environmental scalar reward R in [-1.0, 1.0] from execution outcomes (tests, errors).
+    Rewards are mapped to the feedback log with decayed importance."""
+    if not enabled():
+        return None
+    skill_name = core.resolve_name(skill)
+    if not skill_name:
+        return None
+    r_val = float(reward)
+    verdict = 'helped' if r_val >= 0.3 else ('unhelpful' if r_val <= -0.3 else 'ignored')
+    now = int(time.time())
+    decision_id = decision or last_decision_id()
+    row = {'t': now, 'decision': decision_id, 'skill': skill_name, 'verdict': verdict,
+           'reward': round(r_val, 3), 'source': source}
+    if task and keep_words():
+        row['words'] = v1.task_words(task)[:WORDS_PER_DECISION]
+    _append('feedback.jsonl', row)
+    return row
 
 
 def forget():

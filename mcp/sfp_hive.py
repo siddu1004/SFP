@@ -407,7 +407,7 @@ def scan(project):
 
 
 def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, history=None, scan_result=None,
-           model=None, want_signals=False, include=(), exclude=(), explain=False, phase_hint=None):
+           model=None, want_signals=False, include=(), exclude=(), explain=False, phase_hint=None, explore=None):
     """Decide which skills to use for a task, and in what order.
 
     `model` is a learned preference model (sfp_learn.Model); without one, or with one that has seen
@@ -416,6 +416,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     whatever their score. `explain` adds the top candidates, their signal votes and why each was or was not taken.
     `phase_hint` is the phase of work observed from activity (sfp_track): {phase: share}. It is blended with
     what the task's words say, half and half, or used alone when the words say nothing about the phase.
+    `explore` controls the Upper Confidence Bound exploration factor under the contextual bandit policy.
     """
     t0 = time.time()
     after = [n for n in (core.resolve_name(a) for a in (after or [])) if n]
@@ -446,7 +447,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     learned = {}
     quality = {}
     for n, v in votes.items():
-        z = model.preference(n, words) if model is not None else 0.0
+        z = model.preference(n, words, explore=explore) if model is not None else 0.0
         if z:
             learned[n] = z
         if has_agreement(v) or (z >= RESCUE and v['words'] and v['relation'] != 'mismatch'):

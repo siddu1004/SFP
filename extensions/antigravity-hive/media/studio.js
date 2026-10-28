@@ -383,13 +383,21 @@
       case 'notThisBundle': {
         const skillsRaw = target.getAttribute('data-bundle-skills');
         const skills = skillsRaw ? skillsRaw.split(',').filter(Boolean) : [];
-        vscode.postMessage({ command: 'notThisBundle', skills });
+        const sendFeedback = document.getElementById('choose-feedback-checkbox')?.checked ?? true;
+        vscode.postMessage({ command: 'notThisBundle', skills, sendFeedback });
         break;
       }
       case 'attachBundle': {
         const bundleId = target.getAttribute('data-bundle-id');
         if (bundleId) {
           vscode.postMessage({ command: 'attachBundle', bundleId });
+        }
+        break;
+      }
+      case 'detachBundle': {
+        const bundleId = target.getAttribute('data-bundle-id');
+        if (bundleId) {
+          vscode.postMessage({ command: 'detachBundle', bundleId });
         }
         break;
       }
@@ -771,20 +779,48 @@
         const chipsHtml = skills
           .map((name, i) => `<span class="bundle-chip"><span class="bundle-chip-num">${i + 1}</span> ${escapeHtml(name)}</span>`)
           .join('');
+        const scoreHtml = typeof pushedBundle.score === 'number'
+          ? `<span class="bundle-score-tag">${Math.round(pushedBundle.score * 100)}% match</span>`
+          : '';
+        const whyWords = pushedBundle.hits && pushedBundle.hits.length
+          ? pushedBundle.hits
+          : (pushedBundle.why && pushedBundle.why.startsWith('matches ') ? pushedBundle.why.replace(/^matches\s+/, '').split(/,\s*/) : []);
+        const whyChips = whyWords.length
+          ? `<div class="bundle-banner-why"><span class="bundle-why-label">Prompt keywords:</span>${whyWords.map((w) => `<span class="bundle-why-chip">${escapeHtml(w)}</span>`).join('')}</div>`
+          : (pushedBundle.why ? `<div class="bundle-banner-why"><span class="bundle-why-label">${escapeHtml(pushedBundle.why)}</span></div>` : '');
+
         bundleBanner.innerHTML = `
           <div class="bundle-banner-header">
-            <span class="badge badge-mine">Bundle: ${escapeHtml(pushedBundle.name)}</span>
+            <div class="bundle-title-group">
+              <span class="badge badge-mine">Bundle: ${escapeHtml(pushedBundle.name)}</span>
+              ${scoreHtml}
+            </div>
             <button class="btn btn-secondary btn-small" data-action="notThisBundle" data-bundle-skills="${escapeHtml(skills.join(','))}">Not this bundle</button>
           </div>
+          ${whyChips}
           <div class="bundle-chips-row">${chipsHtml}</div>
         `;
       } else if (suggestedBundle) {
         bundleBanner.classList.remove('hidden');
+        const scoreHtml = typeof suggestedBundle.score === 'number'
+          ? `<span class="bundle-score-tag">${Math.round(suggestedBundle.score * 100)}% match</span>`
+          : '';
+        const whyWords = suggestedBundle.hits && suggestedBundle.hits.length
+          ? suggestedBundle.hits
+          : (suggestedBundle.why && suggestedBundle.why.startsWith('matches ') ? suggestedBundle.why.replace(/^matches\s+/, '').split(/,\s*/) : []);
+        const whyChips = whyWords.length
+          ? `<div class="bundle-banner-why"><span class="bundle-why-label">Prompt keywords:</span>${whyWords.map((w) => `<span class="bundle-why-chip">${escapeHtml(w)}</span>`).join('')}</div>`
+          : (suggestedBundle.why ? `<div class="bundle-banner-why"><span class="bundle-why-label">${escapeHtml(suggestedBundle.why)}</span></div>` : '');
+
         bundleBanner.innerHTML = `
           <div class="bundle-banner-header">
-            <span>Looks like <strong>${escapeHtml(suggestedBundle.name)}</strong></span>
+            <div class="bundle-title-group">
+              <span>Looks like <strong>${escapeHtml(suggestedBundle.name)}</strong></span>
+              ${scoreHtml}
+            </div>
             <button class="btn btn-secondary btn-small" data-action="attachBundle" data-bundle-id="${escapeHtml(suggestedBundle.id)}">Attach whole bundle</button>
           </div>
+          ${whyChips}
         `;
       } else {
         const bundleName = sel?.bundleName || (sel?.task?.startsWith('Bundle: ') ? sel.task.slice(8) : null);
@@ -1050,21 +1086,29 @@
       bundlesSection.classList.toggle('hidden', loaded.length === 0);
       if (bundlesCount) bundlesCount.textContent = loaded.length ? String(loaded.length) : '';
       bundlesList.innerHTML = loaded.map((b) => {
+        const isAttached = !!b.attached || (state.selection && state.selection.bundle && (state.selection.bundle.id === b.id || state.selection.bundle.name === b.name));
         const chips = b.skills.map((n, i) => {
-          const have = b.covered.includes(n);
+          const have = b.covered.includes(n) || isAttached;
           return `<span class="bundle-chip ${have ? 'bundle-chip-chosen' : ''}" title="${have ? 'Chosen for this phase' : 'Loaded with the bundle'}"><span class="bundle-chip-num">${i + 1}</span>${escapeHtml(n)}</span>`;
         }).join('');
         return `
-          <div class="skill-card">
+          <div class="skill-card ${isAttached ? 'card-attached' : ''}">
             <div class="card-header">
               <span class="card-title">${escapeHtml(b.name)}</span>
-              <span class="studio-badge">${escapeHtml(String(b.skills.length))} skills</span>
+              <div>
+                ${isAttached ? '<span class="studio-badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.4); margin-right: 4px;">✓ In Use</span>' : ''}
+                <span class="studio-badge">${escapeHtml(String(b.skills.length))} skills</span>
+              </div>
             </div>
             <div class="card-meta"><span>${escapeHtml(b.goal)}</span></div>
+            ${b.why ? `<div class="bundle-banner-why" style="margin-bottom: 4px;"><span class="bundle-why-label">${escapeHtml(b.why)}</span></div>` : ''}
             <div class="bundle-chips-row">${chips}</div>
             <div class="card-meta"><span>About ${escapeHtml(String(b.tokens))} tokens</span></div>
             <div class="skill-actions">
-              <button class="btn btn-secondary" data-action="attachBundle" data-bundle-id="${escapeHtml(b.id)}">Attach whole bundle</button>
+              ${isAttached
+                ? `<button class="btn btn-secondary" data-action="detachBundle" data-bundle-id="${escapeHtml(b.id)}">Detach bundle</button>`
+                : `<button class="btn btn-secondary" data-action="attachBundle" data-bundle-id="${escapeHtml(b.id)}">Attach whole bundle</button>`
+              }
             </div>
           </div>`;
       }).join('');

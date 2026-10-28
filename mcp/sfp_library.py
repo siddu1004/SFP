@@ -370,7 +370,8 @@ def match_bundles(task, chosen=(), limit=2, exclude=(), tech=None):
             continue
         out.append({'id': b['id'], 'name': b['name'], 'score': round(score, 2), 'push': score >= PUSH_MIN,
                     'skills': b['skills'], 'missing': [n for n in b['skills'] if n not in chosen],
-                    'why': 'matches ' + ', '.join(hit[:4]) if hit else 'the hive already chose %d of its skills' % int(have * len(b['skills']))})
+                    'why': 'matches ' + ', '.join(hit[:4]) if hit else 'the hive already chose %d of its skills' % int(have * len(b['skills'])),
+                    'hits': hit[:6]})
     out.sort(key=lambda m: -m['score'])
     return out[:limit]
 
@@ -378,10 +379,10 @@ def match_bundles(task, chosen=(), limit=2, exclude=(), tech=None):
 PHASE_MIN = 0.3     # below this the overlap is a coincidence, not a fit
 
 
-def phase_bundles(phase, chosen=(), limit=2, exclude=()):
+def phase_bundles(phase, chosen=(), limit=6, exclude=()):
     """The bundles to have loaded for the current phase of work, best first: [{id, name, goal, purpose, skills, covered,
-    missing, score}]. A bundle qualifies when the hive's own choice for the phase already holds some of its skills; one whose
-    purpose is the phase's purpose ranks higher."""
+    missing, score}]. A bundle qualifies when the hive's own choice for the phase already holds some of its skills, when it
+    is a user-created bundle, or when its purpose matches the current phase."""
     purpose = rules().get('phase_purpose', {}).get(phase)
     chosen = set(chosen)
     skip = set(exclude)
@@ -390,13 +391,24 @@ def phase_bundles(phase, chosen=(), limit=2, exclude=()):
         if not b['skills'] or b['id'] in skip:
             continue
         covered = [n for n in b['skills'] if n in chosen]
-        if not covered:
+        is_mine = b.get('mine', False)
+        # User bundles always qualify; otherwise need covered skills or purpose match
+        if not covered and not is_mine and not (purpose and b.get('purpose') == purpose):
             continue
-        score = 0.55 * len(covered) / len(b['skills']) + (0.45 if purpose and b['purpose'] == purpose else 0.0)
-        if score < PHASE_MIN:
+        base_cov = len(covered) / len(b['skills']) if b['skills'] else 0.0
+        score = 0.55 * base_cov + (0.45 if purpose and b.get('purpose') == purpose else 0.0)
+        if is_mine:
+            score = max(score, 0.75)  # user bundles prioritize in the Now panel
+        if score < PHASE_MIN and not is_mine:
             continue
-        out.append({'id': b['id'], 'name': b['name'], 'goal': b['goal'], 'purpose': b['purpose'], 'skills': b['skills'],
-                    'covered': covered, 'missing': [n for n in b['skills'] if n not in chosen], 'score': round(score, 2),
-                    'tokens': b['tokens']})
+        if is_mine:
+            why = 'your custom bundle' + (' (fits %s phase)' % phase if purpose and b.get('purpose') == purpose else '')
+        elif purpose and b.get('purpose') == purpose:
+            why = 'fits %s phase (purpose: %s)' % (phase, purpose)
+        else:
+            why = 'fits %s phase' % phase
+        out.append({'id': b['id'], 'name': b['name'], 'goal': b.get('goal', ''), 'purpose': b.get('purpose', 'build'),
+                    'skills': b['skills'], 'covered': covered, 'missing': [n for n in b['skills'] if n not in chosen],
+                    'score': round(score, 2), 'tokens': b.get('tokens', 0), 'why': why, 'mine': is_mine})
     out.sort(key=lambda m: -m['score'])
     return out[:limit]

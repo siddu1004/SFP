@@ -1058,6 +1058,43 @@ input:checked + .toggle-slider:before {
   align-items: center;
   gap: 6px;
 }
+.bundle-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.bundle-score-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--vscode-badge-background, rgba(55, 148, 255, 0.25));
+  color: var(--vscode-badge-foreground, var(--vscode-foreground));
+  border: 1px solid var(--vscode-widget-border, transparent);
+}
+.bundle-banner-why {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+  font-size: var(--font-xs);
+  color: var(--vscode-descriptionForeground);
+}
+.bundle-why-label {
+  font-size: 11px;
+  opacity: 0.85;
+}
+.bundle-why-chip {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(127, 127, 127, 0.18);
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 10px;
+}
 .bundle-chips-row {
   display: flex;
   flex-wrap: wrap;

@@ -387,6 +387,7 @@ async function sendFeedback(verdict: hive.Verdict, names: string[]) {
     sessionStats = hive.updateSessionStats(sessionStats, { type: 'feedback', verdict: verdict === 'helped' ? 'helped' : 'unhelpful' });
     void extContext?.workspaceState?.update('sfpHive.sessionStats', sessionStats);
     studioProvider?.syncState();
+    void autoTrainSilently();
     void vscode.window.setStatusBarMessage(`SFP Hive: noted ${verdict}: ${names.join(', ')}`, 4000);
   } catch (e) {
     void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
@@ -569,6 +570,9 @@ async function applyBundleWorkflow(bundleId: string) {
     const sel = hive.parseSelection(out);
     sel.task = task;
     (sel as any).bundleName = bundle.name;
+    if (!sel.bundle) {
+      sel.bundle = { id: bundle.id, name: bundle.name };
+    }
     selection = sel;
     baselineSelection = sel;
     currentInclude = sel.stack.map((s) => s.name);
@@ -577,14 +581,71 @@ async function applyBundleWorkflow(bundleId: string) {
     sessionStats = hive.updateSessionStats(sessionStats, { type: 'decision', chosenCount: sel.stack.length });
     void extContext?.workspaceState?.update('sfpHive.sessionStats', sessionStats);
     showStatus();
+    writeActiveSkills();
+
+    // Mark as attached in lastTrackResult so Now tab immediately reflects it
+    if (lastTrackResult) {
+      if (!lastTrackResult.bundles) lastTrackResult.bundles = [];
+      const found = lastTrackResult.bundles.find((b) => b.id === bundle.id);
+      if (found) {
+        (found as any).attached = true;
+      } else {
+        lastTrackResult.bundles.unshift({
+          id: bundle.id,
+          name: bundle.name,
+          goal: bundle.goal || '',
+          purpose: bundle.purpose || 'build',
+          skills: bundle.skills,
+          covered: bundle.skills,
+          missing: [],
+          score: 1.0,
+          tokens: bundle.tokens || bundle.skills.length * 250,
+          why: 'Attached by user',
+          ...({ attached: true } as any)
+        });
+      }
+      studioProvider?.updateTrackResult(lastTrackResult);
+    }
+
     studioProvider?.syncState();
-    studioProvider?.showTab('choose');
+    studioProvider?.showTab('now');
     if (cfg.copy) {
       await vscode.env.clipboard.writeText(hive.buildPrompt(sel, root));
     }
-    void vscode.window.showInformationMessage(`Applied bundle "${bundle.name}". Skills pinned in Choose.`);
+    void vscode.window.showInformationMessage(`Attached bundle "${bundle.name}". Skills are now active for your agent.`);
   } catch (e) {
     void vscode.window.showErrorMessage(`SFP Hive: ${(e as Error).message}`);
+  }
+}
+
+async function detachBundleWorkflow(bundleId: string) {
+  if (lastTrackResult?.bundles) {
+    const found = lastTrackResult.bundles.find((b) => b.id === bundleId);
+    if (found) (found as any).attached = false;
+  }
+  if (selection?.bundle?.id === bundleId || selection?.task?.includes(bundleId)) {
+    selection = undefined;
+    baselineSelection = undefined;
+    currentInclude = [];
+    currentExclude = [];
+  }
+  showStatus();
+  writeActiveSkills();
+  if (lastTrackResult) {
+    studioProvider?.updateTrackResult(lastTrackResult);
+  }
+  studioProvider?.syncState();
+  void vscode.window.showInformationMessage('Detached bundle. Reverted to automatic phase skills.');
+}
+
+async function autoTrainSilently() {
+  const root = sfpRoot();
+  if (!root) return;
+  try {
+    await hive.run(hive.pythonCommand(config().opts), [path.join(root, 'mcp', 'sfp_hive.py'), 'train', '--json']);
+    studioProvider?.syncState();
+  } catch {
+    // silent autonomous background training
   }
 }
 
@@ -1123,12 +1184,20 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
             if (this.liveSession) {
               this.liveSession.steer('', { remove: message.skills });
             }
+            if (message.sendFeedback && selection?.decision) {
+              await sendFeedback('unhelpful', message.skills);
+            }
             await choose(selection?.task, { include: currentInclude, exclude: currentExclude, explain: true });
           }
           break;
         case 'attachBundle':
           if (message.bundleId) {
             await applyBundleWorkflow(message.bundleId);
+          }
+          break;
+        case 'detachBundle':
+          if (message.bundleId) {
+            await detachBundleWorkflow(message.bundleId);
           }
           break;
         case 'fillExample':
@@ -1590,7 +1659,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     <div class="section">
       <div class="section-title">
         <span>Learning &amp; Usage</span>
-        <button class="btn btn-secondary" data-action="train" aria-label="Train model">Train</button>
+        <span class="studio-badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">Autonomous Active</span>
       </div>
       <div class="state-box hidden" id="insights-loading-state">
         <svg class="spin-icon" viewBox="0 0 16 16"><path fill="currentColor" d="M8 1.5a6.5 6.5 0 1 0 6.5 6.5h-1.5A5 5 0 1 1 8 3v-1.5z"/></svg>
@@ -2772,6 +2841,7 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   void runDoctor(false);
+  void autoTrainSilently();
   if ('onDidChangeConfiguration' in vscode.workspace && typeof (vscode.workspace as any).onDidChangeConfiguration === 'function') {
     context.subscriptions.push(
       (vscode.workspace as any).onDidChangeConfiguration((e: any) => {

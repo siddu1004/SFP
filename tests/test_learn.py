@@ -395,6 +395,25 @@ class CommandLineTest(IsolatedData):
         done = self.run_cli('forget')
         self.assertIn('feedback.jsonl', done.stdout)
 
+    def test_linucb_exploration(self):
+        m = learn.fit([(learn.features('django-tdd', ['test', 'view']), 1, 1.0)])
+        self.assertGreater(m.examples, 0)
+        u = m.uncertainty('django-tdd', ['test', 'view'])
+        self.assertGreater(u, 0.0)
+        base_p = m.preference('django-tdd', ['test', 'view'], explore=0.0)
+        explore_p = m.preference('django-tdd', ['test', 'view'], explore=0.5)
+        self.assertGreaterEqual(explore_p, base_p)
+
+    def test_record_reward(self):
+        row = learn.record_reward('django-tdd', 0.8, task='write tests', source='test_passed')
+        self.assertIsNotNone(row)
+        self.assertEqual(row['verdict'], 'helped')
+        self.assertEqual(row['reward'], 0.8)
+        self.assertEqual(row['source'], 'test_passed')
+        row_neg = learn.record_reward('django-celery', -0.5, task='write tests', source='test_failed')
+        self.assertEqual(row_neg['verdict'], 'unhelpful')
+
 
 if __name__ == '__main__':
     unittest.main()
+

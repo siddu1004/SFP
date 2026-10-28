@@ -138,7 +138,7 @@ def plan_bundles(task, project=None, exclude=(), include=(), terms=None, preview
 
 
 def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, include=(), exclude=(), explain=False,
-           check=False, learn=True, bundles='push'):
+           check=False, learn=True, bundles='push', explore=None):
     """sfp_learn.decide plus needs and bundles. Provider skills of every need join the stack, the rest are preloaded.
     `bundles`: 'push' attaches a bundle that fits the task well, whole and in order; 'suggest' only lists and preloads
     it; 'off' does neither."""
@@ -155,7 +155,7 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         if bundles == 'push' and top and top['push'] and max_skills >= 3:
             inc = list(dict.fromkeys(inc + [n for n in top['skills'] if n not in set(exclude)]))
     res = sfp_learn.decide(task, project, goal, after, budget, max(max_skills, len(inc)), learn=learn, include=inc,
-                           exclude=exclude, explain=explain)
+                           exclude=exclude, explain=explain, explore=explore)
     chosen = {c['name'] for c in res['stack']}
     res['needs'] = found
     res['preload'] = [{'name': p, 'why': 'next step of "%s"' % n['name']} for n in found for p in n['preload']

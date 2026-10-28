@@ -292,6 +292,30 @@ def summary(f, chain, current, changes, words):
     }
 
 
+def harvest_implicit_rewards(events, active_skills, words, ctx):
+    """Harvest implicit reinforcement learning rewards from editor events (tests, commits, errors)."""
+    if not active_skills or os.environ.get('SFP_IMPLICIT_REWARD', '1') in ('0', 'false', 'no'):
+        return
+    import sfp_learn
+    for e in events:
+        kind = e.get('kind')
+        if kind == 'run':
+            cmd = e.get('cmd') or ''
+            code = int(e.get('code') if e.get('code') is not None else 0)
+            is_test = any(r.search(cmd) for r, ev in COMMAND_RULES if 'test' in ev)
+            if is_test:
+                if code == 0:
+                    reward = 1.0 if ctx.get('failing') else 0.6
+                    for s in active_skills:
+                        sfp_learn.record_reward(s, reward, task=' '.join(words), source='test_passed')
+                elif code != 0:
+                    for s in active_skills:
+                        sfp_learn.record_reward(s, -0.6, task=' '.join(words), source='test_failed')
+        elif kind == 'git' and 'commit' in (e.get('cmd') or ''):
+            for s in active_skills:
+                sfp_learn.record_reward(s, 0.5, task=' '.join(words), source='git_commit')
+
+
 def track(events, select=True, max_skills=4, project=None, persist=True, now=None):
     """Update the saved tracking state with new events. With `select`, also choose skills for the current
     phase and for the predicted next one, using the hive with the tracked phases as its demand."""
@@ -299,6 +323,8 @@ def track(events, select=True, max_skills=4, project=None, persist=True, now=Non
     chain = PhaseChain(_load('phases.json', {}) if persist else {})
     new, f, chain, changes = run(events, state, chain, now=now)
     out = summary(f, chain, new['current'], changes, new['words'])
+    if persist and events:
+        harvest_implicit_rewards(events, state.get('active_skills', []), new['words'], new['ctx'])
     if select and new['current']:
         import sfp_hive
         task = ' '.join(out['words']) or new['current']
@@ -310,6 +336,7 @@ def track(events, select=True, max_skills=4, project=None, persist=True, now=Non
             nxt = out['next'][0]['phase']
             out['upcoming'] = {'phase': nxt, 'skills': [c['name'] for c in sfp_hive.select(
                 task, project, max_skills=2, phase_hint={nxt: 1.0})['stack']]}
+        new['active_skills'] = [c['name'] for c in out['skills']]
     if persist:
         _save('track_state.json', new)
         _save('phases.json', chain.to_json())

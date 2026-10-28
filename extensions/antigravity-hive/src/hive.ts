@@ -52,7 +52,7 @@ export interface Selection {
 /** A bundle that fits the task: pushed (attached whole, in order) when push is true, otherwise only suggested. */
 export interface BundleMatch {
   id: string; name: string; score: number; push: boolean; applied?: boolean;
-  skills: string[]; missing: string[]; why: string;
+  skills: string[]; missing: string[]; why: string; hits?: string[];
 }
 
 /** Something the task needs that the model cannot do alone, from `sfp_hive.py needs`. */
@@ -316,7 +316,7 @@ export interface TrackResult {
 /** A bundle loaded for the current phase: `covered` are the skills the hive chose, `missing` the rest of the bundle. */
 export interface LoadedBundle {
   id: string; name: string; goal: string; purpose: string; skills: string[];
-  covered: string[]; missing: string[]; score: number; tokens: number;
+  covered: string[]; missing: string[]; score: number; tokens: number; why?: string;
 }
 
 export function trackArgs(root: string, project: string | undefined, max: number, select = true, reset = false): string[] {
@@ -794,8 +794,8 @@ export function parseDoctor(json: string): DoctorResult {
  * When a bundle is only suggested: shows "Looks like <name>" with "Attach whole bundle".
  */
 export function renderBundleBanner(
-  bundle?: { id: string; name: string; skills?: string[] },
-  suggested?: BundleMatch
+  bundle?: { id: string; name: string; skills?: string[]; why?: string; hits?: string[]; score?: number } | null,
+  suggested?: BundleMatch | null
 ): string {
   if (bundle) {
     const name = escapeHtml(bundle.name);
@@ -807,22 +807,50 @@ export function renderBundleBanner(
           .join('')}</div>`
       : '';
     const skillsAttr = escapeHtml(skills.join(','));
+    const scoreHtml = typeof bundle.score === 'number'
+      ? `<span class="bundle-score-tag">${Math.round(bundle.score * 100)}% match</span>`
+      : '';
+    const whyWords = bundle.hits && bundle.hits.length
+      ? bundle.hits
+      : (bundle.why && bundle.why.startsWith('matches ') ? bundle.why.replace(/^matches\s+/, '').split(/,\s*/) : []);
+    const whyChips = whyWords.length
+      ? `<div class="bundle-banner-why"><span class="bundle-why-label">Prompt keywords:</span>${whyWords.map((w) => `<span class="bundle-why-chip">${escapeHtml(w)}</span>`).join('')}</div>`
+      : (bundle.why ? `<div class="bundle-banner-why"><span class="bundle-why-label">${escapeHtml(bundle.why)}</span></div>` : '');
+
     return `<div class="choose-bundle-banner pushed" data-bundle-id="${id}">
   <div class="bundle-banner-header">
-    <span class="bundle-banner-title">Bundle: <strong>${name}</strong></span>
+    <div class="bundle-title-group">
+      <span class="bundle-banner-title">Bundle: <strong>${name}</strong></span>
+      ${scoreHtml}
+    </div>
     <button class="btn btn-secondary btn-small" data-action="notThisBundle" data-bundle-skills="${skillsAttr}">Not this bundle</button>
   </div>
+  ${whyChips}
   ${chipsHtml}
 </div>`.trim();
   }
   if (suggested && !suggested.push) {
     const name = escapeHtml(suggested.name);
     const id = escapeHtml(suggested.id);
+    const scoreHtml = typeof suggested.score === 'number'
+      ? `<span class="bundle-score-tag">${Math.round(suggested.score * 100)}% match</span>`
+      : '';
+    const whyWords = suggested.hits && suggested.hits.length
+      ? suggested.hits
+      : (suggested.why && suggested.why.startsWith('matches ') ? suggested.why.replace(/^matches\s+/, '').split(/,\s*/) : []);
+    const whyChips = whyWords.length
+      ? `<div class="bundle-banner-why"><span class="bundle-why-label">Prompt keywords:</span>${whyWords.map((w) => `<span class="bundle-why-chip">${escapeHtml(w)}</span>`).join('')}</div>`
+      : (suggested.why ? `<div class="bundle-banner-why"><span class="bundle-why-label">${escapeHtml(suggested.why)}</span></div>` : '');
+
     return `<div class="choose-bundle-banner suggested" data-bundle-id="${id}">
   <div class="bundle-banner-header">
-    <span class="bundle-banner-title">Looks like <strong>${name}</strong></span>
+    <div class="bundle-title-group">
+      <span class="bundle-banner-title">Looks like <strong>${name}</strong></span>
+      ${scoreHtml}
+    </div>
     <button class="btn btn-primary btn-small" data-action="attachBundle" data-bundle-id="${id}">Attach whole bundle</button>
   </div>
+  ${whyChips}
 </div>`.trim();
   }
   return '';
@@ -979,6 +1007,7 @@ export function activeSkillsRule(input: ActiveSkills, root: string, now: Date = 
     return lines.join('\n');
   }
   lines.push('Before you start, read the SKILL.md file of each skill below and follow it. Use them in this order.', '');
+  lines.push('State which active SFP skills you are applying in your initial response so the user can verify they are in effect.', '');
   const listed = new Set<string>();
   a.skills.forEach((s, i) => {
     listed.add(s.name);

@@ -9,10 +9,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Build (${{ matrix.target }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
@@ -29,7 +33,7 @@ jobs:
             target: aarch64-apple-darwin
             artifact_name: sfp-darwin-arm64
             binary_path: target/aarch64-apple-darwin/release/sfp
-          - os: macos-13
+          - os: macos-latest
             target: x86_64-apple-darwin
             artifact_name: sfp-darwin-amd64
             binary_path: target/x86_64-apple-darwin/release/sfp
