@@ -392,8 +392,8 @@ def phase_bundles(phase, chosen=(), limit=6, exclude=()):
             continue
         covered = [n for n in b['skills'] if n in chosen]
         is_mine = b.get('mine', False)
-        # User bundles always qualify; otherwise need covered skills or purpose match
-        if not covered and not is_mine and not (purpose and b.get('purpose') == purpose):
+        # User bundles always qualify; built-in bundles require at least one covered skill
+        if not covered and not is_mine:
             continue
         base_cov = len(covered) / len(b['skills']) if b['skills'] else 0.0
         score = 0.55 * base_cov + (0.45 if purpose and b.get('purpose') == purpose else 0.0)

@@ -38,7 +38,7 @@ import threading
 
 SERVER_NAME = 'sfp'
 SERVER_VERSION = '3.17.7'
-SUPPORTED_PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05']
+SUPPORTED_PROTOCOLS = ['2025-06-18', '2025-11-25', '2025-03-26', '2024-11-05', '2024-10-07']
 MAX_FILE_BYTES = 400000
 MAX_LISTED_FILES = 200
 MAX_RESULTS = 50
@@ -46,10 +46,12 @@ MAX_RESULTS = 50
 
 def find_root():
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    candidates = [os.environ.get('SFP_ROOT'), here]
-    pointer = os.path.join(os.path.expanduser('~'), '.sfp', 'root')
+    home = os.path.expanduser('~')
+    candidates = [os.environ.get('SFP_ROOT'), os.environ.get('SFP_DIR'), here]
+    pointer = os.path.join(home, '.sfp', 'root')
     if os.path.isfile(pointer):
         candidates.append(open(pointer, encoding='utf-8').read().strip())
+    candidates.append(os.path.join(home, '.sfp', 'SFP'))
     for c in candidates:
         if c and os.path.isfile(os.path.join(c, 'catalog.json')):
             return os.path.abspath(c)
@@ -654,27 +656,54 @@ def handle(msg):
         return err(rid, -32603, 'internal error')
 
 
+def _write_reply(payload, framed):
+    body = json.dumps(payload, ensure_ascii=False)
+    if framed:
+        encoded = body.encode('utf-8')
+        sys.stdout.write('Content-Length: %d\r\n\r\n%s' % (len(encoded), body))
+    else:
+        sys.stdout.write(body + '\n')
+    sys.stdout.flush()
+
+
 def main():
     if hasattr(sys.stdin, 'reconfigure'):
         sys.stdin.reconfigure(encoding='utf-8')
         sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
     log('ready: %d skills from %s' % (len(SKILLS), ROOT))
     # Load the hive while the client is still starting up, so the first select_skills is as fast as the rest.
     threading.Thread(target=_warm_up, daemon=True).start()
-    for line in sys.stdin:
-        line = line.strip()
+    while True:
+        line = sys.stdin.readline()
         if not line:
+            break
+        stripped = line.strip()
+        if not stripped:
             continue
+        framed = False
+        if stripped.lower().startswith('content-length:'):
+            framed = True
+            try:
+                length = int(stripped.split(':', 1)[1].strip())
+            except ValueError:
+                _write_reply(err(None, -32700, 'parse error'), framed)
+                continue
+            while True:
+                hline = sys.stdin.readline()
+                if not hline or not hline.strip():
+                    break
+            raw = sys.stdin.read(length)
+        else:
+            raw = stripped
         try:
-            msg = json.loads(line)
+            msg = json.loads(raw)
         except ValueError:
-            sys.stdout.write(json.dumps(err(None, -32700, 'parse error')) + '\n')
-            sys.stdout.flush()
+            _write_reply(err(None, -32700, 'parse error'), framed)
             continue
         reply = handle(msg) if isinstance(msg, dict) else err(None, -32600, 'batch requests are not supported')
         if reply is not None:
-            sys.stdout.write(json.dumps(reply, ensure_ascii=False) + '\n')
-            sys.stdout.flush()
+            _write_reply(reply, framed)
 
 
 if __name__ == '__main__':

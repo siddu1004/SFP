@@ -117,8 +117,12 @@ test('the automatic skills rule lists the chosen skills in order, with their fil
   assert.ok(text.startsWith('---\ntrigger: always_on\n---'));
   assert.ok(text.includes('Current phase: test (confidence 69%)'));
   assert.ok(text.indexOf('1. **golang-testing** (base)') < text.indexOf('2. **tdd-workflow** (check)'));
-  assert.ok(text.includes(path.join(REPO, paths['golang-testing'])), 'each skill names the file to read');
+  assert.ok(text.includes(path.join(REPO, paths['golang-testing'], 'SKILL.md')), 'each skill names the SKILL.md file to read');
   assert.ok(text.includes('3. **verification-loop**'), 'the rest of the bundle reaches the agent, in the bundle order');
+  assert.ok(hive.skillFile(REPO, { name: 'golang-testing' })?.endsWith('SKILL.md'), 'skillFile resolves bundle skills without s.path to SKILL.md');
+  assert.strictEqual(hive.detectIdeTool('Cursor'), 'cursor');
+  assert.strictEqual(hive.detectIdeTool('Visual Studio Code'), 'copilot');
+  assert.strictEqual(hive.detectIdeTool('Antigravity IDE'), 'antigravity');
   const typed = hive.activeSkillsRule({ source: 'task', task: 't', skills: [{ name: 'golang-testing' }], bundles: [{ name: 'B', skills: ['golang-testing', 'tdd-workflow'] }] }, REPO);
   assert.ok(typed.includes('**tdd-workflow** (from the bundle)'), 'for a typed task the bundle extras are added after the stack');
   assert.strictEqual((text.match(/\*\*golang-testing\*\*/g) || []).length, 1, 'no skill twice');

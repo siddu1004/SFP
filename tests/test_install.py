@@ -149,6 +149,33 @@ class VSCodeAndRulesTest(InstallerTest):
         self.run_install('rules', '--tools', 'claude', '--project', project, '--remove')
         self.assertFalse(os.path.exists(os.path.join(project, 'CLAUDE.md')))
 
+    def test_antigravity_and_multi_ide_support(self):
+        cfg_dir = os.path.join(self.home, '.gemini', 'config')
+        os.makedirs(cfg_dir, exist_ok=True)
+        done = self.run_install('install', '--tools', 'antigravity-ide', '--categories', 'sfp,agent-dev')
+        self.assertEqual(done.returncode, 0, done.stderr)
+        ag_skills = os.path.join(cfg_dir, 'skills')
+        self.assertTrue(os.path.isdir(os.path.join(ag_skills, 'sfp')))
+        self.assertTrue(os.path.isdir(os.path.join(ag_skills, 'sfp-hive')))
+        # Core skills (sfp, sfp-hive) must have newer or equal mtime than other installed skills
+        sfp_mtime = os.path.getmtime(os.path.join(ag_skills, 'sfp', 'SKILL.md'))
+        other_mtime = os.path.getmtime(os.path.join(ag_skills, 'investigate-first', 'SKILL.md'))
+        self.assertGreaterEqual(sfp_mtime, other_mtime)
+        # Antigravity plugin installed and enabled in ~/.gemini/config/config.json
+        self.assertTrue(os.path.isfile(os.path.join(cfg_dir, 'plugins', 'sfp', 'plugin.json')))
+        with open(os.path.join(cfg_dir, 'config.json'), encoding='utf-8') as f:
+            self.assertEqual(json.load(f)['plugins']['sfp'], {'enabled': True})
+        # Antigravity MCP registration
+        mcp_done = self.run_install('mcp', '--tools', 'antigravity')
+        self.assertEqual(mcp_done.returncode, 0, mcp_done.stderr)
+        with open(os.path.join(cfg_dir, 'mcp_config.json'), encoding='utf-8') as f:
+            mcp_cfg = json.load(f)
+        self.assertIn('sfp', mcp_cfg['mcpServers'])
+        # Antigravity user-level rules
+        rules_done = self.run_install('rules', '--tools', 'antigravity')
+        self.assertEqual(rules_done.returncode, 0, rules_done.stderr)
+        self.assertTrue(os.path.isfile(os.path.join(self.home, '.gemini', 'GEMINI.md')))
+
 
 if __name__ == '__main__':
     unittest.main()

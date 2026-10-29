@@ -39,9 +39,22 @@ function resolveSfpRoot() {
     return PKG_DIR;
   }
 
-  // 2. Otherwise use ~/.sfp/SFP (or $SFP_DIR)
+  // 2. Check ~/.sfp/root pointer written by install.py
+  const rootPointer = path.join(os.homedir(), '.sfp', 'root');
+  if (fs.existsSync(rootPointer)) {
+    try {
+      const pointed = fs.readFileSync(rootPointer, 'utf-8').trim();
+      if (pointed && fs.existsSync(path.join(pointed, 'catalog.json'))) {
+        return pointed;
+      }
+    } catch {
+      // Fall through
+    }
+  }
+
+  // 3. Otherwise use ~/.sfp/SFP (or $SFP_ROOT / $SFP_DIR)
   const defaultDir = path.join(os.homedir(), '.sfp', 'SFP');
-  const targetDir = process.env.SFP_DIR || defaultDir;
+  const targetDir = process.env.SFP_ROOT || process.env.SFP_DIR || defaultDir;
 
   if (!fs.existsSync(path.join(targetDir, '.git'))) {
     console.log(`\x1b[36mSetting up SFP in ${targetDir}...\x1b[0m`);
@@ -68,18 +81,21 @@ Give your AI coding agent the right skills for the job, not all of them.
   \x1b[32msfp\x1b[0m <command> [options]
 
 \x1b[1mCOMMANDS:\x1b[0m
-  \x1b[33minstall\x1b[0m [options]     Install skills into detected IDEs (Claude Code, Cursor, Copilot, etc.)
-  \x1b[33mmcp\x1b[0m                 Run the SFP MCP server on stdio (for Claude Desktop, Cursor, Cline)
+  \x1b[33minstall\x1b[0m [options]     Install skills into detected IDEs (Antigravity, Claude, Cursor, VS Code, etc.)
+  \x1b[33mmcp\x1b[0m [options]         Run the SFP MCP server on stdio (or register with --tools <ide>)
+  \x1b[33mrules\x1b[0m [options]       Add standing instructions to use SFP skills on substantial tasks
   \x1b[33mselect\x1b[0m "<task>"      Ask the hive which skills to load for a task
   \x1b[33mneeds\x1b[0m "<task>"       Check what capabilities or external tools a task needs
   \x1b[33mdoctor\x1b[0m              Check catalog, index, local models, and hive connections
   \x1b[33mroute\x1b[0m [args]          Manage or start the local model router (Ollama, LM Studio, etc.)
+  \x1b[33mapps\x1b[0m [args]           Manage companion apps (OmniRoute, Strix, etc.)
   \x1b[33mlist\x1b[0m                List categories and install profiles
   \x1b[33mhelp\x1b[0m                Show this help message
 
 \x1b[1mEXAMPLES:\x1b[0m
   $ \x1b[32mnpx sfp-hive install\x1b[0m                      # Install starter set into every IDE found
   $ \x1b[32mnpx sfp-hive install --profile backend-dev\x1b[0m # Install backend-focused skills
+  $ \x1b[32mnpx sfp-hive mcp --tools antigravity,cursor\x1b[0m # Register MCP server in IDEs
   $ \x1b[32mnpx sfp-hive select "write unit tests"\x1b[0m     # See which skills the hive recommends
   $ \x1b[32mnpx sfp-hive doctor\x1b[0m                        # Verify health of catalog, index, and models
 
@@ -120,11 +136,17 @@ function run() {
 
   switch (command) {
     case 'mcp':
-      targetScript = path.join(rootDir, 'mcp', 'sfp_mcp.py');
-      targetArgs = args.slice(1);
+      if (args.slice(1).some((a) => a === '--tools' || a === '--project' || a === '--remove' || a.startsWith('--tools='))) {
+        targetScript = path.join(rootDir, 'scripts', 'install.py');
+        targetArgs = ['mcp', ...args.slice(1)];
+      } else {
+        targetScript = path.join(rootDir, 'mcp', 'sfp_mcp.py');
+        targetArgs = args.slice(1);
+      }
       break;
 
     case 'select':
+    case 'live':
     case 'track':
     case 'feedback':
     case 'clusters':
@@ -150,18 +172,12 @@ function run() {
       break;
 
     case 'install':
-      targetScript = path.join(rootDir, 'scripts', 'install.py');
-      targetArgs = ['install', ...args.slice(1)];
-      break;
-
     case 'list':
-      targetScript = path.join(rootDir, 'scripts', 'install.py');
-      targetArgs = ['list', ...args.slice(1)];
-      break;
-
     case 'uninstall':
+    case 'rules':
+    case 'apps':
       targetScript = path.join(rootDir, 'scripts', 'install.py');
-      targetArgs = ['uninstall', ...args.slice(1)];
+      targetArgs = [command, ...args.slice(1)];
       break;
 
     default:
@@ -179,6 +195,8 @@ function run() {
 
   const env = {
     ...process.env,
+    PYTHONIOENCODING: 'utf-8',
+    PYTHONUTF8: '1',
     PYTHONPATH: [path.join(rootDir, 'mcp'), process.env.PYTHONPATH].filter(Boolean).join(path.delimiter)
   };
 

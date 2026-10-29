@@ -39,11 +39,14 @@ function getEditorSelection(): string | undefined {
 
 function config() {
   const c = vscode.workspace.getConfiguration('sfpHive');
+  const rawTool = c.get<string>('installTool', 'antigravity');
+  const appName = (vscode.env as any)?.appName as string | undefined;
+  const detectedTool = appName ? hive.detectIdeTool(appName) : 'antigravity';
   return {
     opts: { sfpPath: c.get<string>('sfpPath') || undefined, python: c.get<string>('python') || undefined },
     max: c.get<number>('maxSkills', 4),
     copy: c.get<boolean>('copyPromptAfterChoosing', true),
-    tool: c.get<string>('installTool', 'antigravity'),
+    tool: rawTool && rawTool !== 'auto' ? (rawTool === 'antigravity' && detectedTool !== 'antigravity' ? detectedTool : rawTool) : detectedTool,
     follow: c.get<boolean>('follow', true),
     followCommands: c.get<boolean>('followCommands', true),
     autoAttach: c.get<boolean>('autoAttach', true),
@@ -157,6 +160,17 @@ export function writeActiveSkills(): string | undefined {
   try {
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, text, 'utf8');
+    // Also mirror into legacy/other IDE rule folders when present in the workspace
+    for (const mirrorRel of ['.agent/rules/sfp-active-skills.md', '.cursor/rules/sfp-active-skills.mdc', '.windsurf/rules/sfp-active-skills.md']) {
+      const mirror = path.resolve(ws, mirrorRel);
+      const topFolder = path.join(ws, mirrorRel.split('/')[0]);
+      if (mirror !== file && fs.existsSync(topFolder)) {
+        try {
+          fs.mkdirSync(path.dirname(mirror), { recursive: true });
+          fs.writeFileSync(mirror, text, 'utf8');
+        } catch { /* ignore mirror failure */ }
+      }
+    }
     autoLastText = body;
     const given = hive.focusActivity(active);
     const names = new Set([...given.skills.map((s) => s.name), ...(given.bundles || []).flatMap((b) => b.skills)]);

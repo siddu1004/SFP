@@ -59,19 +59,29 @@ fn resolve_sfp_root() -> Result<PathBuf, String> {
         }
     }
 
-    // 3. Check SFP_DIR environment variable
-    if let Ok(sfp_dir) = env::var("SFP_DIR") {
-        let path = PathBuf::from(sfp_dir);
-        if is_sfp_root(&path) {
-            return Ok(path);
+    // 3. Check SFP_ROOT / SFP_DIR environment variable
+    for var_name in ["SFP_ROOT", "SFP_DIR"] {
+        if let Ok(sfp_dir) = env::var(var_name) {
+            let path = PathBuf::from(sfp_dir);
+            if is_sfp_root(&path) {
+                return Ok(path);
+            }
         }
     }
 
-    // 4. Default user folder ~/.sfp/SFP
+    // 4. Default user folder ~/.sfp/root pointer or ~/.sfp/SFP
     let home = env::var_os("HOME")
         .or_else(|| env::var_os("USERPROFILE"))
         .map(PathBuf::from)
         .ok_or_else(|| "Could not determine user home directory.".to_string())?;
+
+    let pointer_file = home.join(".sfp").join("root");
+    if let Ok(content) = fs::read_to_string(&pointer_file) {
+        let pointed = PathBuf::from(content.trim());
+        if is_sfp_root(&pointed) {
+            return Ok(pointed);
+        }
+    }
 
     let default_dir = home.join(".sfp").join("SFP");
     if is_sfp_root(&default_dir) {
@@ -112,12 +122,14 @@ Give your AI coding agent the right skills for the job, not all of them.
   \x1b[32msfp-hive\x1b[0m <command> [options]
 
 \x1b[1mCOMMANDS:\x1b[0m
-  \x1b[33minstall\x1b[0m [options]     Install skills into detected IDEs (Claude Code, Cursor, Copilot, etc.)
-  \x1b[33mmcp\x1b[0m                 Run the SFP MCP server on stdio (for Claude Desktop, Cursor, Cline)
+  \x1b[33minstall\x1b[0m [options]     Install skills into detected IDEs (Antigravity, Claude, Cursor, VS Code, etc.)
+  \x1b[33mmcp\x1b[0m [options]         Run the SFP MCP server on stdio (or register with --tools <ide>)
+  \x1b[33mrules\x1b[0m [options]       Add standing instructions to use SFP skills on substantial tasks
   \x1b[33mselect\x1b[0m \"<task>\"      Ask the hive which skills to load for a task
   \x1b[33mneeds\x1b[0m \"<task>\"       Check what capabilities or external tools a task needs
   \x1b[33mdoctor\x1b[0m              Check catalog, index, local models, and hive connections
   \x1b[33mroute\x1b[0m [args]          Manage or start the local model router (Ollama, LM Studio, etc.)
+  \x1b[33mapps\x1b[0m [args]           Manage companion apps (OmniRoute, Strix, etc.)
   \x1b[33mlist\x1b[0m                List categories and install profiles
   \x1b[33mversion\x1b[0m             Show version information
   \x1b[33mhelp\x1b[0m                Show this help message
@@ -125,6 +137,7 @@ Give your AI coding agent the right skills for the job, not all of them.
 \x1b[1mEXAMPLES:\x1b[0m
   $ \x1b[32msfp install\x1b[0m                      # Install starter set into every IDE found
   $ \x1b[32msfp install --profile backend-dev\x1b[0m # Install backend-focused skills
+  $ \x1b[32msfp mcp --tools antigravity,cursor\x1b[0m # Register MCP server in IDEs
   $ \x1b[32msfp select \"write unit tests\"\x1b[0m     # See which skills the hive recommends
   $ \x1b[32msfp doctor\x1b[0m                        # Verify health of catalog, index, and models
 
@@ -178,11 +191,26 @@ fn main() {
 
     let command_str = command.unwrap();
     let (target_script, target_args): (PathBuf, Vec<&str>) = match command_str {
-        "mcp" => (
-            root_dir.join("mcp").join("sfp_mcp.py"),
-            args.iter().skip(1).map(|s| s.as_str()).collect(),
-        ),
-        "select" | "track" | "feedback" | "clusters" | "library" | "bundles" => (
+        "mcp" => {
+            let is_installer = args.iter().skip(1).any(|a| {
+                a == "--tools"
+                    || a == "--project"
+                    || a == "--remove"
+                    || a.starts_with("--tools=")
+                    || a.starts_with("--project=")
+            });
+            if is_installer {
+                let mut sub = vec!["mcp"];
+                sub.extend(args.iter().skip(1).map(|s| s.as_str()));
+                (root_dir.join("scripts").join("install.py"), sub)
+            } else {
+                (
+                    root_dir.join("mcp").join("sfp_mcp.py"),
+                    args.iter().skip(1).map(|s| s.as_str()).collect(),
+                )
+            }
+        }
+        "select" | "live" | "track" | "feedback" | "clusters" | "library" | "bundles" => (
             root_dir.join("mcp").join("sfp_hive.py"),
             args.iter().map(|s| s.as_str()).collect(),
         ),
@@ -200,18 +228,8 @@ fn main() {
             root_dir.join("mcp").join("sfp_route.py"),
             args.iter().skip(1).map(|s| s.as_str()).collect(),
         ),
-        "install" => {
-            let mut sub = vec!["install"];
-            sub.extend(args.iter().skip(1).map(|s| s.as_str()));
-            (root_dir.join("scripts").join("install.py"), sub)
-        }
-        "list" => {
-            let mut sub = vec!["list"];
-            sub.extend(args.iter().skip(1).map(|s| s.as_str()));
-            (root_dir.join("scripts").join("install.py"), sub)
-        }
-        "uninstall" => {
-            let mut sub = vec!["uninstall"];
+        "install" | "list" | "uninstall" | "rules" | "apps" => {
+            let mut sub = vec![command_str];
             sub.extend(args.iter().skip(1).map(|s| s.as_str()));
             (root_dir.join("scripts").join("install.py"), sub)
         }
@@ -241,6 +259,8 @@ fn main() {
         .args(&target_args)
         .current_dir(&root_dir)
         .env("PYTHONPATH", new_pythonpath)
+        .env("PYTHONIOENCODING", "utf-8")
+        .env("PYTHONUTF8", "1")
         .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())

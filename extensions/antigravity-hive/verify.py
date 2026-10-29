@@ -19,11 +19,86 @@ import sys
 import tempfile
 
 EXT_ID = 'siddu1004.sfp-hive'
-EDITORS = {'antigravity': 'antigravity', 'vscode': 'code', 'cursor': 'cursor', 'windsurf': 'windsurf', 'codium': 'codium'}
+EDITORS = {
+    'antigravity': 'antigravity',
+    'vscode': 'code',
+    'vscode-insiders': 'code-insiders',
+    'cursor': 'cursor',
+    'windsurf': 'windsurf',
+    'codium': 'codium',
+    'kiro': 'kiro',
+    'trae': 'trae',
+    'qoder': 'qoder',
+    'pearai': 'pearai',
+    'void': 'void',
+    'positron': 'positron',
+}
+EDITOR_ALIASES = {
+    'antigravity': ['antigravity', 'antigravity-ide', 'agy'],
+    'vscode': ['code'],
+    'vscode-insiders': ['code-insiders'],
+    'cursor': ['cursor', 'cursor-nightly'],
+    'windsurf': ['windsurf', 'windsurf-next'],
+    'codium': ['codium', 'vscodium'],
+    'kiro': ['kiro'],
+    'trae': ['trae', 'trae-cn'],
+    'qoder': ['qoder'],
+    'pearai': ['pearai'],
+    'void': ['void'],
+    'positron': ['positron'],
+}
 HOME = os.path.expanduser('~')
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 PASS, FAIL, WARN, SKIP = 'PASS', 'FAIL', 'WARN', 'SKIP'
+
+
+def find_editor_cli(name):
+    for cmd in EDITOR_ALIASES.get(name, [EDITORS[name]]):
+        p = shutil.which(cmd)
+        if p:
+            return p
+    if os.name == 'nt':
+        local = os.environ.get('LOCALAPPDATA') or os.path.join(HOME, 'AppData', 'Local')
+        win_dirs = {
+            'antigravity': [('Antigravity IDE', 'antigravity-ide.cmd'), ('Antigravity', 'antigravity.cmd')],
+            'vscode': [('Microsoft VS Code', 'code.cmd')],
+            'vscode-insiders': [('Microsoft VS Code Insiders', 'code-insiders.cmd')],
+            'cursor': [('cursor', 'cursor.cmd'), ('Cursor', 'cursor.cmd')],
+            'windsurf': [('Windsurf', 'windsurf.cmd')],
+            'codium': [('VSCodium', 'codium.cmd')],
+            'kiro': [('Kiro', 'kiro.cmd')],
+            'trae': [('Trae', 'trae.cmd')],
+            'qoder': [('Qoder', 'qoder.cmd')],
+            'pearai': [('PearAI', 'pearai.cmd')],
+            'void': [('Void', 'void.cmd')],
+            'positron': [('Positron', 'positron.cmd')],
+        }
+        for folder, script in win_dirs.get(name, []):
+            cand = os.path.join(local, 'Programs', folder, 'bin', script)
+            if os.path.isfile(cand):
+                return cand
+    elif sys.platform == 'darwin':
+        mac_apps = {
+            'antigravity': [('Antigravity.app', 'antigravity'), ('Antigravity IDE.app', 'antigravity-ide')],
+            'vscode': [('Visual Studio Code.app', 'code')],
+            'vscode-insiders': [('Visual Studio Code - Insiders.app', 'code-insiders')],
+            'cursor': [('Cursor.app', 'cursor')],
+            'windsurf': [('Windsurf.app', 'windsurf')],
+            'codium': [('VSCodium.app', 'codium')],
+            'kiro': [('Kiro.app', 'kiro')],
+            'trae': [('Trae.app', 'trae')],
+            'qoder': [('Qoder.app', 'qoder')],
+            'pearai': [('PearAI.app', 'pearai')],
+            'void': [('Void.app', 'void')],
+            'positron': [('Positron.app', 'positron')],
+        }
+        for app, bin_name in mac_apps.get(name, []):
+            for root in ('/Applications', os.path.join(HOME, 'Applications')):
+                cand = os.path.join(root, app, 'Contents', 'Resources', 'app', 'bin', bin_name)
+                if os.path.isfile(cand):
+                    return cand
+    return None
 
 
 def find_installed(home=HOME):
@@ -61,7 +136,7 @@ def scan_logs(files):
 
 def check_hive(root, python=sys.executable):
     """Run the real hive once and return the parsed answer."""
-    env = dict(os.environ, SFP_DATA_DIR=tempfile.mkdtemp(prefix='sfp-verify-'))
+    env = dict(os.environ, SFP_DATA_DIR=tempfile.mkdtemp(prefix='sfp-verify-'), PYTHONIOENCODING='utf-8', PYTHONUTF8='1')
     env.pop('SFP_NO_USAGE_LOG', None)
     done = subprocess.run([python, os.path.join(root, 'mcp', 'sfp_hive.py'), 'select', 'write table driven tests for a go parser',
                            '--json', '--max', '3'], capture_output=True, text=True, timeout=180, env=env)
@@ -70,8 +145,18 @@ def check_hive(root, python=sys.executable):
     return json.loads(done.stdout)
 
 
+def read_json(path):
+    with open(path, encoding='utf-8') as f:
+        return json.load(f)
+
+
 def sfp_root(home=HOME):
-    for cand in (os.environ.get('SFP_ROOT'), open(os.path.join(home, '.sfp', 'root')).read().strip() if os.path.isfile(os.path.join(home, '.sfp', 'root')) else None, REPO):
+    root_ptr = os.path.join(home, '.sfp', 'root')
+    recorded = None
+    if os.path.isfile(root_ptr):
+        with open(root_ptr, encoding='utf-8') as f:
+            recorded = f.read().strip()
+    for cand in (os.environ.get('SFP_ROOT'), recorded, REPO):
         if cand and os.path.isfile(os.path.join(cand, 'mcp', 'sfp_hive.py')):
             return cand
     return None
@@ -84,12 +169,7 @@ def run_checks(editor=None, home=HOME):
         results.append({'check': name, 'status': status, 'detail': detail})
 
     names = [editor] if editor else sorted(EDITORS)
-    clis = {}
-    for n in names:
-        p = shutil.which(EDITORS[n])
-        if not p and n == 'antigravity':
-            p = shutil.which('antigravity-ide')
-        clis[n] = p
+    clis = {n: find_editor_cli(n) for n in names}
     found = {n: p for n, p in clis.items() if p}
     add('editor command on PATH', PASS if found else FAIL,
         ', '.join('%s (%s)' % (n, p) for n, p in found.items()) or 'none of: ' + ', '.join(EDITORS[n] for n in names) +
@@ -99,7 +179,7 @@ def run_checks(editor=None, home=HOME):
         try:
             first = subprocess.run([exe, '--version'], capture_output=True, text=True, timeout=60).stdout.split()
             parts = [int(x) for x in first[0].split('.')[:2]] if first else []
-            need = [int(x) for x in json.load(open(os.path.join(HERE, 'package.json')))['engines']['vscode'].lstrip('^').split('.')[:2]]
+            need = [int(x) for x in read_json(os.path.join(HERE, 'package.json'))['engines']['vscode'].lstrip('^').split('.')[:2]]
             add('editor is new enough (%s)' % n, PASS if parts >= need else FAIL, 'editor %s, the extension needs VS Code %s or newer' % (first[0] if first else '?', '.'.join(map(str, need))))
         except (OSError, ValueError, KeyError, subprocess.SubprocessError):
             add('editor is new enough (%s)' % n, WARN, 'could not read its version')
@@ -120,7 +200,7 @@ def run_checks(editor=None, home=HOME):
     add('extension folder on disk', PASS if folders else FAIL, ', '.join(folders) or 'no ~/.<editor>/extensions/%s-*' % EXT_ID)
     if folders:
         try:
-            pkg = json.load(open(os.path.join(folders[-1], 'package.json')))
+            pkg = read_json(os.path.join(folders[-1], 'package.json'))
             ok = 'onStartupFinished' in pkg.get('activationEvents', []) and os.path.isfile(os.path.join(folders[-1], pkg['main']))
             add('installed copy activates at startup and has its code', PASS if ok else FAIL,
                 'version %s; an older build lacks startup activation, so the status-bar item would be missing' % pkg.get('version'))

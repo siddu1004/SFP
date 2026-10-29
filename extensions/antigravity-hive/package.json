@@ -6,7 +6,7 @@
   "publisher": "siddu1004",
   "license": "MIT",
   "repository": {"type": "git", "url": "https://github.com/siddu1004/SFP.git", "directory": "extensions/antigravity-hive"},
-  "engines": {"vscode": "^1.85.0"},
+  "engines": {"vscode": "^1.75.0"},
   "categories": ["AI", "Other"],
   "keywords": ["skills", "agent", "antigravity", "sfp", "hive"],
   "main": "./out/extension.js",
@@ -91,7 +91,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
-    "@types/vscode": "^1.85.0",
+    "@types/vscode": "^1.75.0",
     "@vscode/vsce": "^3.0.0",
     "typescript": "^5.4.0"
   }

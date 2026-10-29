@@ -73,6 +73,22 @@ export interface Options {
   home?: string;
 }
 
+/** Map the editor's application name to its canonical SFP installer tool key. */
+export function detectIdeTool(appName?: string): string {
+  const name = (appName || '').toLowerCase();
+  if (name.includes('cursor')) return 'cursor';
+  if (name.includes('windsurf')) return 'windsurf';
+  if (name.includes('kiro')) return 'kiro';
+  if (name.includes('trae')) return 'trae';
+  if (name.includes('qoder')) return 'qoder';
+  if (name.includes('pearai')) return 'pearai';
+  if (name.includes('void')) return 'void';
+  if (name.includes('positron')) return 'positron';
+  if (name.includes('antigravity')) return 'antigravity';
+  if (name.includes('visual studio code') || name.includes('vscode') || name.includes('vscodium') || name === 'code') return 'copilot';
+  return 'antigravity';
+}
+
 /** The SFP checkout: the setting, then the folder the installer recorded in ~/.sfp/root. */
 export function findSfpRoot(opts: Options = {}): string | undefined {
   const candidates: string[] = [];
@@ -83,6 +99,12 @@ export function findSfpRoot(opts: Options = {}): string | undefined {
     if (recorded) candidates.push(recorded);
   } catch {
     // not installed through the SFP installer
+  }
+  candidates.push(path.join(home, '.sfp', 'SFP'));
+  if (!opts.home) {
+    if (process.env.SFP_ROOT) candidates.push(process.env.SFP_ROOT);
+    if (process.env.SFP_DIR) candidates.push(process.env.SFP_DIR);
+    candidates.push(path.resolve(__dirname, '..', '..', '..'));
   }
   return candidates.find((c) => fs.existsSync(path.join(c, 'mcp', 'sfp_hive.py')));
 }
@@ -121,7 +143,8 @@ export function feedbackArgs(root: string, decision: string, verdict: Verdict, s
 export function run(python: string, args: string[], timeoutMs = 60000, input?: string): Promise<string> {
   return new Promise((resolve, reject) => {
     // No shell: the task text is passed as one argument, never interpreted.
-    const child = spawn(python, args, { env: process.env });
+    const env = { ...process.env, PYTHONIOENCODING: 'utf-8', PYTHONUTF8: '1' };
+    const child = spawn(python, args, { env });
     if (input !== undefined) {
       child.stdin.write(input);
     }
@@ -235,9 +258,12 @@ export function updateSessionStats(
 /** A prompt to paste into an agent panel: which skills to read, in what order, and how to report back. */
 export function buildPrompt(sel: Selection, root?: string): string {
   if (!sel.stack.length) return `The hive found no skill that fits: ${sel.task}`;
+  const paths = root ? catalogPaths(root) : {};
   const lines = [`Task: ${sel.task}`, '', 'Use these SFP skills, in this order. Read only these, and follow them:'];
   sel.stack.forEach((s, i) => {
-    const where = s.path ? (root ? path.join(root, s.path) : s.path) : '';
+    const rawRel = s.path || paths[s.name] || '';
+    const rel = rawRel ? (s.path ? rawRel : (/[\\/]SKILL\.md$/i.test(rawRel) ? rawRel : `${rawRel.replace(/[\\/]+$/, '')}/SKILL.md`)) : '';
+    const where = rel ? (root ? path.join(root, rel) : rel) : '';
     const why = s.reasons && s.reasons.length ? ` (${s.reasons[0]})` : '';
     lines.push(`${i + 1}. ${s.name}${s.layer ? ` [${s.layer}]` : ''}${why}${where ? `\n   ${where}` : ''}`);
   });
@@ -248,10 +274,16 @@ export function buildPrompt(sel: Selection, root?: string): string {
 }
 
 export function skillFile(root: string, s: Skill): string | undefined {
-  if (!s.path) return undefined;
-  const full = path.resolve(root, s.path);
+  const rel = s.path || catalogPaths(root)[s.name];
+  if (!rel) return undefined;
+  let full = path.resolve(root, rel);
   // Only files inside the SFP checkout.
-  return full.startsWith(path.resolve(root) + path.sep) && fs.existsSync(full) ? full : undefined;
+  if (!full.startsWith(path.resolve(root) + path.sep) || !fs.existsSync(full)) return undefined;
+  if (fs.statSync(full).isDirectory()) {
+    const skillMd = path.join(full, 'SKILL.md');
+    if (fs.existsSync(skillMd)) full = skillMd;
+  }
+  return full;
 }
 
 export function catalogNames(root: string): string[] {
@@ -997,7 +1029,9 @@ export function activeSkillsRule(input: ActiveSkills, root: string, now: Date = 
   const paths = catalogPaths(root);
   const fileOf = (name: string, p?: string) => {
     const rel = p || paths[name];
-    return rel ? path.join(root, rel) : '';
+    if (!rel) return '';
+    const withSkillMd = /[\\/]SKILL\.md$/i.test(rel) ? rel : `${rel.replace(/[\\/]+$/, '')}/SKILL.md`;
+    return path.join(root, withSkillMd);
   };
   const lines: string[] = [
     '---',
