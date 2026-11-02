@@ -19,6 +19,7 @@ Tools
   give_feedback    tell the hive what helped, what did not and what was missing, so it learns
   learning_status  what the hive has learned and how it is doing
   predict_next     the skills most likely to be needed after one
+  research_skill   draft a new skill from research papers with local models, when the library is thin for a task
 Resources
   sfp://skill/{name}   a skill's SKILL.md      sfp://catalog   the category summary
 Prompts
@@ -438,6 +439,22 @@ def tool_select_skills(a):
                            int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)))
     res['next_step'] = ('Call get_skill for each skill in the stack, in order: base layers do the work, '
                         'check layers verify it, finish layers ship it.')
+    if res.get('gap'):
+        res['next_step'] += (' The library is thin for this (see gap): if the user agrees, call research_skill to have a '
+                             'local model draft a skill from research papers.')
+    return json.dumps(res, indent=1)
+
+
+def tool_research_skill(a):
+    task = (a.get('task') or '').strip()
+    if not tokens(task):
+        raise ValueError('describe what the skill is for, for example "tune the PI controller of a buck converter"')
+    import sfp_research
+    log = []
+    res = sfp_research.draft(task, a.get('role'), max(2, min(int(a.get('papers', 6)), 10)), log=log.append)
+    res['log'] = log
+    res['next_step'] = ('This is a draft. Show it to the user; only they approve it, with: python3 mcp/sfp_research.py '
+                        'approve %s [--install <tools>]' % res['name'])
     return json.dumps(res, indent=1)
 
 
@@ -531,11 +548,24 @@ TOOLS = [
          'skill': {'type': 'string', 'description': 'The skill just used. Defaults to the last one fetched.'},
          'limit': {'type': 'integer', 'description': 'How many to return (default 5).'}}},
      'fn': tool_predict_next},
+    {'name': 'research_skill',
+     'description': 'Draft a new skill from research when the library is thin for a task (select_skills reports a gap). '
+                    'A local model writes search queries; OpenAlex, arXiv and Semantic Scholar are searched; the best '
+                    'papers (by meaning, citations and recency) are given to the strongest local model, which writes a '
+                    'cited SKILL.md. Saved as a draft in ~/.sfp/skills/drafts for the user to review and approve; nothing '
+                    'is installed. Only the search queries leave the machine. Takes a minute or two.',
+     'inputSchema': {'type': 'object', 'properties': {
+         'task': {'type': 'string', 'description': 'What the skill is for, in the user\'s words.'},
+         'role': {'type': 'string', 'description': 'The engineer\'s role, from select_skills (for example embedded-hardware).'},
+         'papers': {'type': 'integer', 'description': 'How many papers to write from (default 6, max 10).'}}, 'required': ['task']},
+     'fn': tool_research_skill},
 ]
 TOOL_INDEX = {t['name']: t for t in TOOLS}
 for _t in TOOLS:
-    # select_skills and give_feedback write to the hive's own logs in ~/.sfp, and nowhere else.
-    _t['annotations'] = {'readOnlyHint': _t['name'] not in ('select_skills', 'give_feedback'), 'openWorldHint': False}
+    # select_skills and give_feedback write to the hive's own logs in ~/.sfp; research_skill writes a draft there and asks
+    # the paper indexes on the internet. Nothing else writes or reaches out.
+    _t['annotations'] = {'readOnlyHint': _t['name'] not in ('select_skills', 'give_feedback', 'research_skill'),
+                         'openWorldHint': _t['name'] == 'research_skill'}
 
 # ------------------------------------------------------------ resources/prompts
 

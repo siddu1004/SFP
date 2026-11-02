@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- **The hive understands meaning.** `mcp/sfp_embed.py` embeds every skill with a local embedding model (LM Studio, Ollama, llama.cpp, Jan, vLLM or the SFP router, which now also routes `/v1/embeddings`) and finds the skills closest to what a task means. Meaning rescues a weak word match and never overrules one that names its skill: reworded held-out tasks 34.3% to 40.0%, benchmark 89.0% to 91.2%, project and held-out project tasks unchanged, about 70 ms a task. Blending meaning into every score was tried and lost a third of the project tasks. Off with `SFP_SEMANTIC=0`; without a model the hive works on words as before.
+- **The task in an expert's words.** `mcp/sfp_intent.py` has a local chat model rewrite a task as the terms an expert would use. Measured gain was one more right skill in 35 tasks for 0.5 to 40 seconds a task, so the hive only uses it with `SFP_REWRITE=1`; research always does.
+- **Your role.** `mcp/sfp_role.py` reads the engineer's role from the project's files (embedded and hardware projects included: `.ino`, `.slx`, `.kicad_sch`, Verilog) and the stacks the library covers thinly. Selection gives the role's categories a small push and reports `role`.
+- **Gaps and research.** Selection reports a `gap` when no skill fits, the task's words are unknown, or even the closest skill is far in meaning; and when the project's stack has fewer than three skills. `mcp/sfp_research.py` (and the new MCP tool `research_skill`) searches OpenAlex, arXiv and Semantic Scholar, ranks papers by meaning, citations and recency, and has the strongest loaded local model write a cited skill. Paper text is treated as data: commands that download or run code, links and citations to unknown sources are removed, and the source list is written from the papers' records. Drafts wait in `~/.sfp/skills/drafts` until approved.
+- **Benchmark.** `tests/search_reworded.json` and `tests/search_reworded_holdout.json`: the benchmark tasks reworded by a local model without their concept words (70 kept of 91), half to tune on, half held out. `sfp_hive.py evaluate --semantic` scores with the local models; published figures stay words-only so they are the same on every machine.
+
 ## 3.17.7
 
 - **README.** New hero tile of three numbers under the banner, a "Does It Make the Agent Better?" section with charts of the design test and of held-out accuracy (light and dark), a tip on how the feedback loop learns (94% of reported mistakes fixed on the same task, +0.7 points on new ones), and an honest note on where skills do not help yet. `bench/charts.py` draws the charts from the saved results.

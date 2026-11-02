@@ -1,0 +1,273 @@
+[
+ {
+  "task": "Reduce how often this React thing updates itself.",
+  "expect": [
+   "react-performance",
+   "react-patterns"
+  ],
+  "from": "make this React component re-render less"
+ },
+ {
+  "task": "Create a smooth transition for the dialog box to show up.",
+  "expect": [
+   "animate",
+   "animation-performance",
+   "motion-patterns",
+   "motion-foundations"
+  ],
+  "from": "animate a modal opening smoothly"
+ },
+ {
+  "task": "Configure Docker for a Python project",
+  "expect": [
+   "docker-patterns"
+  ],
+  "from": "set up docker for a python app"
+ },
+ {
+  "task": "Need assistance creating a SwiftUI interface.",
+  "expect": [
+   "swiftui-patterns"
+  ],
+  "from": "help me write a SwiftUI view"
+ },
+ {
+  "task": "Add a capability to my assistant",
+  "expect": [
+   "skill-creator",
+   "skill-development"
+  ],
+  "from": "create a new skill for my agent"
+ },
+ {
+  "task": "Verify that my fitness tracker follows privacy rules",
+  "expect": [
+   "hipaa-compliance",
+   "healthcare-phi-compliance"
+  ],
+  "from": "check my health app for HIPAA compliance"
+ },
+ {
+  "task": "Debug Rust borrowing issue",
+  "expect": [
+   "rust-patterns"
+  ],
+  "from": "fix a Rust ownership error"
+ },
+ {
+  "task": "Find an old choice I made",
+  "expect": [
+   "mem-search",
+   "mem-timeline-report",
+   "mem-smart-explore"
+  ],
+  "from": "search my past sessions for a decision"
+ },
+ {
+  "task": "Set up Next.js to use the new fast build system",
+  "expect": [
+   "nextjs-turbopack"
+  ],
+  "from": "configure Next.js with turbopack"
+ },
+ {
+  "task": "Execute a safety check during continuous integration.",
+  "expect": [
+   "ci-security-scanning-with-strix",
+   "security-scan",
+   "application-security-testing"
+  ],
+  "from": "run a security scan in CI"
+ },
+ {
+  "task": "Redis memory management techniques",
+  "expect": [
+   "redis-patterns"
+  ],
+  "from": "redis caching patterns"
+ },
+ {
+  "task": "Study the subject thoroughly.",
+  "expect": [
+   "deep-research"
+  ],
+  "from": "do deep research on a topic"
+ },
+ {
+  "task": "Check my changes for errors",
+  "expect": [
+   "code-review",
+   "orch-review",
+   "conventional-commit-review"
+  ],
+  "from": "review my pull request for bugs"
+ },
+ {
+  "task": "Kotlin concurrency and reactive streams",
+  "expect": [
+   "kotlin-coroutines-flows"
+  ],
+  "from": "Kotlin coroutines and flows"
+ },
+ {
+  "task": "Create promo text for a new item release",
+  "expect": [
+   "marketing-campaign",
+   "content-engine",
+   "article-writing"
+  ],
+  "from": "write marketing copy for a product launch"
+ },
+ {
+  "task": "Secure a Laravel project against typical threats",
+  "expect": [
+   "laravel-security"
+  ],
+  "from": "protect a Laravel app from common vulnerabilities"
+ },
+ {
+  "task": "Can you explain how a function calls itself repeatedly until it reaches a base case?",
+  "expect": [
+   "teach-me"
+  ],
+  "from": "teach me how recursion works"
+ },
+ {
+  "task": "Make a screen with pictures showing numbers for how much stuff was sold.",
+  "expect": [
+   "dashboard-builder"
+  ],
+  "from": "build a dashboard with charts for sales data"
+ },
+ {
+  "task": "Update the software to improve its structure but keep it working the same way as before.",
+  "expect": [
+   "orch-refine-code"
+  ],
+  "from": "refactor without changing behavior"
+ },
+ {
+  "task": "Extract item costs from online stores",
+  "expect": [
+   "data-scraper-agent"
+  ],
+  "from": "scrape product prices from websites"
+ },
+ {
+  "task": "Identify sneaky tricks that make users buy more on my payment page",
+  "expect": [
+   "dark-pattern-check"
+  ],
+  "from": "detect manipulative dark patterns on my checkout"
+ },
+ {
+  "task": "Adjust stock replenishment triggers to reduce waste and improve efficiency.",
+  "expect": [
+   "inventory-demand-planning"
+  ],
+  "from": "optimize inventory reorder points"
+ },
+ {
+  "task": "Go routines and channels",
+  "expect": [
+   "golang-patterns"
+  ],
+  "from": "Go concurrency patterns"
+ },
+ {
+  "task": "Build a UI component library with variable-based styling",
+  "expect": [
+   "design-system",
+   "design-systems"
+  ],
+  "from": "create a design system with tokens"
+ },
+ {
+  "task": "My Python scripts sometimes pass and sometimes fail unpredictably.",
+  "expect": [
+   "python-testing"
+  ],
+  "from": "my python tests are flaky"
+ },
+ {
+  "task": "Create changelog and mark new iteration",
+  "expect": [
+   "mem-release",
+   "mem-version-bump",
+   "mem-build-and-release"
+  ],
+  "from": "write release notes and tag a version"
+ },
+ {
+  "task": "Make sure my assistant isn't tricked by sneaky input.",
+  "expect": [
+   "agent-security-hardening"
+  ],
+  "from": "protect my agent from prompt injection"
+ },
+ {
+  "task": "Check if users can sign in using an actual web page",
+  "expect": [
+   "e2e-testing",
+   "browser-qa"
+  ],
+  "from": "test a login flow in a real browser"
+ },
+ {
+  "task": "Clean up the jumbled data using either a regular expression or an AI tool.",
+  "expect": [
+   "regex-vs-llm-structured-text"
+  ],
+  "from": "parse messy text with a regex or an LLM"
+ },
+ {
+  "task": "Check the potential dangers of a forecasting platform",
+  "expect": [
+   "prediction-market-risk-review",
+   "prediction-market-oracle-research"
+  ],
+  "from": "review the risk of a prediction market"
+ },
+ {
+  "task": "Create C++ code to validate functionality.",
+  "expect": [
+   "cpp-testing"
+  ],
+  "from": "write C++ unit tests"
+ },
+ {
+  "task": "Prevent my assistant from executing harmful actions.",
+  "expect": [
+   "safety-guard",
+   "gateguard"
+  ],
+  "from": "stop my agent from running unsafe commands"
+ },
+ {
+  "task": "Identify an issue, resolve it, then create a check to ensure it doesn't come back.",
+  "expect": [
+   "orch-fix-defect",
+   "tdd-workflow"
+  ],
+  "from": "fix a bug and add a regression test"
+ },
+ {
+  "task": "Distribute tasks to multiple language models with a backup option.",
+  "expect": [
+   "omni-combos-routing",
+   "cli-routing",
+   "omni-providers",
+   "freellmapi"
+  ],
+  "from": "route requests across several LLM providers with fallback"
+ },
+ {
+  "task": "What did I do this past period?",
+  "expect": [
+   "mem-weekly-digests",
+   "mem-standup",
+   "mem-timeline-report"
+  ],
+  "from": "summarize what I worked on this week"
+ }
+]

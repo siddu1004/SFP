@@ -89,6 +89,27 @@ def checks(router_port=8787, project=None):
         'Start Ollama or LM Studio, or ignore this if you only use cloud models.')
     add('Router config', 'ok' if models else 'warn', '%d models in routes.json' % models, 'Run python3 mcp/sfp_route.py setup --yes.')
     try:
+        import sfp_embed
+        import sfp_intent
+        if not sfp_embed.enabled():
+            add('Meaning search', 'warn', 'off (SFP_SEMANTIC=0)', 'Unset SFP_SEMANTIC to let the hive use local models.')
+        else:
+            st = sfp_embed.status()
+            ep = st.get('endpoint')
+            if not ep:
+                add('Meaning search', 'warn', 'no local embedding model', 'Load an embedding model (for example nomic-embed-text) '
+                    'in LM Studio or Ollama, then run python3 mcp/sfp_embed.py build.')
+            else:
+                done = st.get('embedded', 0)
+                add('Meaning search', 'ok' if done >= 0.9 * skills else 'warn',
+                    '%s on %s, %d of %d skills embedded' % (ep['model'], ep['runtime'], done, skills),
+                    'Run python3 mcp/sfp_embed.py build.')
+            rw = sfp_intent.find_model(timeout=0.4)
+            add('Task rewrite', 'ok' if rw else 'warn', rw['model'] if rw else 'no local chat model',
+                'Load a chat model in LM Studio or Ollama; the hive then reads tasks in an expert\'s terms.')
+    except Exception as e:  # noqa: BLE001
+        add('Meaning search', 'fail', '%s: %s' % (type(e).__name__, e))
+    try:
         with urllib.request.urlopen('http://127.0.0.1:%d/health' % router_port, timeout=0.6) as r:
             health = json.loads(r.read())
         ready = sum(1 for m in health['models'] if m['state'] == 'ready')

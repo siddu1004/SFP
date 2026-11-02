@@ -396,8 +396,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
             raw = b''
         if not self._authorised():
             return self._send(401, {'error': {'message': 'bad token'}})
+        if self.path.split('?')[0].rstrip('/').endswith('/embeddings'):
+            return self._embeddings(raw)
         if not self.path.split('?')[0].rstrip('/').endswith('/chat/completions'):
-            return self._send(404, {'error': {'message': 'only /v1/chat/completions is routed'}})
+            return self._send(404, {'error': {'message': 'only /v1/chat/completions and /v1/embeddings are routed'}})
         try:
             body = json.loads(raw or b'{}')
         except ValueError:
@@ -427,6 +429,41 @@ class Handler(http.server.BaseHTTPRequestHandler):
             log_usage(p, m, size, True, (time.time() - t0) * 1000)
             return
         self._send(503, {'error': {'message': 'every model failed: ' + '; '.join(tried)}}, {'Retry-After': str(COOL_MIN)})
+
+    _embedder = {'checked': 0.0, 'value': None}
+
+    def _embeddings(self, raw):
+        """Embeddings go to the first local runtime with an embedding model (never to a cloud provider)."""
+        import sfp_embed
+        cache = Handler._embedder
+        if time.time() - cache['checked'] > 60 or not cache['value']:
+            cache['value'], cache['checked'] = sfp_embed.find_endpoint(skip=('SFP router',)), time.time()
+        ep = cache['value']
+        if not ep:
+            return self._send(503, {'error': {'message': 'no local embedding model is running (load one in LM Studio or Ollama)'}})
+        try:
+            body = json.loads(raw or b'{}')
+        except ValueError:
+            return self._send(400, {'error': {'message': 'the body is not JSON'}})
+        if not body.get('model') or body['model'] in ('auto', 'embed') or body['model'].startswith('sfp'):
+            body['model'] = ep['model']
+        url = urllib.parse.urlparse(ep['base_url'] + '/embeddings')
+        conn = http.client.HTTPConnection(url.hostname, url.port, timeout=READ_TIMEOUT)
+        try:
+            conn.request('POST', url.path, json.dumps(body).encode(), {'Content-Type': 'application/json'})
+            resp = conn.getresponse()
+            data = resp.read()
+        except (OSError, http.client.HTTPException) as e:
+            cache['checked'] = 0.0
+            return self._send(503, {'error': {'message': 'the embedding model did not answer (%s)' % type(e).__name__}})
+        finally:
+            conn.close()
+        self.send_response(resp.status)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('X-SFP-Model', ep['model'])
+        self.send_header('Content-Length', str(len(data)))
+        self.end_headers()
+        self.wfile.write(data)
 
     def _relay(self, resp, p, m, size):
         self.send_response(resp.status)

@@ -4,6 +4,7 @@ Run:  python3 -m unittest discover -s tests -v
 """
 import json
 import os
+os.environ.setdefault('SFP_SEMANTIC', '0')  # word rules only here; tests/test_semantic.py covers the local models
 import sys
 import tempfile
 import unittest

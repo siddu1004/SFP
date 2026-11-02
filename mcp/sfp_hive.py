@@ -97,6 +97,12 @@ WORK_DONE = 0.6          # how much of a job's need one skill uses up
 HALF_LIFE_DAYS = 30.0    # how fast recorded sequences fade from the history signal
 RESCUE = 0.7             # learned preference strong enough to admit a skill that lacks agreement
 RECALL = 0.3             # learned association strong enough to bring in a skill the search did not find
+EXPANSION_WEIGHT = 0.6   # the local model's expert terms for the task (SFP_REWRITE=1), against the task's own words
+MEANING_WEIGHT = 0.75    # closeness in meaning, as a share of a full word match (set on tests/, see docs in README)
+MEANING_CANDIDATES = 40  # how many of the closest skills in meaning join the candidates
+ROLE_WEIGHT = 0.15       # push for the skills of the engineer's role (sfp_role), when the project shows one clearly
+ROLE_MIN_CONFIDENCE = 0.5
+GAP_COSINE = 0.64        # closest skill in meaning below this, and no word of the task in the stack: the library is thin here
 
 
 # ------------------------------------------------------------------ signals
@@ -203,6 +209,26 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
             lead = sorted(ctx_tech, key=lambda t: (-ctx[t], t))[:3]
             for score, s in core.scored_search(query + ' ' + ' '.join(lead), limit=80):
                 found[s['name']] = max(found.get(s['name'], 0), 0.8 * score)
+    meaning = {}
+    if sit.get('semantic'):
+        top_kw = max(found.values() or [0.0])
+        terms = sit['semantic'].get('terms') or []
+        if terms:
+            # The expert's words for the task (sfp_intent), searched like the task's own, one step below them.
+            exp = core.scored_search(' '.join(terms), limit=80)
+            if exp:
+                full_top = top_kw or exp[0][0]
+                for score, s in exp:
+                    found[s['name']] = max(found.get(s['name'], 0), EXPANSION_WEIGHT * full_top * score / exp[0][0])
+        near = sit['semantic'].get('similar') or []
+        if near:
+            # Closeness in meaning (sfp_embed), as a share of the way from the crowd to the closest skill.
+            floor, best = near[-1][0], near[0][0]
+            span = max(best - floor, 1e-6)
+            for cos, name in near:
+                m = (cos - floor) / span
+                if m > 0:
+                    meaning[name] = m
     for extra, weight in phase_queries:
         if direct_hits or not missing:
             for score, s in core.scored_search(' '.join(words) + ' ' + extra, limit=60):
@@ -220,8 +246,16 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
     cat_fit = v1.category_fit(words)
     top_ctx = max(ctx.values()) if ctx else 1.0
 
+    relevance = {n: found.get(n, 0) / top for n in set(found) | set(meaning)}
+    if meaning:
+        # Meaning rescues, it does not overrule: a skill's relevance is its word match, or MEANING_WEIGHT of its closeness in
+        # meaning when that is higher. A task that names its skill keeps it; one said in other words still finds it.
+        # (Blending the two instead lost a third of the project tasks, where the words name the exact technology.)
+        relevance = {n: max(r, MEANING_WEIGHT * meaning.get(n, 0.0)) for n, r in relevance.items()}
+        best_rel = max(relevance.values() or [0.0]) or 1.0
+        relevance = {n: r / best_rel for n, r in relevance.items()}
     votes = {}
-    for name in set(found) | set(follows):
+    for name in set(found) | set(follows) | set(meaning):
         if name in after or name in INTERNAL_SKILLS or (name in NEED_ONLY and not need_fires(NEED_ONLY[name], sit['text'])):
             continue
         tech = v1.SKILL_TECH.get(name, set())
@@ -240,12 +274,14 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
         if sit['demand'] and v1.SKILL_PHASE.get(name):
             role = v1.cosine(sit['demand'], v1.SKILL_PHASE[name])
         votes[name] = {
-            'words': found.get(name, 0) / top,
+            'words': relevance.get(name, 0.0),
             'project': project,
             'role': role,
             'category': cat_fit.get(core.SKILLS[name]['category']),
             'history': follows[name] / top_follow if name in follows else None,
             'relation': rel,
+            'meaning': meaning.get(name),
+            'rolefit': (1.0 if core.SKILLS[name]['category'] in sit['role_cats'] else 0.0) if sit.get('role_cats') else None,
         }
     return votes
 
@@ -262,6 +298,7 @@ def base_quality(v):
     elif v['relation'] == 'unasked':
         q *= 0.8
     q *= 1 + 0.3 * (v['history'] or 0)
+    q *= 1 + ROLE_WEIGHT * (v.get('rolefit') or 0)
     return q
 
 
@@ -393,6 +430,47 @@ class History(v1.Markov):
 _SCANS = {}
 
 
+def find_gap(task, sit, stack, votes, missing, role):
+    """Where the library is thin for this task or this engineer, and the command that fills it by research; or None.
+
+    The task is a gap when nothing was chosen, when its words are unknown to the library, or when (meaning search
+    being on) even the closest skill is far in meaning and no chosen skill shares a word with the task. The engineer has
+    a gap when the project's main stack is one that few skills cover."""
+    reasons = []
+    near = (sit.get('semantic') or {}).get('similar') or []
+    word_hits = any(set(sit['words']) & v1.SKILL_TOKENS.get(c['name'], set()) for c in stack)
+    if not stack:
+        reasons.append('no skill fits this task')
+    elif missing:
+        reasons.append('the library has no skill for: ' + ', '.join(missing['unknown_words'][:4]))
+    elif near and near[0][0] < GAP_COSINE and not word_hits:
+        reasons.append('the closest skills are far from what the task means')
+    thin = [g for g in (role or {}).get('gaps', []) if g['files'] >= 2]
+    if not reasons and not thin:
+        return None
+    out = {'task': reasons[0] if reasons else None,
+           'stacks': [{'stack': g['stack'], 'skills': g['skills']} for g in thin[:3]],
+           'research': 'python3 mcp/sfp_research.py draft "%s"' % (task or '').replace('"', "'")[:200]}
+    if thin and not reasons:
+        out['research'] = 'python3 mcp/sfp_research.py draft "%s best practices" --role %s' % (
+            thin[0]['stack'], (role or {}).get('role') or 'engineer')
+    return out
+
+
+def understand(text):
+    """{'terms', 'similar'} from the local models, or None when neither answers (or SFP_SEMANTIC=0)."""
+    if not (text or '').strip():
+        return None
+    import sfp_embed
+    import sfp_intent
+    if not sfp_embed.enabled():
+        return None
+    terms = sfp_intent.rewrite(text) if sfp_intent.wanted() else []
+    query = text + ('. ' + ', '.join(terms) if terms else '')
+    near = sfp_embed.similar(query, MEANING_CANDIDATES)
+    return {'terms': terms, 'similar': near} if terms or near else None
+
+
 def scan(project):
     """The project fingerprint, cached for 30 seconds so a busy session does not rescan on every call."""
     if not project:
@@ -407,9 +485,12 @@ def scan(project):
 
 
 def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, history=None, scan_result=None,
-           model=None, want_signals=False, include=(), exclude=(), explain=False, phase_hint=None, explore=None):
+           model=None, want_signals=False, include=(), exclude=(), explain=False, phase_hint=None, explore=None,
+           semantic=None):
     """Decide which skills to use for a task, and in what order.
 
+    `semantic`: None uses local models when they answer (sfp_intent rewrites the task in an expert's terms, sfp_embed
+    finds the skills closest in meaning); False keeps to words, as before; a dict {'terms', 'similar'} is used as given.
     `model` is a learned preference model (sfp_learn.Model); without one, or with one that has seen
     no feedback, the result is the same as the unlearned selection.
     `exclude` names skills the user ruled out; `include` names skills the user pinned, which join the stack
@@ -425,6 +506,16 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     hist = history if history is not None else History(v1.RECIPES, v1.read_usage())
     sc = scan_result if scan_result is not None else scan(project)
     sit = read_situation(task, goal, sc)
+    if semantic is None:
+        # Filler with no word of substance ("for the of a") means nothing, in words or in meaning.
+        semantic = understand(sit['text']) if sit['words'] else None
+    sit['semantic'] = semantic or None
+    role = None
+    if project:
+        import sfp_role
+        role = sfp_role.detect(project, sc)
+        if role and role['role'] and role['confidence'] >= ROLE_MIN_CONFIDENCE:
+            sit['role_cats'] = sfp_role.role_categories(role['role'])
     phase_queries = []
     if phase_hint:
         hint = {p: float(v) for p, v in phase_hint.items() if p in v1.PHASE_ORDER and v > 0}
@@ -477,6 +568,10 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         hit = sorted(set(sit['words']) & v1.SKILL_TOKENS.get(name, set()))
         if hit:
             reasons.append('task words: ' + ', '.join(sit['said'].get(w, w) for w in hit[:4]))
+        elif (v.get('meaning') or 0) >= 0.5:
+            reasons.append('close in meaning to the task')
+        elif sit['semantic'] and sit['semantic'].get('terms'):
+            reasons.append('matches what the task means: ' + ', '.join(sit['semantic']['terms'][:3]))
         skill_tech = v1.SKILL_TECH.get(name, set())
         if v['relation'] == 'fit':
             reasons.append('fits project: ' + ', '.join(v1.show(sorted(skill_tech & sit['ctx_tech'])[:3])))
@@ -524,6 +619,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         'engine': 'sfp-hive ' + VERSION,
         'task': task, 'goal': goal,
         'missing': missing,
+        'understood': (sit['semantic'] or {}).get('terms') or [],
+        'role': role and {k: role[k] for k in ('role', 'confidence', 'evidence', 'stacks')},
+        'gap': find_gap(task, sit, stack, votes, missing, role),
         'project': {'technologies': v1.show(sorted(sit['ctx_tech'], key=lambda t: (-ctx[t], t))[:8]),
                     'evidence': sc['signals'][:8], 'files_scanned': sc['files']},
         'phases': {p: round(v, 2) for p, v in sorted(sit['demand'].items(), key=lambda kv: -kv[1])},
@@ -593,7 +691,9 @@ def _projects(data, tmp):
                 fh.write(body)
 
 
-SETS = (('bench', None), ('proj', 'stack_eval.json'), ('fresh', 'hive_heldout.json'))
+SETS = (('bench', None), ('proj', 'stack_eval.json'), ('fresh', 'hive_heldout.json'),
+        # The bench tasks said in other words by a local model, without their concept words: half to tune on, half held out.
+        ('reworded', 'search_reworded.json'), ('reworded_holdout', 'search_reworded_holdout.json'))
 
 
 def load_cases(tests_dir, tmp, only=None):
@@ -613,20 +713,26 @@ def load_cases(tests_dir, tmp, only=None):
             if not os.path.isfile(path):
                 continue
             data = _load(path)
-            _projects(data, os.path.join(tmp, key))
-            cases = [dict(c, project=os.path.join(tmp, key, c['project'])) for c in data['cases']]
+            if isinstance(data, list):   # tasks without a project
+                cases = [dict(c, project=None, avoid=c.get('avoid', [])) for c in data]
+            else:
+                _projects(data, os.path.join(tmp, key))
+                cases = [dict(c, project=os.path.join(tmp, key, c['project'])) for c in data['cases']]
         if cases:
             out.append((key, cases))
     return out
 
 
-def evaluate(tests_dir=None, only=None):
-    """Score the hive, the v1 engine and plain search on the task sets. Used by the tests and the README."""
+def evaluate(tests_dir=None, only=None, semantic=False):
+    """Score the hive, the v1 engine and plain search on the task sets. Used by the tests and the README.
+    The published figures are for words alone (`semantic=False`), so they are the same on every machine; with
+    `semantic=True` the hive also uses the local models it finds (sfp_intent, sfp_embed), as it does in use."""
     import tempfile
     tests_dir = tests_dir or os.path.join(os.path.dirname(HERE), 'tests')
     hist = History(v1.RECIPES, [])  # recipes only, so personal usage never changes the published figures
     old = v1.Markov(v1.RECIPES, [])
-    engines = {'select': lambda t, p: select(t, p, history=hist), 'v1': lambda t, p: v1.recommend(t, p, chain=old)}
+    sem = None if semantic else False
+    engines = {'select': lambda t, p: select(t, p, history=hist, semantic=sem), 'v1': lambda t, p: v1.recommend(t, p, chain=old)}
     out = {}
     with tempfile.TemporaryDirectory() as tmp:
         for key, cases in load_cases(tests_dir, tmp, only):
@@ -715,7 +821,9 @@ def main(argv=None):
     p = sub.add_parser('profile', help='show what is detected in a project')
     p.add_argument('path', nargs='?', default='.')
     sub.add_parser('recipes', help='list the named stacks')
-    sub.add_parser('evaluate', help='score the hive against the earlier engine and plain search')
+    ev = sub.add_parser('evaluate', help='score the hive against the earlier engine and plain search')
+    ev.add_argument('--semantic', action='store_true', help='also use the local models (rewrite and meaning search)')
+    ev.add_argument('--only', help='comma-separated task sets: bench, proj, fresh, reworded')
     sub.add_parser('learning-curve', help='measure whether learning from feedback improves held-out tasks')
     tk = sub.add_parser('track', help='follow the agent: read activity events, estimate the phase, predict the next')
     tk.add_argument('--events', default='-', help='a JSON list of events, or one JSON event per line; - reads stdin')
@@ -888,7 +996,8 @@ def main(argv=None):
         v1.main([a.cmd] + ([a.path] if a.cmd == 'profile' else []))
     elif a.cmd == 'evaluate':
         print(json.dumps({k: {m: round(x, 3) if isinstance(x, float) else x for m, x in v.items()}
-                          for k, v in evaluate().items()}, indent=1))
+                          for k, v in evaluate(only=a.only and a.only.split(','), semantic=a.semantic).items()},
+                         indent=1))
     elif a.cmd == 'learning-curve':
         print(json.dumps(sfp_learn.learning_curve(), indent=1))
 

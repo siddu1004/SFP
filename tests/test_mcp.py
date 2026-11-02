@@ -4,6 +4,7 @@ Run:  python3 -m unittest discover -s tests -v
 """
 import json
 import os
+os.environ.setdefault('SFP_SEMANTIC', '0')  # word rules only here; tests/test_semantic.py covers the local models
 import subprocess
 import sys
 import unittest
@@ -74,10 +75,13 @@ class McpServerTest(unittest.TestCase):
     def test_tools_list_is_complete_and_only_the_selector_writes(self):
         tools = {t['name']: t for t in self.c.rpc('tools/list')['result']['tools']}
         self.assertEqual(set(tools), {'search_skills', 'get_skill', 'read_skill_file', 'list_categories', 'find_api',
-                                      'install_command', 'select_skills', 'give_feedback', 'learning_status', 'predict_next'})
+                                      'install_command', 'select_skills', 'give_feedback', 'learning_status', 'predict_next',
+                                      'research_skill'})
         for name, t in tools.items():
-            # select_skills and give_feedback write the selector's own logs in ~/.sfp, and nothing else does.
-            self.assertEqual(t['annotations']['readOnlyHint'], name not in ('select_skills', 'give_feedback'))
+            # select_skills and give_feedback write the selector's own logs in ~/.sfp, research_skill writes a draft there
+            # (and is the only tool that reaches the internet), and nothing else does.
+            self.assertEqual(t['annotations']['readOnlyHint'], name not in ('select_skills', 'give_feedback', 'research_skill'))
+            self.assertEqual(t['annotations']['openWorldHint'], name == 'research_skill')
             self.assertEqual(t['inputSchema']['type'], 'object')
             self.assertNotIn('fn', t)
 

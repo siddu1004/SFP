@@ -101,6 +101,18 @@ SFP brings biological collective intelligence to agent skill orchestration:
 3. **Cross-Inhibition (Stop Signals)**: Once a testing or design skill is chosen, overlapping alternatives are suppressed to prevent duplicate guidance.
 4. **Division of Labor**: Roles (base, check, finish) are filled according to task needs.
 5. **Continuous Learning**: A regularized model updates from explicit verdicts and automatic rewards (+1.0 for passing test suites, +0.5 for git commits, -0.6 for test failures).
+6. **Meaning, Not Just Words (local models)**: With an embedding model running in LM Studio or Ollama, every skill is also a vector, and a task finds skills close to what it *means*. Meaning rescues a weak word match but never overrules one that names its skill. Nothing leaves your machine.
+7. **Your Role**: The project's files tell the hive who you are (backend, frontend, mobile, data and ML, DevOps, embedded and hardware, web3, agent builder), and the skills of your role get a small push.
+8. **Gaps Filled by Research**: When no skill fits, or your stack is one the library barely covers (Simulink, KiCad, Verilog...), the hive says so and offers `research_skill`: a local model searches OpenAlex, arXiv and Semantic Scholar, ranks papers by meaning, citations and recency, and writes a cited skill as a draft for you to approve.
+
+| Measured with nomic-embed-text v1.5 (hit / right first) | Words only | With meaning |
+|---|---|---|
+| Benchmark tasks (91) | 0.89 / 0.77 | 0.91 / 0.79 |
+| The same tasks reworded by a local model, held out (35) | 0.34 / 0.23 | 0.40 / 0.26 |
+| Project tasks (24) | 0.79 / 0.63 | 0.79 / 0.67 |
+| Held-out project tasks (22) | 0.86 / 0.68 | 0.86 / 0.68 |
+
+Meaning helps most when a task is said in other words, and costs about 70 ms a task. It is still far from solving rewording (0.40), and a stronger embedding model would help. Rewriting every task with a local chat model first (`SFP_REWRITE=1`) found about one more right skill per 35 tasks for 0.5 to 40 seconds a task, so it is off by default.
 
 ### Dynamic Multi-Bundle Stacking (No Limits)
 
@@ -234,7 +246,8 @@ This guide takes you from a bare machine to an agent that gets the right skills 
 | [6. Register the MCP server](#6-register-the-mcp-server) | All 819 skills on demand, nothing copied | Recommended |
 | [7. Install the SFP Hive extension](#7-install-the-sfp-hive-extension) | The sidebar in Antigravity or VS Code | Optional |
 | [8. Use SFP in Antigravity](#8-use-sfp-in-antigravity) | Your first task with the hive | Use it |
-| [9. Set up the local model router](#9-optional-set-up-the-local-model-router) | Local models first, free tiers next | Optional |
+| [9. Let the hive use local models](#9-optional-let-the-hive-use-local-models) | Meaning search, your role, skills from research | Optional |
+| [9b. Set up the local model router](#9b-optional-set-up-the-local-model-router) | Local models first, free tiers next | Optional |
 | [10. Extras](#10-optional-extras) | Companion apps, skills from any Git repo | Optional |
 
 Also: [Claude Code plugin](#claude-code-plugin-instead-of-steps-2-6), [Keeping it current](#keeping-it-current), [When something is wrong](#when-something-is-wrong), [Removing everything](#removing-everything).
@@ -402,7 +415,25 @@ After a task, tell the hive how it went: **This skill helped** / **This skill di
 
 Useful commands (`Ctrl+Shift+P`, then type "SFP Hive"): **Choose skills for a task**, **Show current agent skills and phase**, **Search skills**, **Apply a bundle**, **Copy the agent prompt**, **Check connection**, **Add a skill from Git**.
 
-### 9. Optional: set up the local model router
+### 9. Optional: let the hive use local models
+
+Load an embedding model in LM Studio or Ollama (for example `nomic-embed-text`), then embed the library once:
+
+```bash
+python3 mcp/sfp_embed.py build          # about a minute; later runs only embed what changed
+python3 mcp/sfp_role.py .               # your role, read from this project, and the stacks the library covers thinly
+```
+
+The hive then matches tasks by meaning as well as words, on its own. When it reports a gap, draft a skill from research (any loaded chat model writes it; only the search queries leave your machine):
+
+```bash
+python3 mcp/sfp_research.py draft "tune the PI controller of a buck converter" --role embedded-hardware
+python3 mcp/sfp_research.py approve <name> --install antigravity     # after you have read the draft
+```
+
+**Check:** `python3 mcp/sfp_hive.py doctor` shows **Meaning search** with every skill embedded. `SFP_SEMANTIC=0` turns all of this off.
+
+### 9b. Optional: set up the local model router
 
 An OpenAI-compatible router on `127.0.0.1:8787` that sends requests to your local models first, then free tiers, then paid ones, and moves to the next model when one is rate limited, out of quota or down.
 
