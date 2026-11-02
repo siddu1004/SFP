@@ -24,6 +24,7 @@ import functools
 import hashlib
 import json
 import math
+import operator
 import os
 import re
 import sys
@@ -45,6 +46,9 @@ RUNTIMES = [
     ('vLLM', 'http://127.0.0.1:8000/v1', 'http://127.0.0.1:8000/v1/models'),
 ]
 EMBED_HINTS = ('embed', 'bge', 'e5-', 'gte', 'minilm', 'nomic')
+EMBED_PREFERENCE = ('bge-m3', 'mxbai-embed', 'nomic-embed', 'bge', 'gte', 'e5-', 'minilm', 'embed')
+EXAMPLES_FILE = os.path.join(core.ROOT, 'skill_examples.json')   # requests a developer might type, per skill
+EXAMPLE_WEIGHT = 0.5     # a skill's closeness: half its description, half its closest example request
 BATCH = 32
 QUERY_TIMEOUT = 4.0     # a task waits at most this long for its vector, then the hive goes on with words alone
 BUILD_TIMEOUT = 300.0
@@ -75,6 +79,7 @@ def find_endpoint(timeout=1.0, skip=()):
     if os.environ.get('SFP_EMBED_URL') and os.environ.get('SFP_EMBED_MODEL'):
         return {'runtime': 'configured', 'base_url': os.environ['SFP_EMBED_URL'].rstrip('/'),
                 'model': os.environ['SFP_EMBED_MODEL']}
+    found = []
     for name, base, listing in RUNTIMES:
         if name in skip:
             continue
@@ -84,8 +89,12 @@ def find_endpoint(timeout=1.0, skip=()):
             continue
         for i in ids:
             if any(h in i.lower() for h in EMBED_HINTS):
-                return {'runtime': name, 'base_url': base, 'model': i}
-    return None
+                found.append({'runtime': name, 'base_url': base, 'model': i})
+    if not found:
+        return None
+    # The strongest model that is there: bge-m3 found the right skill in its top ten for 80% of reworded tasks.
+    rank = lambda ep: next((k for k, h in enumerate(EMBED_PREFERENCE) if h in ep['model'].lower()), len(EMBED_PREFERENCE))
+    return min(found, key=rank)
 
 
 def _prefix(model, kind):
@@ -151,9 +160,9 @@ def _digest(text):
 
 # ---- the cache: ~/.sfp/embeddings/<model>.json, one vector per skill, kept while the skill's text is unchanged ------
 
-def cache_path(model):
+def cache_path(model, kind='skills'):
     safe = ''.join(c if c.isalnum() or c in '-_.' else '_' for c in model)
-    return os.path.join(data_dir(), 'embeddings', safe + '.json')
+    return os.path.join(data_dir(), 'embeddings', safe + ('' if kind == 'skills' else '.' + kind) + '.json')
 
 
 def _pack(v):
@@ -166,21 +175,25 @@ def _unpack(s):
     return a.tolist()
 
 
-def load_cache(model):
+def load_cache(model, kind='skills'):
+    """{skill: (digest, vector)}; for kind='examples', {skill: (digest, [vectors])}."""
     try:
-        with open(cache_path(model), encoding='utf-8') as f:
+        with open(cache_path(model, kind), encoding='utf-8') as f:
             data = json.load(f)
+        if kind == 'examples':
+            return {name: (d, [_unpack(x) for x in v]) for name, (d, v) in data.get('items', {}).items()}
         return {name: (d, _unpack(v)) for name, (d, v) in data.get('items', {}).items()}
     except (OSError, ValueError, TypeError):
         return {}
 
 
-def save_cache(model, items):
-    path = cache_path(model)
+def save_cache(model, items, kind='skills'):
+    path = cache_path(model, kind)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     tmp = path + '.tmp'
+    pack = (lambda v: [_pack(x) for x in v]) if kind == 'examples' else _pack
     with open(tmp, 'w', encoding='utf-8') as f:
-        json.dump({'model': model, 'items': {n: [d, _pack(v)] for n, (d, v) in items.items()}}, f, separators=(',', ':'))
+        json.dump({'model': model, 'items': {n: [d, pack(v)] for n, (d, v) in items.items()}}, f, separators=(',', ':'))
     os.replace(tmp, path)
 
 
@@ -209,8 +222,33 @@ def build(endpoint=None, progress=None, timeout=BUILD_TIMEOUT):
             progress(min(i + BATCH, len(todo)), len(todo))
     if not todo:
         save_cache(endpoint['model'], items)
+    # The example requests are questions, so they are embedded as queries: a task is then matched question to question.
+    examples = load_examples()
+    ex_items = load_cache(endpoint['model'], kind='examples')
+    ex_todo = [(n, _digest('\n'.join(qs)), qs) for n, qs in examples.items()
+               if n in live and qs and ex_items.get(n, (None,))[0] != _digest('\n'.join(qs))]
+    ex_items = {n: v for n, v in ex_items.items() if n in live and n in examples}
+    flat = [(n, d, q) for n, d, qs in ex_todo for q in qs]
+    vecs_of = {}
+    for i in range(0, len(flat), BATCH):
+        chunk = flat[i:i + BATCH]
+        for (n, d, _), v in zip(chunk, embed(endpoint, [q for _, _, q in chunk], 'query', timeout)):
+            vecs_of.setdefault((n, d), []).append(v)
+        if progress:
+            progress(min(i + BATCH, len(flat)), len(flat))
+    for (n, d), vs in vecs_of.items():
+        ex_items[n] = (d, vs)
+    save_cache(endpoint['model'], ex_items, kind='examples')
     _index.cache_clear()
-    return len(todo), len(items)
+    return len(todo) + len(ex_todo), len(items)
+
+
+def load_examples():
+    try:
+        with open(EXAMPLES_FILE, encoding='utf-8') as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
 
 
 # ---- answering ---------------------------------------------------------------------------------------------------
@@ -228,15 +266,21 @@ def endpoint_cached(ttl=60.0):
 
 @functools.lru_cache(maxsize=4)
 def _index(model):
-    """(names, vectors) for the skills whose cached vector matches their current text."""
+    """(names, vectors, example vectors) for the skills whose cached vector matches their current text; a skill without
+    current example vectors has []."""
     items = load_cache(model)
-    names, vecs = [], []
+    ex_items = load_cache(model, kind='examples')
+    examples = load_examples()
+    names, vecs, exvecs = [], [], []
     for s in core.CATALOG['skills']:
         hit = items.get(s['name'])
         if hit and hit[0] == _digest(skill_text(s)):
             names.append(s['name'])
             vecs.append(hit[1])
-    return names, vecs
+            ex = ex_items.get(s['name'])
+            qs = examples.get(s['name'])
+            exvecs.append(ex[1] if ex and qs and ex[0] == _digest('\n'.join(qs)) else [])
+    return names, vecs, exvecs
 
 
 @functools.lru_cache(maxsize=256)
@@ -252,7 +296,7 @@ def similar(text, limit=40, min_coverage=0.9):
     ep = endpoint_cached()
     if not ep:
         return []
-    names, vecs = _index(ep['model'])
+    names, vecs, exvecs = _index(ep['model'])
     if not names or len(names) < min_coverage * len(core.CATALOG['skills']):
         return []
     try:
@@ -260,7 +304,13 @@ def similar(text, limit=40, min_coverage=0.9):
     except (OSError, ValueError, KeyError, urllib.error.URLError):
         _ENDPOINT['checked'] = 0.0   # look for the runtime again next time
         return []
-    scored = [(sum(a * b for a, b in zip(q, v)), n) for n, v in zip(names, vecs)]
+    dot = lambda v: sum(map(operator.mul, q, v))
+    scored = []
+    for n, v, ex in zip(names, vecs, exvecs):
+        s = dot(v)
+        if ex:
+            s = (1 - EXAMPLE_WEIGHT) * s + EXAMPLE_WEIGHT * max(dot(e) for e in ex)
+        scored.append((s, n))
     scored.sort(reverse=True)
     return scored[:limit]
 
@@ -269,8 +319,9 @@ def status():
     ep = find_endpoint()
     out = {'enabled': enabled(), 'endpoint': ep, 'skills': len(core.CATALOG['skills'])}
     if ep:
-        names, _ = _index(ep['model'])
+        names, _, exvecs = _index(ep['model'])
         out['embedded'] = len(names)
+        out['with_examples'] = sum(1 for e in exvecs if e)
         out['cache'] = cache_path(ep['model'])
     return out
 

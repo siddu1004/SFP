@@ -113,6 +113,32 @@ class EmbedTest(LocalModelCase):
         finally:
             os.environ['SFP_SEMANTIC'] = '1'
 
+    def test_example_requests_pull_a_skill_up_and_stale_ones_are_ignored(self):
+        # A request phrased like one of python-testing's examples finds it through the example, not the description.
+        orig = sfp_embed.EXAMPLES_FILE
+        tmp = os.path.join(self.tmp, 'skill_examples.json')
+        with open(tmp, 'w', encoding='utf-8') as f:
+            json.dump({'python-testing': ['zorbled widgets keep flaking randomly', 'quell the flaky zorble suite']}, f)
+        sfp_embed.EXAMPLES_FILE = tmp
+        query = 'zorbled widgets keep flaking randomly'
+        try:
+            sfp_embed._index.cache_clear()
+            before = dict((n, c) for c, n in sfp_embed.similar(query, 900, min_coverage=0.0))
+            sfp_embed.build()
+            sfp_embed._query_vector.cache_clear()
+            after = dict((n, c) for c, n in sfp_embed.similar(query, 900, min_coverage=0.0))
+            self.assertGreater(after['python-testing'], before.get('python-testing', 0.0) + 0.3)
+            self.assertIn('python-testing', [n for _, n in sfp_embed.similar(query, 5)])
+            self.assertEqual(sfp_embed.status()['with_examples'], 1)
+            with open(tmp, 'w', encoding='utf-8') as f:
+                json.dump({'python-testing': ['something else entirely now']}, f)
+            sfp_embed._index.cache_clear()
+            self.assertEqual(sfp_embed.status()['with_examples'], 0, 'examples that changed are not used until rebuilt')
+        finally:
+            sfp_embed.EXAMPLES_FILE = orig
+            sfp_embed._index.cache_clear()
+            sfp_embed._query_vector.cache_clear()
+
     def test_skill_text_reads_the_body_without_code_or_frontmatter(self):
         text = sfp_embed.skill_text(core.SKILLS['python-testing'])
         self.assertIn('pytest', text)
@@ -167,6 +193,15 @@ class HiveMeaningTest(unittest.TestCase):
         sem = {'terms': [], 'similar': [(0.9, 'e2e-testing')] + [(0.3, n) for n in ('blender-motion', 'x-api', 'career-ops')]}
         res = hive.select('write pytest tests for my python code', semantic=sem, history=hive.History())
         self.assertIn('python-testing', [c['name'] for c in res['stack']])
+
+    def test_when_the_words_are_weak_meaning_leads(self):
+        # The best word match carries one word in six of this task, so the words are weak and meaning leads.
+        task = 'could strangers sneak into my website and take over accounts'
+        sem = {'terms': [], 'similar': [(0.9, 'security-review')] + [(0.3, n) for n in ('blender-motion', 'x-api', 'career-ops')]}
+        res = hive.select(task, semantic=sem, history=hive.History(), max_skills=2)
+        chosen = {c['name']: c for c in res['stack']}
+        self.assertIn('security-review', chosen)
+        self.assertEqual(chosen['security-review']['relevance'], 1.0, 'meaning reaches a full word match, not 75% of it')
 
     def test_without_local_models_the_choice_is_unchanged(self):
         a = hive.select('write tests for the order view', semantic=False, history=hive.History())

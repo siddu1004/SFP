@@ -99,6 +99,8 @@ RESCUE = 0.7             # learned preference strong enough to admit a skill tha
 RECALL = 0.3             # learned association strong enough to bring in a skill the search did not find
 EXPANSION_WEIGHT = 0.6   # the local model's expert terms for the task (SFP_REWRITE=1), against the task's own words
 MEANING_WEIGHT = 0.75    # closeness in meaning, as a share of a full word match (set on tests/, see docs in README)
+MEANING_WEIGHT_WEAK = 1.0  # the same when the words are weak: meaning may lead
+WORDS_CONFIDENT = 0.5    # the best word match carries this share of the task's words: the words are sure of themselves
 MEANING_CANDIDATES = 40  # how many of the closest skills in meaning join the candidates
 ROLE_WEIGHT = 0.15       # push for the skills of the engineer's role (sfp_role), when the project shows one clearly
 ROLE_MIN_CONFIDENCE = 0.5
@@ -251,7 +253,17 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
         # Meaning rescues, it does not overrule: a skill's relevance is its word match, or MEANING_WEIGHT of its closeness in
         # meaning when that is higher. A task that names its skill keeps it; one said in other words still finds it.
         # (Blending the two instead lost a third of the project tasks, where the words name the exact technology.)
-        relevance = {n: max(r, MEANING_WEIGHT * meaning.get(n, 0.0)) for n, r in relevance.items()}
+        # How sure the words are: the share of the task's words that the best word match carries. When the words are weak
+        # (a task said in other words), meaning leads instead.
+        mw = MEANING_WEIGHT
+        if found and words:
+            best_word = max(found, key=found.get)
+            carried = len(set(words) & v1.SKILL_TOKENS.get(best_word, set())) / len(set(words))
+            if carried < WORDS_CONFIDENT:
+                mw = MEANING_WEIGHT_WEAK
+        elif not found:
+            mw = MEANING_WEIGHT_WEAK
+        relevance = {n: max(r, mw * meaning.get(n, 0.0)) for n, r in relevance.items()}
         best_rel = max(relevance.values() or [0.0]) or 1.0
         relevance = {n: r / best_rel for n, r in relevance.items()}
     votes = {}
