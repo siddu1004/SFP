@@ -987,7 +987,7 @@ claude-mem's skills: search past work, timelines, handoffs and planning with per
 | `mem-wowerpoint` | Turn one document into a kawaii NotebookLM slide deck. Use for "wowerpoint this", "make a deck about <file>", "turn this report into slides", or any request to render a single document as shareable na… |
 | `claude-mem-install` | Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference. |
 | `mem-host-observer` | Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose. |
-| `mem-openclaw` |  |
+| `mem-openclaw` | This guide walks through setting up the claude-mem plugin on an OpenClaw gateway. By the end, your agents will have persistent memory across sessions via system prompt context injection, and optionall… |
 
 ## session-memory (plugin)
 

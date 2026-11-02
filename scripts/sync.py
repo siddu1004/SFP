@@ -46,6 +46,11 @@ def field(fm, key):
                 break
             lines.append(line.strip())
         value = ' '.join(l for l in lines if l)
+    if value.startswith('"'):
+        try:
+            return json.loads(value)  # a double-quoted description written by quote_description
+        except ValueError:
+            pass
     return value.strip('"\'')
 
 
@@ -80,6 +85,60 @@ def rename_skill(skill_dir, new_name):
     else:
         text = re.sub(r'^---\s*\n', f'---\nname: {new_name}\n', text, count=1)
     open(p, 'w', encoding='utf-8').write(text)
+
+
+def first_paragraph(text):
+    """The first prose paragraph of a skill body: no headings, quotes, lists, code or rules."""
+    para, fence = [], False
+    for line in text.splitlines():
+        s = line.strip()
+        if s.startswith('```'):
+            fence = not fence
+            if para:
+                break
+            continue
+        if fence:
+            continue
+        if not s:
+            if para:
+                break
+            continue
+        if s.startswith(('#', '>', '-', '*', '|', '<', '!')) or re.match(r'^\d+\.', s):
+            if para:
+                break
+            continue
+        para.append(s)
+    return ' '.join(para)
+
+
+def add_frontmatter(skill_dir, name):
+    """Give a skill that has no frontmatter one, so agents can parse it: otherwise a parser takes the first pair of `---`
+    rules in the body as YAML and fails, and the skill has no description to be found by. Returns the frontmatter."""
+    p = os.path.join(skill_dir, 'SKILL.md')
+    with open(p, encoding='utf-8', errors='replace') as f:
+        text = f.read()
+    desc = first_paragraph(text)[:500].rstrip() or f'The {name} skill.'
+    fm = f'name: {name}\ndescription: {json.dumps(desc, ensure_ascii=False)}'
+    with open(p, 'w', encoding='utf-8') as f:
+        f.write(f'---\n{fm}\n---\n\n{text}')
+    return fm
+
+
+def quote_description(skill_dir):
+    """Quote a plain one-line description that strict YAML parsers reject, such as one holding ': ' or ' #'
+    ("mapping values are not allowed"). A JSON string is a valid YAML double-quoted scalar."""
+    p = os.path.join(skill_dir, 'SKILL.md')
+    with open(p, encoding='utf-8', errors='replace') as f:
+        text = f.read()
+    m = re.search(r'^description:[ \t]*(.*)$', frontmatter(text), re.M)
+    if not m:
+        return
+    value = m.group(1).strip()
+    if not value or value[0] in '"\'>|' or (': ' not in value and ' #' not in value and value[0] not in '[{&*!%@`'):
+        return
+    text = text.replace(m.group(0), 'description: ' + json.dumps(value, ensure_ascii=False), 1)
+    with open(p, 'w', encoding='utf-8') as f:
+        f.write(text)
 
 
 def checkout(repo, src_dir, cache):
@@ -183,8 +242,11 @@ def main():
         cat = clf.category(name, source)
         dest = os.path.join(OUT, cat, 'skills', name)
         copy_skill(skill_src, dest)
-        if field(fm, 'name') != name:
+        if not fm:
+            fm = add_frontmatter(dest, name)
+        elif field(fm, 'name') != name:
             rename_skill(dest, name)
+        quote_description(dest)
         app_key = app_for(apps, name, source['repo'])
         if app_key:
             attach_app(dest, app_key, apps[app_key])

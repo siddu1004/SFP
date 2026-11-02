@@ -4891,7 +4891,7 @@
   {
    "name": "mem-openclaw",
    "category": "memory",
-   "description": "",
+   "description": "This guide walks through setting up the claude-mem plugin on an OpenClaw gateway. By the end, your agents will have persistent memory across sessions via system prompt context injection, and optionally a real-time observation feed streaming to a messaging channel.",
    "source": "thedotmack/claude-mem",
    "license": "Apache-2.0",
    "path": "plugins/memory/skills/mem-openclaw",

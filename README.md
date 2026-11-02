@@ -64,7 +64,7 @@ Uninstall cleanly anytime: `~/.sfp/SFP/install.sh uninstall` (or `.\install.ps1 
 
 High-quality agent skills exist, but using them today forces a painful tradeoff:
 
-- **The 58,000-Token Tax**: Agents read every installed skill description at session start. For 819 skills, that consumes **58,363 tokens** (29% of a 200k context window) before you type a single prompt.
+- **The 58,000-Token Tax**: Agents read every installed skill description at session start. For 819 skills, that consumes **58,429 tokens** (29% of a 200k context window) before you type a single prompt.
 - **Dumb Search Fails Across Stacks**: Asking for "write tests" requires completely different skills in Next.js (`react-testing`), Django (`django-tdd`), or Rust (`rust-testing`). Keyword search cannot see your project structure.
 - **Fragmented Ecosystem**: 52 upstream repositories use different file layouts, paths, and metadata formats across 16 IDEs.
 - **Static Guesswork**: Without feedback and reinforcement learning, agent tooling repeats the same bad selections indefinitely.
@@ -85,7 +85,7 @@ SFP brings biological collective intelligence to agent skill orchestration:
 | Capability | Mechanism | Impact |
 |---|---|---|
 | **Curate & Unify** | 52 repositories merged into 24 categories, organized by role presets | Complete coverage across frontend, backend, security, DevOps, and AI |
-| **Dynamic Hive Selection** | 5 scout signals (task words, project files, work phase, category, history) reach quorum | **266 tokens** carried instead of 58,363: **219x reduction** |
+| **Dynamic Hive Selection** | 5 scout signals (task words, project files, work phase, category, history) reach quorum | **266 tokens** carried instead of 58,429: **220x reduction** |
 | **LinUCB Bandit & RL** | Contextual bandit exploration plus implicit reward harvesting from test runs and git commits | **94% of reported mistakes fixed** on retry |
 | **Universal Delivery** | Native folder injection for 16 IDEs + zero-install MCP server + VS Code / Antigravity extension | Install once, run anywhere |
 | **Unlimited Multi-Bundle Stacking** | Stack multiple workflow recipes concurrently (e.g. testing + frontend + security) with auto-deduplication | Zero limits on active bundle depth |
@@ -212,12 +212,12 @@ Figures below are computed directly from this repository during the build. Repro
 | `frontend-dev` preset | 212 | about 15,408 tokens | 7.7% |
 | `backend-dev` preset | 137 | about 11,823 tokens | 5.9% |
 | `mobile-dev` preset | 79 | about 6,397 tokens | 3.2% |
-| `agent-builder` preset | 298 | about 19,876 tokens | 9.9% |
-| `everything` | 819 | about 58,363 tokens | 29.2% |
+| `agent-builder` preset | 298 | about 19,942 tokens | 10.0% |
+| `everything` | 819 | about 58,429 tokens | 29.2% |
 
 **How fast is it?**
 
-Decisions take about 5 ms inside the host process. Search takes about 0.1 ms. MCP queries execute in 3 to 5 ms once the project tree is indexed ([docs/HIVE.md](docs/HIVE.md#speed)).
+Decisions take about 8 ms inside the host process. Search takes about 0.1 ms. MCP queries execute in 3 to 5 ms once the project tree is indexed ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better across every domain. Learning is measured on a simulated user, not on real long-run use. Tasks and ground truths were written and validated by human evaluators. Token counts are estimated at 4 characters per token.
 
