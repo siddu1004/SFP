@@ -56,19 +56,45 @@ function resolveSfpRoot() {
   const defaultDir = path.join(os.homedir(), '.sfp', 'SFP');
   const targetDir = process.env.SFP_ROOT || process.env.SFP_DIR || defaultDir;
 
+  // The code that runs is the release this package was published as, never whatever is on main today.
+  const tag = releaseTag();
   if (!fs.existsSync(path.join(targetDir, '.git'))) {
-    console.log(`\x1b[36mSetting up SFP in ${targetDir}...\x1b[0m`);
+    // stderr only: in `mcp` mode stdout is the JSON-RPC stream.
+    console.error(`\x1b[36mSetting up SFP ${tag} in ${targetDir}...\x1b[0m`);
     fs.mkdirSync(path.dirname(targetDir), { recursive: true });
-    const cloneRes = spawnSync('git', ['clone', '--depth', '1', 'https://github.com/siddu1004/SFP.git', targetDir], {
-      stdio: 'inherit'
+    const cloneRes = spawnSync('git', ['clone', '--depth', '1', '--branch', tag, '--config', 'advice.detachedHead=false', '--config', 'core.longpaths=true', REPO_URL, targetDir], {
+      stdio: ['ignore', 2, 2]
     });
     if (cloneRes.status !== 0) {
-      console.error('\x1b[31mError: Failed to clone SFP repository. Please ensure git is installed.\x1b[0m');
+      console.error(`\x1b[31mError: Failed to clone SFP ${tag}. Please ensure git is installed and the release tag exists.\x1b[0m`);
       process.exit(1);
     }
+  } else {
+    pinCheckout(targetDir, tag);
   }
 
   return targetDir;
+}
+
+const REPO_URL = 'https://github.com/siddu1004/SFP.git';
+
+function releaseTag() {
+  const { version } = JSON.parse(fs.readFileSync(path.join(PKG_DIR, 'package.json'), 'utf-8'));
+  return `v${version}`;
+}
+
+// An earlier launcher cloned main; move a clean checkout to this release, and leave one with local changes alone.
+function pinCheckout(dir, tag) {
+  const git = (...a) => spawnSync('git', ['-C', dir, '-c', 'core.longpaths=true', ...a], { encoding: 'utf-8' });
+  if (git('describe', '--tags', '--exact-match', 'HEAD').stdout.trim() === tag) return;
+  if (git('status', '--porcelain').stdout.trim()) {
+    console.error(`\x1b[33mWarning: ${dir} has local changes, so it was not moved to SFP ${tag}.\x1b[0m`);
+    return;
+  }
+  const fetched = git('fetch', '--depth', '1', 'origin', 'tag', tag, '--no-tags');
+  if (fetched.status !== 0 || git('checkout', '--quiet', '--detach', tag).status !== 0) {
+    console.error(`\x1b[33mWarning: could not move ${dir} to SFP ${tag}; using it as it is.\x1b[0m`);
+  }
 }
 
 function showHelp() {

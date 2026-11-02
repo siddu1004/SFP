@@ -89,7 +89,8 @@ fn resolve_sfp_root() -> Result<PathBuf, String> {
     }
 
     // Clone into default_dir if missing
-    eprintln!("\x1b[36mSetting up SFP in {}...\x1b[0m", default_dir.display());
+    let tag = format!("v{}", VERSION);
+    eprintln!("\x1b[36mSetting up SFP {} in {}...\x1b[0m", tag, default_dir.display());
     if let Some(parent) = default_dir.parent() {
         fs::create_dir_all(parent).map_err(|e| format!("Failed to create directory: {}", e))?;
     }
@@ -99,14 +100,21 @@ fn resolve_sfp_root() -> Result<PathBuf, String> {
             "clone",
             "--depth",
             "1",
+            "--branch",
+            &tag,
+            "--config",
+            "advice.detachedHead=false",
             "https://github.com/siddu1004/SFP.git",
             &default_dir.to_string_lossy(),
         ])
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::inherit())
         .status()
         .map_err(|e| format!("Failed to run git: {}. Please ensure git is installed.", e))?;
 
     if !clone_status.success() {
-        return Err("Failed to clone SFP repository.".to_string());
+        return Err(format!("Failed to clone SFP repository {}.", tag));
     }
 
     Ok(default_dir)
