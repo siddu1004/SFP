@@ -624,316 +624,500 @@
   "Action combat style in Blender."
  ],
  "blend-genre-card-party-idle": [
-  "Need help designing a card game interface in Blender.",
-  "How do I make an engaging idle game background in Blender?",
-  "Blender tips for educational game presentation spaces?",
-  "Looking for ideas to blend genres in party games using Blender.",
-  "Can you recommend Blender settings for a rhythm game UI?",
-  "Quick pointers on art direction for card and party games."
+  "Help with art direction for a card game in Blender?",
+  "How can I make educational games look more engaging in Blender?",
+  "Any ideas for idle/incremental game presentation spaces in Blender?",
+  "Looking to create a deck builder game. How should I start in Blender?",
+  "Need some art direction tips for party games in Blender.",
+  "What’s the best way to design visual novel spaces in Blender?"
  ],
  "blend-genre-metroidvania-roguelike": [
-  "Blender setup for Metroidvania biome gates?",
-  "Roguelike room module design in Blender?",
-  "How to make props run-readable in metroidvania games with Blender?",
-  "Any tricks for creating a roguelite world in Blender?",
-  "Art direction for biomes and rooms in Blender?",
-  "Blender techniques for Metroidvania aesthetics."
+  "How do I create biome gates in a metroidvania game using Blender?",
+  "Tips on designing room modules for roguelikes in Blender?",
+  "Any advice for making run-readable props in Blender games?",
+  "Looking to design an open world with biomes and rooms. How?",
+  "Need help with art direction for metroidvania-style games.",
+  "How can I make my game more readable with Blender's tools?"
  ],
  "blend-genre-narrative-vn": [
-  "Creating a visual novel scene in Blender?",
-  "How to design an interactive movie set in Blender?",
-  "Walking simulator art direction with Blender?",
-  "Story-driven presentation spaces in Blender?",
-  "Blender tips for VN character and environment design?",
-  "Artistic direction for narrative games."
+  "How do I create a visual novel presentation in Blender?",
+  "What’s the best way to design interactive movie spaces in Blender?",
+  "Tips for creating walking simulator environments in Blender?",
+  "Any ideas on story-driven presentation in Blender?",
+  "Looking to enhance art direction for narrative games in Blender.",
+  "Need some guidance on making my game more immersive."
  ],
  "blend-genre-open-world-sandbox": [
-  "Biome landmarks in open world games using Blender?",
-  "Traversable scale art direction with Blender?",
-  "Discovery props for sandbox games in Blender?",
-  "Open world game environments in Blender?",
-  "Blender techniques for creating a sandbox feel?",
-  "Designing large-scale worlds in Blender."
+  "How can I create biome landmarks in an open world game in Blender?",
+  "Tips on designing traversable scale for sandbox games in Blender?",
+  "Any advice on discovery props for a sandbox environment?",
+  "Looking to design an open world with Blender. How to start?",
+  "Need help with art direction for open world and sandbox games.",
+  "What’s the best way to make my game more exploratory?"
  ],
  "blend-genre-puzzle-platformer": [
-  "Readable interactables in puzzle games using Blender?",
-  "How to design jump volumes in platformers with Blender?",
-  "Clear hazard language in Blender for puzzles?",
-  "Art direction for puzzle and platformer levels?",
-  "Blender tricks for interactive elements in games?",
-  "Platformer aesthetics with Blender."
+  "How do I create readable interactables in a puzzle game using Blender?",
+  "Tips on designing jump volumes for platformers in Blender?",
+  "Any advice on clear hazard language in Blender games?",
+  "Looking to design a puzzle and platformer with Blender. How?",
+  "Need help with art direction for puzzle-platformer games.",
+  "What’s the best way to make my game more intuitive?"
  ],
  "blend-genre-racing-sports": [
-  "Track landmarks in racing game design with Blender?",
-  "Stadium kits for sports games using Blender?",
-  "High-speed readability art direction in Blender?",
-  "Racing and sports environments in Blender?",
-  "Blender techniques for track and stadium design?",
-  "Sports game aesthetics."
+  "How can I create track landmarks in a racing game using Blender?",
+  "Tips on designing stadium kits for sports games in Blender?",
+  "Any advice on high-speed readability in Blender games?",
+  "Looking to design a racing and sports game with Blender. How?",
+  "Need help with art direction for racing and sports games.",
+  "What’s the best way to make my game more engaging?"
  ],
  "blend-genre-rpg": [
-  "Loot rarity reads in RPG worlds with Blender?",
-  "Region identity art direction using Blender?",
-  "RPG, JRPG, CRPG, ARPG, MMORPG world design?",
-  "Blender tips for immersive RPG environments?",
-  "Designing dungeons and regions in Blender?",
-  "Artistic direction for RPGs."
+  "How do I create loot rarity reads in an RPG using Blender?",
+  "Tips on designing region identity for JRPGs in Blender?",
+  "Any advice on creating ARPG worlds in Blender?",
+  "Looking to design an RPG world with Blender. How to start?",
+  "Need help with art direction for RPG games.",
+  "What’s the best way to make my game more immersive?"
  ],
  "blend-genre-shooter": [
-  "FPS map design with sightline language in Blender?",
-  "TPS cover design using Blender?",
-  "Shooter map prop creation in Blender?",
-  "Battle royale environments in Blender?",
-  "Extraction shooter layouts with Blender?",
-  "Art direction for shooter games."
+  "How can I create FPS maps with sightlines in Blender?",
+  "Tips on designing TPS cover elements in Blender?",
+  "Any advice on extraction-shooter props in Blender games?",
+  "Looking to design a shooter map with Blender. How?",
+  "Need help with art direction for shooter games.",
+  "What’s the best way to make my game more tactical?"
  ],
  "blend-genre-soulslike": [
-  "Monumental melancholy spaces in soulslikes using Blender?",
-  "Fog gates and bonfire landmarks in soulslikes?",
-  "Lethal readability in soulslike environments with Blender?",
-  "Blender techniques for soulslike aesthetics?",
-  "Designing dark, immersive worlds with Blender?",
-  "Artistic direction for soulslikes."
+  "How do I create monumental melancholy spaces in a soulslike using Blender?",
+  "Tips on designing fog gates in soulslike games in Blender?",
+  "Any advice on bonfire landmarks in Blender games?",
+  "Looking to design a soulslike game with Blender. How to start?",
+  "Need help with art direction for soulslike games.",
+  "What’s the best way to make my game more atmospheric?"
  ],
  "blend-genre-stealth": [
-  "Shadow volumes in stealth games using Blender?",
-  "Patrol-friendly layouts in Blender?",
-  "Concealment materials for stealth environments?",
-  "Stealth game spaces in Blender?",
-  "Blender tips for stealth game design?",
-  "Art direction for stealth games."
+  "Help with stealth game level design in Blender",
+  "How to create shadow volumes and patrol routes in Blender?",
+  "Any tricks for making spaces stealth-friendly in Blender?",
+  "Looking for ideas on concealment materials in Blender.",
+  "Need guidance on designing a stealth game space in Blender.",
+  "Blender tips for creating effective stealth environments."
  ],
  "blend-genre-strategy-sim": [
-  "Help design a sci-fi city builder game environment in Blender.",
-  "What's the best way to create strategy game assets in Blender?",
-  "Can you guide me on making turn-based strategy art in Blender?",
-  "I need help with visual design for a colony sim game. Any tips?",
-  "How can I enhance the aesthetic of my simulation game in Blender?",
-  "Looking for advice on creating RTS visuals using Blender."
+  "Art direction for strategy games using Blender",
+  "How to create RTS maps with Blender?",
+  "Any advice on Blender for turn-based strategy games?",
+  "Tips for making tower defense levels in Blender?",
+  "Need help designing MOBA environments in Blender.",
+  "Blender techniques for city builder simulations."
  ],
  "blend-genre-survival": [
-  "Blender tips for crafting survival horror environments?",
-  "Help me visualize a zombie apocalypse scene in Blender.",
-  "Any ideas on how to make resource props look more realistic in Blender?",
-  "How can I add tension to my survival game space in Blender?",
-  "What are some best practices for art direction in survival games?",
-  "Can you suggest techniques for enhancing crafting readability in Blender?"
+  "Art direction for survival games in Blender",
+  "How to create resource props in Blender?",
+  "Any ideas on crafting readability in survival game spaces?",
+  "Tips for tension routes in survival-horror levels.",
+  "Need help with designing a survival gameplay space in Blender.",
+  "Blender advice for creating tense survival environments."
  ],
  "blend-geometry-nodes": [
-  "Blender Geometry Nodes for procedural trees and plants?",
-  "How do I create a scatter system using Geometry Nodes in Blender?",
-  "Any tricks for making realistic buildings with Geometry Nodes?",
-  "What are some good node groups for creating pipes in Blender?",
-  "Can you show me how to use Geometry Nodes for vegetation?",
-  "How can I make reusable assets with Geometry Nodes?"
+  "Procedural modeling in Blender using Geometry Nodes",
+  "How to create scatter systems with Geometry Nodes?",
+  "Any tips on using Geometry Nodes for vegetation?",
+  "Need help with building procedural models in Blender.",
+  "Blender techniques for creating reusable node groups.",
+  "Geometry Nodes for creating pipes and cables."
  ],
  "blend-godot-export": [
-  "Blender export settings for Godot compatibility?",
-  "Need help exporting Blender models to GLTF/GLB format.",
-  "What are the best practices for correct scale in Godot exports?",
-  "How do I ensure materials and animations export correctly in Blender?",
-  "Any tips on setting up collision shapes in Blender for Godot?",
-  "Exporting assets from Blender to Godot, any advice?"
+  "Exporting to Godot from Blender",
+  "How to export GLTF/GLB files correctly?",
+  "Any advice on exporting animation clips in Blender?",
+  "Need help setting up collision shapes for Godot.",
+  "Blender tips for Godot-specific exports.",
+  "Godot export with correct materials and scale."
  ],
  "blend-hair-groom": [
-  "Blender hair grooming for character modeling?",
-  "What are the best ways to create realistic fur using Geometry Nodes?",
-  "Any tips on creating game hair cards in Blender?",
-  "How do I make particle hair look more natural in Blender?",
-  "What's the best approach to hair grooming with curves in Blender?",
-  "Can you guide me on making realistic character hair in Blender?"
+  "Hair grooming in Blender",
+  "How to use curves for hair grooming?",
+  "Any ideas on particle hair in Blender?",
+  "Tips for creating game hair cards in Blender?",
+  "Need help with character hair grooming in Blender.",
+  "Blender techniques for realistic fur and hair."
  ],
  "blend-hand-painted-style": [
-  "Blender techniques for hand-painted textures?",
-  "How do I achieve soft value transitions in my textures?",
-  "Any tips on creating stylized PBR textures in Blender?",
-  "What are some best practices for brushwork albedo in hand-painted art?",
-  "Can you show me how to create a hand-painted texture style in Blender?",
-  "Tips for realistic hand-painted textures in Blender?"
+  "Hand-painted textures in Blender",
+  "How to create soft value transitions?",
+  "Any advice on stylized PBR in Blender?",
+  "Tips for brushwork albedo in hand-painted textures.",
+  "Need help with hand-painted style art direction in Blender.",
+  "Blender techniques for creating hand-painted effects."
  ],
  "blend-hard-surface": [
-  "Blender tips for hard surface modeling?",
-  "Any advice on creating sci-fi prop models in Blender?",
-  "What are the best ways to add panel lines and chamfers in Blender?",
-  "How do I create manufacturing-accurate surfaces in Blender?",
-  "Can you guide me on boolean workflows for hard surface modeling?",
-  "Tips for hard surface modeling in Blender?"
+  "AAA hard surface modeling in Blender",
+  "How to create boolean workflows?",
+  "Any ideas on panel lines and greebles?",
+  "Tips for manufacturing-accurate surfaces in Blender?",
+  "Need help with sci-fi vehicle modeling in Blender.",
+  "Blender techniques for industrial hard surfaces."
  ],
  "blend-hd-2d-style": [
-  "Blender techniques for combining pixel art with 3D?",
-  "How do I create a HD-2D style environment in Blender?",
-  "Any tips on achieving theatrical lighting in Blender?",
-  "What are the best practices for depth of field in HD-2D scenes?",
-  "Can you show me how to integrate pixel characters with 3D environments?",
-  "Tips for creating HD-2D art in Blender?"
+  "HD-2D art direction in Blender",
+  "How to combine pixel characters with 3D environments?",
+  "Any advice on depth of field in Blender?",
+  "Tips for theatrical lighting in Blender scenes?",
+  "Need help designing a HD-2D style level in Blender.",
+  "Blender techniques for combining 2D and 3D art."
  ],
  "blend-historical-worlds": [
-  "Blender techniques for period world modeling?",
-  "Any advice on historical world art direction in Blender?",
-  "What are the best ways to create ancient Egypt scenes in Blender?",
-  "How do I model medieval castles using historical art direction?",
-  "Can you guide me on creating samurai-inspired environments in Blender?",
-  "Tips for historical world art in Blender?"
+  "Need help with samurai art direction in Blender.",
+  "Can you give me tips on Viking world art for a project?",
+  "Historical Egypt/Greece/Rome style in Blender, any pointers?",
+  "Blender setup for ancient Rome, quick guide?",
+  "How do I make the Victorian era feel in Blender assets?",
+  "Any resources for modern era Blender art direction?"
  ],
  "blend-horror-style": [
-  "Blender tips for horror game art direction?",
-  "Any advice on creating tension-driven lighting in Blender?",
-  "What are the best ways to add analog aesthetics in horror scenes?",
-  "How do I create sparse industrial environments in Blender?",
-  "Can you guide me on making fear-inspired assets in Blender?",
-  "Tips for psychological horror art in Blender?"
+  "Psychological horror lighting setup in Blender.",
+  "Looking for horror style inspiration like Silent Hill.",
+  "Blend horror with industrial aesthetics, any examples?",
+  "Help me create tension-driven lighting in Blender.",
+  "Analog horror style assets in Blender, how to achieve?",
+  "Silent Hill vibes in Blender, any tutorials?"
  ],
  "blend-indie-horror-aesthetics": [
-  "How can I replicate Silent Hill aesthetics in Blender?",
-  "Need help with horror visuals similar to Fear to Fathom.",
-  "Any tips for creating corporate horror looks in Blender?",
-  "Can you suggest how to make a forest cabin horror scene in Blender?",
-  "What are the key elements of indie horror that I should include?",
-  "Looking for ideas on hospital horror scenes in Blender."
+  "Indie horror aesthetic for a cabin scene.",
+  "Corporate horror look in Blender, tips?",
+  "Puppet Combo style in Blender, how to do it?",
+  "Forest horror aesthetics for Blender assets?",
+  "Cabin horror setup in Blender, any guides?",
+  "Related indie horror looks in Blender?"
  ],
  "blend-isometric-style": [
-  "How do I create an isometric view in Blender?",
-  "Need guidance on setting up a strategy game camera.",
-  "Any tips for creating readable silhouettes in dioramas?",
-  "What are the rules for tile assets in isometric art?",
-  "Can you explain true-iso camera setup in Blender?",
-  "How do I frame my scene for an isometric shot?"
+  "Isometric camera setup in Blender.",
+  "True-iso camera for strategy game assets, help!",
+  "Blender isometric diorama framing tips?",
+  "Readable silhouettes in isometric art, advice?",
+  "Tile asset rules for Blender isometry?",
+  "How to achieve isometric look in Blender?"
  ],
  "blend-lighting": [
-  "How can I set up three-point lighting in Blender?",
-  "Need help with horror lighting techniques.",
-  "Any tips on using HDRI for cinematic lighting?",
-  "Can you guide me through volumetric lighting in Blender?",
-  "What are the best practices for rim lighting?",
-  "Looking to create mood-driven illumination. How do I start?"
+  "Three-point lighting setup in Blender.",
+  "Horror lighting examples for Blender scenes?",
+  "Volumetric lighting tutorial for Blender?",
+  "Rim lighting techniques in Blender?",
+  "Mood-driven illumination for Blender assets?",
+  "Blender MCP for look development?"
  ],
  "blend-liminal-space-style": [
-  "How do I create a liminal space in Blender?",
-  "Need tips on transitional architecture design.",
-  "Any ideas for wrong familiarity in my scenes?",
-  "Can you explain endless repetition in art direction?",
-  "What are the key elements of Backrooms aesthetics?",
-  "Looking to replicate empty spaces. How can I do that?"
+  "Liminal space architecture in Blender.",
+  "Empty transitional architecture, how to do it?",
+  "Wrong familiarity effect in Blender?",
+  "Endless repetition style in Blender, any tips?",
+  "Creating liminal spaces with Blender assets?",
+  "Tips for Backrooms art direction in Blender?"
  ],
  "blend-lod-pipeline": [
-  "How do I set up LOD generation in Blender?",
-  "Need help with naming conventions for LODs.",
-  "Any tips on screen-size targets for LODs?",
-  "Can you guide me through validation of game meshes?",
-  "What are the best practices for LOD pipeline setup?",
-  "Looking to optimize my game assets. How do I start?"
+  "LOD generation pipeline in Blender via MCP.",
+  "Screen-size targets for LODs in Blender?",
+  "Blender LOD validation process?",
+  "Naming conventions for LODs, any tips?",
+  "How to create game meshes with LODs in Blender?",
+  "MCP for LOD management?"
  ],
  "blend-lookdev": [
-  "How do I set up a look development loop in Blender?",
-  "Need help with material combination and lighting.",
-  "Any tips on camera angle selection for lookdev?",
-  "Can you guide me through screenshot comparison techniques?",
-  "What are the best practices for shading readability?",
-  "Looking to improve scene atmosphere. How can I do that?"
+  "Look development loop with MCP?",
+  "Combining materials and lighting in Blender assets?",
+  "Camera setup for look development in Blender?",
+  "Screenshot comparison tips in Blender via MCP?",
+  "Shading read correctly via MCP, how to ensure?",
+  "Blender asset look development steps?"
  ],
  "blend-lowpoly-style": [
-  "How do I create a low-poly style in Blender?",
-  "Need tips on PS1/PS2 inspired art direction.",
-  "Any ideas for readable silhouettes in low-poly scenes?",
-  "Can you guide me through minimal polygon usage?",
-  "What are the best practices for simple materials?",
-  "Looking to create strong atmosphere. How do I start?"
+  "Readable silhouettes in low-poly style?",
+  "Minimal polygons for Blender assets?",
+  "Simple materials for low-poly art?",
+  "Strong atmosphere with low-poly in Blender?",
+  "Inspired by PS1/PS2, low-poly tips?",
+  "Low-poly Blender aesthetic guide?"
  ],
  "blend-manga-style": [
-  "How can I replicate manga aesthetics in Blender?",
-  "Need help with monochrome value design.",
-  "Any tips on using speed lines in art direction?",
-  "Can you guide me through screentone feel?",
-  "What are the best practices for manga panel staging?",
-  "Looking to create a manga-inspired scene. How do I start?"
+  "Monochrome value design in manga style?",
+  "Speed lines for manga panels in Blender?",
+  "Screentone feel in manga-inspired art?",
+  "Manga panel staging in Blender, how to do it?",
+  "Blender setup for manga aesthetic?",
+  "Any manga style tutorials for Blender?"
  ],
  "blend-mascot-puppet-horror": [
-  "How can I make mascot characters look scary in Blender?",
-  "Need tips on felt/foam materials.",
-  "Any ideas for uncanny performance of puppets?",
-  "Can you guide me through cheerful brand character design?",
-  "What are the best practices for mascot horror aesthetics?",
-  "Looking to create a puppet horror scene. How can I do that?"
+  "Can you help me create a mascot horror scene in Blender?",
+  "I need art direction tips for blending mascot and puppet horror.",
+  "What materials should I use to make characters look wrong and eerie?",
+  "How can I achieve an uncanny performance with felt/foam materials?",
+  "Any examples of cheerful brand characters gone wrong in Blender?",
+  "Looking for horror-themed mascot art direction ideas."
  ],
  "blend-materials": [
-  "How do I create a realistic metal material in Blender?",
-  "Can you help me make a stylized fabric texture?",
-  "Need some guidance on procedural shaders for dirt and rust.",
-  "Any tips for creating concrete with realistic cracks?",
-  "Looking to add some glass effects, any advice?",
-  "I want to blend PBR with a bit of stylization, what's the trick?"
+  "Need help creating PBR metal material in Blender.",
+  "Can you guide me on procedural shader creation in Blender?",
+  "What are some great wood textures for production shading?",
+  "How do I create a realistic fabric material with Blender?",
+  "Looking to reuse materials across different projects. Any tips?",
+  "Any examples of dirt and rust shaders in Blender?"
  ],
  "blend-minimalist-style": [
-  "How can I make my Blender scene look more minimalist?",
-  "Tips for abstract art direction in Blender?",
-  "Reduced forms and negative space, any examples?",
-  "I want to simplify my design, what’s a good approach?",
-  "Need some ideas for minimalistic color palettes.",
-  "Any techniques for creating less is more visuals?"
+  "Can you help me achieve a minimalist look in Blender?",
+  "What art direction techniques reduce forms for a minimalist style?",
+  "Need ideas for limited palettes in Blender scenes.",
+  "How do I use negative space effectively in my Blender artwork?",
+  "Any examples of abstract art in Blender?",
+  "Looking to simplify my models for a minimalist feel."
  ],
  "blend-neon-retrofuturism": [
-  "How do I achieve a neon look in Blender?",
-  "Vaporwave aesthetic, any specific tips?",
-  "Synthwave mood in my scene, how to start?",
-  "Grid horizons and chrome textures, what tools?",
-  "Dusk palettes for that retro vibe?",
-  "Retrofuturistic art direction, where to begin?"
+  "Can you help me create a neon scene in Blender?",
+  "What mood/art direction techniques are used for retrofuturism?",
+  "How do I achieve grid horizons and chrome effects in Blender?",
+  "Need tips on creating vaporwave and synthwave moods in Blender.",
+  "Any examples of dusk palettes in Blender artwork?",
+  "Looking to add a retrofuturistic vibe to my projects."
  ],
  "blend-noir-style": [
-  "High-contrast lighting tips for Blender?",
-  "How to create wet street effects in Blender?",
-  "Any ideas on silhouette creation for noir style?",
-  "Monochrome or limited-color grading techniques?",
-  "Noir art direction, what’s the process?",
-  "Looking for a dark and gritty look."
+  "How do I create a noir scene with high-contrast lighting in Blender?",
+  "Need help with a dark, moody Blender project. Any tips?",
+  "Blending a noir look - what are some techniques to achieve that?",
+  "Dark and gritty visuals, any advice for Blender users?",
+  "Looking to make a movie scene with wet streets and silhouettes. How?",
+  "Monochrome grading in Blender for a film noir effect."
  ],
  "blend-painterly-style": [
-  "Soft edges in Blender, how to achieve?",
-  "Pigment texture creation for painterly style?",
-  "Illustrative lighting tips for Blender?",
-  "Watercolor or oil painting looks, any guides?",
-  "How can I make my renders look like paintings?",
-  "Painterly effects in Blender?"
+  "Wanna make my Blender assets look like watercolor paintings.",
+  "Soft edges, pigment texture - how do I achieve this painterly look?",
+  "Painterly style in Blender - what modifiers should I use?",
+  "Blender tutorial for a painterly effect - any recommendations?",
+  "Watercolor and oil painting styles in Blender - where to start?",
+  "Any tips on making my assets look like they were painted?"
  ],
  "blend-physics-sim": [
-  "Rigid body simulations in Blender, how to set up?",
-  "Soft body physics tips for destruction setups?",
-  "Constraints and cell fracture debris, any examples?",
-  "Baked caches via MCP for performance, how?",
-  "Physics-based destruction, where to start?",
-  "Need help with complex physics simulation."
+  "Soft body dynamics in Blender, how do I set it up?",
+  "Rigid body simulation - any tricks for better results?",
+  "Constraints and cell fracture in Blender - what are the basics?",
+  "How to create destruction effects using soft body physics?",
+  "Baked caches via MCP in Blender - can you explain this?",
+  "Physics simulations in Blender, any good resources?"
  ],
  "blend-pixel-art-style": [
-  "Pixel art textures in Blender, any advice?",
-  "Low-res textures for pixel rendering, tips?",
-  "HD-2D adjacent pixel reads, what’s that mean?",
-  "Creating pixel-perfect assets in Blender?",
-  "Texel-constrained art direction, how to do it?",
-  "Pixel art style, any resources?"
+  "Pixel art assets for Blender - how to texture constrain them?",
+  "Low-res textures, what's the best approach in Blender?",
+  "Creating pixel-perfect renders with Blender.",
+  "Any tips on creating HD-2D adjacent pixel reads in Blender?",
+  "Blender setup for pixel art - what do I need?",
+  "Pixel art style in Blender - any easy methods?"
  ],
  "blend-procedural-modeling": [
-  "Procedural asset creation for rocks, buildings?",
-  "Using Geometry Nodes for procedural modeling?",
-  "Modifier-based workflows for terrain generation?",
-  "Creating pipes and cables procedurally?",
-  "Sci-fi panels with procedural effects?",
-  "Any tools for procedural asset design?"
+  "Procedural asset creation using Geometry Nodes in Blender.",
+  "Any good workflows for procedural modeling in Blender?",
+  "Creating sci-fi panels with procedural assets in Blender.",
+  "Roads and terrain generation - how to do it procedurally?",
+  "Blender tutorial on modifier-based procedural modeling.",
+  "What's the best way to create pipes and cables procedurally?"
  ],
  "blend-prop-artist": [
-  "Easy prop modeling in Blender?",
-  "Hero props that look grounded, any tips?",
-  "Furniture and tool modeling advice?",
-  "Kitbash parts creation process?",
-  "Game props that are readable, how to do it?",
-  "Hard-surface vs. grounded props?"
+  "Can you help me model some everyday props for a home decor project?",
+  "I need to create a realistic kitchen tool that looks grounded, not too mechanical.",
+  "Quickly design a prop that fits well in a sci-fi setting but has a familiar look.",
+  "Help with modeling household objects using Blender's blend-prop-artist skill.",
+  "Blend some kitbash parts into a cohesive and readable game prop.",
+  "Make a hero prop that feels like it belongs in the real world, not cyberpunk."
  ],
  "blend-psx-horror-style": [
-  "Low-poly affine textures for Blender?",
-  "Limited color depth effects in horror scenes?",
-  "Fog and psychological horror staging tips?",
-  "PS1/PSX-era horror aesthetic, how to achieve?",
-  "Any guides for PSX horror art direction?",
-  "Horror visuals with limited resources?"
+  "How can I create PSX-era horror art with limited color depth and fog?",
+  "I want to make low-poly assets with affine textures for an old-school horror game.",
+  "Need some tips on blending psychological horror elements in a Blender scene.",
+  "Create a Blender asset that looks like it was from a PS1 horror game.",
+  "Any ideas for making scary art using the blend-psx-horror-style skill?",
+  "How to add fog and limited color depth to Blender assets for a retro horror look?"
+ ],
+ "blend-qa-review": [
+  "Can you review my Blender asset with viewport screenshots and checklists?",
+  "I need help with QA for some Blender assets, could you do a quick review?",
+  "Do a production QA gate on these Blender assets, please.",
+  "Review the naming conventions and ship/no-ship verdicts for these assets.",
+  "Quick QA review using MCP for my Blender viewport shots.",
+  "Help me validate these Blender assets with your blend-qa-review skill."
+ ],
+ "blend-realistic-style": [
+  "How to create a photorealistic asset in Blender, focusing on PBR accuracy?",
+  "I need to optimize some scanned objects for high-poly workflows in Blender.",
+  "Can you help with photogrammetry cleanup and real-world scale in Blender?",
+  "Create a realistic AAA game prop using photorealistic art direction.",
+  "Tips for making assets look cinematic and realistic in Blender.",
+  "Blend-realistic-style needed to clean up some scanned objects."
+ ],
+ "blend-rendering": [
+  "How can I optimize the rendering of my Blender scene with Cycles?",
+  "I need help setting up camera angles and lighting for a final render.",
+  "Any tips on denoising and color management in Blender renders?",
+  "Render this Blender asset using both Cycles and Eevee for comparison.",
+  "Quick render optimization in Blender, could you assist?",
+  "Help with setting up render passes and managing colors in Blender."
+ ],
+ "blend-retopology": [
+  "Hey, can you help me retopo this model for animation?",
+  "Need a quick way to make my high-poly mesh low-poly.",
+  "Anyone know how to do proper edge loops in Blender?",
+  "Retro-topology anyone? I need it fast!",
+  "Can someone guide me on creating efficient polygon flow?",
+  "Blender retopology - any tricks or tools?"
+ ],
+ "blend-retro-16bit-style": [
+  "How can I make my art look like an old SNES game?",
+  "Retro 16-bit style needed for this project.",
+  "Can you add some dithering and color richness to this?",
+  "Looking for a way to give my Blender scene that 90s vibe.",
+  "Any tips on achieving SNES/Genesis-era aesthetics?",
+  "Retro 16-bit art direction - anyone?"
+ ],
+ "blend-retro-8bit-style": [
+  "How do I make this look like an old NES game?",
+  "Need a retro 8-bit pixel style in Blender.",
+  "Can you help me with low-res, sprite-like clarity?",
+  "Retro 8-bit art direction for my project.",
+  "Any tricks to get that classic NES feel?",
+  "Pixel/low-res aesthetics - anyone?"
+ ],
+ "blend-rigging": [
+  "Need some rigging help in Blender.",
+  "Anyone know how to do facial rigs in Blender?",
+  "Rigging a character with IK/FK controls.",
+  "Can you guide me on weight painting in Blender?",
+  "Mechanical rigging in Blender - any tips?",
+  "Blender armatures and constraints - anyone?"
+ ],
+ "blend-scene-assembly": [
+  "Help organizing my large scene in Blender.",
+  "Need to link collections in my Blender project.",
+  "Anyone know how to do streaming-friendly set assembly?",
+  "Large scene layout with overrides in Blender.",
+  "Set assembly via MCP - any advice?",
+  "Blender scene organization tips?"
+ ],
+ "blend-sci-fi-punk-worlds": [
+  "Can you help me create a Blender scene with both sci-fi and punk elements?",
+  "I need some tips for blending space and cyberpunk styles in my Blender project.",
+  "How can I achieve a hard sci-fi look combined with steampunk elements?",
+  "Any suggestions for incorporating atompunk aesthetics into my Blender art?",
+  "Blend solarpunk and biopunk visual styles in my next Blender scene.",
+  "Quick tips on mixing clockpunk and cyberpunk in Blender?"
+ ],
+ "blend-sculpting": [
+  "How do I add detailed wrinkles to my character's face in Blender?",
+  "Need help with sculpting hard surfaces in Blender.",
+  "Looking for tips on using Dyntopo and multi-resolutions in Blender.",
+  "Can you guide me through creating a high-frequency surface detail model?",
+  "Any tricks for efficient sculpting in Blender before retopology?",
+  "How do I blend alpha brushes to create seamless transitions?"
+ ],
+ "blend-set-dressing": [
+  "Help with placing props that tell a story in my scene.",
+  "Need advice on balancing prop density in a Blender set.",
+  "How can I improve readability and narrative clusters in my environment?",
+  "Suggestions for effective set dressing in Blender interiors?",
+  "Any tips on arranging props for an exterior scene in Blender?",
+  "What's the best way to enhance environmental storytelling with MCP?"
+ ],
+ "blend-stop-motion-craft-style": [
+  "Looking for stop-motion techniques in Blender.",
+  "How do I create claymation effects in Blender?",
+  "Need advice on paper craft aesthetics in Blender.",
+  "Tips for adding handmade physical material cues in Blender?",
+  "Any resources for achieving a craft-like style in Blender?",
+  "How to integrate stop-motion and handcrafted elements in Blender?"
+ ],
+ "blend-stylized-style": [
+  "How can I achieve stylized art direction in Blender?",
+  "Looking for guidance on shape language in Blender.",
+  "Need help with color harmony for my non-photoreal project.",
+  "Any tips on NPR rendering in Blender?",
+  "How do I create hand-painted assets for stylized projects?",
+  "Suggestions for enhancing the visual style of my game/animation?"
+ ],
+ "blend-texture-workflow": [
+  "Help with creating texture atlases in Blender.",
+  "Need advice on baking AO maps in Blender.",
+  "Any tips on optimizing texture memory in production pipelines?",
+  "How do I apply decals to my models?",
+  "Looking for guidance on normal map baking techniques.",
+  "What's the best way to prepare game-ready textures?"
+ ],
+ "blend-unity-export": [
+  "Help with exporting a model to Unity from Blender.",
+  "Need advice on axis alignment in Unity export.",
+  "Any tips on setting up LODs in Unity via MCP?",
+  "How do I import collision data for a humanoid rig?",
+  "Looking for guidance on material export for Unity.",
+  "Tips for smooth integration of Blender models into Unity?"
+ ],
+ "blend-unreal-export": [
+  "Need help exporting to Unreal Engine from Blender.",
+  "Any advice on FBX scale issues during export?",
+  "How do I set up UCX collision in Unreal via MCP?",
+  "Looking for tips on LODs and sockets export.",
+  "Need guidance on skeletal mesh workflows in Unreal.",
+  "What's the best way to prepare assets for Unreal Engine?"
+ ],
+ "blend-uv-workflow": [
+  "Help with UV unwrapping techniques in Blender.",
+  "Need advice on placing seams for better texture mapping.",
+  "Any tips on optimizing UV packing?",
+  "How do I create texel-dense UVs?",
+  "Looking for guidance on creating lightmap UVs.",
+  "What's the best way to achieve modular UV layouts?"
+ ],
+ "blend-vector-style": [
+  "Need help with vector art direction in Blender.",
+  "Any tips on achieving sharp silhouettes?",
+  "How do I create flat fills for my design?",
+  "Looking for advice on UI-like graphic clarity.",
+  "Need guidance on vector clean techniques.",
+  "What's the best way to enhance visual clarity?"
+ ],
+ "blend-vegetation-artist": [
+  "Help with creating trees and plants in Blender.",
+  "Need advice on grass card authoring.",
+  "Any tips on canopy LODs?",
+  "How do I create game-friendly leaf atlases?",
+  "Looking for guidance on vegetation in Blender.",
+  "What's the best way to add foliage details?"
+ ],
+ "blend-vehicle-artist": [
+  "Can you help me model a futuristic mech in Blender?",
+  "I need to create some LOD models for my game assets.",
+  "How do I ensure the panel flow looks natural on my car model?",
+  "Could you suggest some tips for modeling vehicles in Blender?",
+  "I'm having trouble with proportions. Any advice?",
+  "Can you fix this broken vehicle part in Blender?"
+ ],
+ "blend-vfx-fx": [
+  "I want to create a cool smoke effect in Blender.",
+  "How can I make particle trails look more realistic?",
+  "Is there a tutorial for making fire effects in Blender?",
+  "What's the best way to set up Geometry Nodes for VFX?",
+  "Can you help me with a complex VFX sequence?",
+  "I need some advice on creating smoke simulations."
+ ],
+ "blend-visual-console-eras": [
+  "How do I recreate a PS2-style game look in Blender?",
+  "Looking for advice on how to add retro arcade flair to my Blender art.",
+  "Need some guidance on achieving a DOS aesthetic with film grain effects.",
+  "Any suggestions for making a scene look like it's from an old CRT monitor?",
+  "Tips on blending VHS and digital styles in a Blender project.",
+  "Quick way to get that classic game console feel in Blender?"
+ ],
+ "blend-voxel-style": [
+  "How do I create chunk-friendly assets in Blender?",
+  "Can you help me with block grid modeling in Blender?",
+  "What's the best way to use limited palettes in voxel art?",
+  "I need some tips for creating Minecraft-like models.",
+  "How can I improve my voxel art in Blender?",
+  "Can you suggest a good voxel tutorial?"
  ],
  "blender-director": [
   "Plan the workflow for this Blender project.",
@@ -1047,6 +1231,14 @@
   "Automate console-error checks after deployment.",
   "Ensure UI is accessible and visually consistent."
  ],
+ "browser-use": [
+  "Automate this web scraping task using Browser-Use.",
+  "Interact with an authenticated web app via AI agent automation.",
+  "Test browser tasks efficiently with Playwright and Browser-Use.",
+  "Build a UI workflow automation script for our app.",
+  "Can you help automate interactions in this complex web application?",
+  "Set up an AI agent to scrape data from this website."
+ ],
  "brutalism": [
   "Can you help me create a raw, minimalistic web design with unadorned elements?",
   "I need a UI design that looks jarring and functional, like brutalist architecture.",
@@ -1078,6 +1270,14 @@
   "How do I bundle a Node runtime with my MCP server?",
   "Need to distribute a local MCP server effectively.",
   "Looking to make an MCPB file for my project."
+ ],
+ "build-your-own-x": [
+  "Recreate Git from scratch, step-by-step instructions needed.",
+  "Design a zero-dependency implementation of Redis.",
+  "Build a simple HTTP server without using existing frameworks.",
+  "Master the low-level architecture of Docker containers.",
+  "Create an SQLite database system from the ground up.",
+  "Guide me through building a basic compiler from scratch."
  ],
  "bun-runtime": [
   "Can you explain when to use Bun instead of Node?",
@@ -1524,6 +1724,14 @@
   "Optimize this analytical query for better performance in ClickHouse.",
   "Any tips on structuring a ClickHouse database for high-performance workloads?"
  ],
+ "cloudflare-codemode": [
+  "Build a sandboxed tool using Cloudflare Code Mode.",
+  "How do I create a dynamic Worker sandbox with Cloudflare Codemode?",
+  "Can you help me integrate OpenAPI with agent tools on Cloudflare?",
+  "I want to connect Durable Objects in a sandbox environment. How?",
+  "Set up MCP servers safely using Cloudflare Codemode for agents.",
+  "Quickly run agent tools in a secure Cloudflare sandbox."
+ ],
  "code-tour": [
   "Can you create a CodeTour for new team members joining the project?",
   "I need to explain how our PR process works. Can you make a tour for that?",
@@ -1531,6 +1739,14 @@
   "How do I create a tour for architecture walkthroughs in our system?",
   "Make a CodeTour to help with RCA (Root Cause Analysis).",
   "Can you guide me through creating a step-by-step tour for this feature?"
+ ],
+ "codebase-memory-mcp": [
+  "Explore complex codebases using MCP; how does it work?",
+  "How do I query architectural relationships in a large codebase?",
+  "Maintain cross-session code context with Codebase Memory MCP.",
+  "Need guidance on integrating MCP for local code intelligence.",
+  "Any tips on setting up persistent local code intelligence?",
+  "Quickly set up MCP to explore code dependencies."
  ],
  "codebase-onboarding": [
   "I'm joining a new project. Can you generate an onboarding guide for me?",
@@ -1659,6 +1875,14 @@
   "Auto-invalidate cached results based on content changes.",
   "Separate service layer for content hash caching.",
   "Optimize repeated file processing using content hashes."
+ ],
+ "content-media-frontend-slides": [
+  "Convert my PowerPoint presentation into an HTML format with animations.",
+  "Help me design engaging slides for a pitch or talk without being a designer.",
+  "Create a visually appealing HTML presentation from scratch.",
+  "How do I make my slides more dynamic and interactive?",
+  "Can you convert this PPTX file to web-friendly slides?",
+  "Design some animation-rich slides for our upcoming presentation."
  ],
  "context-and-decisions": [
   "Create a CONTEXT.md for our domain terms.",
@@ -1916,6 +2140,14 @@
   "Guide me through securing admin controls in AMMs.",
   "Can you provide a checklist for integer math safety?"
  ],
+ "defuddle": [
+  "Extract clean Markdown from this HTML page.",
+  "Could you help me convert HTML to Markdown?",
+  "Is there a way to use Defuddle CLI for this task?",
+  "How do I defuddle an HTML file and get clean Markdown?",
+  "I need to clean up some messy HTML. Can you help?",
+  "Can you run Defuddle on this page?"
+ ],
  "delivery-gate": [
   "Set up a delivery gate to block Claude until quality checks pass.",
   "How can I detect stale learning logs with the delivery gate?",
@@ -1987,6 +2219,22 @@
   "Collaborative brainstorming for a complex problem.",
   "Onboard a new project with insights from different roles.",
   "Session to refine and finalize a design concept."
+ ],
+ "diagram-design": [
+  "Can you make a system architecture diagram for our project in HTML/SVG?",
+  "I need an ER diagram for the database model, can you help me with that?",
+  "How about creating a flowchart for the user registration process using Mermaid?",
+  "Please design a sequence diagram showing the interaction between modules.",
+  "Could you generate an SVG timeline for our project milestones?",
+  "Quickly create a data flow diagram to visualize how data moves."
+ ],
+ "difftastic": [
+  "Perform a syntax-aware diff on these two files.",
+  "Inspect this codebase for structural changes using difft.",
+  "Compare nested blocks in these refactored files.",
+  "Help review syntactic modifications between versions.",
+  "Use Difftastic to analyze complex refactors in our source code.",
+  "Generate a detailed report of syntax-aware differences between codes."
  ],
  "discord-access": [
   "Pair me with someone in Discord.",
@@ -2348,6 +2596,14 @@
   "Perform a live sandbox test with Strix to find security vulnerabilities.",
   "Scan our code with Strix to detect and prove issues."
  ],
+ "find-skills": [
+  "Can you help me find a skill to integrate AI into my app?",
+  "How do I add natural language processing to my project?",
+  "Do you have any skills for automating data entry tasks?",
+  "I need something that can analyze customer feedback, any ideas?",
+  "Is there a skill for predictive analytics I can use?",
+  "Looking for an image recognition tool, any suggestions?"
+ ],
  "fix-security-vulnerabilities-with-strix": [
   "Fix the security vulnerabilities found by Strix pentest.",
   "I need to triage and patch security issues identified by Strix.",
@@ -2363,6 +2619,14 @@
   "Fast and simple user experience with vibrant colors needed.",
   "Flat design with clean typography, please!",
   "Looking for a two-dimensional design without depth."
+ ],
+ "floorplan": [
+  "Can you draw a floor plan of our app's codebase?",
+  "Help me visualize the connections between modules in our repo.",
+  "I need an interactive node-graph map of our codebase.",
+  "Create a human-readable floorplan for our app's subsystems.",
+  "How do I get a visual overview of our codebase structure?",
+  "Generate a floorplan showing all HTTP routes and imports."
  ],
  "flox-environments": [
   "Set up a cross-platform development environment using Flox.",
@@ -2387,6 +2651,94 @@
   "Any tips on using snapshot streaming in iOS 26+?",
   "Looking to add LLM features to my iOS app, any advice?",
   "How do I get started with Apple FoundationModels on-device?"
+ ],
+ "founder-board": [
+  "Can you give me feedback on my business idea from a board perspective?",
+  "What would my board say about this product concept?",
+  "Help me pitch my startup to a board of directors.",
+  "I need insights on market positioning, can you help?",
+  "How do I structure my business plan for a board meeting?",
+  "Is there a framework you recommend for board evaluations?"
+ ],
+ "founder-brand": [
+  "Can you help me come up with a brand name and logo?",
+  "What's the best way to design my company's voice and tone?",
+  "I need some ideas for branding my new product.",
+  "How do I ensure my brand matches my market positioning?",
+  "Do you know how to choose the right colors and typography for branding?",
+  "Can you help me write a compelling tagline?"
+ ],
+ "founder-cfo": [
+  "How do I calculate the unit economics of my startup?",
+  "What's the break-even point for my business model?",
+  "Can you help me understand cash flow projections better?",
+  "I need to know how much funding I should ask for.",
+  "Do you have any tools to estimate profit margins?",
+  "How long will it take for my startup to become profitable?"
+ ],
+ "founder-competitors": [
+  "Can you map out our competitors and highlight their gaps?",
+  "I need a competitor analysis focusing on price, positioning, and customer complaints.",
+  "Please analyze the market for direct and indirect competitors using public data.",
+  "Competitor mapping with product details, pricing, and customer feedback needed.",
+  "Generate a comprehensive report of our competitors' strategies and weaknesses.",
+  "Quickly identify key competitors and their market position."
+ ],
+ "founder-consumer": [
+  "Run the consumer panel with my target audience; see who buys and why.",
+  "Set up a buyer simulation for 100 different profiles based on age, income, etc.",
+  "I want to test our pitch through a diverse set of buyer scenarios.",
+  "Can you create a swarm of buyers to test our product's appeal?",
+  "How do we refine our offer after running it through the consumer panel?",
+  "Quickly assess the reaction of 20 potential customers to our pitch."
+ ],
+ "founder-launch": [
+  "Create a detailed launch plan with a real-world test and countdown.",
+  "Build a phased launch strategy with a pre-sale and opening day checklist.",
+  "I need a step-by-step guide for launching, starting with a soft launch.",
+  "Launch planning including a waitlist, pre-sale, and pop-up event.",
+  "Develop a comprehensive launch plan from concept to market release.",
+  "A quick launch plan focusing on initial testing and go-to-market strategy."
+ ],
+ "founder-marketing": [
+  "Craft a marketing campaign based on our consumer panel results.",
+  "Positioning and channels analysis for our target customer base.",
+  "Generate a 30-day marketing plan with dated posts, ads, and budget split.",
+  "Create hooks and answers to potential objections from the consumer panel.",
+  "Marketing strategy including channels, messaging, and KPIs based on competition.",
+  "A quick marketing campaign outline targeting identified buyer personas."
+ ],
+ "founder-offer": [
+  "Build an irresistible offer with clear bonuses and urgency.",
+  "Identify problems buyers face and turn them into solutions in our offer.",
+  "Create a compelling offer that's easy to deliver and valuable to the buyer.",
+  "Offer design focusing on customer objections and real urgency.",
+  "Analyze buyer journey to craft a personalized and enticing offer.",
+  "Quickly draft an offer with honest bonuses and clear terms."
+ ],
+ "founder-ops": [
+  "How do I handle suppliers and set up my first day operations?",
+  "Can you help me with the step-by-step procedures for opening, serving, and closing?",
+  "I need a risk register to prepare for potential issues. Can you assist?",
+  "What tools and licenses are necessary to run my business efficiently?",
+  "Who should work when and how do I manage their schedules?",
+  "Can you provide a checklist for suppliers and initial setup?"
+ ],
+ "founder-plan": [
+  "Compile all the business details into one coherent plan.",
+  "How do I integrate the board's decision with other founder insights?",
+  "Create a launch plan that covers all aspects of our business.",
+  "Summarize competitor analysis, buyer panel, and CFO data in a business plan.",
+  "What verdict should I expect based on various inputs for my business plan?",
+  "Can you help me pull everything together into a final business plan?"
+ ],
+ "founder-pricing": [
+  "Determine the optimal price based on consumer feedback and competition.",
+  "How do I set prices that align with our margin while appealing to buyers?",
+  "Use the Van Westendorp matrix to analyze buyer sentiments on pricing.",
+  "What should be my pricing strategy considering competitors' pricing?",
+  "Can you recommend a pricing range from the consumer panel data?",
+  "Find the right price balance between affordability and competitiveness."
  ],
  "framer-motion": [
   "How do I animate layout transitions in React using Framer Motion?",
@@ -2603,6 +2955,302 @@
   "Could you guide on MorphSVG effects?",
   "Do you have any examples of complex animations?",
   "How can I implement physics-based motion?"
+ ],
+ "gsd-add-tests": [
+  "How do I generate tests based on UAT criteria?",
+  "Can you help create tests for a completed phase?",
+  "What's the process for adding tests in GSD?",
+  "I need to add tests; any best practices?",
+  "Any tools or methods for test generation?",
+  "Help with generating tests for UAT."
+ ],
+ "gsd-ai-integration-phase": [
+  "How do I create an AI-SPEC.md design contract?",
+  "Can you guide me through building AI systems in GSD?",
+  "What's the process for integrating AI into a phase?",
+  "Any tips for designing AI components in GSD?",
+  "How do I ensure AI integration meets criteria?",
+  "I need to generate an AI design contract."
+ ],
+ "gsd-audit-fix": [
+  "Can you help with fixing issues found during audit?",
+  "What's the process for autonomously fixing audits?",
+  "Any tools or methods for automated fixes?",
+  "How do I classify and fix audit issues?",
+  "I need to test and commit fixes. Any guidance?",
+  "Help with the audit-to-fix pipeline."
+ ],
+ "gsd-audit-milestone": [
+  "Can you help me audit a milestone against original intent?",
+  "What's the process for auditing milestone completion?",
+  "Any tips for ensuring milestones meet expectations?",
+  "How do I archive completed milestones?",
+  "I need to verify a milestone. Can you assist?",
+  "Help with auditing and archiving milestones."
+ ],
+ "gsd-audit-uat": [
+  "Can you do a UAT audit?",
+  "Help with verifying outstanding tasks.",
+  "Audit all pending UAT items, please.",
+  "Do a cross-phase UAT check-up.",
+  "Review and verify all open UATs.",
+  "Please run an audit on all UATs."
+ ],
+ "gsd-autonomous": [
+  "Run the remaining phases on auto-pilot.",
+  "Let's automate the rest of the workflow.",
+  "Can you execute the remaining phases autonomously?",
+  "Autonomously handle the next steps.",
+  "Please run the final phases automatically.",
+  "Automate all the pending tasks."
+ ],
+ "gsd-capture": [
+  "Capture these ideas and notes somewhere.",
+  "Where should I store this task?",
+  "Can you record these seeds for me?",
+  "Help capture these thoughts, please.",
+  "Please save these tasks to their destination.",
+  "Store these ideas in the right place."
+ ],
+ "gsd-cleanup": [
+  "Archive completed milestone directories.",
+  "Clean up phase directories post-milestone.",
+  "Can you archive the completed milestones?",
+  "Help clean up after we finish a milestone.",
+  "Please archive the phase directories.",
+  "Time to clear out old milestone folders."
+ ],
+ "gsd-code-review": [
+  "Review the code for bugs and security issues.",
+  "Code review needed, please check.",
+  "Can you do a code review of recent changes?",
+  "Please review the updated source files.",
+  "Help with reviewing the latest code.",
+  "Do a thorough code review."
+ ],
+ "gsd-complete-milestone": [
+  "Complete this milestone and prepare for the next version.",
+  "Archive the milestone and get ready for the next one.",
+  "Can you finalize this milestone?",
+  "Help me complete this milestone and prep for the next.",
+  "Please archive the completed milestone.",
+  "Finalize this milestone, please."
+ ],
+ "gsd-config": [
+  "Configure GSD settings for workflow toggles.",
+  "Set up some advanced knobs in GSD.",
+  "Can you help configure GSD integrations?",
+  "Let's adjust the model profile in GSD.",
+  "Please update the GSD configurations.",
+  "Help with configuring GSD settings."
+ ],
+ "gsd-debug": [
+  "Debug this system issue systematically.",
+  "Persistent debugging session, please.",
+  "Can you debug this problem?",
+  "Systematic debugging across context resets.",
+  "Please help with debugging this.",
+  "Run a persistent debugging session."
+ ],
+ "gsd-discuss-phase": [
+  "Gather context for the next phase via questions.",
+  "Help me plan the next phase, start with discussion.",
+  "Can you gather adaptive questions for planning?",
+  "Discuss the next phase context and plan.",
+  "Please discuss the next phase for better understanding.",
+  "Adaptive questioning to understand the phase."
+ ],
+ "gsd-docs-update": [
+  "Generate or update project documentation now.",
+  "Help with updating the project docs against the codebase.",
+  "Can you update the project documentation?",
+  "Please generate verified project documentation.",
+  "Update the docs based on the latest code.",
+  "Help create/update project documentation."
+ ],
+ "gsd-eval-review": [
+  "Can you review the eval and suggest fixes?",
+  "Need help auditing the evaluation phase.",
+  "Please check the eval coverage and give a remediation plan.",
+  "Evaluate the execution phase and provide an EVAL-REVIEW.md.",
+  "Could you run a quick eval audit and generate a remediation plan?",
+  "Help me review the AI eval and make it better."
+ ],
+ "gsd-execute-phase": [
+  "Execute all plans in this SDD phase, please.",
+  "Run the SDD phase with dependency-aware parallelization.",
+  "Please execute the current phase with proper dependencies.",
+  "Can you run the SDD phase execution now?",
+  "Execute the plans in this phase with wave parallelization.",
+  "Time to execute the SDD phase; do it right."
+ ],
+ "gsd-explore": [
+  "Let's explore some ideas for this project.",
+  "Need your help thinking through some new ideas.",
+  "Can you ideate and route these ideas?",
+  "Socratic exploration of potential solutions needed.",
+  "Help brainstorm and prioritize ideas for the next phase.",
+  "I need some creative idea generation for this."
+ ],
+ "gsd-extract-learnings": [
+  "Extract learnings from the completed phase artifacts.",
+  "Please gather insights and patterns from the finished phase.",
+  "Can you pull out lessons, decisions, and surprises?",
+  "Need to extract key takeaways from the phase.",
+  "Gather all the decision points and lessons learned.",
+  "Help me extract important learnings from this phase."
+ ],
+ "gsd-fast": [
+  "Quickly do this small task for me.",
+  "Execute this trivial task without delays.",
+  "Just finish this small job right now.",
+  "Do this inline; no planning needed.",
+  "Handle this tiny task super fast.",
+  "Can you execute this immediately?"
+ ],
+ "gsd-forensics": [
+  "Investigate why the GSD workflow failed.",
+  "Diagnose what went wrong in the failed workflow.",
+  "Please look into the failure of the GSD process.",
+  "Need a post-mortem on the failed GSD workflow.",
+  "Can you analyze the failed GSD execution?",
+  "Help diagnose issues with the failed GSD workflow."
+ ],
+ "gsd-graphify": [
+  "Build and inspect the project knowledge graph.",
+  "Please query and build the knowledge graph now.",
+  "Inspect the .planning/graphs/ for the knowledge graph.",
+  "Can you create and look at the project knowledge graph?",
+  "Query the current state of the knowledge graph.",
+  "Help me build and examine the project knowledge graph."
+ ],
+ "gsd-health": [
+  "Check the health of the planning directory.",
+  "Please diagnose any issues in the planning directory.",
+  "Need a health check for the planning directory.",
+  "Can you repair any problems in the planning directory?",
+  "Inspect and optionally fix the planning directory health.",
+  "Help me ensure the planning directory is healthy."
+ ],
+ "gsd-help": [
+  "Show me all available GSD commands and guides.",
+  "Please display the usage guide for GSD commands.",
+  "What commands are available in GSD?",
+  "Can you list the GSD commands and their usage?",
+  "Help, I need to know what GSD can do.",
+  "Show me the GSD command options."
+ ],
+ "gsd-import": [
+  "Ingest external plans with conflict detection.",
+  "Please import these plans carefully.",
+  "Need to import external plans safely.",
+  "Can you ingest these plans and check for conflicts?",
+  "Import these plans, detecting any conflicts first.",
+  "Help me import plans without causing issues."
+ ],
+ "gsd-inbox": [
+  "Can you help me review all the open issues and pull requests on my GitHub repo?",
+  "I need someone to triage my GitHub projects based on templates and guidelines.",
+  "Any tool to manage GitHub issues and PRs efficiently?",
+  "Help sorting through our open issues and PRs, please.",
+  "Reviewing all the active tickets on my GitHub; any assistance?",
+  "Looking for a way to streamline reviewing my repo's GitHub activity."
+ ],
+ "gsd-ingest-docs": [
+  "Can you help me set up a .planning/ directory with existing docs in my repo?",
+  "Need to bootstrap a .planning/ setup from all the ADRs and SPECs.",
+  "Any tool to merge .planning/ from various documents like PRDs and specs?",
+  "How do I consolidate existing documentation into a .planning/ structure?",
+  "Looking for a way to automate the setup of a .planning/ directory.",
+  "Tips on organizing ADRs, PRDs, and SPECs into a single .planning/ folder."
+ ],
+ "gsd-manager": [
+  "Is there a tool that can help me manage multiple project phases from one terminal?",
+  "Looking for an interactive command center to handle various project tasks.",
+  "Any way to streamline managing different project stages through a terminal?",
+  "Need a single terminal solution to oversee multiple project phases.",
+  "Help with a command-line interface for managing project workflows.",
+  "Tool or script to manage different project phases from one place?"
+ ],
+ "gsd-map-codebase": [
+  "Can you help me analyze our codebase and generate some planning documents?",
+  "I need a .planning/codebase/ document for our current project.",
+  "Could you run the parallel mapper agents on our codebase to create some insights?",
+  "Please generate a detailed codebase analysis report.",
+  "How can I get a comprehensive view of our codebase using your tool?",
+  "Can you summarize the key components in our codebase?"
+ ],
+ "gsd-mempalace-capture": [
+  "Need help filing a phase artifact into MemPalace.",
+  "Could you mirror some decision facts into the temporal KG?",
+  "I want to capture this decision and pattern in MemPalace.",
+  "Please file this as a phase artifact and update MemPalace.",
+  "How do I add this new data to MemPalace's temporal KG?",
+  "Can you assist with capturing this information in MemPalace?"
+ ],
+ "gsd-mempalace-recall": [
+  "Recall some decisions and patterns from MemPalace for me.",
+  "I need insights from MemPalace before planning our next steps.",
+  "Could you pull up some surprising findings from MemPalace?",
+  "Please recall any relevant decisions or patterns from MemPalace.",
+  "How can I access past decisions and patterns in MemPalace?",
+  "Can you help me review previous decisions stored in MemPalace?"
+ ],
+ "gsd-milestone-summary": [
+  "Generate a comprehensive project summary from our milestone artifacts.",
+  "I need a detailed summary of our milestones for the team.",
+  "Could you compile a project summary based on our milestone artifacts?",
+  "Please provide a summary of our current project milestones.",
+  "How can I get a review-ready summary of our milestones?",
+  "Can you help create a summary document from our milestone data?"
+ ],
+ "gsd-mvp-phase": [
+  "Plan this phase as an MVP slice with user stories and SPIDR splitting.",
+  "I want to plan the next phase as an MVP, can you assist?",
+  "Could you help me split this phase into user stories using SPIDR?",
+  "Please create a vertical MVP plan for this phase.",
+  "How do I plan a phase as a vertical MVP slice?",
+  "Can you guide me through planning this phase as an MVP?"
+ ],
+ "gsd-new-milestone": [
+  "Hey, can we kick off a new milestone? Need to update the PROJECT.md and route stuff.",
+  "Time for a new milestone cycle. Update the doc and move forward.",
+  "Let's start a new milestone. Update the project document and proceed.",
+  "New milestone alert! Update the PROJECT.md and get things moving.",
+  "Milestone time! Please update the document and route accordingly.",
+  "Initiate a new milestone, please. Update PROJECT.md and go."
+ ],
+ "gsd-new-project": [
+  "Need to start a fresh project. Can you help with initializing it?",
+  "Let's create a new project. Gather deep context and set up the doc.",
+  "New project setup needed. Please initialize with context gathering.",
+  "Initializing a new project. Deep context required, please start.",
+  "Start a new project. Need deep context and PROJECT.md setup.",
+  "Fresh project time! Can you initialize it?"
+ ],
+ "gsd-next": [
+  "What's the next step in our project? Can you help me determine that?",
+  "Need to move forward. What should we do next with our GSD?",
+  "Can you figure out the next action for our project? Please.",
+  "Next up, what's the right GSD action? Help me decide.",
+  "What’s the next step in our process? Can you guide me?",
+  "Determine the next GSD action. Please assist."
+ ],
+ "gsd-ns-context": [
+  "Codebase intel needed. Map it out and graphify the docs, learnings, and mempalace.",
+  "Help me with codebase intel. Graphify docs, capture learnings, and build a mempalace.",
+  "I need to understand the codebase better. Can you help map it out?",
+  "Codebase analysis required. Map the graph, review docs, and build a knowledge base.",
+  "Graphify the codebase, map the docs, capture learnings, and build a mempalace.",
+  "Need codebase intel. Please map it out and summarize key learnings."
+ ],
+ "gsd-ns-ideate": [
+  "Exploration phase needed. Can you help with sketching and spec capturing?",
+  "Sketch out some ideas and capture the specs for our next steps.",
+  "Let's explore and ideate. Sketch, spike, and capture the specs.",
+  "Need to explore and ideate. Help me sketch and create a spec.",
+  "Ideation time! Explore, sketch, and capture the specifications.",
+  "Sketch and spike some ideas. Capture the specs for us."
  ],
  "gsd-ns-manage": [
   "Hey, can you help me update the ship inbox?",
@@ -2884,6 +3532,38 @@
   "Need to check the status of all workstreams. Can you do that?",
   "Resume a paused workstream for me."
  ],
+ "hairline-adopt": [
+  "How can I convert my logo into a Hairline figure?",
+  "Can you take this SVG and make it a Hairline illustration?",
+  "I have an icon, could you turn it into a Hairline style?",
+  "Please run /hairline-adopt on this file to create a line-based version.",
+  "Adopt this drawing as a Hairline figure for me.",
+  "Convert my illustration to a Hairline gesture."
+ ],
+ "hairline-create": [
+  "Create a new Hairline figure of a futuristic cityscape.",
+  "Could you make a Hairline representation of a solar system?",
+  "I need an isometric line figure of a robot. Can you help?",
+  "/hairline-create with the idea of a flying car in motion.",
+  "Draw a Hairline style of a human hand holding a phone.",
+  "Generate a self-contained HTML file for a Hairline character."
+ ],
+ "hallmark": [
+  "Build a new website that looks designed.",
+  "/hallmark redesign homepage",
+  "I need a professional-looking design.",
+  "Can you make this page look better?",
+  "Hallmark style please.",
+  "New design with hallmark touch."
+ ],
+ "harness-engineering": [
+  "Build an execution harness for evaluating AI agent performance.",
+  "Configure an autonomous runtime environment for our agents.",
+  "Optimize the action spaces in our AI agent evaluation loops.",
+  "Design test fixtures and gates to improve agent testing.",
+  "Create a robust system for agent execution and optimization.",
+  "Help set up a comprehensive evaluation framework for our AI agents."
+ ],
  "headroom": [
   "Can you help me analyze this huge log file?",
   "Is there a way to work on this large JSON without loading it all into memory?",
@@ -3028,6 +3708,14 @@
   "Export my design as both MP4 and GIF files.",
   "Help me review the visual style of this new project."
  ],
+ "humanizer": [
+  "Can you make this sound more human?",
+  "Fix the AI jargon in this text.",
+  "Rewrite to avoid forced metaphors and cliches.",
+  "Humanize this paragraph, please.",
+  "Make it read like a natural conversation.",
+  "Clean up the flow without changing the meaning."
+ ],
  "i18n-sync": [
   "I need help translating and synchronizing JSON locale files.",
   "Can you guide me on adding new keys to the translation files?",
@@ -3099,6 +3787,14 @@
   "Please define the state machines for this application.",
   "Claude, could you provide guidance on gesture patterns?",
   "Any suggestions for improving product behavior across all states?"
+ ],
+ "interface-review": [
+  "Can you review our UI code for accessibility and layout issues?",
+  "Help me check the writing and typography in this UI file.",
+  "I need a comprehensive review of our frontend design quality.",
+  "Please do a pre-merge UX polish audit on these files.",
+  "Systematically review the accessibility, layout, writing, and typography in our UI codebase.",
+  "Could you provide a prioritized list of issues with evidence-based findings for our UI?"
  ],
  "internal-comms": [
   "Write a status report for the team.",
@@ -3219,6 +3915,14 @@
   "Do you have any tips for implementing pagination with Spring Boot and JPA?",
   "Can you show me how to use HikariCP connection pooling with JPA?"
  ],
+ "json-canvas": [
+  "I want to create a visual canvas with nodes and edges.",
+  "Could you help me edit this .canvas file?",
+  "How do I make flowcharts in JSON Canvas?",
+  "I need to create a mind map using JSON Canvas.",
+  "What's the best way to work with .canvas files?",
+  "Can you suggest some JSON Canvas examples?"
+ ],
  "jury": [
   "Score this website like an Awwwards jury would.",
   "Evaluate the accessibility and SEO of this webpage.",
@@ -3234,6 +3938,14 @@
   "Use Karpathy’s approach for defining success criteria here.",
   "Apply the guidelines to make surgical changes to the code.",
   "Surface assumptions and define verifiable success in this task."
+ ],
+ "knap": [
+  "Apply this Knap template to my data.",
+  "How do I turn JSON into Markdown notes?",
+  "I need to batch-generate Markdown files. Can you help?",
+  "Could you format the Defuddle output as a note?",
+  "What's the best way to use Knap CLI for this task?",
+  "Can you suggest some Knap templates?"
  ],
  "knowledge-ops": [
   "How can I sync knowledge across multiple storage layers?",
@@ -3363,6 +4075,14 @@
   "Implement this feature using the lean-build approach.",
   "/lean-build to get started."
  ],
+ "lemo-opuscar": [
+  "Can you make an animated explainer video using Lemo-Opuscar styles?",
+  "Produce a short film from code in the style of oil painting.",
+  "I need a programmatic ukiyo-e animation. Can you do that?",
+  "Create a teardown-style promo short for our product launch.",
+  "Direct a Lemo-Opuscar style watercolor animation explaining our tech.",
+  "Use Lemo-Opuscar to make an animated video from real footage."
+ ],
  "levels": [
   "Conversion-focused design to guide users easily.",
   "How can I remove friction and improve user actions?",
@@ -3418,6 +4138,14 @@
   "What are some effective circuit breaker strategies for trading bots?",
   "Can you provide examples of MEV protection techniques for trading agents?",
   "Best practices for securely managing keys in an autonomous trading system."
+ ],
+ "locomotive-scroll": [
+  "How do I add smooth scrolling and parallax effects to my website?",
+  "Need help with scroll-triggered animations using Locomotive Scroll.",
+  "Implementing sticky containers with Locomotive Scroll, any tips?",
+  "Can you show me how to use Locomotive Scroll for inertia scrolling?",
+  "Looking for a way to reveal elements as I scroll, any ideas?",
+  "What's the best way to add alpha support in react-colorful?"
  ],
  "logistics-exception-management": [
   "How should I handle shipment delays and damages?",
@@ -3882,6 +4610,14 @@
   "Looking for a method to record and test downstream effects after changes.",
   "Can you help me implement a REGRESSION.md system?"
  ],
+ "moli": [
+  "Use Moli for web scraping; how does it work?",
+  "Can you help me extract clean DOM content using Moli?",
+  "Need advice on running lightweight browser automation with Moli.",
+  "How do I scrape data from a website without heavy Chromium overhead?",
+  "Moli seems efficient for my needs; any setup tips?",
+  "Quickly set up Moli for web scraping tasks."
+ ],
  "moneyprinterturbo-video": [
   "Can you help me make a short video on how to use MoneyPrinterTurbo?",
   "I need a voice-over video explaining the features of our product.",
@@ -3945,6 +4681,118 @@
   "How do I design a schema for this use case?",
   "Any tips on connection pooling in production?",
   "Can you review my transaction handling in MySQL?"
+ ],
+ "n8n-agents": [
+  "How do I design AI agents in n8n?",
+  "I need help building an AI Agent node.",
+  "What's the right way to set up LLM chains in n8n?",
+  "Can you explain how to use system prompts with AI agents?",
+  "How do I implement agent memory in n8n workflows?",
+  "What are some common pitfalls when using tool calling in n8n?"
+ ],
+ "n8n-binary-and-data": [
+  "How do I handle binary data in n8n?",
+  "Can you help me read a PDF file in n8n?",
+  "I need to attach an image to an email. How can I do that?",
+  "What's the correct way to use $binary in n8n workflows?",
+  "How do I troubleshoot issues with base64 encoding/decoding?",
+  "Can you explain how to work with vision/multimodal input in n8n?"
+ ],
+ "n8n-code-javascript": [
+  "I'm stuck writing a JavaScript code in n8n.",
+  "How do I make HTTP requests in the Code node?",
+  "What's the difference between different modes in the Code node?",
+  "Can you help me troubleshoot errors in the Code node?",
+  "How do I work with dates in JavaScript within n8n?",
+  "I need to use $helpers for something. Can you provide an example?"
+ ],
+ "n8n-code-python": [
+  "How do I write Python code in a Code node?",
+  "Can you explain how to access _input/_json/_node syntax in Python?",
+  "What limitations are there when using Python in n8n?",
+  "I need help with standard library functions in Python within n8n.",
+  "How do I choose between JavaScript and Python in the Code node?",
+  "Can you provide an example of a custom data transformation?"
+ ],
+ "n8n-code-tool": [
+  "I'm building a Custom Code Tool. How should I start?",
+  "Can you help me write code for an AI-agent-callable tool?",
+  "What's the correct structure for returning results from a Code Tool?",
+  "How do I parse the `query` input in a Code Tool?",
+  "Can you explain how to use _input/_json/_node syntax in a Code Tool?",
+  "I need to troubleshoot an error in my Custom Code Tool. Can you help?"
+ ],
+ "n8n-error-handling": [
+  "How do I wire error handling in n8n?",
+  "What are some best practices for structured error handling?",
+  "Can you explain how to use continueErrorOutput in workflows?",
+  "I need help with silent failures in a scheduled workflow.",
+  "How do I configure onError actions in n8n?",
+  "Can you provide an example of recoverable error handling?"
+ ],
+ "n8n-expression-syntax": [
+  "Can you help me validate expression syntax in n8n?",
+  "What's the correct way to use {{}} in expressions?",
+  "How do I troubleshoot common expression errors?",
+  "I need to map data between nodes. Can you help?",
+  "How do I reference webhook data in workflows?",
+  "Can you provide an example of complex expression usage?"
+ ],
+ "n8n-mcp-tools-expert": [
+  "How do I use n8n-mcp tools effectively?",
+  "I need guidance on searching for nodes and validating configurations.",
+  "Can you help me access templates and manage workflows in n8n-mcp?",
+  "What's the best way to organize workflows into folders?",
+  "How do I manage credentials in n8n-mcp?",
+  "Can you explain how to audit instance security using n8n-mcp tools?"
+ ],
+ "n8n-multi-instance": [
+  "I'm working with multiple n8n instances. How should I handle that?",
+  "What's the correct way to use `n8n_instances` in workflows?",
+  "How do I troubleshoot NOT_FOUND errors when calling workflows across instances?",
+  "Can you help me organize credentials for different environments?",
+  "What are some best practices for managing multiple n8n instances?",
+  "I need to switch between prod and staging instances. How can I do that?"
+ ],
+ "n8n-node-configuration": [
+  "Can you help me configure the email node in n8n?",
+  "I'm stuck on setting up this node; any tips?",
+  "How do I handle dependencies between properties in a node?",
+  "What's the best way to determine required fields for a node?",
+  "Could you explain how get_node detail levels work?",
+  "Any common patterns for configuring nodes by type?"
+ ],
+ "n8n-self-hosting": [
+  "I want to self-host n8n on my server. Can you guide me?",
+  "How do I install and set up n8n using Docker Compose?",
+  "Can you help deploy n8n with automatic HTTPS on a fresh Linux VM?",
+  "What's the recommended way to host n8n on AWS EC2?",
+  "Any tips for setting up n8n behind a reverse proxy?",
+  "How do I provision and self-host n8n?"
+ ],
+ "n8n-subworkflows": [
+  "I need to build a sub-workflow. Any advice?",
+  "Can you help extract shared logic into a sub-workflow?",
+  "What's the best way to make workflows modular?",
+  "How do I use 'Define Below' in sub-workflows?",
+  "Any tips for reusing workflows across n8n?",
+  "I'm looking to create a reusable sub-workflow."
+ ],
+ "n8n-validation-expert": [
+  "Can you help me fix this validation error?",
+  "What does this validation warning mean?",
+  "How do I interpret validation results in n8n?",
+  "Any tips for understanding operator structure issues?",
+  "What's the process behind the validation loop in n8n?",
+  "How do I deal with false positives in validation?"
+ ],
+ "n8n-workflow-patterns": [
+  "Can you recommend workflow patterns for n8n?",
+  "I'm designing a new workflow. Any architectural advice?",
+  "What's the best way to handle webhook processing in n8n?",
+  "Any tips for integrating HTTP API with n8n workflows?",
+  "How should I plan my workflow architecture?",
+  "Can you give me examples of AI agent workflows?"
  ],
  "nanoclaw-repl": [
   "How do I switch models in NanoClaw?",
@@ -4042,6 +4890,14 @@
   "Correct address derivation using Keccak-256.",
   "Validate Ethereum hashing in TypeScript."
  ],
+ "notebooklm": [
+  "Can you help me install notebooklm-py?",
+  "I'm having trouble authenticating with Gemini Notebook.",
+  "How do I troubleshoot issues with the notebooklm CLI?",
+  "Could you explain how to use the async Python API for notebooklm?",
+  "What are some best practices for managing artifacts in notebooklm?",
+  "Can you show me how to generate research artifacts using this tool?"
+ ],
  "nutrient-document-processing": [
   "Convert PDF to DOCX using Nutrient API.",
   "OCR text from an image document via API.",
@@ -4057,6 +4913,30 @@
   "Do you have any patterns to ensure route rules are set up correctly in Nuxt 4?",
   "Can you provide examples of how to use useFetch and useAsyncData safely in Nuxt 4?",
   "I need help debugging hydration mismatches in my Nuxt 4 app. What should I do?"
+ ],
+ "obsidian-bases": [
+  "Create a new Obsidian Base file with filters.",
+  "How do I create a database-like view in Obsidian?",
+  "I need to edit my .base files. Can you help?",
+  "What's the best way to use formulas in Obsidian Bases?",
+  "Could you suggest some views for my notes?",
+  "Can you show me how to filter notes in Obsidian?"
+ ],
+ "obsidian-cli": [
+  "How do I read notes from my Obsidian vault using CLI?",
+  "I need to create a new note with the Obsidian CLI.",
+  "Is there a way to search for tasks in Obsidian CLI?",
+  "Can you help me reload plugins using the Obsidian CLI?",
+  "What's the best way to capture errors in Obsidian?",
+  "How do I take a screenshot of my vault?"
+ ],
+ "obsidian-markdown": [
+  "I need to create a wikilink in Obsidian.",
+  "How do I add properties to my Markdown notes?",
+  "Can you help me with frontmatter in Obsidian?",
+  "What's the best way to use callouts in Markdown?",
+  "Could you suggest some tags for my notes?",
+  "How do I embed files in Obsidian?"
  ],
  "omni-agents-a2a": [
   "Can you help me interact with OmniRoute using JSON-RPC 2.0 for smart routing?",
@@ -4250,6 +5130,14 @@
   "Generate a detailed SOUL.md for an OpenClaw NPC.",
   "Can you help me come up with a name and avatar for my new OpenClaw character?"
  ],
+ "opencode": [
+  "Automate pull request triage using the OpenCode CLI.",
+  "Can you show me how to run background coding tasks with opencode?",
+  "Need to integrate multi-model workflows; any suggestions?",
+  "How do I set up automated testing in my project with opencode?",
+  "Looking for a quick guide on orchestrating coding workflows.",
+  "Integrate OpenCode CLI into our CI/CD pipeline."
+ ],
  "opensource-pipeline": [
   "I have a private project that needs to be open-sourced. What should I do?",
   "/opensource this project, please.",
@@ -4257,6 +5145,14 @@
   "Can you guide me through the process of making a private project open-source?",
   "Make this internal tool available as an open-source library.",
   "I need to fork and sanitize a private repository. How do I do that?"
+ ],
+ "openviking": [
+  "How do I manage the agent's memory and context hierarchy?",
+  "Is there a way to use OpenViking for persistent memory across sessions?",
+  "Can you explain how to integrate the virtual filesystem in our project?",
+  "Need help with structuring multi-tier agent context using OpenViking.",
+  "Any tips on managing agent filesystem RAG with OpenViking?",
+  "How do I access files in the viking:// filesystem?"
  ],
  "operator-approval-loop": [
   "Set up an operator approval loop for my agent's external communications.",
@@ -4650,6 +5546,14 @@
   "What's your strategy for better cache management?",
   "Any tips to maximize prompt cache effectiveness?"
  ],
+ "prompt-master": [
+  "Can you write an optimized prompt for Midjourney?",
+  "Optimize this prompt for the LLM.",
+  "I need a better prompt for image AI.",
+  "Help me adapt this prompt for video AI.",
+  "Write a prompt for Cursor tool.",
+  "Create an optimal coding agent prompt."
+ ],
  "prompt-optimizer": [
   "Optimize this prompt for better results.",
   "Can you rewrite my prompt to be clearer?",
@@ -4809,6 +5713,14 @@
   "Could you help with micro-interactions?",
   "Do you have any examples of landing pages?",
   "How can I build engaging interfaces?"
+ ],
+ "react-colorful": [
+  "How can I integrate a color picker into my React app?",
+  "Need a lightweight color picker with Hex, RGB inputs.",
+  "Looking for a color picker with keyboard accessibility in React.",
+  "Can you provide an example of how to use alpha support with react-colorful?",
+  "Any advice on custom styling the react-colorful color picker?",
+  "How do I add HSL and HSV inputs to my color picker?"
  ],
  "react-native-patterns": [
   "What's the best way to handle navigation in React Native?",
@@ -5082,6 +5994,14 @@
   "Is there a GitHub project I can use for authentication?",
   "What's the latest in natural language processing libraries?"
  ],
+ "security-audit": [
+  "Can you perform a security audit on my codebase?",
+  "What are some common vulnerabilities in REST APIs?",
+  "Do you know how to conduct a pen test on a CLI tool?",
+  "Help me review the security of this library I'm using.",
+  "I need guidance on securing my web services, any tips?",
+  "How do I ensure that my daemon is secure?"
+ ],
  "security-bounty-hunter": [
   "Hunt for vulnerabilities in our public repository.",
   "Can you check for any remotely exploitable bugs?",
@@ -5121,6 +6041,54 @@
   "Can you check my Core Web Vitals?",
   "What should I focus on for structured data implementation?",
   "Please plan an SEO audit for our site."
+ ],
+ "sepia": [
+  "Could you make this AI writing more human?",
+  "How about fixing the narrative in this story?",
+  "Edit these release notes to sound more natural.",
+  "Revise this text for better readability.",
+  "Apply your domain rules to this PR message.",
+  "Smooth out the structure of this fiction piece."
+ ],
+ "sepia-hemingway": [
+  "Write this scene in a Hemingway style.",
+  "Can you revise this story with a Hemingway touch?",
+  "Make this text read like Hemingway's prose.",
+  "Strongly de-AI this narrative, please.",
+  "Apply the Hemingway voice profile to this story.",
+  "Rewrite this fiction in Hemingway's style."
+ ],
+ "sepia-recreate": [
+  "Completely rewrite this passage with Sepia.",
+  "Can you use Sepia to rework this entire text?",
+  "Recreate this content using Sepia's full capabilities.",
+  "Sepia, please do a full rewrite of this.",
+  "Sepia, recreate this story from scratch.",
+  "Use Sepia to give me a fresh take on this."
+ ],
+ "sepia-refactor": [
+  "Make minimal changes to improve this text.",
+  "Can you revise this prose with Sepia?",
+  "Apply Sepia's refactor tool for this paragraph.",
+  "Do an in-place edit of this story.",
+  "Sepia, please make small edits to this.",
+  "Refactor this text using Sepia."
+ ],
+ "sepia-review": [
+  "Please review my prose without editing it.",
+  "Sepia review needed for this text.",
+  "I want to check the flow of my writing.",
+  "Can you diagnose my prose but don't edit?",
+  "Review my draft, no changes please.",
+  "Need a sepia review on this."
+ ],
+ "sepia-write": [
+  "Help me write a new piece of prose.",
+  "Sepia write to create something new.",
+  "I need help crafting some text.",
+  "Write a new story with Sepia.",
+  "Create some prose using Sepia.",
+  "New prose creation needed."
  ],
  "session-report": [
   "Generate an HTML report of my session usage.",
@@ -5216,6 +6184,14 @@
   "Do a quick lint of the latest skill PR for compatibility issues.",
   "Need to verify frontmatter and substitutions in skill files.",
   "Compatibility check for ECC skills before publishing."
+ ],
+ "skill-inspector": [
+  "Is this skill safe to install? Can you check it with SkillSpector?",
+  "Can you review the downloaded skill folder for any potential issues?",
+  "How do I know if a skill is over-permissioned or malicious?",
+  "Please inspect this AI agent skill and let me know if it's trustworthy.",
+  "Use SkillSpector to ensure that the skill is installable without problems.",
+  "Can you confirm if this skill is safe before I add it to my system?"
  ],
  "skill-scout": [
   "I'm looking for an existing skill for this workflow.",
@@ -5671,6 +6647,78 @@
   "Inspect logs for one of the machines in the Uncloud cluster.",
   "Add a new machine to the Uncloud cluster."
  ],
+ "understand": [
+  "Can you analyze our codebase to create an interactive knowledge graph?",
+  "I need help understanding the architecture and components in our project.",
+  "Please produce an interactive map of our codebase's components.",
+  "How do I visualize the relationships between different parts of our code?",
+  "Analyze our codebase and show me the architecture in a knowledge graph.",
+  "Create an understanding dashboard for our codebase."
+ ],
+ "understand-chat": [
+  "Can you help me understand a specific part of our codebase?",
+  "I have questions about our project's architecture. Can you assist?",
+  "Please explain this piece of code to me using the knowledge graph.",
+  "What does this module do in our codebase? Help me understand.",
+  "Can you provide an overview of how this component works?",
+  "Explain the relationship between these two modules."
+ ],
+ "understand-dashboard": [
+  "Launch the dashboard to visualize our codebase's knowledge graph.",
+  "Show me the interactive web dashboard for our codebase.",
+  "Open the understand dashboard and display our architecture.",
+  "Can you open the knowledge graph visualization tool?",
+  "How do I access the understanding dashboard for our project?",
+  "Display the knowledge graph on the dashboard."
+ ],
+ "understand-diff": [
+  "Analyze this git diff to understand what changed.",
+  "What impact does this pull request have on our codebase?",
+  "Can you explain the changes in this diff and affected components?",
+  "Help me analyze the risks associated with this pull request.",
+  "Show me how this change affects different parts of our system.",
+  "Explain the changes introduced by this git diff."
+ ],
+ "understand-domain": [
+  "Can you help me visualize the flow of our e-commerce platform?",
+  "I need an interactive graph showing how user authentication works in this app.",
+  "Could you extract the domain knowledge from our codebase and present it as a flowchart?",
+  "Please generate an interactive domain flow diagram for our project.",
+  "Help me understand the business logic by creating a domain flow map.",
+  "Create a lightweight scan to get an overview of the main components in our system."
+ ],
+ "understand-explain": [
+  "Can you explain the purpose and functionality of this specific function?",
+  "I need a detailed explanation of how this module works in our codebase.",
+  "Could you provide a deep dive into what's happening in this file?",
+  "Explain the logic behind this piece of code, please.",
+  "Help me understand this particular function in detail.",
+  "Can you break down the functionality of this code for me?"
+ ],
+ "understand-figma": [
+  "Analyze our Figma file and create an interactive design knowledge graph.",
+  "Generate a design dashboard from our Figma project.",
+  "Could you extract the components and instances from our Figma file?",
+  "Please analyze our Figma pages and screens and present them as a graph.",
+  "Create an interactive graph of the design elements in our Figma file.",
+  "Help me understand the structure of our Figma project with a knowledge graph."
+ ],
+ "understand-knowledge": [
+  "Extract entities and relationships from this LLM wiki knowledge base.",
+  "Generate an interactive knowledge graph from this Karpathy-pattern wiki.",
+  "Could you analyze this knowledge base and cluster topics for me?",
+  "Please create a knowledge graph with implicit relationships from this data.",
+  "Help me understand the key concepts by generating an entity-extracted graph.",
+  "Analyze the wiki and present it as an interactive knowledge dashboard."
+ ],
+ "understand-onboard": [
+  "Create an onboarding guide for new team members joining our project.",
+  "Could you help generate a comprehensive onboarding document?",
+  "I need a detailed guide to get new developers up to speed.",
+  "Please create an onboarding plan for new hires in our team.",
+  "Generate a step-by-step onboarding process for new team members.",
+  "Help me draft an onboarding guide for new project participants."
+ ],
  "unified-memory": [
   "Save the current work state and resume later.",
   "Transfer context between different agents for this task.",
@@ -5694,6 +6742,14 @@
   "/unlazy; let’s get this done right.",
   "Prevent this long-running task from stalling at 80%.",
   "Use the unlazy mode for this substantial task."
+ ],
+ "using-n8n-mcp-skills": [
+  "I'm building a flow. Can you help configure a node?",
+  "How do I write expressions or Code nodes in n8n?",
+  "What's the best way to wire credentials in n8n?",
+  "Can you help me debug a misbehaving workflow?",
+  "I need to design and validate an n8n workflow.",
+  "Any tips for editing workflows through n8n-mcp?"
  ],
  "ux-research": [
   "Can you plan and conduct UX research for this product?",
