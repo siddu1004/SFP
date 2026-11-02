@@ -40,17 +40,14 @@
 ## Try It in 60 Seconds
 
 ```bash
-# Cross-platform (Windows, macOS, Linux via npm / npx):
-npx sfp-hive install
-
-# Or via curl (macOS and Linux):
+# macOS and Linux:
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh
 
-# Or via PowerShell (Windows):
+# Windows (PowerShell):
 irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1 | iex
 ```
 
-Installs the starter preset into every IDE found on your machine. Restart your IDE, then prompt your agent:
+Needs Python 3.8+ and Git. Installs the starter preset into every IDE found on your machine; the [step-by-step install guide](docs/INSTALL.md) covers every option. Restart your IDE, then prompt your agent:
 
 > Use sfp-hive for this task: add tests for the checkout form.
 
@@ -225,18 +222,10 @@ Decisions take about 8 ms inside the host process. Search takes about 0.1 ms. MC
 
 ## Install
 
-Quick install options for all platforms:
+**New to SFP? Follow the [A-Z install guide](docs/INSTALL.md)**: prerequisites, skills, MCP server, the SFP Hive extension and the model router, each step with a check. Quick options:
 
 <details open>
-<summary><b>1. npm / npx (Cross-Platform)</b></summary>
-
-```bash
-npx sfp-hive install
-```
-</details>
-
-<details>
-<summary><b>2. macOS and Linux (curl)</b></summary>
+<summary><b>1. macOS and Linux (curl)</b></summary>
 
 ```bash
 # Starter preset into all detected IDEs:
@@ -248,7 +237,7 @@ curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -
 </details>
 
 <details>
-<summary><b>3. Windows (PowerShell)</b></summary>
+<summary><b>2. Windows (PowerShell)</b></summary>
 
 ```powershell
 # Starter preset:
@@ -260,7 +249,7 @@ irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1 | iex
 </details>
 
 <details>
-<summary><b>4. Claude Code Plugin</b></summary>
+<summary><b>3. Claude Code Plugin</b></summary>
 
 ```text
 /plugin marketplace add siddu1004/SFP
@@ -270,7 +259,7 @@ irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1 | iex
 </details>
 
 <details>
-<summary><b>5. Zero-Install MCP Server</b></summary>
+<summary><b>4. Zero-Install MCP Server</b></summary>
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh | sh -s -- mcp
@@ -280,7 +269,7 @@ Registers `sfp` with all detected IDEs, granting on-demand access to all 819 ski
 </details>
 
 <details>
-<summary><b>6. VS Code / Antigravity Hive Extension</b></summary>
+<summary><b>5. VS Code / Antigravity Hive Extension</b></summary>
 
 ```bash
 python3 extensions/antigravity-hive/install.py
