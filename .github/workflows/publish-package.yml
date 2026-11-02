@@ -1,8 +1,9 @@
-name: Publish to GitHub Packages
+name: Publish to npm
 
+# A release tag (v3.18.0) publishes that version as `sfp-hive` on the public npm registry. The launcher in the package
+# clones the same tag on first run, so the tag is what users run. Needs the repository secret NPM_TOKEN (an npm
+# automation token); provenance links the package to this workflow and commit so anyone can check where it came from.
 on:
-  release:
-    types: [published]
   push:
     tags:
       - 'v*'
@@ -13,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write
+      id-token: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,16 +23,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@siddu1004'
+          registry-url: 'https://registry.npmjs.org'
 
-      - name: Publish to GitHub Packages
+      - name: Check the tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/v')
         run: |
+          test "v$(node -p "require('./package.json').version")" = "${GITHUB_REF_NAME}" || {
+            echo "Tag ${GITHUB_REF_NAME} does not match package.json version"; exit 1; }
+
+      - name: Publish sfp-hive
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then echo "NPM_TOKEN secret is not set; skipping publish."; exit 0; fi
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          if npm view @siddu1004/sfp@$CURRENT_VERSION version --registry=https://npm.pkg.github.com > /dev/null 2>&1; then
-            echo "Version $CURRENT_VERSION is already published to GitHub Packages. Skipping."
+          if npm view sfp-hive@$CURRENT_VERSION version > /dev/null 2>&1; then
+            echo "sfp-hive@$CURRENT_VERSION is already on npm. Skipping."
           else
-            npm publish
+            npm publish --provenance --access public
           fi
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

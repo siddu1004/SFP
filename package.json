@@ -1,5 +1,5 @@
 {
-  "name": "@siddu1004/sfp",
+  "name": "sfp-hive",
   "version": "3.17.7",
   "description": "Give your AI coding agent the right skills for the job, not all of them. Curated library of 800+ agent skills across 16 IDEs with an intelligent hive that selects, orders, and learns from feedback.",
   "author": "siddu1004",
@@ -10,7 +10,8 @@
     "url": "git+https://github.com/siddu1004/SFP.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
   },
   "bugs": {
     "url": "https://github.com/siddu1004/SFP/issues"

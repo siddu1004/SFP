@@ -103,9 +103,15 @@ def detect(path, scan_result=None):
             'stacks': stacks, 'gaps': [st for st in stacks if st['skills'] < THIN]}
 
 
+# Stacks the search cannot see by their own name: the tokenizer drops one-letter words, so C and R are counted by the
+# words their skills do use.
+COVERAGE_WORDS = {'c': ('cpp', 'firmware', 'embedded', 'microcontroller'), 'r': ('rstats', 'tidyverse', 'ggplot')}
+
+
 def coverage(word):
     """How many skills name a technology, in their name, description or category."""
-    return len(core.POSTINGS.get(core.stem(word.lower()), ()))
+    words = COVERAGE_WORDS.get(word.lower(), (word,))
+    return len({i for w in words for i in core.POSTINGS.get(core.stem(w.lower()), ())})
 
 
 def stacks_of(counts, terms):
