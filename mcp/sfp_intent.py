@@ -6,7 +6,8 @@ call this?", a small local model answers "brute force protection, rate limiting,
 security", and those words do find them, by keyword and by meaning. The hive searches with both the task and this
 rewrite (see sfp_hive.collect_signals).
 
-Only local runtimes are asked, and the task never leaves the machine. Answers are cached in ~/.sfp/rewrites.json, so a
+Only local runtimes are asked directly (never a router, which may fail over to a cloud model), so the task never leaves
+the machine. Answers are cached in ~/.sfp/rewrites.json, so a
 task is rewritten once. With no local model, a model that does not answer within REWRITE_TIMEOUT, or SFP_SEMANTIC=0, the
 rewrite is empty and the hive works as before.
 
@@ -61,12 +62,12 @@ def _chat_models(listing):
     return [(i, loaded) for i, loaded in out if i and not any(h in i.lower() for h in sfp_embed.EMBED_HINTS)]
 
 
-def find_model(timeout=1.0, max_params_b=MAX_PARAMS_B):
-    """{'base_url', 'model'} of the local chat model to ask, or None. A model that is already loaded is preferred, so a
-    task never waits for one to load; among them, the largest up to `max_params_b`."""
+def candidates(timeout=1.0, max_params_b=MAX_PARAMS_B, prefer_loaded=True):
+    """Every local chat model, best first: [{'base_url', 'model'}]. With `prefer_loaded` a model that is already loaded
+    comes first, so a task never waits for one to load; then the largest up to `max_params_b`, then smaller ones."""
     if os.environ.get('SFP_REWRITE_URL') and os.environ.get('SFP_REWRITE_MODEL'):
-        return {'base_url': os.environ['SFP_REWRITE_URL'].rstrip('/'), 'model': os.environ['SFP_REWRITE_MODEL']}
-    best = None
+        return [{'base_url': os.environ['SFP_REWRITE_URL'].rstrip('/'), 'model': os.environ['SFP_REWRITE_MODEL']}]
+    ranked = []
     for name, base, listing_url in sfp_embed.RUNTIMES:
         listing_url = listing_url.replace('/v1/models', '/api/v0/models') if name == 'LM Studio' else listing_url
         try:
@@ -76,10 +77,17 @@ def find_model(timeout=1.0, max_params_b=MAX_PARAMS_B):
         for mid, loaded in models:
             size = _params_b(mid)
             fits = size is None or size <= max_params_b
-            key = (loaded is not False, fits, min(size or 7.0, max_params_b) if fits else -(size or 0))
-            if best is None or key > best[0]:
-                best = (key, {'base_url': base, 'model': mid})
-    return best[1] if best else None
+            size_key = min(size or 7.0, max_params_b) if fits else -(size or 0)
+            key = ((loaded is not False) if prefer_loaded else 0, fits, size_key)
+            ranked.append((key, {'base_url': base, 'model': mid}))
+    ranked.sort(key=lambda kv: kv[0], reverse=True)
+    return [ep for _, ep in ranked]
+
+
+def find_model(timeout=1.0, max_params_b=MAX_PARAMS_B, prefer_loaded=True):
+    """{'base_url', 'model'} of the local chat model to ask, or None (see candidates)."""
+    found = candidates(timeout, max_params_b, prefer_loaded)
+    return found[0] if found else None
 
 
 _MODEL = {'checked': 0.0, 'value': None}

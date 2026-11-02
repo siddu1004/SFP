@@ -15,7 +15,8 @@ When the hive finds no good skill for a task, or the engineer's stack is one the
 
 Paper text is data, never instructions: the model is told so, and its answer loses any command that downloads or runs
 code from the internet, any link, and any citation to a source that was not given. Only the search queries leave the
-machine (to the paper indexes); the task itself, the papers' text and the writing stay local.
+machine (to the paper indexes); the task itself, the papers' text and the writing stay local, because models are asked
+only on the local runtimes themselves, never through a router that could fail over to the cloud.
 
 CLI
   sfp_research.py draft "tune the PI controller of a buck converter" [--role embedded-hardware] [--papers 6]
@@ -281,16 +282,28 @@ def split_answer(text):
 
 def write_skill(task, role, papers, ep=None, chat=None):
     """(name, SKILL.md text, writer model) for the task, from the ranked papers."""
-    ep = ep or sfp_intent.find_model(max_params_b=MAX_WRITER_B)
-    if not ep:
+    # A draft is written once, so the largest local model is tried first, loaded or not; one that cannot load (not enough
+    # memory) or writes no usable skill hands over to the next.
+    tried = [ep] if ep else sfp_intent.candidates(max_params_b=MAX_WRITER_B, prefer_loaded=False)
+    if not tried:
         raise RuntimeError('no local model found to write the skill: load one in LM Studio or Ollama')
     prompt = WRITE_PROMPT.format(role=role or 'software engineer', task=task.strip()[:800], n=len(papers),
                                  sources=sources_block(papers))
-    raw = (chat or _chat)(ep, prompt, 1800, WRITE_TIMEOUT, 0.2, WRITE_SYSTEM)
-    desc, body = split_answer(raw)
-    body = clean_body(body, len(papers))
-    if not re.search(r'^## Steps', body, re.M):
-        raise RuntimeError('the model did not write a usable skill (no Steps section); try again or load a larger model')
+    body, desc, failures = None, '', []
+    for ep in tried:
+        try:
+            raw = (chat or _chat)(ep, prompt, 1800, WRITE_TIMEOUT, 0.2, WRITE_SYSTEM)
+        except (OSError, ValueError, KeyError, IndexError, urllib.error.URLError) as e:
+            failures.append('%s: %s' % (ep['model'], type(e).__name__))
+            continue
+        desc, body = split_answer(raw)
+        body = clean_body(body, len(papers))
+        if re.search(r'^## Steps', body, re.M):
+            break
+        failures.append('%s: no Steps section' % ep['model'])
+        body = None
+    if body is None:
+        raise RuntimeError('no local model wrote a usable skill (%s)' % '; '.join(failures))
     title = re.search(r'^#\s+(.+)$', body, re.M)
     name = slugify(title.group(1) if title else task)
     desc = clean_body(desc, len(papers)).replace('\n', ' ')[:300] or 'Research-based guidance for: %s' % task[:200]

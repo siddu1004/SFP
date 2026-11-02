@@ -3,10 +3,11 @@
 
 Keyword search misses a task that says the same thing in other words: "make the login safer" shares no word with
 "authentication hardening". An embedding model maps both close together. This module asks a local runtime (LM Studio,
-Ollama, llama.cpp, Jan, vLLM, or the SFP router) for vectors, keeps the skills' vectors in a cache, and answers
+Ollama, llama.cpp, Jan or vLLM) for vectors, keeps the skills' vectors in a cache, and answers
 "which skills mean what this task means" in a few milliseconds.
 
-Nothing leaves the machine: only local runtimes are asked. With no embedding model running, or SFP_SEMANTIC=0, every
+Nothing leaves the machine: only the local runtimes themselves are asked, never a router (port 8787), because a router
+may fail over to a cloud model without saying so. SFP_EMBED_URL can still point anywhere you choose. With no embedding model running, or SFP_SEMANTIC=0, every
 function here returns nothing and the hive works on words alone, as before.
 
 CLI
@@ -34,11 +35,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import sfp_mcp as core  # noqa: E402  (the catalog)
 
-# Where an embedding model may be running: (name, OpenAI-compatible base url, how to list its models).
+# Where a model may be running: (name, OpenAI-compatible base url, how to list its models). Routers are left out on
+# purpose: the SFP router, and others like it, fall back to cloud providers when a local model fails.
 RUNTIMES = [
     ('LM Studio', 'http://127.0.0.1:1234/v1', 'http://127.0.0.1:1234/v1/models'),
     ('Ollama', 'http://127.0.0.1:11434/v1', 'http://127.0.0.1:11434/api/tags'),
-    ('SFP router', 'http://127.0.0.1:8787/v1', 'http://127.0.0.1:8787/v1/models'),
     ('llama.cpp server', 'http://127.0.0.1:8080/v1', 'http://127.0.0.1:8080/v1/models'),
     ('Jan', 'http://127.0.0.1:1337/v1', 'http://127.0.0.1:1337/v1/models'),
     ('vLLM', 'http://127.0.0.1:8000/v1', 'http://127.0.0.1:8000/v1/models'),
