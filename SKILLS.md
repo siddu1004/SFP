@@ -298,7 +298,7 @@ Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR an
 | Skill | What it does |
 |---|---|
 | `deployment-patterns` | Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications. Use when setting up CI/CD, contain… |
-| `docker-patterns` | Docker and Docker Compose patterns for local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration. Use when creating or reviewing Doc… |
+| `docker-patterns` | Docker and Docker Compose patterns: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orch… |
 | `flox-environments` | Create reproducible, cross-platform (macOS/Linux) development environments with Flox, a declarative Nix-based environment manager. Use when setting up project toolchains, installing system-level depen… |
 | `git-workflow` | Git workflow patterns including branching strategies, commit conventions, keeping history clean and readable, tidying local commits before merging, merge vs rebase, conflict resolution, and collaborat… |
 | `github-ops` | GitHub repository operations, automation, and management. Issue triage, PR management, CI/CD operations, release management, and security monitoring using the gh CLI. Use when the user wants to manage… |
@@ -465,7 +465,7 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `moli` | Fast, resource-light headless browser automation using Moli for web scraping and AI agent DOM extraction. Use when running lightweight browser automation, extracting clean DOM content, or scraping web… |
 | `graft` | Compile and execute declarative multi-agent pipelines using the Graft CLI runtime. Compose agent graphs, state handoffs, and verification steps into repeatable workflows. Use when orchestrating cooper… |
 
-## agent-dev (105)
+## agent-dev (104)
 
 Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.
 
@@ -501,7 +501,6 @@ Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budge
 | `configure-ecc` | Run the conversational ECC setup wizard inside the current harness: inventory the install, collect scope (user/project/local) and hook mode (off/minimal/standard/strict) in Claude Code, use Codex's na… |
 | `context-and-decisions` | Govern stable domain context with a narrowly scoped CONTEXT.md when needed, and route hard-to-reverse decisions to ECC's existing architecture-decision-records skill. Use when domain terms require rep… |
 | `context-budget` | Routes live context checks to the native Codex or Claude Code meter without scanning files, and performs a bounded static component audit only when explicitly requested. Use for context-budget request… |
-| `continuous-learning` | [DEPRECATED - use continuous-learning-v2] Legacy v1 stop-hook skill extractor. v2 is a strict superset with instinct-based, project-scoped, hook-reliable learning. Do not invoke v1: when continuous le… |
 | `continuous-learning-v2` | Instinct-based learning system that observes sessions via hooks, creates atomic instincts with confidence scoring, and evolves them into skills/commands/agents. v2.1 adds project-scoped instincts to p… |
 | `cost-tracking` | Track and report Claude Code token usage, spending, and budgets from the local ECC cost-tracker metrics log. Use when the user asks about costs, spending, usage, tokens, budgets, or cost breakdowns by… |
 | `deepseek-harness-setup` | Install and operate Everything Claude Code (ECC) on the DeepSeek Harness (DSH): native skill roots (~/.dsh/skills, .agents/skills), the @deepseek-ai/dsh-hooks-claude-code bridge for command hooks, bar… |

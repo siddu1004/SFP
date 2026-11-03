@@ -58,6 +58,19 @@ class FrontmatterTest(unittest.TestCase):
         self.assertEqual(sync.field(fm, 'description'), desc)
         self.assertTrue(text.endswith('Body: here.\n'))
 
+    def test_a_description_override_replaces_a_multiline_description_and_keeps_the_rest(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, 'SKILL.md'), 'w', encoding='utf-8') as f:
+                f.write('---\nname: demo\ndescription: >\n  old text that\n  spans lines\nlicense: MIT\n---\n\nBody: here.\n')
+            fm = sync.set_description(d, 'New: what it really covers.')
+            with open(os.path.join(d, 'SKILL.md'), encoding='utf-8') as f:
+                text = f.read()
+        self.assertEqual(sync.field(fm, 'description'), 'New: what it really covers.')
+        self.assertEqual(sync.field(fm, 'license'), 'MIT')
+        self.assertNotIn('old text', text)
+        self.assertTrue(text.endswith('Body: here.\n'))
+
     def test_a_skill_without_frontmatter_gets_one_that_survives_colons_and_rules(self):
         import tempfile
         with tempfile.TemporaryDirectory() as d:

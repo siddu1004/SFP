@@ -96,8 +96,12 @@
       ],
       "collision_prefix": "ecc-",
       "exclude": [
-        "skills/frontend-slides"
-      ]
+        "skills/frontend-slides",
+        "skills/continuous-learning"
+      ],
+      "descriptions": {
+        "docker-patterns": "Docker and Docker Compose patterns: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration."
+      }
     },
     {
       "repo": "diegosouzapw/OmniRoute",
@@ -585,7 +589,10 @@
       "default": "business-ops",
       "skills": [
         "skills/*"
-      ]
+      ],
+      "descriptions": {
+        "founder-brand": "Establish startup brand identity, company naming, domain checks, and founder look. Use when naming a new business or startup, creating a brand tagline, or defining initial founder brand voice and logo direction."
+      }
     },
     {
       "repo": "zarazhangrui/frontend-slides",
@@ -618,7 +625,10 @@
       "default": "content-media",
       "skills": [
         "skills/*"
-      ]
+      ],
+      "descriptions": {
+        "sepia": "Make AI-generated fiction and professional prose read as human-written. Use when revising or humanizing AI writing, eliminating AI patterns, or reviewing fiction and documents for authentic human voice."
+      }
     },
     {
       "repo": "nidhinjs/prompt-master",

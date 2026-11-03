@@ -42,7 +42,7 @@
   },
   "agent-dev": {
    "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.",
-   "skills": 105
+   "skills": 104
   },
   "ai-ml": {
    "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
@@ -1833,15 +1833,6 @@
    "variants": {}
   },
   {
-   "name": "continuous-learning",
-   "category": "agent-dev",
-   "description": "[DEPRECATED - use continuous-learning-v2] Legacy v1 stop-hook skill extractor. v2 is a strict superset with instinct-based, project-scoped, hook-reliable learning. Do not invoke v1: when continuous learning, session learning, or pattern extraction is requested, route to continuous-learning-v2 instead.",
-   "source": "affaan-m/everything-claude-code",
-   "license": "MIT",
-   "path": "plugins/agent-dev/skills/continuous-learning",
-   "variants": {}
-  },
-  {
    "name": "continuous-learning-v2",
    "category": "agent-dev",
    "description": "Instinct-based learning system that observes sessions via hooks, creates atomic instincts with confidence scoring, and evolves them into skills/commands/agents. v2.1 adds project-scoped instincts to prevent cross-project contamination. Use when capturing lessons from a session, managing instincts, or promoting them into skills, commands, or agents.",
@@ -2132,7 +2123,7 @@
   {
    "name": "docker-patterns",
    "category": "devops",
-   "description": "Docker and Docker Compose patterns for local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration. Use when creating or reviewing Dockerfiles and Compose services, testing installers across Linux distributions, or planning accurate native macOS and Windows validation.",
+   "description": "Docker and Docker Compose patterns: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration.",
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/devops/skills/docker-patterns",

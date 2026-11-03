@@ -1,7 +1,7 @@
 ---
 name: founder-brand
 description: "Establish startup brand identity, company naming, domain checks, and founder look. Use when naming a new business or startup, creating a brand tagline, or defining initial founder brand voice and logo direction."
-license: MIT
+argument-hint: "[name ideas, if any]"
 ---
 
 # founder-brand

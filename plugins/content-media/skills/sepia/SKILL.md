@@ -2,6 +2,8 @@
 name: sepia
 description: "Make AI-generated fiction and professional prose read as human-written. Use when revising or humanizing AI writing, eliminating AI patterns, or reviewing fiction and documents for authentic human voice."
 license: MIT
+metadata:
+  version: "0.12.4"
 ---
 
 # Sepia — de-AI writing

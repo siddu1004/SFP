@@ -141,6 +141,31 @@ def quote_description(skill_dir):
         f.write(text)
 
 
+def set_description(skill_dir, text):
+    """Replace a skill's description with ours (sources.json "descriptions"), for an upstream description that hides what
+    the skill covers or pushes it onto tasks it does not fit. Returns the new frontmatter."""
+    p = os.path.join(skill_dir, 'SKILL.md')
+    with open(p, encoding='utf-8', errors='replace') as f:
+        full = f.read()
+    fm = frontmatter(full)
+    lines, out, skipping = fm.split('\n'), [], False
+    for line in lines:
+        if re.match(r'^description:', line):
+            skipping = True
+            out.append('description: ' + json.dumps(text, ensure_ascii=False))
+            continue
+        if skipping and line[:1] in (' ', '\t'):
+            continue   # the rest of a folded or multi-line description
+        skipping = False
+        out.append(line)
+    new_fm = '\n'.join(out)
+    if new_fm == fm:   # no description line at all
+        new_fm = fm + '\ndescription: ' + json.dumps(text, ensure_ascii=False)
+    with open(p, 'w', encoding='utf-8') as f:
+        f.write(full.replace(fm, new_fm, 1))
+    return new_fm
+
+
 def checkout(repo, src_dir, cache):
     name = repo.split('/')[1]
     safe_name = repo.replace('/', '__')
@@ -247,6 +272,8 @@ def main():
         elif field(fm, 'name') != name:
             rename_skill(dest, name)
         quote_description(dest)
+        if name in source.get('descriptions', {}):
+            fm = set_description(dest, source['descriptions'][name])
         app_key = app_for(apps, name, source['repo'])
         if app_key:
             attach_app(dest, app_key, apps[app_key])
