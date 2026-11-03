@@ -6832,7 +6832,8 @@
     "mem-build-and-release": {
       "job": "design",
       "output": [
-        "code"
+        "code",
+        "document"
       ],
       "style": "hands-on",
       "depth": "practitioner",
@@ -7037,7 +7038,8 @@
     "mem-release": {
       "job": "deploy",
       "output": [
-        "code"
+        "code",
+        "document"
       ],
       "style": "hands-on",
       "depth": "practitioner",
@@ -7106,7 +7108,8 @@
     "mem-version-bump": {
       "job": "build",
       "output": [
-        "code"
+        "code",
+        "document"
       ],
       "style": "hands-on",
       "depth": "practitioner",

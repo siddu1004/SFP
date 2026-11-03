@@ -113,6 +113,58 @@ class TasteTest(unittest.TestCase):
         non_generic_subs = [s for s in subs if s != 'software-engineering-patterns']
         self.assertEqual(len(non_generic_subs), len(set(non_generic_subs)))
 
+    def test_no_hardcoded_catalog_skills_in_selection(self):
+        import ast
+        import sfp_mcp as core
+        cat_skills = set(core.SKILLS.keys())
+        allowed = set(sfp_hive.INTERNAL_SKILLS) | set(sfp_hive.NEED_ONLY.keys()) | {'taste'}
+        
+        mcp_dir = os.path.join(ROOT, 'mcp')
+        for fname in ('sfp_hive.py', 'sfp_cards.py'):
+            fpath = os.path.join(mcp_dir, fname)
+            with open(fpath, 'r', encoding='utf-8') as f:
+                tree = ast.parse(f.read(), filename=fname)
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                    val = node.value
+                    if val in cat_skills and val not in allowed:
+                        self.fail(f"Catalog skill '{val}' found as string literal in {fname}:{node.lineno} outside allowed name lists")
+
+    def test_dynamic_new_skill_with_card_picked_by_taste(self):
+        import sfp_mcp as core
+        fake_name = 'fake-hologram-explainer'
+        mock_skill = {
+            'name': fake_name,
+            'category': 'science',
+            'source': 'test/custom',
+            'path': 'fake/path',
+            'description': '3D holographic simulation and interactive explainer.'
+        }
+        core.SKILLS[fake_name] = mock_skill
+        core.CATALOG['skills'].append(mock_skill)
+        cards = sfp_cards.load_cards()
+        cards[fake_name] = {
+            'job': 'explain',
+            'output': ['interactive'],
+            'style': 'hands-on',
+            'depth': 'practitioner',
+            'needs': [],
+            'substitutes_for': 'explain-concepts',
+            'source': 'test'
+        }
+        try:
+            sfp_learn.update_taste(fake_name, weight=5.0)
+            res = sfp_hive.select('explain holographic optical physics', None, semantic=False)
+            names = [s['name'] for s in res['stack']]
+            self.assertIn(fake_name, names)
+            lead = res['stack'][0]
+            self.assertEqual(lead['name'], fake_name)
+            self.assertTrue(any('interactive' in r for r in lead['reasons']))
+        finally:
+            core.SKILLS.pop(fake_name, None)
+            core.CATALOG['skills'] = [s for s in core.CATALOG['skills'] if s['name'] != fake_name]
+            cards.pop(fake_name, None)
+
 
 if __name__ == '__main__':
     unittest.main()

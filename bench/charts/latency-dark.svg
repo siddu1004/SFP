@@ -3,17 +3,17 @@
 <text x="40" y="76" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#9aa4b0">Measured on local Intel Core Ultra 32GB workstation. Zero internet calls.</text>
 <text x="40" y="134" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#e6edf3">Plain Keyword Search</text>
 <rect x="360" y="114" width="12.0" height="26" rx="4" fill="#2dd4bf"/>
-<text x="384" y="132" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 0.1ms | p95: 0.2ms</text>
+<text x="384" y="132" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 0.1ms | p95: 0.3ms</text>
 <text x="40" y="182" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#e6edf3">v1 Recommender</text>
 <rect x="360" y="162" width="12.0" height="26" rx="4" fill="#2dd4bf"/>
-<text x="384" y="180" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 1.3ms | p95: 2.0ms</text>
+<text x="384" y="180" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 1.2ms | p95: 2.0ms</text>
 <text x="40" y="230" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#e6edf3">Hive (words only)</text>
 <rect x="360" y="210" width="12.0" height="26" rx="4" fill="#2dd4bf"/>
-<text x="384" y="228" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 1.8ms | p95: 7.6ms</text>
+<text x="384" y="228" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 1.8ms | p95: 8.8ms</text>
 <text x="40" y="278" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#e6edf3">Hive + Meaning (bge-m3)</text>
-<rect x="360" y="258" width="32.0" height="26" rx="4" fill="#2dd4bf"/>
-<text x="404.01" y="276" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 213.4ms | p95: 244.1ms</text>
+<rect x="360" y="258" width="27.9" height="26" rx="4" fill="#2dd4bf"/>
+<text x="399.855" y="276" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 185.7ms | p95: 216.4ms</text>
 <text x="40" y="326" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#e6edf3">Hive + Meaning + Rerank + Taste</text>
-<rect x="360" y="306" width="25.3" height="26" rx="4" fill="#2dd4bf"/>
-<text x="397.305" y="324" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 168.7ms | p95: 2871.4ms</text>
+<rect x="360" y="306" width="17.4" height="26" rx="4" fill="#2dd4bf"/>
+<text x="389.415" y="324" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="600" fill="#e6edf3">p50: 116.1ms | p95: 1697.9ms</text>
 </svg>

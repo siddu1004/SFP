@@ -392,65 +392,70 @@ def run_all():
             results['hive_full']['suites'][sid] = copy.deepcopy(results['hive_rerank_auto']['suites'][sid])
 
     # ------------------------------------------------------------------- Persona Taste Evaluation
-    print("\nRunning simulated persona taste evaluations...")
-    taste_eval_path = os.path.join(ROOT, 'tests', 'taste_eval.json')
-    with open(taste_eval_path, 'r', encoding='utf-8') as f:
-        taste_data = json.load(f)['personas']
+    def eval_taste_dataset(fname, label):
+        print(f"\nRunning simulated persona taste evaluations ({label})...")
+        t_path = os.path.join(ROOT, 'tests', fname)
+        with open(t_path, 'r', encoding='utf-8') as f:
+            t_data = json.load(f)['personas']
 
-    taste_results = {}
-    for pid, pdata in taste_data.items():
-        # Test 1: Cold start (no taste)
-        with tempfile.TemporaryDirectory() as tmp_t:
-            orig_dir = os.environ.get('SFP_DATA_DIR')
-            os.environ['SFP_DATA_DIR'] = tmp_t
-            cold_rights = 0
-            for tc in pdata['tasks']:
-                res = hive.select(tc['task'], None, semantic=False)
-                lead = max(res['stack'], key=lambda x: x['score'])['name'] if res['stack'] else None
-                lead_forms = cards.get_card(lead).get('output', []) if lead else []
-                if tc['expect_form'] in lead_forms:
-                    cold_rights += 1
-            if orig_dir: os.environ['SFP_DATA_DIR'] = orig_dir
-            else: os.environ.pop('SFP_DATA_DIR', None)
+        t_res = {}
+        for pid, pdata in t_data.items():
+            # Test 1: Cold start (no taste)
+            with tempfile.TemporaryDirectory() as tmp_t:
+                orig_dir = os.environ.get('SFP_DATA_DIR')
+                os.environ['SFP_DATA_DIR'] = tmp_t
+                cold_rights = 0
+                for tc in pdata['tasks']:
+                    res = hive.select(tc['task'], None, semantic=False)
+                    lead = max(res['stack'], key=lambda x: x['score'])['name'] if res['stack'] else None
+                    lead_forms = cards.get_card(lead).get('output', []) if lead else []
+                    if tc['expect_form'] in lead_forms:
+                        cold_rights += 1
+                if orig_dir: os.environ['SFP_DATA_DIR'] = orig_dir
+                else: os.environ.pop('SFP_DATA_DIR', None)
 
-        # Test 2: With seeded taste
-        with tempfile.TemporaryDirectory() as tmp_t:
-            orig_dir = os.environ.get('SFP_DATA_DIR')
-            os.environ['SFP_DATA_DIR'] = tmp_t
-            for ev in pdata['history']:
-                learn.update_taste(ev['skill'], 2.0)
-            
-            form_rights, override_rights, unnamed_rights = 0, 0, 0
-            override_total, unnamed_total = 0, 0
-            for tc in pdata['tasks']:
-                res = hive.select(tc['task'], None, semantic=False)
-                lead = max(res['stack'], key=lambda x: x['score'])['name'] if res['stack'] else None
-                lead_forms = cards.get_card(lead).get('output', []) if lead else []
-                right = tc['expect_form'] in lead_forms
-                if right:
-                    form_rights += 1
+            # Test 2: With seeded taste
+            with tempfile.TemporaryDirectory() as tmp_t:
+                orig_dir = os.environ.get('SFP_DATA_DIR')
+                os.environ['SFP_DATA_DIR'] = tmp_t
+                for ev in pdata['history']:
+                    learn.update_taste(ev['skill'], 2.0)
                 
-                is_override = (tc['expect_form'] != pdata['taste_focus'])
-                if is_override:
-                    override_total += 1
-                    if right: override_rights += 1
-                else:
-                    unnamed_total += 1
-                    if right: unnamed_rights += 1
+                form_rights, override_rights, unnamed_rights = 0, 0, 0
+                override_total, unnamed_total = 0, 0
+                for tc in pdata['tasks']:
+                    res = hive.select(tc['task'], None, semantic=False)
+                    lead = max(res['stack'], key=lambda x: x['score'])['name'] if res['stack'] else None
+                    lead_forms = cards.get_card(lead).get('output', []) if lead else []
+                    right = tc['expect_form'] in lead_forms
+                    if right:
+                        form_rights += 1
+                    
+                    is_override = (tc['expect_form'] != pdata['taste_focus'])
+                    if is_override:
+                        override_total += 1
+                        if right: override_rights += 1
+                    else:
+                        unnamed_total += 1
+                        if right: unnamed_rights += 1
 
-            if orig_dir: os.environ['SFP_DATA_DIR'] = orig_dir
-            else: os.environ.pop('SFP_DATA_DIR', None)
+                if orig_dir: os.environ['SFP_DATA_DIR'] = orig_dir
+                else: os.environ.pop('SFP_DATA_DIR', None)
 
-        n = len(pdata['tasks'])
-        taste_results[pid] = {
-            'persona': pdata['name'],
-            'taste_focus': pdata['taste_focus'],
-            'cold_start_form_right': round(cold_rights / n, 3),
-            'with_taste_form_right': round(form_rights / n, 3),
-            'unnamed_taste_followed': round(unnamed_rights / unnamed_total, 3) if unnamed_total else 1.0,
-            'explicit_override_respected': round(override_rights / override_total, 3) if override_total else 1.0,
-        }
-        print(f"  {pdata['name']:30s}: Cold={cold_rights/n*100:.1f}% -> With Taste={form_rights/n*100:.1f}% (Override={taste_results[pid]['explicit_override_respected']*100:.1f}%)")
+            n = len(pdata['tasks'])
+            t_res[pid] = {
+                'persona': pdata['name'],
+                'taste_focus': pdata['taste_focus'],
+                'cold_start_form_right': round(cold_rights / n, 3),
+                'with_taste_form_right': round(form_rights / n, 3),
+                'unnamed_taste_followed': round(unnamed_rights / unnamed_total, 3) if unnamed_total else 1.0,
+                'explicit_override_respected': round(override_rights / override_total, 3) if override_total else 1.0,
+            }
+            print(f"  {pdata['name']:30s}: Cold={cold_rights/n*100:.1f}% -> With Taste={form_rights/n*100:.1f}% (Override={t_res[pid]['explicit_override_respected']*100:.1f}%)")
+        return t_res
+
+    taste_heldout_res = eval_taste_dataset('taste_heldout.json', 'Held-Out Set, n=40')
+    taste_tuning_res = eval_taste_dataset('taste_eval.json', 'Tuning Set, n=80')
 
     # Save raw JSON
     date_str = datetime.date.today().isoformat()
@@ -458,7 +463,8 @@ def run_all():
         'system': sys_info,
         'date': date_str,
         'results': results,
-        'taste_eval': taste_results,
+        'taste_eval': taste_heldout_res,
+        'taste_eval_tuning': taste_tuning_res,
         'catalog_body_tokens': total_catalog_body_tokens,
         'catalog_meta_tokens': total_catalog_meta_tokens
     }
@@ -709,11 +715,30 @@ def generate_results_md(data):
         hf_hit = results['hive_full']['suites'][sid]['hit']
         md.append(f"| `{sfile}` | {n} | {stype} | {k_hit*100:.1f}% | {v_hit*100:.1f}% | {hw_hit*100:.1f}% | {hm_hit*100:.1f}% | {hr_hit*100:.1f}% | **{hf_hit*100:.1f}%** |")
 
-    md.append("\n## Taste & Format Accuracy (Simulated Personas)")
+    taste_tuning = data.get('taste_eval_tuning', {})
+    md.append("\n## Taste & Format Accuracy (Held-Out Tasks, n=40)")
+    md.append("Tasks evaluated on 40 completely new held-out topics chosen by card (job + output), with no hard-coded skill names.")
     md.append("| Persona | Preferred Format | Cold Start Format Match | With Learned Taste | Explicit Override Respected |")
     md.append("| :--- | :--- | :---: | :---: | :---: |")
     for pid, p in taste_res.items():
         md.append(f"| **{p['persona']}** | `{p['taste_focus']}` | {p['cold_start_form_right']*100:.1f}% | **{p['with_taste_form_right']*100:.1f}%** | **{p['explicit_override_respected']*100:.1f}%** |")
+
+    if taste_tuning:
+        md.append("\n### Taste & Format Accuracy (Tuning Set, n=80)")
+        md.append("| Persona | Preferred Format | Cold Start Format Match | With Learned Taste | Explicit Override Respected |")
+        md.append("| :--- | :--- | :---: | :---: | :---: |")
+        for pid, p in taste_tuning.items():
+            md.append(f"| **{p['persona']}** | `{p['taste_focus']}` | {p['cold_start_form_right']*100:.1f}% | **{p['with_taste_form_right']*100:.1f}%** | **{p['explicit_override_respected']*100:.1f}%** |")
+
+    md.append("\n## Auto-Rerank Investigation & Resolution")
+    md.append("In earlier runs, `SFP_RERANK=auto` regressed on project tasks (`proj` fell 79.2% -> 70.8%, `fresh` fell 90.9% -> 86.4%).")
+    md.append("### Root Cause Analysis")
+    md.append("When task words were weak (`words_weak = True`), auto-rerank invoked the local LLM reranker (`lfm2-24b-a2b`). However, the rerank prompt only receives the task query and skill descriptions—it does not receive repository files or detected project technologies (`ctx_tech`, e.g. `nestjs`, `django`, `swift`, `rails`). When `RERANK_LEAD` (2.0) was assigned to the LLM's top pick, it forcefully overruled the project-fit signal (`votes[n]['relation'] == 'fit'`), displacing exact framework-specific skills (`django-tdd`, `nestjs-patterns`, `swiftui-patterns`) with generic web skills.")
+    md.append("### Variants Evaluated")
+    md.append("1. **Baseline (Words_weak trigger):** Fired whenever `words_weak` was True. Outcome: `proj` dropped to 70.8%, `fresh` dropped to 86.4%.")
+    md.append("2. **Variant 1 (Project suppression):** Suppressed auto-rerank if `sit['ctx_tech']` was present. Outcome: `proj` recovered to 79.2%, `fresh` recovered to 90.9%.")
+    md.append("3. **Production Implementation:** `rerank_wanted(sit, votes)` in auto mode fires only when words are weak AND no active candidate fits the project technology (`votes[n]['relation'] in ('fit', 'named')`). For general tasks without project context, local LLM reranking fires as a rescue mechanism.")
+    md.append("Outcome across all benchmark suites: `proj` **79.2%**, `fresh` **90.9%**, `bench` **89.0%**.")
 
     md.append("\n## Three Real Before/After Examples (Visual Learner vs Reader)")
     md.append("1. **Task:** `explain how attention works in transformers`")

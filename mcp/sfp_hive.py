@@ -218,38 +218,65 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
                 found[s['name']] = max(found.get(s['name'], 0), 0.8 * score)
         import sfp_cards
         task_job, named_form = sfp_cards.task_intent(sit.get('text', ''))
-        full_top = max(found.values() or [1.0])
-        if task_job == 'explain' or any(w in words for w in ('explain', 'understand', 'teach', 'learn')):
-            for sk in ('teach-me', 'manim-video', 'understand-explain', 'continuous-learning-v2', 'rederive'):
-                if sk in core.SKILLS:
-                    found[sk] = max(found.get(sk, 0), 0.85 * full_top)
         taste = sit.get('taste') or {}
-        if taste and taste.get('output'):
-            if taste['output'].get('video', 0.0) >= 2.0:
-                if any(w in sit.get('text', '').lower() for w in ('showcase', 'walk through', 'demonstrate', 'highlight', 'record', 'capture', 'tour', 'journey', 'demo', 'screen', 'flow')) or task_job in ('design', 'build'):
-                    for sk in ('remotion-video-creation', 'ui-demo', 'video-editing'):
-                        if sk in core.SKILLS:
-                            found[sk] = max(found.get(sk, 0), 0.85 * full_top)
-            if taste['output'].get('animation', 0.0) >= 2.0:
-                if task_job in ('explain', 'design', 'build'):
-                    for sk in ('manim-video', 'motion-patterns', 'framer-motion', 'animate'):
-                        if sk in core.SKILLS:
-                            found[sk] = max(found.get(sk, 0), 0.85 * full_top)
-        if named_form:
-            form_cands = {
-                'animation': ('manim-video', 'motion-patterns'),
-                'video': ('remotion-video-creation', 'ui-demo'),
-                'text': ('teach-me', 'documentation-lookup'),
-                'slides': ('frontend-slides', 'mem-wowerpoint'),
-                'diagram': ('diagram-design', 'flowchart'),
-                'interactive': ('playground', 'interactive-demo'),
-                'image': ('ios-icon-gen', 'image'),
-                'document': ('technical-writing-and-docs', 'rea-changelog-update'),
-                'report': ('accessibility-audit', 'quality-scan'),
-                'code': ('python-patterns', 'python-testing', 'benchmark'),
-            }
-            for sk in form_cands.get(named_form, ()):
-                if sk in core.SKILLS:
+        has_taste = bool(taste and taste.get('events', 0) > 0)
+        words_weak = sit.get('words_weak', False) or (len(words) <= 3 and direct_hits <= 2)
+        several_forms = bool(named_form or has_taste or task_job in ('explain', 'design', 'build', 'review', 'write', 'plan'))
+        if task_job and (named_form or has_taste):
+            cards = sfp_cards.load_cards()
+            best_skill = max(found, key=found.get) if found else None
+            best_sub = cards.get(best_skill, {}).get('substitutes_for') if best_skill else None
+            pool = []
+            for sk, c in cards.items():
+                if sk not in core.SKILLS or sk in INTERNAL_SKILLS or (sk in NEED_ONLY and not need_fires(NEED_ONLY[sk], sit.get('text', ''))):
+                    continue
+                c_job = c.get('job')
+                c_sub = c.get('substitutes_for')
+                if (best_sub and best_sub != 'software-engineering-patterns' and c_sub == best_sub) or (c_job == task_job):
+                    pool.append(sk)
+            if pool:
+                sem_sim = dict((name, cos) for cos, name in (sit.get('semantic') or {}).get('similar', []))
+                def cand_rank_score(sk):
+                    c = cards.get(sk, {})
+                    sim = sem_sim.get(sk, 0.0)
+                    kw = found.get(sk, 0.0)
+                    toks = len(set(words) & v1.SKILL_TOKENS.get(sk, set()))
+                    is_sub = 1.0 if (best_sub and c.get('substitutes_for') == best_sub) else 0.0
+                    return (sim, is_sub, toks, kw)
+                pool.sort(key=cand_rank_score, reverse=True)
+                scouted = []
+                preferred_forms = []
+                if named_form:
+                    preferred_forms.append(named_form)
+                if has_taste and taste.get('output'):
+                    sorted_taste = sorted(taste['output'].items(), key=lambda kv: -kv[1])
+                    preferred_forms.extend([f for f, w in sorted_taste if w > 0.5 and f not in preferred_forms])
+                for pf in preferred_forms:
+                    for sk in pool:
+                        if sk not in scouted and pf in cards.get(sk, {}).get('output', []):
+                            scouted.append(sk)
+                            break
+                        if len(scouted) >= 8:
+                            break
+                seen_forms = set()
+                for sk in scouted:
+                    seen_forms.update(cards.get(sk, {}).get('output', []))
+                for sk in pool:
+                    if len(scouted) >= 8:
+                        break
+                    if sk in scouted:
+                        continue
+                    sk_forms = cards.get(sk, {}).get('output', [])
+                    if not any(f in seen_forms for f in sk_forms):
+                        scouted.append(sk)
+                        seen_forms.update(sk_forms)
+                for sk in pool:
+                    if len(scouted) >= 8:
+                        break
+                    if sk not in scouted:
+                        scouted.append(sk)
+                full_top = max(found.values() or [1.0])
+                for sk in scouted:
                     found[sk] = max(found.get(sk, 0), 0.85 * full_top)
     meaning = {}
     if sit.get('semantic'):
@@ -512,20 +539,27 @@ def find_gap(task, sit, stack, votes, missing, role):
     return out
 
 
-def rerank_wanted(sit):
+def rerank_wanted(sit, votes=None):
     mode = os.environ.get('SFP_RERANK', 'auto').lower()
     if mode in ('0', 'off', 'false', 'no'):
         return False
     if mode in ('1', 'on', 'true', 'yes'):
         return True
-    return bool(sit.get('words_weak'))
+    if not sit.get('words_weak'):
+        return False
+    # Auto rerank is a rescue mechanism for weak-word general tasks.
+    # Never overrule strong project-technology matches where the local LLM lacks repository context.
+    if sit.get('ctx_tech'):
+        if votes is None or any(v.get('relation') in ('fit', 'named') for v in votes.values()):
+            return False
+    return True
 
 
 def rerank(sit, votes, quality, exclude):
     """The candidates a local model judges fit the task best, best first ([] when off, no model answers, or the task is
     not one said in other words). The pool is the closest in meaning, then the signals' own favourites."""
     sem = sit.get('semantic') or {}
-    if not sem.get('similar') or not rerank_wanted(sit):
+    if not sem.get('similar') or not rerank_wanted(sit, votes=votes):
         return []
     import sfp_intent
     ok = lambda n: n in votes and n not in exclude and votes[n]['relation'] != 'mismatch'

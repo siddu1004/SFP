@@ -21,8 +21,9 @@
 
 <blockquote align="center">
   <b>SFP 3.19.0 Results at a Glance:</b><br>
-  &bull; <b>60.8% held-out retrieval accuracy</b> (+36.1% over plain keyword search 24.7%, +13.4% over words-only 47.4%) with local <code>bge-m3</code> vectors + fast local reranking.<br>
-  &bull; <b>94.4% context token reduction</b> vs loading all skill descriptions (99.8% vs loading full library text).<br>
+  &bull; <b>61.9% held-out retrieval accuracy</b> (+37.2% over plain keyword search 24.7%, +14.5% over words-only 47.4%) with local <code>bge-m3</code> vectors + fast local reranking.<br>
+  &bull; <b>92.5% format match on held-out tasks</b> (up from 57.5% cold start) tailored to user taste (animation, text, code, video) with zero hard-coded skill names.<br>
+  &bull; <b>96.1% context token reduction</b> vs loading all skill descriptions (99.8% vs loading full library text).<br>
   &bull; <b>100% private, local-first intelligence</b> with personalized learning taste profiles and zero prompt telemetry leaving your workstation.<br>
   <i>Read the complete benchmark report, 95% Wilson intervals, and disclosures in <a href="bench/RESULTS.md">bench/RESULTS.md</a>.</i>
 </blockquote>

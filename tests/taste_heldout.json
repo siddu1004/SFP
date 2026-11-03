@@ -1,0 +1,337 @@
+{
+  "_description": "40 held-out tasks across 4 personas evaluated on taste preference and explicit overrides, chosen by card (job + output)",
+  "personas": {
+    "visual_animation": {
+      "name": "Visual Learner (Animation)",
+      "taste_focus": "animation",
+      "history": [
+        {"skill": "manim-video", "verdict": "helped"},
+        {"skill": "framer-motion", "verdict": "helped"},
+        {"skill": "manim-video", "verdict": "helped"},
+        {"skill": "slack-gif-creator", "verdict": "helped"},
+        {"skill": "manim-video", "verdict": "helped"},
+        {"skill": "animate", "verdict": "helped"},
+        {"skill": "manim-video", "verdict": "helped"},
+        {"skill": "motion-patterns", "verdict": "helped"},
+        {"skill": "manim-video", "verdict": "helped"},
+        {"skill": "animation-vocabulary", "verdict": "helped"},
+        {"skill": "manim-video", "verdict": "helped"},
+        {"skill": "improve-animations", "verdict": "helped"},
+        {"skill": "manim-video", "verdict": "helped"},
+        {"skill": "find-animation-opportunities", "verdict": "helped"},
+        {"skill": "manim-video", "verdict": "helped"}
+      ],
+      "tasks": [
+        {
+          "task": "explain how quaternions represent 3D rotation",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "understand the raft consensus leader election state machine",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "explain elliptic curve point addition and multiplication",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "show how ray tracing traces primary and reflection rays",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "explain how recursive descent parsers build an AST",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "understand gradient descent with momentum on a loss surface",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "explain avl tree double rotations and node rebalancing",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "just give me a text summary of the TLS 1.3 handshake",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "write python code implementation for a bloom filter",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "python-testing"]
+        },
+        {
+          "task": "showcase the user authentication flow with a video walkthrough",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        }
+      ]
+    },
+    "reader_text": {
+      "name": "Deep Reader (Text / Prose)",
+      "taste_focus": "text",
+      "history": [
+        {"skill": "teach-me", "verdict": "helped"},
+        {"skill": "documentation-lookup", "verdict": "helped"},
+        {"skill": "teach-me", "verdict": "helped"},
+        {"skill": "article-writing", "verdict": "helped"},
+        {"skill": "teach-me", "verdict": "helped"},
+        {"skill": "ecc-guide", "verdict": "helped"},
+        {"skill": "teach-me", "verdict": "helped"},
+        {"skill": "antigravity-guide", "verdict": "helped"},
+        {"skill": "teach-me", "verdict": "helped"},
+        {"skill": "intent-driven-development", "verdict": "helped"},
+        {"skill": "teach-me", "verdict": "helped"},
+        {"skill": "documentation-lookup", "verdict": "helped"},
+        {"skill": "teach-me", "verdict": "helped"},
+        {"skill": "rules-distill", "verdict": "helped"},
+        {"skill": "teach-me", "verdict": "helped"}
+      ],
+      "tasks": [
+        {
+          "task": "explain memory barriers and CPU cache coherency protocols",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "understand zero knowledge proofs and zk-SNARK concepts",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "how distributed deadlock detection algorithms work",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "explain CPU branch predictor mechanisms and speculative execution",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "breakdown of websocket protocol framing and handshake",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "understand database write-ahead logging and ARIES recovery",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "explain generational garbage collection and mark sweep compact",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "explain how binary search tree balancing works with line animation",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "provide code only for an LRU cache implementation",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "golang-patterns"]
+        },
+        {
+          "task": "create a video recording of the deployment dashboard",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        }
+      ]
+    },
+    "hands_on_code": {
+      "name": "Hands-on Engineer (Code / Patterns)",
+      "taste_focus": "code",
+      "history": [
+        {"skill": "python-patterns", "verdict": "helped"},
+        {"skill": "python-testing", "verdict": "helped"},
+        {"skill": "golang-patterns", "verdict": "helped"},
+        {"skill": "rust-patterns", "verdict": "helped"},
+        {"skill": "python-patterns", "verdict": "helped"},
+        {"skill": "fastapi-patterns", "verdict": "helped"},
+        {"skill": "python-patterns", "verdict": "helped"},
+        {"skill": "csharp-testing", "verdict": "helped"},
+        {"skill": "python-patterns", "verdict": "helped"},
+        {"skill": "cpp-coding-standards", "verdict": "helped"},
+        {"skill": "python-patterns", "verdict": "helped"},
+        {"skill": "django-patterns", "verdict": "helped"},
+        {"skill": "python-patterns", "verdict": "helped"},
+        {"skill": "backend-patterns", "verdict": "helped"},
+        {"skill": "python-patterns", "verdict": "helped"}
+      ],
+      "tasks": [
+        {
+          "task": "build an in-memory key value cache with TTL expiration",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "golang-patterns"]
+        },
+        {
+          "task": "implement an asynchronous event bus with subscribe and publish",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "backend-patterns"]
+        },
+        {
+          "task": "write a token bucket rate limiter middleware",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "fastapi-patterns"]
+        },
+        {
+          "task": "build a trie prefix tree for search autocomplete",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "golang-patterns"]
+        },
+        {
+          "task": "implement JWT authentication verification and refresh tokens",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "security-review"]
+        },
+        {
+          "task": "create a circuit breaker pattern with failure threshold",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "backend-patterns"]
+        },
+        {
+          "task": "build an LSM tree compaction background worker",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "clickhouse-io"]
+        },
+        {
+          "task": "give me a text summary of B-tree vs LSM-tree trade-offs",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "visualize merge sort divide and conquer with line animation",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        },
+        {
+          "task": "record a video walkthrough of the checkout process",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        }
+      ]
+    },
+    "video_producer": {
+      "name": "Video & Demo Producer (Video / Screencasts)",
+      "taste_focus": "video",
+      "history": [
+        {"skill": "remotion-video-creation", "verdict": "helped"},
+        {"skill": "video-editing", "verdict": "helped"},
+        {"skill": "remotion-video-creation", "verdict": "helped"},
+        {"skill": "ui-demo", "verdict": "helped"},
+        {"skill": "remotion-video-creation", "verdict": "helped"},
+        {"skill": "moneyprinterturbo-video", "verdict": "helped"},
+        {"skill": "remotion-video-creation", "verdict": "helped"},
+        {"skill": "video-content", "verdict": "helped"},
+        {"skill": "remotion-video-creation", "verdict": "helped"},
+        {"skill": "manim-video", "verdict": "helped"},
+        {"skill": "remotion-video-creation", "verdict": "helped"},
+        {"skill": "tasteforge-video", "verdict": "helped"},
+        {"skill": "remotion-video-creation", "verdict": "helped"},
+        {"skill": "crane-shot", "verdict": "helped"},
+        {"skill": "remotion-video-creation", "verdict": "helped"}
+      ],
+      "tasks": [
+        {
+          "task": "showcase the user onboarding wizard flow with a video",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        },
+        {
+          "task": "record a demo of the settings modal and preferences",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        },
+        {
+          "task": "capture a video walkthrough of the subscription checkout",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        },
+        {
+          "task": "demonstrate user profile editing and avatar upload video",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        },
+        {
+          "task": "walk through the analytics dashboard and metrics video",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        },
+        {
+          "task": "produce a video tour of the workspace switcher interface",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        },
+        {
+          "task": "record screencast highlighting the responsive layout",
+          "expect_job": "build",
+          "expect_form": "video",
+          "expect_skills": ["remotion-video-creation", "ui-demo"]
+        },
+        {
+          "task": "just write a text summary of the release feature list",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": ["teach-me", "documentation-lookup"]
+        },
+        {
+          "task": "provide code implementation for the authentication hook",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": ["python-patterns", "frontend-patterns"]
+        },
+        {
+          "task": "explain network routing topology with line animation",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": ["manim-video"]
+        }
+      ]
+    }
+  }
+}
