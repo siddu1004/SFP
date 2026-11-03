@@ -6,7 +6,7 @@
   },
   "frontend": {
    "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.",
-   "skills": 87
+   "skills": 88
   },
   "design-styles": {
    "description": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more.",
@@ -34,11 +34,11 @@
   },
   "security": {
    "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
-   "skills": 23
+   "skills": 31
   },
   "agents": {
    "description": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.",
-   "skills": 106
+   "skills": 107
   },
   "agent-dev": {
    "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.",
@@ -46,7 +46,7 @@
   },
   "ai-ml": {
    "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
-   "skills": 11
+   "skills": 12
   },
   "ai-gateway": {
    "description": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
@@ -58,7 +58,7 @@
   },
   "content-media": {
    "description": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.",
-   "skills": 36
+   "skills": 38
   },
   "business-ops": {
    "description": "Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check.",
@@ -74,7 +74,7 @@
   },
   "research-docs": {
    "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).",
-   "skills": 39
+   "skills": 40
   },
   "web3": {
    "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
@@ -82,19 +82,19 @@
   },
   "engineering": {
    "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
-   "skills": 24
+   "skills": 26
   },
   "science-hardware": {
    "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
-   "skills": 116
+   "skills": 123
   },
   "career": {
    "description": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
-   "skills": 1
+   "skills": 3
   },
   "memory": {
    "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
-   "skills": 31
+   "skills": 32
   },
   "session-memory": {
    "description": "Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker.",
@@ -8041,6 +8041,247 @@
    "source": "omgovich/react-colorful",
    "license": "MIT",
    "path": "plugins/frontend/skills/react-colorful",
+   "variants": {}
+  },
+  {
+   "name": "stageshow",
+   "category": "frontend",
+   "description": "Build faux product UI that looks like a real product, as a still illustration or an animated demo with a cursor. Browser and app windows, dashboards, phones, notifications, terminals, bento grids and cursor walkthroughs, framed, masked and cropped the way a marketing page, feature card or docs hero needs them. Use whenever someone wants a fake or mocked UI, a product demo or walkthrough animation, a hero or feature-card illustration of an app, a product shot in the style of a polished marketing site, or an animated cursor doing things in an interface, even if they never say \"faux UI\". React and plain CSS.",
+   "source": "benjitaylor/skills",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/stageshow",
+   "variants": {}
+  },
+  {
+   "name": "scrape",
+   "category": "career",
+   "description": "Finds new job postings matching your profile via installed portal-search CLIs (LinkedIn, local job boards, and any skills added with /add-portal). Deduplicates across runs. Triggers on: job scrape, find jobs, search jobs, new jobs, job search, scrape jobs, /scrape",
+   "source": "ai-job-search-dev/ai-job-search",
+   "license": "MIT",
+   "path": "plugins/career/skills/scrape",
+   "variants": {}
+  },
+  {
+   "name": "upskill",
+   "category": "career",
+   "description": "Compares tracked job postings against the candidate profile to identify skill gaps and generate a prioritized learning plan with study resources. Triggers on: /upskill, upskill, skill gaps, what should I learn, learning plan",
+   "source": "ai-job-search-dev/ai-job-search",
+   "license": "MIT",
+   "path": "plugins/career/skills/upskill",
+   "variants": {}
+  },
+  {
+   "name": "anndata",
+   "category": "science-hardware",
+   "description": "Handles annotated matrices in single-cell analysis, .h5ad and Zarr files, and integration with the scverse ecosystem. This is the data format skill\u2014for analysis workflows use scanpy; for probabilistic models use scvi-tools; for population-scale queries use cellxgene-census.",
+   "source": "K-Dense-AI/scientific-agent-skills",
+   "license": "MIT",
+   "path": "plugins/science-hardware/skills/anndata",
+   "variants": {}
+  },
+  {
+   "name": "astropy",
+   "category": "science-hardware",
+   "description": "Core Python library for astronomy and astrophysics workflows that need Astropy APIs, including units/quantities, coordinates, FITS I/O, tables, time systems, WCS, and cosmology. Use when implementing or debugging astronomical data analysis code with Astropy.",
+   "source": "K-Dense-AI/scientific-agent-skills",
+   "license": "MIT",
+   "path": "plugins/science-hardware/skills/astropy",
+   "variants": {}
+  },
+  {
+   "name": "biopython",
+   "category": "science-hardware",
+   "description": "Provides Biopython workflows for sequence manipulation, file parsing (FASTA/GenBank/PDB), phylogenetics, and programmatic NCBI/PubMed access (Bio.Entrez). Supports batch processing, custom molecular-biology pipelines, BLAST automation, structure analysis, and motif analysis.",
+   "source": "K-Dense-AI/scientific-agent-skills",
+   "license": "MIT",
+   "path": "plugins/science-hardware/skills/biopython",
+   "variants": {}
+  },
+  {
+   "name": "datamol",
+   "category": "science-hardware",
+   "description": "Pythonic wrapper around RDKit with simplified interface and sensible defaults. Preferred for standard drug discovery including SMILES parsing, standardization, descriptors, fingerprints, clustering, 3D conformers, parallel processing. Returns native rdkit.Chem.Mol objects. For advanced control or custom parameters, use rdkit directly.",
+   "source": "K-Dense-AI/scientific-agent-skills",
+   "license": "MIT",
+   "path": "plugins/science-hardware/skills/datamol",
+   "variants": {}
+  },
+  {
+   "name": "deepchem",
+   "category": "science-hardware",
+   "description": "Builds molecular property prediction and MoleculeNet workflows with DeepChem, including SMILES featurization, scaffold or grouped holdouts, masked labels, graph models and explicit pretrained encoder transfer. Used for ADMET, toxicity, solubility and chemistry ML when DeepChem data/model contracts and scientific validation are needed.",
+   "source": "K-Dense-AI/scientific-agent-skills",
+   "license": "MIT",
+   "path": "plugins/science-hardware/skills/deepchem",
+   "variants": {}
+  },
+  {
+   "name": "scientific-schematics",
+   "category": "science-hardware",
+   "description": "Generates scientific diagram drafts using Nano Banana 2 AI with smart iterative refinement. Uses Gemini 3.7 Flash for quality review. Refines when the review requests improvement, with at most two generations. Specialized in neural network architectures, system diagrams, flowcharts, biological pathways, and complex scientific visualizations.",
+   "source": "K-Dense-AI/scientific-agent-skills",
+   "license": "MIT",
+   "path": "plugins/science-hardware/skills/scientific-schematics",
+   "variants": {}
+  },
+  {
+   "name": "scikit-bio",
+   "category": "science-hardware",
+   "description": "Biological data toolkit. Sequence analysis, alignments, phylogenetic trees, diversity metrics (alpha/beta, UniFrac), ordination (PCoA), PERMANOVA, FASTA/Newick I/O, for microbiome analysis.",
+   "source": "K-Dense-AI/scientific-agent-skills",
+   "license": "MIT",
+   "path": "plugins/science-hardware/skills/scikit-bio",
+   "variants": {}
+  },
+  {
+   "name": "achieving-cmmc-level-2-compliance",
+   "category": "security",
+   "description": "Prepare a defense-contractor environment for CMMC Level 2 certification: scope CUI and FCI, implement the 110 NIST SP 800-171 Rev 2 security requirements across 14 families, compute the SPRS score with the DoD Assessment Methodology, manage a compliant POA&M, and ready the organization for a C3PAO assessment. Use when an organization handles Controlled Unclassified Information (CUI) under a DoD contract, when a contract carries DFARS clause 252.204-7012/7019/7020/7021, when preparing for or responding to a CMMC assessment, when computing or improving an SPRS score, when building a System Security Plan or POA&M for 800-171, or when scoping which systems are in the CUI boundary. Keywords: CMMC, CMMC Level 2, NIST 800-171, SP 800-171 Rev 2, CUI, FCI, SPRS, DFARS 7012, C3PAO, POA&M, System Security Plan, DoD Assessment Methodology, 110 controls, defense industrial base, DIB, FedRAMP equivalency.",
+   "source": "mukul975/Anthropic-Cybersecurity-Skills",
+   "license": "Apache-2.0",
+   "path": "plugins/security/skills/achieving-cmmc-level-2-compliance",
+   "variants": {}
+  },
+  {
+   "name": "analyzing-api-gateway-access-logs",
+   "category": "security",
+   "description": "Parses API Gateway access logs (AWS API Gateway, Kong, Nginx) to detect",
+   "source": "mukul975/Anthropic-Cybersecurity-Skills",
+   "license": "Apache-2.0",
+   "path": "plugins/security/skills/analyzing-api-gateway-access-logs",
+   "variants": {}
+  },
+  {
+   "name": "analyzing-cloud-storage-access-patterns",
+   "category": "security",
+   "description": "Detect abnormal access in AWS S3, GCS, and Azure Blob Storage by analyzing CloudTrail Data Events, GCS audit logs, and Azure Storage Analytics for after-hours bulk downloads, new-IP access, and API-call spikes (e.g. GetObject) via statistical baselines and time-series anomaly detection. Use when investigating suspected cloud data exfiltration or building related detection rules.",
+   "source": "mukul975/Anthropic-Cybersecurity-Skills",
+   "license": "Apache-2.0",
+   "path": "plugins/security/skills/analyzing-cloud-storage-access-patterns",
+   "variants": {}
+  },
+  {
+   "name": "auditing-aws-s3-bucket-permissions",
+   "category": "security",
+   "description": "Systematically audit AWS S3 bucket permissions to identify publicly",
+   "source": "mukul975/Anthropic-Cybersecurity-Skills",
+   "license": "Apache-2.0",
+   "path": "plugins/security/skills/auditing-aws-s3-bucket-permissions",
+   "variants": {}
+  },
+  {
+   "name": "auditing-cloud-with-cis-benchmarks",
+   "category": "security",
+   "description": "Audit AWS, Azure, and GCP environments against the CIS Foundations Benchmarks by running automated scans with tools like Prowler and ScoutSuite, interpreting failed controls, and tracking remediation for continuous compliance. Use when conducting a cloud security audit, validating CIS benchmark compliance (CIS v5 AWS, v4 Azure, v4 GCP), or setting up continuous cloud compliance monitoring.",
+   "source": "mukul975/Anthropic-Cybersecurity-Skills",
+   "license": "Apache-2.0",
+   "path": "plugins/security/skills/auditing-cloud-with-cis-benchmarks",
+   "variants": {}
+  },
+  {
+   "name": "detecting-container-escape-attempts",
+   "category": "security",
+   "description": "Detects container escape at runtime across tooling - namespace manipulation, capability abuse, kernel exploits, sensitive host mounts, and anomalous syscalls - and explains which signals matter regardless of whether Falco, Sysdig, auditd, or an EDR is doing the collection. Use when deciding what breakout behaviour to monitor, investigating a suspected Docker or Kubernetes breakout, or comparing escape coverage across runtime sensors. Keywords: container escape, breakout, namespaces, CAP_SYS_ADMIN, privileged, hostPath, kernel exploit, syscall. Do not use for Falco rule syntax itself - use detecting-container-escape-with-falco-rules; for a static configuration sweep use performing-container-escape-detection.",
+   "source": "mukul975/Anthropic-Cybersecurity-Skills",
+   "license": "Apache-2.0",
+   "path": "plugins/security/skills/detecting-container-escape-attempts",
+   "variants": {}
+  },
+  {
+   "name": "hardening-docker-containers-for-production",
+   "category": "security",
+   "description": "Hardens Dockerfiles, images, and per-container runtime settings against the CIS Docker Benchmark v1.8.0: non-root users, dropped capabilities, read-only root filesystem, seccomp and AppArmor profiles, and minimal multi-stage builds, validated with docker-bench-security, Hadolint, and Dockle. Use when preparing a container or Dockerfile for production, or auditing images and runtime flags against CIS Docker controls. Keywords: Dockerfile, USER, --cap-drop, read-only rootfs, seccomp, AppArmor, multi-stage, Hadolint, Dockle. Do not use for the Docker daemon's own configuration - use hardening-docker-daemon-configuration.",
+   "source": "mukul975/Anthropic-Cybersecurity-Skills",
+   "license": "Apache-2.0",
+   "path": "plugins/security/skills/hardening-docker-containers-for-production",
+   "variants": {}
+  },
+  {
+   "name": "implementing-zero-trust-network-access",
+   "category": "security",
+   "description": "Configures Zero Trust Network Access (ZTNA) in AWS, Azure, and GCP using identity-aware proxies, micro-segmentation, and continuous verification with conditional access policies, replacing VPN-based access with BeyondCorp-style architectures. Use when replacing VPN remote access with identity-based controls, limiting lateral movement via micro-segmentation, or exposing cloud workloads to authenticated users without public internet exposure.",
+   "source": "mukul975/Anthropic-Cybersecurity-Skills",
+   "license": "Apache-2.0",
+   "path": "plugins/security/skills/implementing-zero-trust-network-access",
+   "variants": {}
+  },
+  {
+   "name": "searxng",
+   "category": "research-docs",
+   "description": "Configure and query a private SearXNG metasearch instance to retrieve web search results without commercial tracking. Use when conducting private web research, aggregating search engines, or bypassing web search rate limits.",
+   "source": "searxng/searxng",
+   "license": "AGPL-3.0",
+   "path": "plugins/research-docs/skills/searxng",
+   "variants": {},
+   "app": "searxng"
+  },
+  {
+   "name": "agentmemory",
+   "category": "memory",
+   "description": "Connect and configure the AgentMemory MCP vector server to store embeddings and retain persistent state across agent runs. Use when setting up long-term memory servers, vector state backends, or agent persistence infrastructure.",
+   "source": "rohitg00/agentmemory",
+   "license": "MIT",
+   "path": "plugins/memory/skills/agentmemory",
+   "variants": {},
+   "app": "agentmemory"
+  },
+  {
+   "name": "gitnexus",
+   "category": "engineering",
+   "description": "Index codebase structure and query cross-repository knowledge graphs using GitNexus AST analysis. Use when navigating unfamiliar codebases, tracing cross-file dependencies, or mapping symbol references across repos.",
+   "source": "abhigyanpatwari/GitNexus",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/gitnexus",
+   "variants": {},
+   "app": "gitnexus"
+  },
+  {
+   "name": "openmontage",
+   "category": "content-media",
+   "description": "Create and render programmatic video montages from video clips, audio tracks, and timeline specs using OpenMontage. Use when automating video compilation, generating clip reels, or synchronizing video transitions.",
+   "source": "calesthio/OpenMontage",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/openmontage",
+   "variants": {},
+   "app": "openmontage"
+  },
+  {
+   "name": "graft",
+   "category": "agents",
+   "description": "Compile and execute declarative multi-agent pipelines using the Graft CLI runtime. Compose agent graphs, state handoffs, and verification steps into repeatable workflows. Use when orchestrating cooperating agents.",
+   "source": "JSLEEKR/graft",
+   "license": "MIT",
+   "path": "plugins/agents/skills/graft",
+   "variants": {},
+   "app": "graft"
+  },
+  {
+   "name": "trail-code",
+   "category": "engineering",
+   "description": "Track AST changes, record contextual codebase learnings, and monitor symbol references using Trail-Code. Use when recording code learnings during refactoring or building automated context trails.",
+   "source": "trailhq/Trail-Code",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/trail-code",
+   "variants": {},
+   "app": "trail-code"
+  },
+  {
+   "name": "colibri",
+   "category": "ai-ml",
+   "description": "Compile and run ultra-fast streaming MoE local model inference using the pure-C Colibri engine. Use when running minimal-footprint streaming model inference on CPU or lightweight machines.",
+   "source": "JustVugg/colibri",
+   "license": "MIT",
+   "path": "plugins/ai-ml/skills/colibri",
+   "variants": {},
+   "app": "colibri"
+  },
+  {
+   "name": "gpt-image-prompting",
+   "category": "content-media",
+   "description": "Engineer detailed prompts and visual composition specifications for GPT-4o, DALL-E 3, and generative image models based on awesome-gpt-image-2 techniques. Use when creating UI mockups, icons, banners, and diagrams.",
+   "source": "freestylefly/awesome-gpt-image-2",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/gpt-image-prompting",
    "variants": {}
   },
   {

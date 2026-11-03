@@ -760,6 +760,118 @@
       "skills": [
         "."
       ]
+    },
+    {
+      "repo": "benjitaylor/skills",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "stageshow"
+      ]
+    },
+    {
+      "repo": "ai-job-search-dev/ai-job-search",
+      "license": "MIT",
+      "default": "career",
+      "skills": [
+        ".claude/skills/job-scraper",
+        ".claude/skills/upskill"
+      ]
+    },
+    {
+      "repo": "K-Dense-AI/scientific-agent-skills",
+      "license": "MIT",
+      "default": "science-hardware",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "mukul975/Anthropic-Cybersecurity-Skills",
+      "license": "Apache-2.0",
+      "default": "security",
+      "skills": [
+        "skills/achieving-cmmc-level-2-compliance",
+        "skills/analyzing-api-gateway-access-logs",
+        "skills/analyzing-cloud-storage-access-patterns",
+        "skills/auditing-aws-s3-bucket-permissions",
+        "skills/auditing-cloud-with-cis-benchmarks",
+        "skills/detecting-container-escape-attempts",
+        "skills/hardening-docker-containers-for-production",
+        "skills/implementing-zero-trust-network-access"
+      ]
+    },
+    {
+      "repo": "searxng/searxng",
+      "license": "AGPL-3.0",
+      "default": "research-docs",
+      "skills": [
+        "."
+      ],
+      "local": "templates/searxng"
+    },
+    {
+      "repo": "rohitg00/agentmemory",
+      "license": "MIT",
+      "default": "memory",
+      "skills": [
+        "."
+      ],
+      "local": "templates/agentmemory"
+    },
+    {
+      "repo": "abhigyanpatwari/GitNexus",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        "."
+      ],
+      "local": "templates/gitnexus"
+    },
+    {
+      "repo": "calesthio/OpenMontage",
+      "license": "MIT",
+      "default": "content-media",
+      "skills": [
+        "."
+      ],
+      "local": "templates/openmontage"
+    },
+    {
+      "repo": "JSLEEKR/graft",
+      "license": "MIT",
+      "default": "agents",
+      "skills": [
+        "."
+      ],
+      "local": "templates/graft"
+    },
+    {
+      "repo": "trailhq/Trail-Code",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        "."
+      ],
+      "local": "templates/trail-code"
+    },
+    {
+      "repo": "JustVugg/colibri",
+      "license": "MIT",
+      "default": "ai-ml",
+      "skills": [
+        "."
+      ],
+      "local": "templates/colibri"
+    },
+    {
+      "repo": "freestylefly/awesome-gpt-image-2",
+      "license": "MIT",
+      "default": "content-media",
+      "skills": [
+        "."
+      ],
+      "local": "templates/gpt-image-prompting"
     }
   ],
   "externals": {

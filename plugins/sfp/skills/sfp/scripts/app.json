@@ -612,5 +612,266 @@
     "after": [
       "Run `viking init` to initialize the agent context filesystem."
     ]
+  },
+  "searxng": {
+    "name": "SearXNG",
+    "homepage": "https://github.com/searxng/searxng",
+    "what": "Privacy-respecting, hackable metasearch engine aggregating results from over 70 search services.",
+    "sources": [
+      "searxng/searxng"
+    ],
+    "needs": [
+      {
+        "tool": "docker",
+        "label": "Docker Engine",
+        "url": "https://docs.docker.com/engine/install/"
+      }
+    ],
+    "installed": {
+      "command": [
+        "docker",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "docker",
+          "pull",
+          "searxng/searxng"
+        ],
+        "why": "pulls the official SearXNG container image"
+      }
+    ],
+    "after": [
+      "Start with `docker run -d -p 8080:8080 -v ./searxng:/etc/searxng searxng/searxng`."
+    ]
+  },
+  "agentmemory": {
+    "name": "AgentMemory",
+    "homepage": "https://github.com/rohitg00/agentmemory",
+    "what": "Persistent vector memory MCP server and store for AI coding agents.",
+    "sources": [
+      "rohitg00/agentmemory"
+    ],
+    "needs": [
+      {
+        "tool": "node",
+        "label": "Node.js (v18+)",
+        "url": "https://nodejs.org/"
+      }
+    ],
+    "installed": {
+      "command": [
+        "npx",
+        "-y",
+        "@agentmemory/agentmemory",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "@agentmemory/agentmemory"
+        ],
+        "why": "installs the AgentMemory MCP server globally"
+      }
+    ],
+    "after": [
+      "Add to your IDE MCP configuration using `npx -y @agentmemory/agentmemory`."
+    ]
+  },
+  "gitnexus": {
+    "name": "GitNexus",
+    "homepage": "https://github.com/abhigyanpatwari/GitNexus",
+    "what": "Knowledge graph and AST code indexing tool for multi-repository context.",
+    "sources": [
+      "abhigyanpatwari/GitNexus"
+    ],
+    "needs": [
+      {
+        "tool": "node",
+        "label": "Node.js (v18+)",
+        "url": "https://nodejs.org/"
+      }
+    ],
+    "installed": {
+      "command": [
+        "npx",
+        "-y",
+        "gitnexus",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "gitnexus"
+        ],
+        "why": "installs the GitNexus CLI globally"
+      }
+    ],
+    "after": [
+      "Run `npx gitnexus analyze` in any git repository to build the graph."
+    ]
+  },
+  "openmontage": {
+    "name": "OpenMontage",
+    "homepage": "https://github.com/calesthio/OpenMontage",
+    "what": "Programmatic video montage creation pipeline using FFmpeg and Remotion.",
+    "sources": [
+      "calesthio/OpenMontage"
+    ],
+    "needs": [
+      {
+        "tool": "node",
+        "label": "Node.js (v18+)",
+        "url": "https://nodejs.org/"
+      },
+      {
+        "tool": "ffmpeg",
+        "label": "FFmpeg multimedia framework",
+        "url": "https://ffmpeg.org/"
+      }
+    ],
+    "installed": {
+      "command": [
+        "openmontage",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "openmontage"
+        ],
+        "why": "installs the OpenMontage CLI globally"
+      }
+    ],
+    "after": [
+      "Run `openmontage --help` to inspect montage synthesis options."
+    ]
+  },
+  "graft": {
+    "name": "Graft",
+    "homepage": "https://github.com/JSLEEKR/graft",
+    "what": "Multi-agent pipeline compiler and runtime CLI for composing agent workflows.",
+    "sources": [
+      "JSLEEKR/graft"
+    ],
+    "needs": [
+      {
+        "tool": "node",
+        "label": "Node.js (v18+)",
+        "url": "https://nodejs.org/"
+      }
+    ],
+    "installed": {
+      "command": [
+        "graft",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "@jsleekr/graft"
+        ],
+        "why": "installs the Graft agent compiler globally"
+      }
+    ],
+    "after": [
+      "Run `graft init` to scaffold a multi-agent pipeline definition."
+    ]
+  },
+  "trail-code": {
+    "name": "Trail-Code",
+    "homepage": "https://github.com/trailhq/Trail-Code",
+    "what": "AST dependency mapper and codebase learnings layer for AI agents.",
+    "sources": [
+      "trailhq/Trail-Code"
+    ],
+    "needs": [
+      {
+        "tool": "node",
+        "label": "Node.js (v18+)",
+        "url": "https://nodejs.org/"
+      }
+    ],
+    "installed": {
+      "command": [
+        "npx",
+        "-y",
+        "@trailhq/trail-code",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "@trailhq/trail-code"
+        ],
+        "why": "installs the Trail-Code agent layer globally"
+      }
+    ],
+    "after": [
+      "Run `npx trail-code watch` in your repository root."
+    ]
+  },
+  "colibri": {
+    "name": "Colibri",
+    "homepage": "https://github.com/JustVugg/colibri",
+    "what": "Ultra-lightweight pure C Mixture-of-Experts streaming inference engine.",
+    "sources": [
+      "JustVugg/colibri"
+    ],
+    "needs": [
+      {
+        "tool": "gcc",
+        "label": "C compiler (gcc or clang)",
+        "url": "https://gcc.gnu.org/"
+      }
+    ],
+    "installed": {
+      "command": [
+        "colibri",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "git",
+          "clone",
+          "https://github.com/JustVugg/colibri.git"
+        ],
+        "why": "clones Colibri repository for local compilation with make"
+      }
+    ],
+    "after": [
+      "Compile with `make` and run `./colibri --model <path>`."
+    ]
   }
 }

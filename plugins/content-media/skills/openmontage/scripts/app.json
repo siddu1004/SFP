@@ -1,0 +1,42 @@
+{
+  "name": "OpenMontage",
+  "homepage": "https://github.com/calesthio/OpenMontage",
+  "what": "Programmatic video montage creation pipeline using FFmpeg and Remotion.",
+  "sources": [
+    "calesthio/OpenMontage"
+  ],
+  "needs": [
+    {
+      "tool": "node",
+      "label": "Node.js (v18+)",
+      "url": "https://nodejs.org/"
+    },
+    {
+      "tool": "ffmpeg",
+      "label": "FFmpeg multimedia framework",
+      "url": "https://ffmpeg.org/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "openmontage",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "openmontage"
+      ],
+      "why": "installs the OpenMontage CLI globally"
+    }
+  ],
+  "after": [
+    "Run `openmontage --help` to inspect montage synthesis options."
+  ],
+  "id": "openmontage"
+}

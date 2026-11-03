@@ -1,0 +1,36 @@
+{
+  "name": "Colibri",
+  "homepage": "https://github.com/JustVugg/colibri",
+  "what": "Ultra-lightweight pure C Mixture-of-Experts streaming inference engine.",
+  "sources": [
+    "JustVugg/colibri"
+  ],
+  "needs": [
+    {
+      "tool": "gcc",
+      "label": "C compiler (gcc or clang)",
+      "url": "https://gcc.gnu.org/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "colibri",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "git",
+        "clone",
+        "https://github.com/JustVugg/colibri.git"
+      ],
+      "why": "clones Colibri repository for local compilation with make"
+    }
+  ],
+  "after": [
+    "Compile with `make` and run `./colibri --model <path>`."
+  ],
+  "id": "colibri"
+}

@@ -1,0 +1,39 @@
+{
+  "name": "GitNexus",
+  "homepage": "https://github.com/abhigyanpatwari/GitNexus",
+  "what": "Knowledge graph and AST code indexing tool for multi-repository context.",
+  "sources": [
+    "abhigyanpatwari/GitNexus"
+  ],
+  "needs": [
+    {
+      "tool": "node",
+      "label": "Node.js (v18+)",
+      "url": "https://nodejs.org/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "npx",
+      "-y",
+      "gitnexus",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "gitnexus"
+      ],
+      "why": "installs the GitNexus CLI globally"
+    }
+  ],
+  "after": [
+    "Run `npx gitnexus analyze` in any git repository to build the graph."
+  ],
+  "id": "gitnexus"
+}

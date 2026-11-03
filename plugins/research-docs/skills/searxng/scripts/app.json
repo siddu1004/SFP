@@ -1,0 +1,36 @@
+{
+  "name": "SearXNG",
+  "homepage": "https://github.com/searxng/searxng",
+  "what": "Privacy-respecting, hackable metasearch engine aggregating results from over 70 search services.",
+  "sources": [
+    "searxng/searxng"
+  ],
+  "needs": [
+    {
+      "tool": "docker",
+      "label": "Docker Engine",
+      "url": "https://docs.docker.com/engine/install/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "docker",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "docker",
+        "pull",
+        "searxng/searxng"
+      ],
+      "why": "pulls the official SearXNG container image"
+    }
+  ],
+  "after": [
+    "Start with `docker run -d -p 8080:8080 -v ./searxng:/etc/searxng searxng/searxng`."
+  ],
+  "id": "searxng"
+}

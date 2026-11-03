@@ -1,0 +1,37 @@
+{
+  "name": "Graft",
+  "homepage": "https://github.com/JSLEEKR/graft",
+  "what": "Multi-agent pipeline compiler and runtime CLI for composing agent workflows.",
+  "sources": [
+    "JSLEEKR/graft"
+  ],
+  "needs": [
+    {
+      "tool": "node",
+      "label": "Node.js (v18+)",
+      "url": "https://nodejs.org/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "graft",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "@jsleekr/graft"
+      ],
+      "why": "installs the Graft agent compiler globally"
+    }
+  ],
+  "after": [
+    "Run `graft init` to scaffold a multi-agent pipeline definition."
+  ],
+  "id": "graft"
+}

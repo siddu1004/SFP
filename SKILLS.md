@@ -11,7 +11,7 @@ The router and the hive: find the right skill for any task, installed or not, an
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 | `sfp-hive` | Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work move… |
 
-## frontend (87)
+## frontend (88)
 
 UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.
 
@@ -104,6 +104,7 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `interface-review` | Review UI code systematically across accessibility, layout, writing, typography, and polish. Produces prioritized, evidence-based file:line findings table. Use when reviewing UI code, evaluating desig… |
 | `locomotive-scroll` | Implement smooth scrolling, parallax effects, and scroll-triggered animations using Locomotive Scroll. Use when adding smooth inertia scrolling, scroll-bound transforms, sticky containers, or scroll-r… |
 | `react-colorful` | Integrate ultra-lightweight, zero-dependency color pickers in React apps using react-colorful. Use when adding color pickers (Hex, RGB, HSL, HSV) with keyboard accessibility, custom styling, or alpha … |
+| `stageshow` | Build faux product UI that looks like a real product, as a still illustration or an animated demo with a cursor. Browser and app windows, dashboards, phones, notifications, terminals, bento grids and … |
 
 ## design-styles (67)
 
@@ -312,7 +313,7 @@ Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR an
 | `sweep-reds` | Repair confirmed CI failures base-first, then prepare affected PRs one at a time with exact-candidate evidence. Use when asked to sweep reds or restore the queue. Never merges, closes PRs, weakens tes… |
 | `validate-release-green` | Run or inspect the local Release-Green observer for an exact base or combined PR candidate, separating hard failures, advisory drift and incomplete evidence. Use for maintainer preflight; full CI acce… |
 
-## security (23)
+## security (31)
 
 Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.
 
@@ -341,8 +342,16 @@ Strix autonomous pentesting, OWASP testing, secure coding for each framework, an
 | `springboot-security` | Spring Security best practices for authn/authz, validation, CSRF, secrets, headers, rate limiting, and dependency security in Java Spring Boot services. Use when reviewing Spring Security authn/authz,… |
 | `reverse-engineer-anything` | Reverse engineer native, managed, Electron/JavaScript, packaged, firmware, and browser targets with REA. Use shipped-artifact or requested runtime evidence to explain features, compare versions, decom… |
 | `security-audit` | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. Use for security questions, focused reviews, vulnerability research, security audits, or pe… |
+| `achieving-cmmc-level-2-compliance` | Prepare a defense-contractor environment for CMMC Level 2 certification: scope CUI and FCI, implement the 110 NIST SP 800-171 Rev 2 security requirements across 14 families, compute the SPRS score wit… |
+| `analyzing-api-gateway-access-logs` | Parses API Gateway access logs (AWS API Gateway, Kong, Nginx) to detect |
+| `analyzing-cloud-storage-access-patterns` | Detect abnormal access in AWS S3, GCS, and Azure Blob Storage by analyzing CloudTrail Data Events, GCS audit logs, and Azure Storage Analytics for after-hours bulk downloads, new-IP access, and API-ca… |
+| `auditing-aws-s3-bucket-permissions` | Systematically audit AWS S3 bucket permissions to identify publicly |
+| `auditing-cloud-with-cis-benchmarks` | Audit AWS, Azure, and GCP environments against the CIS Foundations Benchmarks by running automated scans with tools like Prowler and ScoutSuite, interpreting failed controls, and tracking remediation … |
+| `detecting-container-escape-attempts` | Detects container escape at runtime across tooling - namespace manipulation, capability abuse, kernel exploits, sensitive host mounts, and anomalous syscalls - and explains which signals matter regard… |
+| `hardening-docker-containers-for-production` | Hardens Dockerfiles, images, and per-container runtime settings against the CIS Docker Benchmark v1.8.0: non-root users, dropped capabilities, read-only root filesystem, seccomp and AppArmor profiles,… |
+| `implementing-zero-trust-network-access` | Configures Zero Trust Network Access (ZTNA) in AWS, Azure, and GCP using identity-aware proxies, micro-segmentation, and continuous verification with conditional access policies, replacing VPN-based a… |
 
-## agents (106)
+## agents (107)
 
 Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.
 
@@ -454,6 +463,7 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `gsd-workstreams` | Manage parallel workstreams — list, create, switch, status, progress, complete, and resume |
 | `browser-use` | Automate browser interactions for AI agents using the Browser-Use Python library and Playwright. Use when building web scraping agents, automating complex UI workflows, interacting with authenticated … |
 | `moli` | Fast, resource-light headless browser automation using Moli for web scraping and AI agent DOM extraction. Use when running lightweight browser automation, extracting clean DOM content, or scraping web… |
+| `graft` | Compile and execute declarative multi-agent pipelines using the Graft CLI runtime. Compose agent graphs, state handoffs, and verification steps into repeatable workflows. Use when orchestrating cooper… |
 
 ## agent-dev (105)
 
@@ -567,7 +577,7 @@ Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budge
 | `harness-engineering` | Design, test, and optimize AI agent execution harnesses, test fixtures, action spaces, and evaluation gates. Use when building agent evaluation loops, configuring autonomous runtime environments, or o… |
 | `opencode` | Automate coding workflows using OpenCode CLI (opencode) and terminal subagents. Use when orchestrating background coding tasks, running automated pull request triage, or integrating multi-model coding… |
 
-## ai-ml (11)
+## ai-ml (12)
 
 LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.
 
@@ -584,6 +594,7 @@ LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems
 | `recsys-pipeline-architect` | Design composable recommendation, ranking, and feed pipelines using the six-stage Source→Hydrator→Filter→Scorer→Selector→SideEffect framework popularized by xAI's open-sourced For You algorithm. Use t… |
 | `regex-vs-llm-structured-text` | Decision framework for parsing structured text (quizzes, forms, invoices, receipts, tables) with a hybrid regex-first pipeline — regex extraction handles 95%+ cheaply, a confidence scorer flags low-co… |
 | `prompt-master` | Generates optimized prompts for AI tools. Activates only when the user explicitly asks to write, fix, improve, or adapt a prompt for a specific AI tool (LLM, Cursor, Midjourney, image AI, video AI, co… |
+| `colibri` | Compile and run ultra-fast streaming MoE local model inference using the pure-C Colibri engine. Use when running minimal-footprint streaming model inference on CPU or lightweight machines. |
 
 ## ai-gateway (45)
 
@@ -651,7 +662,7 @@ About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platf
 | `x-api` | X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants t… |
 | `freellmapi` | Run and use FreeLLMAPI, one OpenAI-compatible /v1 endpoint that stacks the free tiers of 34 LLM providers with automatic routing and failover. Use when the user wants free LLM inference, to point an O… |
 
-## content-media (36)
+## content-media (38)
 
 Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.
 
@@ -693,6 +704,8 @@ Writing, marketing and persuasion audits, SEO, video, slides, social posting, br
 | `sepia-review` | Use when a user explicitly requests Sepia review to diagnose prose without editing. |
 | `sepia-write` | Use when a user explicitly requests Sepia write to create new prose. |
 | `lemo-opuscar` | Direct and produce short films made entirely in code using Lemo-Opuscar styles (oil painting, watercolor, ukiyo-e, teardown). Use when creating programmatic video, animations, explainers, or promo sho… |
+| `openmontage` | Create and render programmatic video montages from video clips, audio tracks, and timeline specs using OpenMontage. Use when automating video compilation, generating clip reels, or synchronizing video… |
+| `gpt-image-prompting` | Engineer detailed prompts and visual composition specifications for GPT-4o, DALL-E 3, and generative image models based on awesome-gpt-image-2 techniques. Use when creating UI mockups, icons, banners,… |
 
 ## business-ops (38)
 
@@ -776,7 +789,7 @@ Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, conf
 | `network-config-validation` | Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, stale references, management-plane risk, and IOS-style security hygiene. … |
 | `network-interface-health` | Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, switches, and Linux hosts. Use when an interface shows errors, drops, CRCs… |
 
-## research-docs (39)
+## research-docs (40)
 
 Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).
 
@@ -821,6 +834,7 @@ Deep research, scientific databases, literature review, docs, ADRs, a teach-me t
 | `understand-knowledge` | Analyze a Karpathy-pattern LLM wiki knowledge base and generate an interactive knowledge graph with entity extraction, implicit relationships, and topic clustering. |
 | `understand-onboard` | Use when you need to generate an onboarding guide for new team members joining a project |
 | `codebase-memory-mcp` | Connect persistent local code intelligence and architectural dependency graphs using Codebase Memory MCP. Use when exploring complex codebases, querying architectural relationships, or maintaining cro… |
+| `searxng` | Configure and query a private SearXNG metasearch instance to retrieve web search results without commercial tracking. Use when conducting private web research, aggregating search engines, or bypassing… |
 
 ## web3 (9)
 
@@ -838,7 +852,7 @@ DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent secur
 | `prediction-market-oracle-research` | Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligence. Use for source-grounded analysis of market-implied probabilities, c… |
 | `prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and execution risk. Use before any workflow handles venue auth, user portfolio data… |
 
-## engineering (24)
+## engineering (26)
 
 General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.
 
@@ -868,8 +882,10 @@ General engineering practice: architecture, standards, error handling, performan
 | `floorplan` | Draw a floorplan of an app's codebase (one repo or several side by side), an interactive node-graph map where every subsystem, module, file and HTTP route has a human-readable name and a one-line desc… |
 | `build-your-own-x` | Recreate core technologies from scratch step-by-step: Git, Redis, Docker, SQLite, HTTP servers, or compilers. Use when building deep foundational systems, designing zero-dependency implementations, or… |
 | `difftastic` | Perform syntax-aware structural diffing on source code using Difftastic (difft). Compares code based on AST structure rather than lines. Use when reviewing syntactic changes, inspecting complex refact… |
+| `gitnexus` | Index codebase structure and query cross-repository knowledge graphs using GitNexus AST analysis. Use when navigating unfamiliar codebases, tracing cross-file dependencies, or mapping symbol reference… |
+| `trail-code` | Track AST changes, record contextual codebase learnings, and monitor symbol references using Trail-Code. Use when recording code learnings during refactoring or building automated context trails. |
 
-## science-hardware (116)
+## science-hardware (123)
 
 Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 
@@ -991,16 +1007,25 @@ Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 | `blend-vfx-fx` | Cinematic and game VFX in Blender including smoke, fire, particles, trails, and Geometry Nodes FX setups via MCP. |
 | `blend-visual-console-eras` | Visual era art direction for Blender covering PS1–PS5 stylistic cues, retro arcade, DOS, CRT, VHS, and film-grain presentation. |
 | `blend-voxel-style` | Voxel and Minecraft-adjacent art direction for Blender with block grid modeling, limited palettes, and chunk-friendly assets. |
+| `anndata` | Handles annotated matrices in single-cell analysis, .h5ad and Zarr files, and integration with the scverse ecosystem. This is the data format skill—for analysis workflows use scanpy; for probabilistic… |
+| `astropy` | Core Python library for astronomy and astrophysics workflows that need Astropy APIs, including units/quantities, coordinates, FITS I/O, tables, time systems, WCS, and cosmology. Use when implementing … |
+| `biopython` | Provides Biopython workflows for sequence manipulation, file parsing (FASTA/GenBank/PDB), phylogenetics, and programmatic NCBI/PubMed access (Bio.Entrez). Supports batch processing, custom molecular-b… |
+| `datamol` | Pythonic wrapper around RDKit with simplified interface and sensible defaults. Preferred for standard drug discovery including SMILES parsing, standardization, descriptors, fingerprints, clustering, 3… |
+| `deepchem` | Builds molecular property prediction and MoleculeNet workflows with DeepChem, including SMILES featurization, scaffold or grouped holdouts, masked labels, graph models and explicit pretrained encoder … |
+| `scientific-schematics` | Generates scientific diagram drafts using Nano Banana 2 AI with smart iterative refinement. Uses Gemini 3.7 Flash for quality review. Refines when the review requests improvement, with at most two gen… |
+| `scikit-bio` | Biological data toolkit. Sequence analysis, alignments, phylogenetic trees, diversity metrics (alpha/beta, UniFrac), ordination (PCoA), PERMANOVA, FASTA/Newick I/O, for microbiome analysis. |
 
-## career (1)
+## career (3)
 
 AI job search: evaluate offers, tailor CVs, scan portals, track applications.
 
 | Skill | What it does |
 |---|---|
 | `career-ops` | Open-source AI job search agent -- evaluate offers, generate CVs, scan portals, track applications. Use when the user pastes a job URL or JD, asks to scan portals, generate a CV/PDF, track application… |
+| `scrape` | Finds new job postings matching your profile via installed portal-search CLIs (LinkedIn, local job boards, and any skills added with /add-portal). Deduplicates across runs. Triggers on: job scrape, fi… |
+| `upskill` | Compares tracked job postings against the candidate profile to identify skill gaps and generate a prioritized learning plan with study resources. Triggers on: /upskill, upskill, skill gaps, what shoul… |
 
-## memory (31)
+## memory (32)
 
 claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.
 
@@ -1037,6 +1062,7 @@ claude-mem's skills: search past work, timelines, handoffs and planning with per
 | `mem-host-observer` | Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose. |
 | `mem-openclaw` | This guide walks through setting up the claude-mem plugin on an OpenClaw gateway. By the end, your agents will have persistent memory across sessions via system prompt context injection, and optionall… |
 | `openviking` | Manage agent memory, knowledge, and context hierarchy using OpenViking's virtual filesystem (viking://). Use when structuring multi-tier agent context, managing persistent memory across sessions, or i… |
+| `agentmemory` | Connect and configure the AgentMemory MCP vector server to store embeddings and retain persistent state across agent runs. Use when setting up long-term memory servers, vector state backends, or agent… |
 
 ## session-memory (plugin)
 

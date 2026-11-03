@@ -1,0 +1,39 @@
+{
+  "name": "Trail-Code",
+  "homepage": "https://github.com/trailhq/Trail-Code",
+  "what": "AST dependency mapper and codebase learnings layer for AI agents.",
+  "sources": [
+    "trailhq/Trail-Code"
+  ],
+  "needs": [
+    {
+      "tool": "node",
+      "label": "Node.js (v18+)",
+      "url": "https://nodejs.org/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "npx",
+      "-y",
+      "@trailhq/trail-code",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "@trailhq/trail-code"
+      ],
+      "why": "installs the Trail-Code agent layer globally"
+    }
+  ],
+  "after": [
+    "Run `npx trail-code watch` in your repository root."
+  ],
+  "id": "trail-code"
+}

@@ -59,6 +59,18 @@ SFP collects skills written by other people. Each skill keeps the license of the
 | [omgovich/react-colorful](https://github.com/omgovich/react-colorful) | MIT | Vlad Shilov |
 | [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) | CC0-1.0 | WalkingLabs |
 | [codecrafters-io/build-your-own-x](https://github.com/codecrafters-io/build-your-own-x) | MIT | CodeCrafters |
+| [benjitaylor/skills](https://github.com/benjitaylor/skills) | MIT | Benji Taylor |
+| [ai-job-search-dev/ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) | MIT | AI Job Search Dev |
+| [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills) | MIT | K-Dense AI |
+| [mukul975/Anthropic-Cybersecurity-Skills](https://github.com/mukul975/Anthropic-Cybersecurity-Skills) | Apache-2.0 | Mukul Sharma |
+| [searxng/searxng](https://github.com/searxng/searxng) | AGPL-3.0 | SearXNG community |
+| [rohitg00/agentmemory](https://github.com/rohitg00/agentmemory) | MIT | Rohit G. |
+| [abhigyanpatwari/GitNexus](https://github.com/abhigyanpatwari/GitNexus) | MIT | Abhigyan Patwari |
+| [calesthio/OpenMontage](https://github.com/calesthio/OpenMontage) | MIT | Calesthio |
+| [JSLEEKR/graft](https://github.com/JSLEEKR/graft) | MIT | JSLEEKR |
+| [trailhq/Trail-Code](https://github.com/trailhq/Trail-Code) | MIT | TrailHQ |
+| [JustVugg/colibri](https://github.com/JustVugg/colibri) | MIT | JustVugg |
+| [freestylefly/awesome-gpt-image-2](https://github.com/freestylefly/awesome-gpt-image-2) | MIT | FreestyleFly |
 
 `session-memory` is installed from its own repo and is not copied into SFP. The `career` launcher clones career-ops when you first use it.
 

@@ -1,0 +1,39 @@
+{
+  "name": "AgentMemory",
+  "homepage": "https://github.com/rohitg00/agentmemory",
+  "what": "Persistent vector memory MCP server and store for AI coding agents.",
+  "sources": [
+    "rohitg00/agentmemory"
+  ],
+  "needs": [
+    {
+      "tool": "node",
+      "label": "Node.js (v18+)",
+      "url": "https://nodejs.org/"
+    }
+  ],
+  "installed": {
+    "command": [
+      "npx",
+      "-y",
+      "@agentmemory/agentmemory",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "@agentmemory/agentmemory"
+      ],
+      "why": "installs the AgentMemory MCP server globally"
+    }
+  ],
+  "after": [
+    "Add to your IDE MCP configuration using `npx -y @agentmemory/agentmemory`."
+  ],
+  "id": "agentmemory"
+}
