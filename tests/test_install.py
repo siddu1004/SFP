@@ -94,6 +94,16 @@ class InstallerTest(unittest.TestCase):
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertEqual(os.listdir(self.skills) if os.path.isdir(self.skills) else [], [])
 
+    def test_update_command_runs_successfully(self):
+        done = self.install('--categories', 'sfp')
+        self.assertEqual(done.returncode, 0, done.stderr)
+        update_done = subprocess.run([sys.executable, '-I', INSTALL, 'update', '--tools', 'cursor', '--categories', 'sfp'],
+                                     capture_output=True, text=True, env=self.env, timeout=120)
+        self.assertEqual(update_done.returncode, 0, update_done.stderr)
+        self.assertIn('Refreshing installed skills', update_done.stdout)
+        self.assertIn('Update complete', update_done.stdout)
+        self.assertTrue(os.path.isdir(os.path.join(self.skills, 'sfp')))
+
 
 class VSCodeAndRulesTest(InstallerTest):
     """VS Code reads Copilot's skills folders and has its own mcp.json; `rules` writes a removable standing instruction."""

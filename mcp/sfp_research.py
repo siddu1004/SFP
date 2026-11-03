@@ -353,8 +353,6 @@ def draft(task, role=None, n_papers=6, log=print, fetch=_get):
 UPDATE_TASK = ('{goal}. The agent already has the skill below; write what the research published since {since} adds to it: '
                'new techniques, better defaults, and what to stop doing. Do not repeat what the skill already says.\n\n'
                '<current-skill>\n{skill}\n</current-skill>')
-DEFAULT_TOPICS = ['retrieval-augmented generation (RAG)', 'agent memory for LLM agents', 'evaluating LLM applications',
-                  'LLM tool use and function calling', 'prompt caching and context compression', 'code generation agents']
 
 
 def _since(months):
@@ -418,7 +416,9 @@ def load_topics():
         with open(topics_path(), encoding='utf-8') as f:
             return json.load(f)
     except (OSError, ValueError):
-        return list(DEFAULT_TOPICS)
+        # No list of your own: follow what you lean towards, as the mentor reads it from your history.
+        import sfp_mentor
+        return sfp_mentor.topics_for(sfp_mentor.profile())
 
 
 def save_topics(topics):

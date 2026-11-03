@@ -6,6 +6,7 @@ import json
 import math
 import os
 os.environ.setdefault('SFP_SEMANTIC', '0')  # word rules only here; tests/test_semantic.py covers the local models
+os.environ.setdefault('SFP_DATA_DIR', __import__('tempfile').mkdtemp(prefix='sfp-test-'))  # never write to the real ~/.sfp
 import statistics
 import sys
 import tempfile
