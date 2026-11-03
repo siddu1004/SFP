@@ -576,7 +576,11 @@ TOOLS = [
                     'recorded in ~/.sfp) and grow skills for it from research. mode "profile" shows their areas and the '
                     'research topics it suggests (reads only). mode "grow" searches the paper indexes widely, has the local '
                     'model read the best papers and write their practical lessons, and drafts one skill per topic for the '
-                    'user to approve. Only the search queries leave the machine. Growing takes several minutes per topic.',
+                    'user to approve. Only the search queries leave the machine. Growing takes several minutes per topic. '
+                    'Use it when select_skills reports a gap, when the same kind of task keeps getting weak skills, or '
+                    'when the user asks SFP to learn or keep up with research. Show the profile and let the user pick or '
+                    'add topics; if it looks wrong, ask them for topics instead. Every result is a draft: show it, and '
+                    'install nothing until the user approves it (sfp research approve <name>).',
      'inputSchema': {'type': 'object', 'properties': {
          'mode': {'type': 'string', 'enum': ['profile', 'grow'], 'description': 'profile (default) or grow.'},
          'topics': {'type': 'array', 'items': {'type': 'string'}, 'description': 'Topics to grow instead of the suggested ones.'},

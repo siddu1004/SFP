@@ -903,15 +903,6 @@
         "performance-management": "Headcount HR and management policy for employee performance management systems, review cycles, feedback calibration, and performance improvement plans.",
         "product-launch": "Headcount go-to-market planning, launch readiness criteria, cross-functional tiering, and announcement coordination."
       }
-    },
-    {
-      "repo": "siddu1004/SFP",
-      "license": "MIT",
-      "default": "sfp",
-      "skills": [
-        "."
-      ],
-      "local": "templates/skill-mentor"
     }
   ],
   "externals": {

@@ -698,6 +698,24 @@ def latest_release_tag(root):
     return None
 
 
+def installed_version(root):
+    """(X, Y, Z) of the SFP checked out at `root` (its package.json), or None."""
+    try:
+        with open(os.path.join(root, 'package.json'), encoding='utf-8') as f:
+            m = re.match(r'^(\d+)\.(\d+)\.(\d+)', json.load(f).get('version', ''))
+        return tuple(int(x) for x in m.groups()) if m else None
+    except (OSError, ValueError):
+        return None
+
+
+def is_newer(tag, root):
+    """Whether release `tag` (vX.Y.Z) is newer than what is checked out: an update never moves back to an older release
+    (the newest tag can lag behind main until the next release is tagged)."""
+    m = re.match(r'^v(\d+)\.(\d+)\.(\d+)$', tag or '')
+    mine = installed_version(root)
+    return bool(m) and (mine is None or tuple(int(x) for x in m.groups()) > mine)
+
+
 def cmd_update(cat, args):
     """Update SFP to the latest release tag (never main) and refresh installed skills."""
     git_dir = os.path.join(ROOT, '.git')
@@ -714,6 +732,8 @@ def cmd_update(cat, args):
                     curr = subprocess.run(['git', '-C', ROOT, 'describe', '--tags', '--exact-match'], capture_output=True, text=True).stdout.strip()
                     if curr == newest:
                         print(f"  Already on latest release tag {newest}.")
+                    elif not is_newer(newest, ROOT):
+                        print(f"  This copy is already newer than the latest release tag {newest}; staying on it.")
                     else:
                         co = subprocess.run(['git', '-C', ROOT, 'checkout', newest], capture_output=True, text=True)
                         if co.returncode == 0:

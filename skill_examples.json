@@ -8584,13 +8584,5 @@
     "Diagnose why our recent video didn't perform well.",
     "Create a channel strategy to boost subscriber growth.",
     "Help me with retention teardown of this video."
-  ],
-  "skill-mentor": [
-    "I want to improve my machine learning skills. Can you guide me on how to do that?",
-    "I'm interested in deep learning research. Could you help me find and understand the latest papers in this field?",
-    "I keep hitting a wall when it comes to data analysis. How can I enhance my abilities in this area?",
-    "What are some of the best practices for software development? Can you provide insights from recent studies?",
-    "I'm looking to learn more about natural language processing. Could you recommend any research papers or courses that would be beneficial?",
-    "How can I become better at project management? Are there any recent studies on effective strategies in this field?"
   ]
 }

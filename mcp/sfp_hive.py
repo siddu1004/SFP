@@ -105,6 +105,11 @@ MEANING_CANDIDATES = 40  # how many of the closest skills in meaning join the ca
 ROLE_WEIGHT = 0.15       # push for the skills of the engineer's role (sfp_role), when the project shows one clearly
 ROLE_MIN_CONFIDENCE = 0.5
 GAP_COSINE = 0.64        # closest skill in meaning below this, and no word of the task in the stack: the library is thin here
+# When a task's words are weak, the right skill is among the 20 closest in meaning for about 5 tasks in 6, but the signals
+# rank it first for under half: a local model reads those candidates and picks (sfp_intent.rerank). SFP_RERANK=auto
+# (default) asks only when the words are weak, 1 always, 0 never.
+RERANK_POOL = 20
+RERANK_LEAD = 1.05       # a skill the model picks ranks just above the best the signals found
 
 
 # ------------------------------------------------------------------ signals
@@ -263,6 +268,7 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
                 mw = MEANING_WEIGHT_WEAK
         elif not found:
             mw = MEANING_WEIGHT_WEAK
+        sit['words_weak'] = mw == MEANING_WEIGHT_WEAK
         relevance = {n: max(r, mw * meaning.get(n, 0.0)) for n, r in relevance.items()}
         best_rel = max(relevance.values() or [0.0]) or 1.0
         relevance = {n: r / best_rel for n, r in relevance.items()}
@@ -462,11 +468,36 @@ def find_gap(task, sit, stack, votes, missing, role):
         return None
     out = {'task': reasons[0] if reasons else None,
            'stacks': [{'stack': g['stack'], 'skills': g['skills']} for g in thin[:3]],
-           'research': 'python3 mcp/sfp_research.py draft "%s"' % (task or '').replace('"', "'")[:200]}
+           'research': 'python3 mcp/sfp_research.py draft "%s"' % (task or '').replace('"', "'")[:200],
+           # the mentor (sfp_mentor, MCP tool grow_skills) reads the best papers and drafts a skill for the user to approve
+           'grow': 'sfp mentor grow --topic "%s"' % (task or '').replace('"', "'")[:200]}
     if thin and not reasons:
         out['research'] = 'python3 mcp/sfp_research.py draft "%s best practices" --role %s' % (
             thin[0]['stack'], (role or {}).get('role') or 'engineer')
     return out
+
+
+def rerank_wanted(sit):
+    mode = os.environ.get('SFP_RERANK', 'auto').lower()
+    if mode in ('0', 'off', 'false', 'no'):
+        return False
+    if mode in ('1', 'on', 'true', 'yes'):
+        return True
+    return bool(sit.get('words_weak'))
+
+
+def rerank(sit, votes, quality, exclude):
+    """The candidates a local model judges fit the task best, best first ([] when off, no model answers, or the task is
+    not one said in other words). The pool is the closest in meaning, then the signals' own favourites."""
+    sem = sit.get('semantic') or {}
+    if not sem.get('similar') or not rerank_wanted(sit):
+        return []
+    import sfp_intent
+    ok = lambda n: n in votes and n not in exclude and votes[n]['relation'] != 'mismatch'
+    pool = [n for _, n in sem['similar'] if ok(n)][:RERANK_POOL]
+    pool += [n for n in sorted(quality, key=lambda n: -quality[n])[:5] if ok(n) and n not in pool]
+    items = [(n, core.SKILLS[n].get('description') or '') for n in pool]
+    return [n for n in sfp_intent.rerank(sit['text'], items) if n in pool]
 
 
 def understand(text):
@@ -560,6 +591,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     if quality:
         top_q = max(quality.values())
         quality = {n: q / top_q for n, q in quality.items()}
+    picks = rerank(sit, votes, quality, exclude)
+    for i, n in enumerate(picks):
+        quality[n] = RERANK_LEAD - 0.01 * i
     why = {}
     pinned = [n for n in include if n not in exclude]
     rest = {n: q for n, q in quality.items() if n not in pinned}
@@ -595,6 +629,8 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             reasons.append('preferred from feedback')
         elif learned.get(name, 0) <= -0.15:
             reasons.append('down-weighted by feedback')
+        if name in picks:
+            reasons.append('judged the best fit by the local model')
         if name in pinned:
             reasons.insert(0, 'pinned by you')
         else:
@@ -632,6 +668,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         'task': task, 'goal': goal,
         'missing': missing,
         'understood': (sit['semantic'] or {}).get('terms') or [],
+        'reranked': picks,
         'role': role and {k: role[k] for k in ('role', 'confidence', 'evidence', 'stacks')},
         'gap': find_gap(task, sit, stack, votes, missing, role),
         'project': {'technologies': v1.show(sorted(sit['ctx_tech'], key=lambda t: (-ctx[t], t))[:8]),

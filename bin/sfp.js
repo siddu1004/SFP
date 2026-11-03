@@ -43,6 +43,25 @@ function getLatestReleaseTag(rootDir) {
   return null;
 }
 
+// Whether release tag vX.Y.Z is newer than the SFP checked out in rootDir: an update never moves back to an older
+// release (the newest tag can lag behind main until the next release is tagged).
+function isNewerRelease(tag, rootDir) {
+  const m = (tag || '').match(/^v(\d+)\.(\d+)\.(\d+)$/);
+  if (!m) return false;
+  let mine = null;
+  try {
+    const v = JSON.parse(fs.readFileSync(path.join(rootDir, 'package.json'), 'utf-8')).version || '';
+    const mm = v.match(/^(\d+)\.(\d+)\.(\d+)/);
+    if (mm) mine = [1, 2, 3].map((i) => parseInt(mm[i], 10));
+  } catch {}
+  if (!mine) return true;
+  for (let i = 0; i < 3; i++) {
+    const t = parseInt(m[i + 1], 10);
+    if (t !== mine[i]) return t > mine[i];
+  }
+  return false;
+}
+
 function findPython() {
   const candidates = process.platform === 'win32'
     ? ['python3', 'python', 'py -3', 'py']
@@ -220,6 +239,8 @@ function handleUpdate(rootDir, py, args) {
         const currTag = (curr.stdout || '').trim();
         if (currTag === latestTag) {
           console.error(`  \x1b[32m✔ Already on latest release tag ${latestTag}.\x1b[0m`);
+        } else if (!isNewerRelease(latestTag, rootDir)) {
+          console.error(`  \x1b[32m✔ This copy is already newer than the latest release tag ${latestTag}; staying on it.\x1b[0m`);
         } else {
           console.error(`  Checking out latest release tag ${latestTag}...`);
           const co = git('checkout', latestTag);
@@ -321,7 +342,7 @@ function resolveSfpRoot() {
     if (!git('status', '--porcelain').stdout.trim()) {
       git('fetch', '--tags', 'origin');
       const latestTag = getLatestReleaseTag(targetDir);
-      if (latestTag) {
+      if (latestTag && isNewerRelease(latestTag, targetDir)) {
         git('checkout', latestTag);
       }
     }
@@ -349,6 +370,9 @@ Give your AI coding agent the right skills for the job, not all of them.
   \x1b[33mneeds\x1b[0m "<task>"       Check what capabilities or external tools a task needs
   \x1b[33mdoctor\x1b[0m              Check catalog, index, local models, and hive connections
   \x1b[33mroute\x1b[0m [args]          Manage or start the local model router (Ollama, LM Studio, etc.)
+  \x1b[33mmodels\x1b[0m [probe|add|remove] The models the hive asks: local ones found, plus any you add by API
+  \x1b[33mmentor\x1b[0m [profile|grow]  What you lean towards, and new skills grown from research for it
+  \x1b[33mresearch\x1b[0m [args]       Draft, refresh, approve or reject skills written from research papers
   \x1b[33mapps\x1b[0m [args]           Manage companion apps (OmniRoute, Strix, etc.)
   \x1b[33mlist\x1b[0m                List categories and install profiles
   \x1b[33mhelp\x1b[0m                Show this help message
@@ -464,6 +488,21 @@ function run() {
 
     case 'route':
       targetScript = path.join(rootDir, 'mcp', 'sfp_route.py');
+      targetArgs = args.slice(1);
+      break;
+
+    case 'models':
+      targetScript = path.join(rootDir, 'mcp', 'sfp_intent.py');
+      targetArgs = args.length > 1 ? args.slice(1) : ['models'];
+      break;
+
+    case 'mentor':
+      targetScript = path.join(rootDir, 'mcp', 'sfp_mentor.py');
+      targetArgs = args.length > 1 ? args.slice(1) : ['profile'];
+      break;
+
+    case 'research':
+      targetScript = path.join(rootDir, 'mcp', 'sfp_research.py');
       targetArgs = args.slice(1);
       break;
 

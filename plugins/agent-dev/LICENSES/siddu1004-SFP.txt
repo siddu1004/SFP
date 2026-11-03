@@ -1,3 +1,0 @@
-MIT License
-
-Source: https://github.com/siddu1004/SFP
