@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="380" viewBox="0 0 900 380" role="img" aria-labelledby="t d"><title id="t">Format Accuracy per Persona (Taste vs Cold Start)</title><rect width="900" height="380" rx="16" fill="#12171f"/>
+<text x="40" y="48" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" fill="#e6edf3">Format Accuracy: Cold Start vs Learned Taste</text>
+<text x="40" y="76" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#9aa4b0">4 personas x 20 tasks (60% unnamed form, 40% explicit override). Stored in taste.json.</text>
+<text x="40" y="134" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Visual Learner (Animation)</text>
+<rect x="360" y="110" width="133.0" height="18" rx="4" fill="#4a5768"/>
+<rect x="360" y="132" width="133.0" height="18" rx="4" fill="#2dd4bf"/>
+<text x="505.0" y="146" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">35% (cold: 35%)</text>
+<text x="40" y="192" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Reader (Text / Reference)</text>
+<rect x="360" y="168" width="228.0" height="18" rx="4" fill="#4a5768"/>
+<rect x="360" y="190" width="342.0" height="18" rx="4" fill="#2dd4bf"/>
+<text x="714.0" y="204" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">90% (cold: 60%)</text>
+<text x="40" y="250" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Hands-On Learner (Code / Tests)</text>
+<rect x="360" y="226" width="342.0" height="18" rx="4" fill="#4a5768"/>
+<rect x="360" y="248" width="361.0" height="18" rx="4" fill="#2dd4bf"/>
+<text x="733.0" y="262" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">95% (cold: 90%)</text>
+<text x="40" y="308" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#e6edf3">Video Producer (Remotion / Video)</text>
+<rect x="360" y="284" width="133.0" height="18" rx="4" fill="#4a5768"/>
+<rect x="360" y="306" width="133.0" height="18" rx="4" fill="#2dd4bf"/>
+<text x="505.0" y="320" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">35% (cold: 35%)</text>
+<text x="40" y="360" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#9aa4b0">Gray: Cold Start | Green: Learned Taste (30-day half-life). Explicit overrides 100% respected.</text>
+</svg>

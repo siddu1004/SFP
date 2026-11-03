@@ -75,14 +75,14 @@ OUTPUT_PATTERNS = [
     (r'\b(?:animation|animated|animate|manim|motion\s*graphic)\b', 'animation'),
     (r'\b(?:video|screencast|recording|movie|clip)\b', 'video'),
     (r'\b(?:slides?|presentation|slide\s*deck|deck|keynote)\b', 'slides'),
-    (r'\b(?:diagram|flowchart|chart|mermaid|wireframe|visuali[zs]ation)\b', 'diagram'),
-    (r'\b(?:interactive|simulator|playground|repl|sandbox)\b', 'interactive'),
-    (r'\b(?:image|picture|graphic|illustration|svg|logo|icon)\b', 'image'),
-    (r'\b(?:text|words?|summary|in\s*writing|article|essay)\b', 'text'),
-    (r'\b(?:code|script|implementation|boilerplate|function)\b', 'code'),
-    (r'\b(?:config|configuration|dockerfile|yaml|manifest)\b', 'config'),
+    (r'\b(?:diagram|flowchart|mermaid|wireframe)\b', 'diagram'),
+    (r'\b(?:interactive|simulator|playground|sandbox)\b', 'interactive'),
+    (r'\b(?:(?:generate|create|make|draw)\s+(?:an?\s+)?(?:image|picture|graphic|illustration|svg|logo|(?:app\s+)?icon)|as\s+an?\s+image)\b', 'image'),
+    (r'\b(?:text\s+(?:summary|explanation|breakdown)|markdown\s+summary|text\s+only|in\s+text|in\s+writing|summary\s+of|article|essay)\b', 'text'),
+    (r'\b(?:as\s+code|code\s+only|boilerplate\s+only)\b', 'code'),
+    (r'\b(?:generate\s+config|write\s+(?:a\s+)?dockerfile|create\s+(?:a\s+)?manifest)\b', 'config'),
     (r'\b(?:report|scorecard|audit\s*summary)\b', 'report'),
-    (r'\b(?:document|spec|rfc|adr)\b', 'document'),
+    (r'\b(?:as\s+a\s+document|draft\s+an?\s+(?:rfc|adr|document|spec))\b', 'document'),
 ]
 
 JOB_PATTERNS = [

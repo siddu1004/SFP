@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="360" viewBox="0 0 840 360" role="img" aria-labelledby="t d"><title id="t">Plain-Words Accuracy Before and After Rerank</title><rect width="840" height="360" rx="16" fill="#f4f1ea"/>
+<text x="40" y="48" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" fill="#1a1d21">Plain-Words Task Accuracy Before &amp; After Rerank</text>
+<text x="40" y="76" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#565c64">Tested on beginner vibe-coder phrasing (40 held-out tasks). Local 24B MoE reranker.</text>
+<text x="40" y="145" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#1a1d21">Words Only (no model)</text>
+<rect x="340" y="120" width="143.0" height="36" rx="6" fill="#a8a190"/>
+<text x="495.0" y="144" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#1a1d21">32.5%</text>
+<text x="40" y="201" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#1a1d21">Words + Meaning (bge-m3)</text>
+<rect x="340" y="176" width="187.0" height="36" rx="6" fill="#a8a190"/>
+<text x="539.0" y="200" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#1a1d21">42.5%</text>
+<text x="40" y="257" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#1a1d21">Words + Meaning + Rerank (lfm2-24b)</text>
+<rect x="340" y="232" width="220.0" height="36" rx="6" fill="#0f766e"/>
+<text x="572.0" y="256" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#1a1d21">50.0%</text>
+</svg>

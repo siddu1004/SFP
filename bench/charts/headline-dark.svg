@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="480" viewBox="0 0 1000 480" role="img" aria-labelledby="t d"><title id="t">Held-Out Retrieval Accuracy by Engine</title><rect width="1000" height="480" rx="16" fill="#12171f"/>
+<text x="48" y="54" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="700" fill="#e6edf3">Held-Out Accuracy across Engines 1–6</text>
+<text x="48" y="84" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#9aa4b0">Average hit rate across 3 held-out task suites (97 tasks never tuned on). 95% Wilson intervals shown.</text>
+<text x="48" y="156" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" fill="#e6edf3">1. Plain Keyword Search</text>
+<rect x="320" y="130" width="260.2" height="42" rx="6" fill="#4a5768"/>
+<text x="594.2204329896908" y="157" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#e6edf3">48.2%</text>
+<text x="48" y="214" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" fill="#e6edf3">2. v1 Recommender</text>
+<rect x="320" y="188" width="250.1" height="42" rx="6" fill="#4a5768"/>
+<text x="584.1096288659794" y="215" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#e6edf3">46.3%</text>
+<text x="48" y="272" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" fill="#e6edf3">3. Hive (words only)</text>
+<rect x="320" y="246" width="234.4" height="42" rx="6" fill="#4a5768"/>
+<text x="568.4440618556702" y="273" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#e6edf3">43.4%</text>
+<text x="48" y="330" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" fill="#e6edf3">4. Hive + Meaning (bge-m3)</text>
+<rect x="320" y="304" width="287.0" height="42" rx="6" fill="#4a5768"/>
+<text x="621.0172371134021" y="331" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#e6edf3">53.2%</text>
+<text x="48" y="388" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="400" fill="#e6edf3">5. Hive + Meaning + Rerank</text>
+<rect x="320" y="362" width="314.8" height="42" rx="6" fill="#4a5768"/>
+<text x="648.84393814433" y="389" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#e6edf3">58.3%</text>
+<text x="48" y="446" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="600" fill="#e6edf3">6. Hive + Meaning + Rerank + Taste</text>
+<rect x="320" y="420" width="314.8" height="42" rx="6" fill="#2dd4bf"/>
+<text x="648.84393814433" y="447" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#e6edf3">58.3%</text>
+<text x="48" y="456" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#9aa4b0">Zero cloud leakage. Runs 100% locally with Ollama and LM Studio.</text>
+</svg>

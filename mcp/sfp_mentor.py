@@ -28,6 +28,7 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import sfp_intent  # noqa: E402
+import sfp_learn
 import sfp_research  # noqa: E402
 
 HALF_LIFE_DAYS = 30.0

@@ -211,7 +211,7 @@ class VSCodeAndRulesTest(InstallerTest):
             calls.append(cmd)
             res = unittest.mock.MagicMock()
             res.returncode = 0
-            res.stdout = "v3.19.0\nv3.18.0\n" if 'tag' in cmd else ""
+            res.stdout = "v3.20.0\nv3.19.0\n" if 'tag' in cmd else ""
             res.stderr = ""
             return res
 
@@ -223,7 +223,7 @@ class VSCodeAndRulesTest(InstallerTest):
             # Verify fetch was called with --tags
             self.assertTrue(any('fetch' in c and '--tags' in c for c in calls))
             # Verify checkout was called with the latest tag
-            self.assertTrue(any('checkout' in c and 'v3.19.0' in c for c in calls))
+            self.assertTrue(any('checkout' in c and 'v3.20.0' in c for c in calls))
             # Critical requirement: MUST NEVER pull main
             for c in calls:
                 self.assertFalse('pull' in c and 'main' in c, f"Command pulled main: {c}")

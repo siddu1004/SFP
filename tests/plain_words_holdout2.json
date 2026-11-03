@@ -1,0 +1,303 @@
+[
+  {
+    "task": "my app is slow when lots of people use it",
+    "expect": [
+      "parallel-execution-optimizer",
+      "clickhouse-io",
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "make the login not get hacked",
+    "expect": [
+      "security-review",
+      "application-security-testing",
+      "auth0"
+    ]
+  },
+  {
+    "task": "need to put my code on the web so friends can see it",
+    "expect": [
+      "deployment-patterns",
+      "docker-patterns",
+      "uncloud"
+    ]
+  },
+  {
+    "task": "show pretty moving shapes when user clicks button",
+    "expect": [
+      "framer-motion",
+      "motion-patterns",
+      "animate"
+    ]
+  },
+  {
+    "task": "stop database from crashing on too many queries",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "redis-patterns"
+    ]
+  },
+  {
+    "task": "need to send an email when user buys a thing",
+    "expect": [
+      "mailtrap-email-integration",
+      "django-celery",
+      "email-ops"
+    ]
+  },
+  {
+    "task": "make my site look nice on phones and ipads",
+    "expect": [
+      "frontend-patterns",
+      "responsive",
+      "web-interface-guidelines"
+    ]
+  },
+  {
+    "task": "test all the buttons on my website automatically",
+    "expect": [
+      "playwright-cli",
+      "e2e-testing",
+      "browser-qa"
+    ]
+  },
+  {
+    "task": "keep track of how much my openai bill costs",
+    "expect": [
+      "cost-tracking",
+      "ecc-tools-cost-audit",
+      "cli-cost-usage"
+    ]
+  },
+  {
+    "task": "make a robot that clicks through website forms for me",
+    "expect": [
+      "browser-use",
+      "playwright-cli",
+      "n8n-agents"
+    ]
+  },
+  {
+    "task": "fix the red error in my python terminal",
+    "expect": [
+      "investigate-first",
+      "orch-fix-defect",
+      "surgical-patch"
+    ]
+  },
+  {
+    "task": "make a video showing people how to use my app",
+    "expect": [
+      "ui-demo",
+      "remotion-video-creation",
+      "video-editing"
+    ]
+  },
+  {
+    "task": "make the buttons look like 3d puffy clay",
+    "expect": [
+      "claymorphism",
+      "neumorphism",
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "connect my app to twitter to post messages",
+    "expect": [
+      "x-api",
+      "social-publisher"
+    ]
+  },
+  {
+    "task": "put all my python packages into a clean container",
+    "expect": [
+      "docker-patterns",
+      "generating-python-installer"
+    ]
+  },
+  {
+    "task": "turn my spreadsheet rows into a database table",
+    "expect": [
+      "database-migrations",
+      "postgres-patterns",
+      "clickhouse-io"
+    ]
+  },
+  {
+    "task": "make an animated cartoon video of a science concept",
+    "expect": [
+      "manim-video",
+      "moneyprinterturbo-video"
+    ]
+  },
+  {
+    "task": "check if someone typed bad words into the comment box",
+    "expect": [
+      "security-review",
+      "prompt-optimizer"
+    ]
+  },
+  {
+    "task": "make my react app load in less than one second",
+    "expect": [
+      "react-performance",
+      "nextjs-turbopack",
+      "vite-patterns"
+    ]
+  },
+  {
+    "task": "write good commit messages without thinking about it",
+    "expect": [
+      "conventional-commit-review",
+      "caveman-commit"
+    ]
+  },
+  {
+    "task": "make my app talk in spanish and french",
+    "expect": [
+      "i18n-sync",
+      "visa-doc-translate"
+    ]
+  },
+  {
+    "task": "clean up messy code without breaking anything",
+    "expect": [
+      "safe-refactor",
+      "orch-refine-code"
+    ]
+  },
+  {
+    "task": "see what other apps are doing to copy their design",
+    "expect": [
+      "competitive-platform-analysis",
+      "market-research"
+    ]
+  },
+  {
+    "task": "make a slide presentation for my investors",
+    "expect": [
+      "frontend-slides",
+      "mem-wowerpoint",
+      "investor-materials"
+    ]
+  },
+  {
+    "task": "stop people from downloading all data from my api",
+    "expect": [
+      "security-review",
+      "api-security-testing",
+      "rate-limit"
+    ]
+  },
+  {
+    "task": "make a discord bot that answers questions",
+    "expect": [
+      "discord-access",
+      "discord-configure",
+      "n8n-agents"
+    ]
+  },
+  {
+    "task": "test my rust code so it never panics",
+    "expect": [
+      "rust-testing",
+      "rust-patterns"
+    ]
+  },
+  {
+    "task": "backup my database so I do not lose files if server dies",
+    "expect": [
+      "cli-backup-sync",
+      "omni-db-backups"
+    ]
+  },
+  {
+    "task": "make a pretty chart showing sales this month",
+    "expect": [
+      "dashboard-builder",
+      "diagram-design"
+    ]
+  },
+  {
+    "task": "let people log in with google and github buttons",
+    "expect": [
+      "auth0",
+      "omni-auth"
+    ]
+  },
+  {
+    "task": "check why my tests are failing in github actions",
+    "expect": [
+      "terminal-ops",
+      "investigate-first",
+      "continuous-agent-loop"
+    ]
+  },
+  {
+    "task": "turn my figma drawing into clean vue code",
+    "expect": [
+      "ui-to-vue",
+      "frontend-patterns"
+    ]
+  },
+  {
+    "task": "make my font look like an old 80s computer terminal",
+    "expect": [
+      "retro",
+      "mono",
+      "sega"
+    ]
+  },
+  {
+    "task": "read pdf files and pull out invoice numbers",
+    "expect": [
+      "nutrient-document-processing",
+      "receipts"
+    ]
+  },
+  {
+    "task": "set up background jobs so user does not wait",
+    "expect": [
+      "django-celery",
+      "n8n-workflow-patterns"
+    ]
+  },
+  {
+    "task": "make my website accessible for blind users with screen readers",
+    "expect": [
+      "accessibility-audit",
+      "frontend-a11y"
+    ]
+  },
+  {
+    "task": "run my own ai model on my graphics card",
+    "expect": [
+      "foundation-models-on-device",
+      "uncloud"
+    ]
+  },
+  {
+    "task": "make a diagram of my microservices architecture",
+    "expect": [
+      "diagram-design",
+      "architecture-decision-records"
+    ]
+  },
+  {
+    "task": "let users upload photos to the cloud safely",
+    "expect": [
+      "security-review",
+      "application-security-testing"
+    ]
+  },
+  {
+    "task": "find bugs in my pull request before merging",
+    "expect": [
+      "gsd-code-review",
+      "caveman-review",
+      "code-review"
+    ]
+  }
+]

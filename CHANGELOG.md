@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.19.0
+
+- **Skill Cards & Understanding:** Generated structured skill cards (skill_cards.json) for all 1,065 skills detailing output format, job category, interaction style, depth, prerequisites, and substitute equivalence groups. The hive understands what each skill produces (code, text, animation, video, diagram, etc.) and avoids stacking redundant duplicate substitutes.
+- **Learned User Taste:** The hive tracks preferred output styles and teaching formats in ~/.sfp/taste.json with an exponential 30-day half-life. Stored as private numerical facet weights only—zero prompt text or personal data is ever saved or sent. Named explicit output formats in prompts strictly override learned taste.
+- **Local Model Reranking:** Integrated sfp_intent.rerank() into the hive with SFP_RERANK=auto. When prompt words are ambiguous or colloquial, the local LLM evaluates top candidates and picks the exact fit, boosting held-out plain-words accuracy from 40% to 50% without leaking tokens.
+- **Custom API Models with Privacy Guarantees:** Manage local and self-hosted models via sfp models [add|remove|probe]. Supports --key-env to pass API keys strictly via environment variables (never written to disk) and --research-only to restrict cloud endpoints exclusively to background research drafts.
+- **Reproducible Benchmark Suite & Honesty Disclosures:** Introduced bench/run_all.py testing all 6 engines across 6 task suites (including 3 completely held-out sets: fresh, reworded_holdout, and plain_words_holdout2) with 95% Wilson score intervals, 10 light/dark SVG performance charts in bench/charts/, and full documentation in bench/RESULTS.md. Held-out retrieval accuracy reaches 58.3% (+10.1% over keyword search) while saving 99.7% of catalog tokens.
+- **Semver Pinning & Update Safety:** Fixed semver comparisons in sfp update and bin/sfp.js to ensure the CLI never checks out or prompts for an older release tag.
+- **Removal of deprecated skill-mentor:** The mentor functionality is now fully native in the core engine (sfp mentor, sfp research, and grow_skills MCP tool).
+
 ## 3.18.0
 
 - **The mentor.** `mcp/sfp_mentor.py profile` reads what you lean towards from your SFP history (skills chosen, feedback, gaps, recent weeks first) and names research topics for it; `grow` searches the paper indexes widely, keeps the best papers (meaning, citations for their age, known venue), has the local model read each one and write its practical lesson, and drafts one skill per topic. New MCP tool `grow_skills`, and the `skill-mentor` skill teaches any agent the whole loop.

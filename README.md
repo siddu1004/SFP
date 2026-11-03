@@ -11,13 +11,21 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-3.18.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.18.0">
+  <img src="https://img.shields.io/badge/version-3.19.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.19.0">
   <img src="https://img.shields.io/badge/skills-1065-0f766e?style=flat-square&labelColor=3b4350" alt="1065 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
   <img src="https://img.shields.io/badge/needs-Python_3-0f766e?style=flat-square&labelColor=3b4350" alt="Needs Python 3">
   <img src="https://img.shields.io/badge/license-MIT-0f766e?style=flat-square&labelColor=3b4350" alt="MIT license">
 </p>
+
+<blockquote align="center">
+  <b>SFP 3.19.0 Results at a Glance:</b><br>
+  &bull; <b>58.3% held-out retrieval accuracy</b> (+10.1% over plain keyword search, +14.9% over words-only) with local <code>bge-m3</code> vectors + fast local reranking.<br>
+  &bull; <b>99.7% context token reduction</b> (carrying an average of 4,997 tokens instead of 1.9M full-catalog tokens).<br>
+  &bull; <b>100% private, local-first intelligence</b> with personalized learning taste profiles and zero prompt telemetry leaving your workstation.<br>
+  <i>Read the complete benchmark report, 95% Wilson intervals, and disclosures in <a href="bench/RESULTS.md">bench/RESULTS.md</a>.</i>
+</blockquote>
 
 <p align="center">
 <picture>
@@ -143,6 +151,83 @@ Notice that plain keyword search yields identical, generic results everywhere. T
 
 ---
 
+---
+
+## How SFP Picks
+
+The hive evaluates tasks through five progressive layers of understanding:
+1. **Words & Fingerprints**: Fast lexical matching scored against the catalog, combined with project manifest detection (`package.json`, `Cargo.toml`, `go.mod`, etc.) so tools for foreign ecosystems are strictly discarded.
+2. **Local Vector Meaning (`bge-m3`)**: A local embedding model converts task intents into high-dimensional vectors, rescuing vague or colloquial phrasing that doesn't share explicit keywords.
+3. **Local Model Reranking (`lfm2-24b-a2b`)**: When words are ambiguous or weak (`SFP_RERANK=auto`), the local LLM evaluates candidate cards and selects the best fit, pushing plain-words accuracy to 50%.
+4. **Skill Cards (`skill_cards.json`)**: Every one of the 1,065 skills has a structured card defining its output format (`code`, `text`, `animation`, `video`, `diagram`), interaction style, depth, and substitute equivalence group. Near-duplicate substitutes are never stacked together.
+5. **Your Taste (`~/.sfp/taste.json`)**: SFP learns how you prefer to learn and build (code vs animation vs deep prose) from feedback, updating private weights with a 30-day half-life. An explicit format requested in your prompt (e.g. *"as a markdown summary"*) strictly overrides taste.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/headline-dark.svg">
+    <img src="bench/charts/headline-light.svg" alt="Held-Out Accuracy across Engines 1-6" width="100%">
+  </picture>
+</p>
+
+### Real Selection Examples from Benchmark 3.19.0
+
+| What you ask | User Context / Taste | What SFP Picks | Why |
+|---|---|---|---|
+| *"make the api not die when flooded with requests"* | Any | `rate-limiting`, `resilience` | Plain-words colloquial request rescued by local reranker |
+| *"check for sneaky memory leaks in go routine"* | Go project | `golang-patterns`, `golang-testing` | Lexical gap bridged by meaning & project fingerprint |
+| *"explain how attention works in transformers"* | Visual Learner (`animation`) | `manim-video` | Learner prefers programmatic animated visual walkthroughs |
+| *"explain how attention works in transformers"* | Reader (`text`) | `deep-research`, text explanation | Reader prefers exhaustive mathematical deep dive |
+| *"explain how attention works as a markdown summary"* | Visual Learner | `deep-research` | **Explicit named form override:** User asked for markdown summary |
+| *"simulate quantum teleportation with qiskit"* | Any | **Library Gap Detected** | SFP detects unmet need and suggests `sfp mentor grow` |
+
+---
+
+## Choose Models
+
+SFP is 100% local-first and works offline out of the box with LM Studio, Ollama, llama.cpp, Jan, and vLLM.
+
+```bash
+# View detected models and health
+sfp models
+
+# Probe active endpoints for latency and speed
+sfp models probe
+
+# Add an external or self-hosted API model safely
+sfp models add deepseek-research https://api.deepseek.com/v1 deepseek-reasoner --key-env DEEPSEEK_API_KEY --research-only
+```
+
+> **Privacy Guarantee:** API keys are never stored on disk or committed to files; they are read at invocation strictly from the specified environment variable. Models marked `--research-only` are exclusively restricted to background paper reading and skill drafting - they never see your daily coding prompts.
+
+---
+
+## Your Taste & The Mentor
+
+### Inspecting and Tuning Taste
+See your learned preference weights at any time:
+```bash
+# View active taste profile
+sfp taste
+
+# Reset learned weights back to neutral cold-start
+sfp taste --reset
+```
+
+### The Mentor Loop
+```bash
+# Inspect your profile, interests, and unmet library needs
+sfp mentor
+
+# Research and draft skills to fill identified gaps
+sfp mentor grow
+
+# Approve research drafts into your live skill library
+sfp research drafts
+sfp research approve <draft-id>
+```
+
+---
+
 ## Platform Capabilities
 
 SFP supports 16 IDEs and provides three flexible delivery modes:
@@ -205,7 +290,7 @@ Rigorous benchmarks against baselines and plain keyword search:
 
 Figures below are computed directly from this repository during the build. Reproduce with `python3 mcp/sfp_hive.py evaluate` and `python3 mcp/sfp_hive.py learning-curve`.
 
-| Task set | Hive 3.18.0 | Earlier engine | Plain search |
+| Task set | Hive 3.19.0 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **86%** | 64% | 9% |
 | 24 tasks in 10 sample projects | 79% | 79% | 25% |

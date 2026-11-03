@@ -56,7 +56,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.18.0'
+VERSION = '3.19.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 # Catalog skills whose description names every domain (public-apis lists 51 kinds of API): words always match them, so
 # they are candidates only when their capability in capabilities.json fires ("is there a free API for...").
@@ -549,7 +549,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     hist = history if history is not None else History(v1.RECIPES, v1.read_usage())
     sc = scan_result if scan_result is not None else scan(project)
     sit = read_situation(task, goal, sc)
-    if semantic is None:
+    if semantic is None or semantic is True:
         # Filler with no word of substance ("for the of a") means nothing, in words or in meaning.
         semantic = understand(sit['text']) if sit['words'] else None
     sit['semantic'] = semantic or None
@@ -575,13 +575,13 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     words = sit['words'][:sel_words()]
     missing = detect_missing(sit['words'], sit.get('said'))
     recalled = {}
-    if model is not None and model.w:
+    if model and model.w:
         recalled = {n: z for n, z in model.recall(words).items() if z >= RECALL and n not in after and n not in INTERNAL_SKILLS}
     votes = collect_signals(sit, after, hist, recalled, phase_queries, missing=missing)
     learned = {}
     quality = {}
     for n, v in votes.items():
-        z = model.preference(n, words, explore=explore) if model is not None else 0.0
+        z = model.preference(n, words, explore=explore) if model else 0.0
         if z:
             learned[n] = z
         if has_agreement(v) or (z >= RESCUE and v['words'] and v['relation'] != 'mismatch'):
@@ -598,26 +598,35 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     import sfp_cards
     import sfp_learn
     task_job, named_form = sfp_cards.task_intent(task)
-    taste = sfp_learn.load_taste()
+    taste = sfp_learn.load_taste() if (model is not False and sfp_learn) else {}
+    has_proj = bool(sit['ctx_tech'])
 
     for n in list(quality):
         card = sfp_cards.get_card(n)
         forms = card.get('output', ['text'])
         needs = card.get('needs', [])
-        tools_installed = any(t in sit['ctx'] or t in sit['words'] for t in needs) if needs else True
-        fit_mult = 1.15 if (needs and tools_installed) else (0.85 if needs and not tools_installed else 1.0)
+        v_rel = votes.get(n, {}).get('relation')
+        task_asked_for_tool = any(t in sit['words'] for t in needs) if needs else False
+        tools_installed = any(t in sit['ctx'] for t in needs) if needs else True
+        if has_proj and needs and not task_asked_for_tool and not tools_installed and v_rel not in ('fit', 'named'):
+            fit_mult = 0.85
+        elif has_proj and needs and tools_installed:
+            fit_mult = 1.15
+        else:
+            fit_mult = 1.0
 
         matching_form = (named_form in forms) or (named_form == 'text' and any(f in forms for f in ('text', 'document')))
-        if named_form:
-            if matching_form:
-                quality[n] = quality[n] * 2.5
-            else:
-                quality[n] = quality[n] * 0.3
-        else:
+        if named_form and matching_form:
+            taste_mult = 2.0
+        elif taste and taste.get('events', 0) > 0:
             form_pref = max([taste.get('output', {}).get(f, 0.0) for f in forms] or [0.0])
             style_pref = taste.get('style', {}).get(card.get('style'), 0.0)
             taste_mult = 1.0 + 0.6 * form_pref + 0.2 * style_pref
-            quality[n] = quality[n] * fit_mult * taste_mult
+        else:
+            taste_mult = 1.0
+
+        quality[n] = quality[n] * fit_mult * taste_mult
+
     why = {}
     pinned = [n for n in include if n not in exclude]
     rest = {n: q for n, q in quality.items() if n not in pinned}
@@ -634,7 +643,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     filtered_chosen = []
     alternatives = []
     for sub, items in sub_groups.items():
-        if len(items) <= 1 or sub in ('software-engineering-patterns',):
+        if len(items) <= 1 or sub in ('software-engineering-patterns', 'unit-testing'):
             filtered_chosen.extend(items)
         else:
             items_sorted = sorted(items, key=lambda it: -quality.get(it[0], 0.0))

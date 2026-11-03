@@ -1,0 +1,955 @@
+{
+  "_description": "4 simulated personas evaluating taste preference and explicit format overrides",
+  "personas": {
+    "visual_animation": {
+      "name": "Visual Learner (Animation)",
+      "taste_focus": "animation",
+      "history": [
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "framer-motion",
+          "verdict": "helped"
+        },
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "slack-gif-creator",
+          "verdict": "helped"
+        },
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "animate",
+          "verdict": "helped"
+        },
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "motion-patterns",
+          "verdict": "helped"
+        },
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "animation-vocabulary",
+          "verdict": "helped"
+        },
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        },
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "blender-skills",
+          "verdict": "helped"
+        },
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        }
+      ],
+      "tasks": [
+        {
+          "task": "explain how attention works in transformers",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "help me understand backpropagation in neural networks",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "explain quicksort partitioning visually",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video",
+            "motion-patterns"
+          ]
+        },
+        {
+          "task": "explain gradient descent optimization curves",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "understand how paxos consensus works",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "explain b-tree page splits and rebalancing",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "show how convolutional filters process pixels",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "explain fourier transform with rotating vectors",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "understand tokenization and byte pair encoding",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "explain how diffusion models denoise images",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "explain public key cryptography and diffie-hellman",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "understand how rawnav memory paging works",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "just give me a text summary of attention mechanisms",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me",
+            "continuous-learning-v2",
+            "documentation-lookup"
+          ]
+        },
+        {
+          "task": "write a markdown spec document for backprop",
+          "expect_job": "write",
+          "expect_form": "document",
+          "expect_skills": [
+            "technical-writing-and-docs",
+            "intent-driven-development"
+          ]
+        },
+        {
+          "task": "write a python code implementation for quicksort",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-patterns",
+            "python-testing"
+          ]
+        },
+        {
+          "task": "generate a flowchart diagram of gradient descent",
+          "expect_job": "design",
+          "expect_form": "diagram",
+          "expect_skills": [
+            "diagram-design",
+            "flowchart"
+          ]
+        },
+        {
+          "task": "give me a brief text bullet list of paxos steps",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me",
+            "checklist"
+          ]
+        },
+        {
+          "task": "write code benchmarks for b-tree indexing",
+          "expect_job": "test",
+          "expect_form": "code",
+          "expect_skills": [
+            "benchmark",
+            "python-testing"
+          ]
+        },
+        {
+          "task": "make a presentation slide deck for diffusion models",
+          "expect_job": "design",
+          "expect_form": "slides",
+          "expect_skills": [
+            "frontend-slides",
+            "mem-wowerpoint"
+          ]
+        },
+        {
+          "task": "create an interactive playground demo for encryption",
+          "expect_job": "build",
+          "expect_form": "interactive",
+          "expect_skills": [
+            "playground",
+            "interactive-demo"
+          ]
+        }
+      ]
+    },
+    "reader_text": {
+      "name": "Reader (Text / Reference)",
+      "taste_focus": "text",
+      "history": [
+        {
+          "skill": "teach-me",
+          "verdict": "helped"
+        },
+        {
+          "skill": "documentation-lookup",
+          "verdict": "helped"
+        },
+        {
+          "skill": "ecc-guide",
+          "verdict": "helped"
+        },
+        {
+          "skill": "teach-me",
+          "verdict": "helped"
+        },
+        {
+          "skill": "technical-writing-and-docs",
+          "verdict": "helped"
+        },
+        {
+          "skill": "teach-me",
+          "verdict": "helped"
+        },
+        {
+          "skill": "article-writing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "teach-me",
+          "verdict": "helped"
+        },
+        {
+          "skill": "continuous-learning-v2",
+          "verdict": "helped"
+        },
+        {
+          "skill": "teach-me",
+          "verdict": "helped"
+        },
+        {
+          "skill": "intent-driven-development",
+          "verdict": "helped"
+        },
+        {
+          "skill": "teach-me",
+          "verdict": "helped"
+        },
+        {
+          "skill": "architecture-decision-records",
+          "verdict": "helped"
+        },
+        {
+          "skill": "teach-me",
+          "verdict": "helped"
+        },
+        {
+          "skill": "docs-governance",
+          "verdict": "helped"
+        }
+      ],
+      "tasks": [
+        {
+          "task": "explain how attention works in transformers",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me",
+            "documentation-lookup"
+          ]
+        },
+        {
+          "task": "help me understand backpropagation in neural networks",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "explain quicksort algorithm principles",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "explain gradient descent math foundations",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "understand paxos distributed consensus protocol",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "explain b-tree internal node structures",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "explain convolutional neural network layer theory",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "understand discrete fourier transform equations",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "explain byte pair encoding tokenization algorithm",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "explain diffusion model score matching mathematics",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "understand elliptic curve diffie hellman key exchange",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "explain virtual memory page translation mechanisms",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me"
+          ]
+        },
+        {
+          "task": "create a manim animation of attention weights",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "make an animated video illustrating backpropagation",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "write a python code implementation for quicksort",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-patterns",
+            "python-testing"
+          ]
+        },
+        {
+          "task": "generate a flowchart diagram of paxos messages",
+          "expect_job": "design",
+          "expect_form": "diagram",
+          "expect_skills": [
+            "diagram-design"
+          ]
+        },
+        {
+          "task": "build an interactive playground for tokenization",
+          "expect_job": "build",
+          "expect_form": "interactive",
+          "expect_skills": [
+            "playground"
+          ]
+        },
+        {
+          "task": "create a slide deck presentation on diffusion models",
+          "expect_job": "design",
+          "expect_form": "slides",
+          "expect_skills": [
+            "frontend-slides",
+            "mem-wowerpoint"
+          ]
+        },
+        {
+          "task": "write benchmark code to stress test memory paging",
+          "expect_job": "test",
+          "expect_form": "code",
+          "expect_skills": [
+            "benchmark"
+          ]
+        },
+        {
+          "task": "produce an animated demonstration of b-trees",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        }
+      ]
+    },
+    "hands_on_code": {
+      "name": "Hands-On Learner (Code / Tests)",
+      "taste_focus": "code",
+      "history": [
+        {
+          "skill": "python-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "tdd-workflow",
+          "verdict": "helped"
+        },
+        {
+          "skill": "python-patterns",
+          "verdict": "helped"
+        },
+        {
+          "skill": "golang-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "python-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "rust-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "pytest",
+          "verdict": "helped"
+        },
+        {
+          "skill": "python-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "react-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "tdd-workflow",
+          "verdict": "helped"
+        },
+        {
+          "skill": "python-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "safe-refactor",
+          "verdict": "helped"
+        },
+        {
+          "skill": "python-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "cpp-testing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "python-testing",
+          "verdict": "helped"
+        }
+      ],
+      "tasks": [
+        {
+          "task": "how to implement jwt token verification",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-patterns",
+            "security-review"
+          ]
+        },
+        {
+          "task": "how to verify user email addresses on signup",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-testing",
+            "tdd-workflow"
+          ]
+        },
+        {
+          "task": "how to build a sliding window rate limiter",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-patterns",
+            "redis-patterns"
+          ]
+        },
+        {
+          "task": "how to write unit tests for order total calculations",
+          "expect_job": "test",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-testing",
+            "tdd-workflow"
+          ]
+        },
+        {
+          "task": "how to benchmark database query response latency",
+          "expect_job": "test",
+          "expect_form": "code",
+          "expect_skills": [
+            "benchmark",
+            "clickhouse-io"
+          ]
+        },
+        {
+          "task": "how to write a retry decorator with exponential backoff",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-patterns"
+          ]
+        },
+        {
+          "task": "how to parse and validate json schema payloads",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-patterns"
+          ]
+        },
+        {
+          "task": "how to implement optimistic locking for inventory",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "postgres-patterns",
+            "mysql-patterns"
+          ]
+        },
+        {
+          "task": "how to write mock tests for payment gateway webhooks",
+          "expect_job": "test",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-testing",
+            "tdd-workflow"
+          ]
+        },
+        {
+          "task": "how to configure connection pooling for postgresql",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "postgres-patterns"
+          ]
+        },
+        {
+          "task": "how to implement graceful shutdown for worker loops",
+          "expect_job": "build",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-patterns"
+          ]
+        },
+        {
+          "task": "how to add property-based fuzz tests for serialization",
+          "expect_job": "test",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-testing"
+          ]
+        },
+        {
+          "task": "just give me a text summary of rate limiting algorithms",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me",
+            "documentation-lookup"
+          ]
+        },
+        {
+          "task": "create an animated video explaining exponential backoff",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        },
+        {
+          "task": "draw an architecture diagram of payment webhook flows",
+          "expect_job": "design",
+          "expect_form": "diagram",
+          "expect_skills": [
+            "diagram-design"
+          ]
+        },
+        {
+          "task": "write a markdown spec document for order checkout",
+          "expect_job": "write",
+          "expect_form": "document",
+          "expect_skills": [
+            "technical-writing-and-docs"
+          ]
+        },
+        {
+          "task": "make a presentation slide deck for the database migration",
+          "expect_job": "design",
+          "expect_form": "slides",
+          "expect_skills": [
+            "frontend-slides"
+          ]
+        },
+        {
+          "task": "generate a security audit report on token handling",
+          "expect_job": "review",
+          "expect_form": "report",
+          "expect_skills": [
+            "security-review"
+          ]
+        },
+        {
+          "task": "create an interactive playground for testing schemas",
+          "expect_job": "build",
+          "expect_form": "interactive",
+          "expect_skills": [
+            "playground"
+          ]
+        },
+        {
+          "task": "animate database locking conflicts with manim",
+          "expect_job": "explain",
+          "expect_form": "animation",
+          "expect_skills": [
+            "manim-video"
+          ]
+        }
+      ]
+    },
+    "video_producer": {
+      "name": "Video Producer (Remotion / Video)",
+      "taste_focus": "video",
+      "history": [
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        },
+        {
+          "skill": "ui-demo",
+          "verdict": "helped"
+        },
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        },
+        {
+          "skill": "video-editing",
+          "verdict": "helped"
+        },
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        },
+        {
+          "skill": "videodb",
+          "verdict": "helped"
+        },
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        },
+        {
+          "skill": "tasteforge-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        },
+        {
+          "skill": "moneyprinterturbo-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        },
+        {
+          "skill": "manim-video",
+          "verdict": "helped"
+        },
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        },
+        {
+          "skill": "ui-demo",
+          "verdict": "helped"
+        },
+        {
+          "skill": "remotion-video-creation",
+          "verdict": "helped"
+        }
+      ],
+      "tasks": [
+        {
+          "task": "showcase the new checkout feature flow",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "walk through user onboarding steps",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "demonstrate dark mode toggle interactions",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "highlight top release notes features",
+          "expect_job": "write",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "record product tour for landing page header",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "capture bug reproduction in web app",
+          "expect_job": "fix",
+          "expect_form": "video",
+          "expect_skills": [
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "showcase mobile responsive drawer menu",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "demonstrate multi-tenant workspace switching",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "walk through api key creation in dashboard",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "showcase checkout discount coupon applied",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "demonstrate drag and drop kanban card moves",
+          "expect_job": "design",
+          "expect_form": "video",
+          "expect_skills": [
+            "remotion-video-creation",
+            "ui-demo"
+          ]
+        },
+        {
+          "task": "record full end to end user purchase journey",
+          "expect_job": "test",
+          "expect_form": "video",
+          "expect_skills": [
+            "ui-demo",
+            "remotion-video-creation"
+          ]
+        },
+        {
+          "task": "just write a text description of the onboarding flow",
+          "expect_job": "explain",
+          "expect_form": "text",
+          "expect_skills": [
+            "teach-me",
+            "technical-writing-and-docs"
+          ]
+        },
+        {
+          "task": "write python tests verifying the checkout flow",
+          "expect_job": "test",
+          "expect_form": "code",
+          "expect_skills": [
+            "python-testing",
+            "e2e-testing"
+          ]
+        },
+        {
+          "task": "generate a flowchart diagram of the purchase funnel",
+          "expect_job": "design",
+          "expect_form": "diagram",
+          "expect_skills": [
+            "diagram-design"
+          ]
+        },
+        {
+          "task": "write markdown release notes for the new features",
+          "expect_job": "write",
+          "expect_form": "document",
+          "expect_skills": [
+            "rea-changelog-update",
+            "technical-writing-and-docs"
+          ]
+        },
+        {
+          "task": "create a presentation slide deck for the product tour",
+          "expect_job": "design",
+          "expect_form": "slides",
+          "expect_skills": [
+            "frontend-slides",
+            "mem-wowerpoint"
+          ]
+        },
+        {
+          "task": "build an interactive playground demo of the drawer menu",
+          "expect_job": "build",
+          "expect_form": "interactive",
+          "expect_skills": [
+            "playground"
+          ]
+        },
+        {
+          "task": "export an svg icon vector of the new logo",
+          "expect_job": "design",
+          "expect_form": "image",
+          "expect_skills": [
+            "ios-icon-gen",
+            "image"
+          ]
+        },
+        {
+          "task": "produce an audit report of accessibility issues",
+          "expect_job": "review",
+          "expect_form": "report",
+          "expect_skills": [
+            "accessibility-audit",
+            "quality-scan"
+          ]
+        }
+      ]
+    }
+  }
+}

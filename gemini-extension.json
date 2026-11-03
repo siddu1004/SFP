@@ -1,6 +1,6 @@
 {
   "name": "sfp",
-  "version": "3.18.0",
+  "version": "3.19.0",
   "description": "SFP: 1065 agent skills, searchable and readable on demand, with a hive that picks the few each task needs.",
   "mcpServers": {
     "sfp": {
