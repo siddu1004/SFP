@@ -41,6 +41,7 @@ def fake_vector(text):
 class FakeModels(http.server.BaseHTTPRequestHandler):
     calls = []
     chat_answer = 'brute force protection, rate limiting, account lockout'
+    last_auth = None
 
     def log_message(self, *a):
         pass
@@ -57,6 +58,7 @@ class FakeModels(http.server.BaseHTTPRequestHandler):
         self._send({'data': [{'id': 'fake-embed'}, {'id': 'fake-chat-7b'}]})
 
     def do_POST(self):
+        FakeModels.last_auth = self.headers.get('Authorization')
         body = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
         FakeModels.calls.append(self.path)
         if self.path.endswith('/embeddings'):
@@ -176,6 +178,83 @@ class IntentTest(LocalModelCase):
         self.assertEqual(first, ['brute force protection', 'rate limiting', 'account lockout'])
         self.assertEqual(first, second)
         self.assertEqual(FakeModels.calls.count('/v1/chat/completions'), 1, 'the second rewrite comes from the cache')
+
+    def test_api_models_lifecycle_and_env(self):
+        entry = sfp_intent.add_api_model('test-api', 'http://example.com/v1', 'my-model', key_env='TEST_KEY_ENV', tasks=False)
+        self.assertEqual(entry['name'], 'test-api')
+        apis = sfp_intent.api_models()
+        self.assertTrue(any(m['name'] == 'test-api' for m in apis))
+
+        os.environ.pop('TEST_KEY_ENV', None)
+        found_models = sfp_intent.found()
+        self.assertFalse(any(m.get('model') == 'my-model' for m in found_models))
+
+        os.environ['TEST_KEY_ENV'] = 'secret-123'
+        try:
+            found_models = sfp_intent.found()
+            self.assertTrue(any(m.get('model') == 'my-model' for m in found_models))
+
+            found_for_tasks = sfp_intent.found(for_tasks=True)
+            self.assertFalse(any(m.get('model') == 'my-model' for m in found_for_tasks))
+        finally:
+            os.environ.pop('TEST_KEY_ENV', None)
+
+        sfp_intent.remove_api_model('test-api')
+        self.assertFalse(any(m['name'] == 'test-api' for m in sfp_intent.api_models()))
+
+    def test_chat_sends_bearer_key(self):
+        os.environ['TEST_BEARER_KEY'] = 'bearer-token-xyz'
+        ep = {'base_url': self.env['SFP_REWRITE_URL'], 'model': 'fake-chat-7b', 'key_env': 'TEST_BEARER_KEY'}
+        try:
+            sfp_intent.chat(ep, 'hello', 10, 5.0)
+            self.assertEqual(FakeModels.last_auth, 'Bearer bearer-token-xyz')
+        finally:
+            os.environ.pop('TEST_BEARER_KEY', None)
+
+    def test_rerank_picks_cache_and_filtering(self):
+        items = [('skill-a', 'desc a'), ('skill-b', 'desc b'), ('skill-c', 'desc c'), ('skill-d', 'desc d')]
+        orig_answer = FakeModels.chat_answer
+        FakeModels.chat_answer = '3, 1, 99, 0, 2, 4'
+        FakeModels.calls.clear()
+        task = 'test task for rerank filtering'
+        picks = sfp_intent.rerank(task, items)
+        self.assertEqual(picks, ['skill-c', 'skill-a', 'skill-b'])
+
+        calls_before = len(FakeModels.calls)
+        picks2 = sfp_intent.rerank(task, items)
+        self.assertEqual(picks2, picks)
+        self.assertEqual(len(FakeModels.calls), calls_before)
+        FakeModels.chat_answer = orig_answer
+
+    def test_hive_rerank_wanted(self):
+        import sfp_hive
+        saved = os.environ.get('SFP_RERANK')
+        try:
+            os.environ['SFP_RERANK'] = '0'
+            self.assertFalse(sfp_hive.rerank_wanted({'words_weak': True}))
+            os.environ['SFP_RERANK'] = '1'
+            self.assertTrue(sfp_hive.rerank_wanted({'words_weak': False}))
+            os.environ['SFP_RERANK'] = 'auto'
+            self.assertTrue(sfp_hive.rerank_wanted({'words_weak': True}))
+            self.assertFalse(sfp_hive.rerank_wanted({'words_weak': False}))
+        finally:
+            if saved is None:
+                os.environ.pop('SFP_RERANK', None)
+            else:
+                os.environ['SFP_RERANK'] = saved
+
+    def test_hive_select_with_fake_rerank(self):
+        import sfp_hive
+        old_rerank = sfp_hive.rerank
+        sfp_hive.rerank = lambda sit, votes, quality, exclude: ['python-testing']
+        try:
+            res = sfp_hive.select('write some unit tests for python functions', None, semantic=False)
+            self.assertIn('python-testing', res['reranked'])
+            lead = res['stack'][0]
+            self.assertEqual(lead['name'], 'python-testing')
+            self.assertIn('judged the best fit by the local model', lead['reasons'])
+        finally:
+            sfp_hive.rerank = old_rerank
 
 
 class ModelChoiceTest(unittest.TestCase):

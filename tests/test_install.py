@@ -1,3 +1,4 @@
+import unittest.mock
 """The installer (scripts/install.py): upgrading from the old skill name, and running an installed skill.
 
 Everything runs against a throwaway home folder; the real one is never touched.
@@ -210,7 +211,7 @@ class VSCodeAndRulesTest(InstallerTest):
             calls.append(cmd)
             res = unittest.mock.MagicMock()
             res.returncode = 0
-            res.stdout = "v3.18.0\nv3.17.7\n" if 'tag' in cmd else ""
+            res.stdout = "v3.19.0\nv3.18.0\n" if 'tag' in cmd else ""
             res.stderr = ""
             return res
 
@@ -222,10 +223,37 @@ class VSCodeAndRulesTest(InstallerTest):
             # Verify fetch was called with --tags
             self.assertTrue(any('fetch' in c and '--tags' in c for c in calls))
             # Verify checkout was called with the latest tag
-            self.assertTrue(any('checkout' in c and 'v3.18.0' in c for c in calls))
+            self.assertTrue(any('checkout' in c and 'v3.19.0' in c for c in calls))
             # Critical requirement: MUST NEVER pull main
             for c in calls:
                 self.assertFalse('pull' in c and 'main' in c, f"Command pulled main: {c}")
+
+
+    def test_is_newer_checks_version_and_update_never_checks_out_older_tag(self):
+        sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+        import install
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, 'package.json'), 'w', encoding='utf-8') as f:
+                json.dump({'version': '3.18.0'}, f)
+            self.assertFalse(install.is_newer('v3.17.7', d))
+            self.assertFalse(install.is_newer('v3.18.0', d))
+            self.assertTrue(install.is_newer('v3.19.0', d))
+
+            calls = []
+            def fake_run(cmd, *a, **kw):
+                calls.append(cmd)
+                res = unittest.mock.MagicMock()
+                res.returncode = 0
+                res.stdout = 'v3.17.7\n' if 'tag' in cmd else ''
+                res.stderr = ''
+                return res
+            with unittest.mock.patch('subprocess.run', side_effect=fake_run), unittest.mock.patch('install.cmd_install'), unittest.mock.patch('install.load_catalog', return_value={'skills': []}), unittest.mock.patch('install.ROOT', d):
+                args = unittest.mock.MagicMock()
+                cat = {'skills': []}
+                install.cmd_update(cat, args)
+                for c in calls:
+                    self.assertFalse('checkout' in c and 'v3.17.7' in c)
 
 
 if __name__ == '__main__':

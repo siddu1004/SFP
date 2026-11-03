@@ -465,7 +465,7 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `moli` | Fast, resource-light headless browser automation using Moli for web scraping and AI agent DOM extraction. Use when running lightweight browser automation, extracting clean DOM content, or scraping web… |
 | `graft` | Compile and execute declarative multi-agent pipelines using the Graft CLI runtime. Compose agent graphs, state handoffs, and verification steps into repeatable workflows. Use when orchestrating cooper… |
 
-## agent-dev (105)
+## agent-dev (104)
 
 Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.
 
@@ -575,7 +575,6 @@ Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budge
 | `cloudflare-codemode` | Build and run sandboxed agent tools using Cloudflare Code Mode (@cloudflare/codemode). Connects dynamic Worker sandboxes, Durable Objects, OpenAPI, and MCP servers safely. Use when creating agent sand… |
 | `harness-engineering` | Design, test, and optimize AI agent execution harnesses, test fixtures, action spaces, and evaluation gates. Use when building agent evaluation loops, configuring autonomous runtime environments, or o… |
 | `opencode` | Automate coding workflows using OpenCode CLI (opencode) and terminal subagents. Use when orchestrating background coding tasks, running automated pull request triage, or integrating multi-model coding… |
-| `skill-mentor` | Grow new skills for the user from research: notice what they lean towards, find and read the best papers, and turn them into practical skills. Use when the user wants SFP to learn, asks for skills fro… |
 
 ## ai-ml (12)
 

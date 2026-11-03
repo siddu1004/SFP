@@ -42,7 +42,7 @@
   },
   "agent-dev": {
    "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.",
-   "skills": 105
+   "skills": 104
   },
   "ai-ml": {
    "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
@@ -9821,15 +9821,6 @@
    "source": "cbrock84/headcount",
    "license": "MIT",
    "path": "plugins/business-ops/skills/test-driven-development",
-   "variants": {}
-  },
-  {
-   "name": "skill-mentor",
-   "category": "agent-dev",
-   "description": "Grow new skills for the user from research: notice what they lean towards, find and read the best papers, and turn them into practical skills. Use when the user wants SFP to learn, asks for skills from research or the latest papers, keeps hitting gaps, or says to make them better at what they do.",
-   "source": "siddu1004/SFP",
-   "license": "MIT",
-   "path": "plugins/agent-dev/skills/skill-mentor",
    "variants": {}
   },
   {

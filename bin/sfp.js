@@ -139,6 +139,20 @@ function fetchJson(url, headers = {}) {
   });
 }
 
+function isSemverNewer(remote, local) {
+  if (!remote || !local) return false;
+  const parse = v => (String(v).replace(/^v/, '').split('.').map(x => parseInt(x, 10) || 0));
+  const r = parse(remote);
+  const l = parse(local);
+  for (let i = 0; i < 3; i++) {
+    const rv = r[i] || 0;
+    const lv = l[i] || 0;
+    if (rv > lv) return true;
+    if (rv < lv) return false;
+  }
+  return false;
+}
+
 async function checkRemoteUpdate(rootDir) {
   let remoteCommit = '';
   let localCommit = '';
@@ -175,7 +189,7 @@ async function checkRemoteUpdate(rootDir) {
     const npmData = await fetchJson(NPM_REGISTRY_LATEST);
     if (npmData && npmData.version) {
       remoteVersion = npmData.version;
-      if (localVersion && remoteVersion !== localVersion) {
+      if (localVersion && isSemverNewer(remoteVersion, localVersion)) {
         hasUpdate = true;
       }
     }

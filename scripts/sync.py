@@ -456,7 +456,9 @@ def measure(cfg, cats, catalog):
             sizes.append(os.path.getsize(f) // 4)
     sizes.sort()
 
-    # The hive, scored against the earlier engine and plain search on the same tasks, and whether it learns.
+    # The hive, scored against the earlier engine and plain search on the same tasks, and whether it learns. Words alone
+    # (SFP_SEMANTIC=0), so the README's figures are the same on every machine and no local model is asked per task.
+    os.environ['SFP_SEMANTIC'] = '0'
     sys.modules['sfp_mcp'] = mod
     sys.path.insert(0, os.path.join(ROOT, 'mcp'))
     for stale in ('sfp_stack', 'sfp_hive', 'sfp_learn'):

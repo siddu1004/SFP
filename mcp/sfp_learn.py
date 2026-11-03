@@ -538,7 +538,8 @@ def learning_curve(tests_dir=None, folds=5, seeds=5, rng_seed=7):
         cases = [c for _, cs in sel.load_cases(tests_dir, tmp) for c in cs]
 
         def run(c, model=None):
-            return sel.select(c['task'], c['project'], history=hist, model=model)
+            # words alone, as evaluate's published figures: the same on every machine, and no model asked per task
+            return sel.select(c['task'], c['project'], history=hist, model=model, semantic=False)
 
         def ok(c, res):
             return bool({x for x in c['expect'] if x in core.SKILLS} & {s['name'] for s in res['stack']})

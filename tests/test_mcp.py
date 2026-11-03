@@ -87,6 +87,19 @@ class McpServerTest(unittest.TestCase):
             self.assertEqual(t['inputSchema']['type'], 'object')
             self.assertNotIn('fn', t)
 
+    def test_grow_skills_requires_approval_and_find_gap_suggests_grow(self):
+        tools = {t['name']: t for t in self.c.rpc('tools/list')['result']['tools']}
+        desc = tools['grow_skills']['description'].lower()
+        self.assertIn('draft', desc)
+        self.assertTrue('approve' in desc or 'approval' in desc)
+
+        import sfp_hive
+        gap = sfp_hive.find_gap('simulate quantum teleportation with qiskit', {'semantic': {'terms': []}}, [], {}, [], {})
+        self.assertIsNotNone(gap)
+        self.assertIn('grow', gap)
+        self.assertTrue(gap['grow'].startswith('sfp mentor grow'))
+
+
     def test_search_finds_the_right_skill(self):
         err, text = self.c.call('search_skills', query='postgres schema migration', limit=5)
         self.assertFalse(err)
@@ -218,6 +231,8 @@ class PortablePathsTest(unittest.TestCase):
             out = subprocess.run([sys.executable, '-c', code], capture_output=True, text=True, timeout=60,
                                  env=dict(os.environ, SFP_ROOT=d))
             self.assertEqual(json.loads(out.stdout), ['plugins/sfp/skills/sfp', 'plugins/sfp/skills/sfp-hive'], out.stderr)
+
+
 
 
 if __name__ == '__main__':

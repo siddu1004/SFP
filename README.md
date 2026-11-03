@@ -7,12 +7,12 @@
 
 <p align="center">
   <b>Give your AI coding agent the right skills for the job, not all of them.</b><br>
-  1066 skills, sorted by what you build. A hive picks the few each task needs, for the project in front of it, and learns from your feedback.
+  1065 skills, sorted by what you build. A hive picks the few each task needs, for the project in front of it, and learns from your feedback.
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-3.18.0-0f766e?style=flat-square&labelColor=3b4350" alt="Version 3.18.0">
-  <img src="https://img.shields.io/badge/skills-1066-0f766e?style=flat-square&labelColor=3b4350" alt="1066 skills">
+  <img src="https://img.shields.io/badge/skills-1065-0f766e?style=flat-square&labelColor=3b4350" alt="1065 skills">
   <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
   <img src="https://img.shields.io/badge/tested_end_to_end-Claude_Code-0f766e?style=flat-square&labelColor=3b4350" alt="Tested end to end in Claude Code">
   <img src="https://img.shields.io/badge/needs-Python_3-0f766e?style=flat-square&labelColor=3b4350" alt="Needs Python 3">
@@ -22,7 +22,7 @@
 <p align="center">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/results-numbers-dark.svg">
-  <img src="assets/results-numbers-light.svg" alt="86% right skill on unseen tasks (plain search 9%); 5 of 6 pages shipped with SFP against 4 of 6 without skills; 1066 skills" width="100%">
+  <img src="assets/results-numbers-light.svg" alt="86% right skill on unseen tasks (plain search 9%); 5 of 6 pages shipped with SFP against 4 of 6 without skills; 1065 skills" width="100%">
 </picture>
 </p>
 
@@ -61,7 +61,7 @@ Uninstall cleanly anytime: `~/.sfp/SFP/install.sh uninstall` (or `.\install.ps1 
 
 High-quality agent skills exist, but using them today forces a painful tradeoff:
 
-- **The 58,000-Token Tax**: Agents read every installed skill description at session start. For 1066 skills, that consumes **82,012 tokens** (41% of a 200k context window) before you type a single prompt.
+- **The 58,000-Token Tax**: Agents read every installed skill description at session start. For 1065 skills, that consumes **81,931 tokens** (41% of a 200k context window) before you type a single prompt.
 - **Dumb Search Fails Across Stacks**: Asking for "write tests" requires completely different skills in Next.js (`react-testing`), Django (`django-tdd`), or Rust (`rust-testing`). Keyword search cannot see your project structure.
 - **Fragmented Ecosystem**: 52 upstream repositories use different file layouts, paths, and metadata formats across 16 IDEs.
 - **Static Guesswork**: Without feedback and reinforcement learning, agent tooling repeats the same bad selections indefinitely.
@@ -81,8 +81,8 @@ SFP brings biological collective intelligence to agent skill orchestration:
 
 | Capability | Mechanism | Impact |
 |---|---|---|
-| **Curate & Unify** | 92 repositories merged into 24 categories, organized by role presets | Complete coverage across frontend, backend, security, DevOps, and AI |
-| **Dynamic Hive Selection** | 5 scout signals (task words, project files, work phase, category, history) reach quorum | **266 tokens** carried instead of 82,012: **308x reduction** |
+| **Curate & Unify** | 91 repositories merged into 24 categories, organized by role presets | Complete coverage across frontend, backend, security, DevOps, and AI |
+| **Dynamic Hive Selection** | 5 scout signals (task words, project files, work phase, category, history) reach quorum | **266 tokens** carried instead of 81,931: **308x reduction** |
 | **LinUCB Bandit & RL** | Contextual bandit exploration plus implicit reward harvesting from test runs and git commits | **91% of reported mistakes fixed** on retry |
 | **Universal Delivery** | Native folder injection for 16 IDEs + zero-install MCP server + VS Code / Antigravity extension | Install once, run anywhere |
 | **Unlimited Multi-Bundle Stacking** | Stack multiple workflow recipes concurrently (e.g. testing + frontend + security) with auto-deduplication | Zero limits on active bundle depth |
@@ -136,8 +136,8 @@ The exact same prompt &mdash; *"write tests for the orders"* &mdash; executed in
 | Next.js | `react-testing`, `playwright-cli`, `application-security-testing` |
 | Rust | `rust-testing` |
 | .NET | `csharp-testing` |
-| Flutter | `dart-flutter-patterns`, `experimentation`, `flutter-dart-code-review` |
-| Django | `django-celery`, `experimentation` |
+| Flutter | `dart-flutter-patterns`, `flutter-dart-code-review` |
+| Django | `django-celery`, `django-tdd` |
 
 Notice that plain keyword search yields identical, generic results everywhere. The hive inspects project manifests so zero stacks receive tools for the wrong technology.
 
@@ -154,7 +154,7 @@ SFP supports 16 IDEs and provides three flexible delivery modes:
 - **Local Model Router**: Manages local backends (Ollama, LM Studio, llama.cpp, vLLM) with automatic failover and zero telemetry.
 
 ### 2. Zero-Footprint MCP Server
-- Serves all 1066 skills dynamically via standard JSON-RPC over stdio.
+- Serves all 1065 skills dynamically via standard JSON-RPC over stdio.
 - Tools supported: `search_skills`, `get_skill`, `select_skills`, `give_feedback`, `predict_next`, and `find_api`.
 - Zero context bloat: skills are loaded on demand only when invoked.
 
@@ -216,17 +216,17 @@ Figures below are computed directly from this repository during the build. Repro
 
 | What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |
 |---|---:|---:|---:|
-| `sfp` and `sfp-hive` only (the rest on demand) | 2 + all 1064 through them | about 266 tokens | 0.1% |
-| `starter` preset | 175 | about 15,436 tokens | 7.7% |
+| `sfp` and `sfp-hive` only (the rest on demand) | 2 + all 1063 through them | about 266 tokens | 0.1% |
+| `starter` preset | 174 | about 15,355 tokens | 7.7% |
 | `frontend-dev` preset | 225 | about 16,541 tokens | 8.3% |
 | `backend-dev` preset | 151 | about 13,382 tokens | 6.7% |
 | `mobile-dev` preset | 84 | about 6,886 tokens | 3.4% |
-| `agent-builder` preset | 310 | about 20,739 tokens | 10.4% |
-| `everything` | 1066 | about 82,012 tokens | 41.0% |
+| `agent-builder` preset | 309 | about 20,658 tokens | 10.3% |
+| `everything` | 1065 | about 81,931 tokens | 41.0% |
 
 **How fast is it?**
 
-Decisions take about 9 ms inside the host process. Search takes about 0.1 ms. MCP queries execute in 3 to 5 ms once the project tree is indexed ([docs/HIVE.md](docs/HIVE.md#speed)).
+Decisions take about 6 ms inside the host process. Search takes about 0.1 ms. MCP queries execute in 3 to 5 ms once the project tree is indexed ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better across every domain. Learning is measured on a simulated user, not on real long-run use. Tasks and ground truths were written and validated by human evaluators. Token counts are estimated at 4 characters per token.
 
@@ -243,7 +243,7 @@ This guide takes you from a bare machine to an agent that gets the right skills 
 | [3. Check the install](#3-check-the-install) | A health report | Yes |
 | [4. Install skills into your tools](#4-install-skills-into-your-tools) | Skills your agent can use | Yes |
 | [5. Add the standing instruction](#5-add-the-standing-instruction) | The agent asks the hive on every real task | Recommended |
-| [6. Register the MCP server](#6-register-the-mcp-server) | All 1066 skills on demand, nothing copied | Recommended |
+| [6. Register the MCP server](#6-register-the-mcp-server) | All 1065 skills on demand, nothing copied | Recommended |
 | [7. Install the SFP Hive extension](#7-install-the-sfp-hive-extension) | The sidebar in Antigravity or VS Code | Optional |
 | [8. Use SFP in Antigravity](#8-use-sfp-in-antigravity) | Your first task with the hive | Use it |
 | [9. Let the hive use local models](#9-optional-let-the-hive-use-local-models) | Meaning search, your role, skills from research | Optional |
@@ -325,7 +325,7 @@ python3 mcp/sfp_hive.py doctor
 
 If you used 2A, this is done; read on only to change what is installed.
 
-SFP has 1066 skills. Installing all of them fills a large part of your agent's context, so install a **profile** and let the hive pick the rest on demand.
+SFP has 1065 skills. Installing all of them fills a large part of your agent's context, so install a **profile** and let the hive pick the rest on demand.
 
 ```bash
 python3 scripts/install.py list                       # all categories, profiles and the tools found on this machine
@@ -370,7 +370,7 @@ python3 scripts/install.py rules --project .              # only this project (A
 
 ### 6. Register the MCP server
 
-The MCP server lets any MCP client search and read all 1066 skills on demand, with nothing copied into your tools.
+The MCP server lets any MCP client search and read all 1065 skills on demand, with nothing copied into your tools.
 
 ```bash
 python3 scripts/install.py mcp                            # every tool found
@@ -410,7 +410,7 @@ Open the **SFP Hive** icon in the activity bar. It has three views: **SFP Hive**
 |---|---|
 | **Now** | Follows your work (saved files, test runs, commits) to tell which phase you are in, and shows the skills and bundle for it |
 | **Choose** | Type a task; the hive picks a few skills and orders them. Click one to see why it was chosen, `+` to pin another, `x` to drop one |
-| **Library** | Browse all 1066 skills by area, goal, bundle and cluster; open a skill, pin it or add it to a bundle |
+| **Library** | Browse all 1065 skills by area, goal, bundle and cluster; open a skill, pin it or add it to a bundle |
 | **Insights** | What the hive has learned from your feedback, and **Check connection** |
 
 ![A bundle in the Skill Library](extensions/antigravity-hive/media/screenshot-bundle.png)
