@@ -73,16 +73,16 @@ def validate_card(c):
 # Explicit output form patterns in user requests
 OUTPUT_PATTERNS = [
     (r'\b(?:animation|animated|animate|manim|motion\s*graphic)\b', 'animation'),
-    (r'\b(?:video|screencast|recording|movie|clip)\b', 'video'),
+    (r'\b(?:video|screencast|recording|record|movie|clip)\b', 'video'),
     (r'\b(?:slides?|presentation|slide\s*deck|deck|keynote)\b', 'slides'),
     (r'\b(?:diagram|flowchart|mermaid|wireframe)\b', 'diagram'),
     (r'\b(?:interactive|simulator|playground|sandbox)\b', 'interactive'),
-    (r'\b(?:(?:generate|create|make|draw)\s+(?:an?\s+)?(?:image|picture|graphic|illustration|svg|logo|(?:app\s+)?icon)|as\s+an?\s+image)\b', 'image'),
-    (r'\b(?:text\s+(?:summary|explanation|breakdown)|markdown\s+summary|text\s+only|in\s+text|in\s+writing|summary\s+of|article|essay)\b', 'text'),
-    (r'\b(?:as\s+code|code\s+only|boilerplate\s+only)\b', 'code'),
+    (r'\b(?:(?:generate|create|make|draw|export)\s+(?:an?\s+)?(?:image|picture|graphic|illustration|svg|logo|(?:app\s+)?icon)|as\s+an?\s+image|svg\s+icon)\b', 'image'),
+    (r'\b(?:text\s+(?:summary|explanation|breakdown|description)|markdown\s+summary|text\s+only|in\s+text|in\s+writing|summary\s+of|bullet\s+list|article|essay)\b', 'text'),
+    (r'\b(?:as\s+code|code\s+only|boilerplate\s+only|code\s+implementation|code\s+benchmarks?|benchmark\s+code|python\s+tests?|python\s+code)\b', 'code'),
     (r'\b(?:generate\s+config|write\s+(?:a\s+)?dockerfile|create\s+(?:a\s+)?manifest)\b', 'config'),
-    (r'\b(?:report|scorecard|audit\s*summary)\b', 'report'),
-    (r'\b(?:as\s+a\s+document|draft\s+an?\s+(?:rfc|adr|document|spec))\b', 'document'),
+    (r'\b(?:report|scorecard|audit\s*summary|audit\s+report|produce\s+an?\s+audit)\b', 'report'),
+    (r'\b(?:as\s+a\s+document|draft\s+an?\s+(?:rfc|adr|document|spec)|markdown\s+spec|spec\s+document|release\s+notes)\b', 'document'),
 ]
 
 JOB_PATTERNS = [

@@ -132,8 +132,13 @@ def card_from_words(name, desc, body):
 
     # Substitutes_for: domain/job grouping
     # e.g. explain-concepts, unit-testing, e2e-testing, code-review, ui-design, database-patterns, etc.
-    if job == 'explain':
+    if 'video' in outs or any(w in name for w in ('video', 'remotion', 'screencast')):
+        sub = 'video-creation'
+    elif job == 'explain' or name == 'manim-video':
         sub = 'explain-concepts'
+        job = 'explain'
+    elif 'animation' in outs or any(w in name for w in ('anim', 'motion')):
+        sub = 'motion-and-animation'
     elif job == 'test':
         if 'e2e' in full or 'playwright' in full:
             sub = 'e2e-testing'
@@ -147,9 +152,7 @@ def card_from_words(name, desc, body):
         else:
             sub = 'code-review'
     elif job == 'design':
-        if 'animation' in outs or 'video' in outs:
-            sub = 'motion-and-animation'
-        elif 'system' in full or 'pattern' in full:
+        if 'system' in full or 'pattern' in full:
             sub = 'design-systems'
         else:
             sub = 'ui-ux-design'

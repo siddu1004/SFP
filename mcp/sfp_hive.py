@@ -216,6 +216,41 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
             lead = sorted(ctx_tech, key=lambda t: (-ctx[t], t))[:3]
             for score, s in core.scored_search(query + ' ' + ' '.join(lead), limit=80):
                 found[s['name']] = max(found.get(s['name'], 0), 0.8 * score)
+        import sfp_cards
+        task_job, named_form = sfp_cards.task_intent(sit.get('text', ''))
+        full_top = max(found.values() or [1.0])
+        if task_job == 'explain' or any(w in words for w in ('explain', 'understand', 'teach', 'learn')):
+            for sk in ('teach-me', 'manim-video', 'understand-explain', 'continuous-learning-v2', 'rederive'):
+                if sk in core.SKILLS:
+                    found[sk] = max(found.get(sk, 0), 0.85 * full_top)
+        taste = sit.get('taste') or {}
+        if taste and taste.get('output'):
+            if taste['output'].get('video', 0.0) >= 2.0:
+                if any(w in sit.get('text', '').lower() for w in ('showcase', 'walk through', 'demonstrate', 'highlight', 'record', 'capture', 'tour', 'journey', 'demo', 'screen', 'flow')) or task_job in ('design', 'build'):
+                    for sk in ('remotion-video-creation', 'ui-demo', 'video-editing'):
+                        if sk in core.SKILLS:
+                            found[sk] = max(found.get(sk, 0), 0.85 * full_top)
+            if taste['output'].get('animation', 0.0) >= 2.0:
+                if task_job in ('explain', 'design', 'build'):
+                    for sk in ('manim-video', 'motion-patterns', 'framer-motion', 'animate'):
+                        if sk in core.SKILLS:
+                            found[sk] = max(found.get(sk, 0), 0.85 * full_top)
+        if named_form:
+            form_cands = {
+                'animation': ('manim-video', 'motion-patterns'),
+                'video': ('remotion-video-creation', 'ui-demo'),
+                'text': ('teach-me', 'documentation-lookup'),
+                'slides': ('frontend-slides', 'mem-wowerpoint'),
+                'diagram': ('diagram-design', 'flowchart'),
+                'interactive': ('playground', 'interactive-demo'),
+                'image': ('ios-icon-gen', 'image'),
+                'document': ('technical-writing-and-docs', 'rea-changelog-update'),
+                'report': ('accessibility-audit', 'quality-scan'),
+                'code': ('python-patterns', 'python-testing', 'benchmark'),
+            }
+            for sk in form_cands.get(named_form, ()):
+                if sk in core.SKILLS:
+                    found[sk] = max(found.get(sk, 0), 0.85 * full_top)
     meaning = {}
     if sit.get('semantic'):
         top_kw = max(found.values() or [0.0])
@@ -577,6 +612,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     recalled = {}
     if model and model.w:
         recalled = {n: z for n, z in model.recall(words).items() if z >= RECALL and n not in after and n not in INTERNAL_SKILLS}
+    import sfp_learn
+    taste = sfp_learn.load_taste() if (model is not False and sfp_learn) else {}
+    sit['taste'] = taste
     votes = collect_signals(sit, after, hist, recalled, phase_queries, missing=missing)
     learned = {}
     quality = {}
@@ -617,7 +655,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
 
         matching_form = (named_form in forms) or (named_form == 'text' and any(f in forms for f in ('text', 'document')))
         if named_form and matching_form:
-            taste_mult = 2.0
+            taste_mult = 3.0
+        elif named_form and not matching_form:
+            taste_mult = 0.2
         elif taste and taste.get('events', 0) > 0:
             form_pref = max([taste.get('output', {}).get(f, 0.0) for f in forms] or [0.0])
             style_pref = taste.get('style', {}).get(card.get('style'), 0.0)
@@ -661,6 +701,8 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                         'reason': f"alternative: {alt_form} format ({alt_it[0]})"
                     })
                     break
+    if taste and taste.get('events', 0) > 0 or named_form:
+        filtered_chosen.sort(key=lambda it: -quality.get(it[0], 0.0))
     chosen = filtered_chosen
     for n in pinned:
         # The user's choice: it takes the job it suits best, and is listed with the others.
@@ -714,7 +756,10 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                       'response': round(resp, 3), 'relevance': round(v['words'], 3),
                       'path': core.SKILLS[name]['path'] + '/SKILL.md', 'reasons': reasons,
                       'card': card})
-    stack.sort(key=lambda c: (v1.PHASE_ORDER.index(c['phase']), -c['score']))
+    if taste and taste.get('events', 0) > 0 or named_form:
+        stack.sort(key=lambda c: -c['score'])
+    else:
+        stack.sort(key=lambda c: (v1.PHASE_ORDER.index(c['phase']), -c['score']))
 
     used = {c['name'] for c in stack}
     recipe, best = None, 0.0

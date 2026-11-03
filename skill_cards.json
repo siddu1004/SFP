@@ -122,14 +122,12 @@
     "animate": {
       "job": "review",
       "output": [
-        "animation",
-        "document",
-        "code"
+        "animation"
       ],
       "style": "visual",
       "depth": "practitioner",
       "needs": [],
-      "substitutes_for": "code-review",
+      "substitutes_for": "motion-and-animation",
       "source": "words",
       "hash": "702e1f2ab1ac699c"
     },
@@ -264,7 +262,7 @@
       "style": "visual",
       "depth": "practitioner",
       "needs": [],
-      "substitutes_for": "code-review",
+      "substitutes_for": "motion-and-animation",
       "source": "words",
       "hash": "0bcdbe2fa4af009f"
     },
@@ -324,7 +322,7 @@
       "style": "visual",
       "depth": "practitioner",
       "needs": [],
-      "substitutes_for": "code-review",
+      "substitutes_for": "motion-and-animation",
       "source": "words",
       "hash": "b556e31e11ead6e0"
     },
@@ -1737,15 +1735,12 @@
     "moneyprinterturbo-video": {
       "job": "build",
       "output": [
-        "video",
-        "config",
-        "report",
-        "code"
+        "video"
       ],
       "style": "visual",
       "depth": "practitioner",
       "needs": [],
-      "substitutes_for": "software-engineering-patterns",
+      "substitutes_for": "video-creation",
       "source": "words",
       "hash": "eb13a7944f0cf1e9"
     },
@@ -4376,16 +4371,12 @@
     "motion-patterns": {
       "job": "build",
       "output": [
-        "animation",
-        "image",
-        "document",
-        "code",
-        "text"
+        "animation"
       ],
       "style": "visual",
       "depth": "practitioner",
       "needs": [],
-      "substitutes_for": "software-engineering-patterns",
+      "substitutes_for": "motion-and-animation",
       "source": "words",
       "hash": "b11b615585c662a5"
     },
@@ -5188,20 +5179,15 @@
     "remotion-video-creation": {
       "job": "build",
       "output": [
-        "animation",
         "video",
-        "diagram",
-        "image",
-        "document",
-        "code",
-        "text"
+        "animation"
       ],
       "style": "visual",
       "depth": "practitioner",
       "needs": [
         "remotion"
       ],
-      "substitutes_for": "software-engineering-patterns",
+      "substitutes_for": "video-creation",
       "source": "words",
       "hash": "a5f5ca7ef205db16"
     },
@@ -5710,17 +5696,14 @@
     "tasteforge-video": {
       "job": "review",
       "output": [
-        "video",
-        "image",
-        "document",
-        "code"
+        "video"
       ],
       "style": "visual",
       "depth": "practitioner",
       "needs": [
         "blender"
       ],
-      "substitutes_for": "code-review",
+      "substitutes_for": "video-creation",
       "source": "words",
       "hash": "c7973cb4e105ec95"
     },
@@ -5856,17 +5839,14 @@
       "job": "design",
       "output": [
         "video",
-        "slides",
-        "interactive",
-        "document",
-        "code"
+        "interactive"
       ],
       "style": "visual",
       "depth": "beginner",
       "needs": [
         "playwright"
       ],
-      "substitutes_for": "motion-and-animation",
+      "substitutes_for": "video-creation",
       "source": "words",
       "hash": "90888ef5a4393e6d"
     },
@@ -5946,9 +5926,7 @@
     "video-editing": {
       "job": "build",
       "output": [
-        "video",
-        "image",
-        "code"
+        "video"
       ],
       "style": "visual",
       "depth": "beginner",
@@ -5956,22 +5934,19 @@
         "ffmpeg",
         "remotion"
       ],
-      "substitutes_for": "software-engineering-patterns",
+      "substitutes_for": "video-creation",
       "source": "words",
       "hash": "7171be68912f273d"
     },
     "videodb": {
       "job": "data",
       "output": [
-        "video",
-        "image",
-        "document",
-        "code"
+        "video"
       ],
       "style": "visual",
       "depth": "practitioner",
       "needs": [],
-      "substitutes_for": "database-and-migrations",
+      "substitutes_for": "video-creation",
       "source": "words",
       "hash": "4aec945f342c6cae"
     },
@@ -7836,7 +7811,7 @@
       "style": "visual",
       "depth": "practitioner",
       "needs": [],
-      "substitutes_for": "software-engineering-patterns",
+      "substitutes_for": "motion-and-animation",
       "source": "words",
       "hash": "0c5b61f69069458b"
     },
@@ -8104,7 +8079,7 @@
       "style": "visual",
       "depth": "practitioner",
       "needs": [],
-      "substitutes_for": "software-engineering-patterns",
+      "substitutes_for": "motion-and-animation",
       "source": "words",
       "hash": "b83939914ed32a71"
     },
@@ -13708,14 +13683,12 @@
     "video-content": {
       "job": "build",
       "output": [
-        "video",
-        "document",
-        "code"
+        "video"
       ],
       "style": "visual",
       "depth": "beginner",
       "needs": [],
-      "substitutes_for": "software-engineering-patterns",
+      "substitutes_for": "video-creation",
       "source": "words",
       "hash": "4ab5956110b560f4"
     },

@@ -1,8 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="840" height="280" viewBox="0 0 840 280" role="img" aria-labelledby="t d"><title id="t">Context Tokens: SFP Stack vs Full Catalog</title><rect width="840" height="280" rx="16" fill="#f4f1ea"/>
-<text x="40" y="48" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" fill="#1a1d21">Context Efficiency: SFP Stack vs Full Catalog</text>
-<text x="40" y="76" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#565c64">Average body tokens loaded into agent context across 1,065 skills.</text>
-<rect x="40" y="115" width="760" height="42" rx="8" fill="#a8a190"/>
-<text x="56" y="142" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="600" fill="#f4f1ea">Full Catalog (1,065 skills): 1,907,824 tokens</text>
-<rect x="40" y="175" width="40.0" height="42" rx="8" fill="#0f766e"/>
-<text x="94" y="202" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="17" font-weight="700" fill="#1a1d21">SFP Stack: 4,997 tokens (99.7% context saved!)</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="320" viewBox="0 0 860 320" role="img" aria-labelledby="t d"><title id="t">Context Tokens: SFP Stack vs Full Catalog</title><rect width="860" height="320" rx="16" fill="#f4f1ea"/>
+<text x="40" y="44" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="700" fill="#1a1d21">Context Efficiency: SFP Stack vs Full Catalog</text>
+<text x="40" y="70" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="14" fill="#565c64">Comparing average stack context footprint against loading all 1,065 skills.</text>
+<rect x="40" y="100" width="760" height="38" rx="6" fill="#a8a190"/>
+<text x="56" y="125" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" fill="#f4f1ea">All Skill Descriptions (what agents load): 81,931 tokens</text>
+<rect x="40" y="155" width="42.8" height="38" rx="6" fill="#0f766e"/>
+<text x="96.84629749423294" y="180" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="16" font-weight="700" fill="#1a1d21">SFP Stack: 4,619 tokens (94.4% context saved!)</text>
+<text x="40" y="240" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#565c64">Conservative baseline: 96.1% saved vs descriptions (81.9k tokens); 99.8% saved vs full text (1.91M tokens).</text>
 </svg>

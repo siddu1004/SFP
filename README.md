@@ -21,8 +21,8 @@
 
 <blockquote align="center">
   <b>SFP 3.19.0 Results at a Glance:</b><br>
-  &bull; <b>58.3% held-out retrieval accuracy</b> (+10.1% over plain keyword search, +14.9% over words-only) with local <code>bge-m3</code> vectors + fast local reranking.<br>
-  &bull; <b>99.7% context token reduction</b> (carrying an average of 4,997 tokens instead of 1.9M full-catalog tokens).<br>
+  &bull; <b>60.8% held-out retrieval accuracy</b> (+36.1% over plain keyword search 24.7%, +13.4% over words-only 47.4%) with local <code>bge-m3</code> vectors + fast local reranking.<br>
+  &bull; <b>94.4% context token reduction</b> vs loading all skill descriptions (99.8% vs loading full library text).<br>
   &bull; <b>100% private, local-first intelligence</b> with personalized learning taste profiles and zero prompt telemetry leaving your workstation.<br>
   <i>Read the complete benchmark report, 95% Wilson intervals, and disclosures in <a href="bench/RESULTS.md">bench/RESULTS.md</a>.</i>
 </blockquote>
@@ -176,8 +176,8 @@ The hive evaluates tasks through five progressive layers of understanding:
 | *"make the api not die when flooded with requests"* | Any | `rate-limiting`, `resilience` | Plain-words colloquial request rescued by local reranker |
 | *"check for sneaky memory leaks in go routine"* | Go project | `golang-patterns`, `golang-testing` | Lexical gap bridged by meaning & project fingerprint |
 | *"explain how attention works in transformers"* | Visual Learner (`animation`) | `manim-video` | Learner prefers programmatic animated visual walkthroughs |
-| *"explain how attention works in transformers"* | Reader (`text`) | `deep-research`, text explanation | Reader prefers exhaustive mathematical deep dive |
-| *"explain how attention works as a markdown summary"* | Visual Learner | `deep-research` | **Explicit named form override:** User asked for markdown summary |
+| *"explain how attention works in transformers"* | Reader (`text`) | `teach-me` | Reader prefers concise structured text walkthrough |
+| *"just give me a text summary of attention mechanisms"* | Visual Learner | `teach-me` | **Explicit named form override:** User asked for text summary |
 | *"simulate quantum teleportation with qiskit"* | Any | **Library Gap Detected** | SFP detects unmet need and suggests `sfp mentor grow` |
 
 ---

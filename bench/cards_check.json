@@ -1,0 +1,1012 @@
+{
+  "total_sampled": 60,
+  "cards": [
+    {
+      "job": "build",
+      "output": [
+        "slides",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "c4137310c4ce30a6",
+      "skill": "android-clean-architecture",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "design",
+      "output": [
+        "animation",
+        "document",
+        "code"
+      ],
+      "style": "visual",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "motion-and-animation",
+      "source": "words",
+      "hash": "a15772a201e666e8",
+      "skill": "apple-design",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "deploy",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "deployment-and-containers",
+      "source": "words",
+      "hash": "d9d06b19af5c2499",
+      "skill": "architecture-decision-records",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "a98e86c74a590e7a",
+      "job": "design",
+      "output": [
+        "text",
+        "image"
+      ],
+      "style": "reference",
+      "depth": "expert",
+      "needs": [],
+      "substitutes_for": "sci-fi-punk-worlds, lighting",
+      "source": "model",
+      "skill": "blend-neon-retrofuturism",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "design",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "blender"
+      ],
+      "substitutes_for": "ui-ux-design",
+      "source": "words",
+      "hash": "4ebb7d138b0836d3",
+      "skill": "blend-psx-horror-style",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "71e9ac9599808903",
+      "job": "design",
+      "output": [
+        "text"
+      ],
+      "style": "step-by-step",
+      "depth": "beginner",
+      "needs": [],
+      "substitutes_for": "environment-artist, lighting",
+      "source": "model",
+      "skill": "blend-scene-assembly",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "test",
+      "output": [
+        "interactive",
+        "image",
+        "code"
+      ],
+      "style": "visual",
+      "depth": "practitioner",
+      "needs": [
+        "playwright",
+        "puppeteer"
+      ],
+      "substitutes_for": "e2e-testing",
+      "source": "words",
+      "hash": "94a42255483cece7",
+      "skill": "browser-qa",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "image",
+        "config",
+        "report",
+        "code"
+      ],
+      "style": "visual",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "118ea521be93c0d6",
+      "skill": "canary-watch",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "review",
+      "output": [
+        "report",
+        "document",
+        "code",
+        "text"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "code-review",
+      "source": "words",
+      "hash": "0b7e73e601f8bcb6",
+      "skill": "caveman-evidence-review",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "3fd531294699dc11",
+      "job": "explain",
+      "output": [
+        "text"
+      ],
+      "style": "step-by-step",
+      "depth": "beginner",
+      "needs": [],
+      "substitutes_for": "caveman-mode-tracker",
+      "source": "model",
+      "skill": "caveman-stats",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "test",
+      "output": [
+        "report",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "docker",
+        "strix"
+      ],
+      "substitutes_for": "unit-testing",
+      "source": "words",
+      "hash": "ec31f0569510ff35",
+      "skill": "ci-security-scanning-with-strix",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "operate",
+      "output": [
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "omniroute"
+      ],
+      "substitutes_for": "infrastructure-and-ops",
+      "source": "words",
+      "hash": "96e1585a920c877f",
+      "skill": "cli-backup-sync",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "operate",
+      "output": [
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "omniroute"
+      ],
+      "substitutes_for": "infrastructure-and-ops",
+      "source": "words",
+      "hash": "b7e47e5cf1f2539f",
+      "skill": "cli-health",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "test",
+      "output": [
+        "config",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "omniroute"
+      ],
+      "substitutes_for": "unit-testing",
+      "source": "words",
+      "hash": "fdc5389d838ffe0a",
+      "skill": "cli-plugins-skills",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "interactive",
+        "config",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "omniroute"
+      ],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "62d93b89da6bb889",
+      "skill": "cli-setup",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "config",
+        "report",
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "abf0031eea52ee67",
+      "skill": "collaboration-platform-administration",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "review",
+      "output": [
+        "config",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "code-review",
+      "source": "words",
+      "hash": "efc7eb6185d07edd",
+      "skill": "config-gc",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "5c1493b09baba7e8",
+      "skill": "cost-aware-llm-pipeline",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "deploy",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "deployment-and-containers",
+      "source": "words",
+      "hash": "d0fc32e7bc3825c4",
+      "skill": "council",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "review",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "code-review",
+      "source": "words",
+      "hash": "eb0ad53011b56120",
+      "skill": "customer-billing-ops",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "config",
+        "code",
+        "text"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "095404ee5af7a23f",
+      "skill": "deepseek-harness-setup",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "deploy",
+      "output": [
+        "interactive",
+        "config",
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "docker"
+      ],
+      "substitutes_for": "deployment-and-containers",
+      "source": "words",
+      "hash": "edd49d7423078aa3",
+      "skill": "deployment-patterns",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "review",
+      "output": [
+        "document",
+        "code",
+        "text"
+      ],
+      "style": "hands-on",
+      "depth": "expert",
+      "needs": [],
+      "substitutes_for": "code-review",
+      "source": "words",
+      "hash": "c86e33803ae565bf",
+      "skill": "design-critique",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "report",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "46da1fcada23055a",
+      "skill": "energy-procurement",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "report",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "6523e6720734f20b",
+      "skill": "fundraising-and-investor-relations",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "51694e5e9f32c694",
+      "job": "design",
+      "output": [
+        "document",
+        "diagram"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "ui-ux-design",
+      "source": "model",
+      "skill": "futuristic",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "cbf05bcf69e1cb23",
+      "job": "design",
+      "output": [
+        "document",
+        "config"
+      ],
+      "style": "reference",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "ui-ux-design",
+      "source": "model",
+      "skill": "gradient",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "report",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "747d48cf3944d11c",
+      "skill": "gsd-autonomous",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "research",
+      "output": [
+        "report",
+        "code",
+        "text"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "literature-and-search",
+      "source": "words",
+      "hash": "a534d5351dee41ee",
+      "skill": "gsd-explore",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "config",
+        "report",
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "bb1fa867b7f1cb49",
+      "skill": "gsd-new-project",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "report",
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "ffae24cceeb4cbc1",
+      "skill": "gsd-ns-context",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "report",
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "481bcfe297e21d49",
+      "skill": "gsd-ns-ideate",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "8e92f5dc5b28353e",
+      "job": "design",
+      "output": [
+        "document"
+      ],
+      "style": "step-by-step",
+      "depth": "beginner",
+      "needs": [],
+      "substitutes_for": "architecture-design",
+      "source": "model",
+      "skill": "healthcare-emr-patterns",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "design",
+      "output": [
+        "video",
+        "image",
+        "code"
+      ],
+      "style": "visual",
+      "depth": "practitioner",
+      "needs": [
+        "playwright"
+      ],
+      "substitutes_for": "motion-and-animation",
+      "source": "words",
+      "hash": "f4e57070d614c9b5",
+      "skill": "huashu-design",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "94797847258230cb",
+      "job": "design",
+      "output": [
+        "diagram"
+      ],
+      "style": "visual",
+      "depth": "expert",
+      "needs": [],
+      "substitutes_for": "service-blueprint",
+      "source": "model",
+      "skill": "journey-mapping",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "14a5a2cbdad07f84",
+      "job": "explain",
+      "output": [
+        "text"
+      ],
+      "style": "step-by-step",
+      "depth": "beginner",
+      "needs": [],
+      "substitutes_for": "kotlin-server-patterns",
+      "source": "model",
+      "skill": "kotlin-ktor-patterns",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "review",
+      "output": [
+        "image",
+        "report",
+        "document",
+        "code"
+      ],
+      "style": "visual",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "code-review",
+      "source": "words",
+      "hash": "4a7b37ce07e847d2",
+      "skill": "marketing-analytics",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "interactive",
+        "config",
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "ee0a338f96c430e4",
+      "skill": "mem-mode-creator",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "document",
+        "code",
+        "text"
+      ],
+      "style": "visual",
+      "depth": "expert",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "dc9482404dd51867",
+      "skill": "minimal",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "3e4bf75076721a6f",
+      "job": "design",
+      "output": [
+        "document",
+        "config"
+      ],
+      "style": "reference",
+      "depth": "expert",
+      "needs": [
+        "n8n-nodes-langchain.*"
+      ],
+      "substitutes_for": "ai-agent",
+      "source": "model",
+      "skill": "n8n-agents",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "automate",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "workflow-automation",
+      "source": "words",
+      "hash": "4ac08a9e4eaebf1c",
+      "skill": "n8n-multi-instance",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "automate",
+      "output": [
+        "code",
+        "text"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "workflow-automation",
+      "source": "words",
+      "hash": "1558db6567be96c9",
+      "skill": "n8n-workflow-patterns",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "interactive",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "24ae9899b4ab2f40",
+      "skill": "nanoclaw-repl",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "10c727491d32fe8f",
+      "job": "design",
+      "output": [
+        "document"
+      ],
+      "style": "step-by-step",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "explain-concepts",
+      "source": "model",
+      "skill": "neon",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "2584e46b3fc09a13",
+      "skill": "nodejs-keccak256",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "config",
+        "code",
+        "text"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "omniroute"
+      ],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "5e3dacd2095ae416",
+      "skill": "omni-cli-tools",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "test",
+      "output": [
+        "config",
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "omniroute"
+      ],
+      "substitutes_for": "unit-testing",
+      "source": "words",
+      "hash": "83a8b07cb9d05c8d",
+      "skill": "omni-proxies",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "090b1a59a76af188",
+      "skill": "openviking",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "design",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [
+        "playwright"
+      ],
+      "substitutes_for": "design-systems",
+      "source": "words",
+      "hash": "a7b2e21906ad319a",
+      "skill": "orch-build-mvp",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "test",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "unit-testing",
+      "source": "words",
+      "hash": "704337abe162dcc7",
+      "skill": "orch-change-feature",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "document",
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "d03e439670740aed",
+      "skill": "product-capability",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "design",
+      "output": [
+        "document",
+        "code",
+        "text"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "ui-ux-design",
+      "source": "words",
+      "hash": "be40dec214fac2fe",
+      "skill": "rea-tool-design",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "interactive",
+        "image",
+        "document",
+        "code"
+      ],
+      "style": "visual",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "386bb039daa64999",
+      "skill": "react-colorful",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "1027085a901c2aa0",
+      "skill": "sales-compensation-and-territory",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "review",
+      "output": [
+        "image",
+        "document",
+        "code",
+        "text"
+      ],
+      "style": "visual",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "code-review",
+      "source": "words",
+      "hash": "305e377ae1a9c396",
+      "skill": "seo",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "dcddb8e4a41f1373",
+      "job": "design",
+      "output": [
+        "image"
+      ],
+      "style": "visual",
+      "depth": "beginner",
+      "needs": [],
+      "substitutes_for": "ui-design",
+      "source": "model",
+      "skill": "stageshow",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "code"
+      ],
+      "style": "hands-on",
+      "depth": "beginner",
+      "needs": [],
+      "substitutes_for": "software-engineering-patterns",
+      "source": "words",
+      "hash": "f974dad3e0e07d48",
+      "skill": "swift-concurrency-6-2",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "62b8eab3abe5599c",
+      "job": "explain",
+      "output": [
+        "text"
+      ],
+      "style": "step-by-step",
+      "depth": "beginner",
+      "needs": [],
+      "substitutes_for": "tax-compliance",
+      "source": "model",
+      "skill": "tax",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "hash": "09981c3538fe0700",
+      "job": "design",
+      "output": [
+        "diagram",
+        "interactive"
+      ],
+      "style": "hands-on",
+      "depth": "practitioner",
+      "needs": [],
+      "substitutes_for": "game-design",
+      "source": "model",
+      "skill": "tetris",
+      "checked": null,
+      "notes": ""
+    },
+    {
+      "job": "build",
+      "output": [
+        "video"
+      ],
+      "style": "visual",
+      "depth": "beginner",
+      "needs": [
+        "ffmpeg",
+        "remotion"
+      ],
+      "substitutes_for": "video-creation",
+      "source": "words",
+      "hash": "7171be68912f273d",
+      "skill": "video-editing",
+      "checked": null,
+      "notes": ""
+    }
+  ]
+}
