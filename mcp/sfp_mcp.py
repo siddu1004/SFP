@@ -445,6 +445,18 @@ def tool_select_skills(a):
     return json.dumps(res, indent=1)
 
 
+def tool_grow_skills(a):
+    import sfp_mentor
+    if (a.get('mode') or 'profile') == 'profile':
+        prof = sfp_mentor.profile()
+        return json.dumps(dict(prof, research_topics=sfp_mentor.topics_for(prof),
+                               next_step='Show the user these topics; grow the ones they pick with mode "grow".'), indent=1)
+    res = sfp_mentor.grow(topics=a.get('topics') or None, n_papers=max(3, min(int(a.get('papers', 8)), 12)), log=lambda s: None)
+    res['next_step'] = ('These are drafts. Show them to the user; only they approve one, with: python3 mcp/sfp_research.py '
+                        'approve <name> [--install <tools>]')
+    return json.dumps(res, indent=1)
+
+
 def tool_research_skill(a):
     task = (a.get('task') or '').strip()
     if not tokens(task):
@@ -559,13 +571,25 @@ TOOLS = [
          'role': {'type': 'string', 'description': 'The engineer\'s role, from select_skills (for example embedded-hardware).'},
          'papers': {'type': 'integer', 'description': 'How many papers to write from (default 6, max 10).'}}, 'required': ['task']},
      'fn': tool_research_skill},
+    {'name': 'grow_skills',
+     'description': 'The mentor: notice what the user leans towards (from the skills chosen, the feedback and the gaps '
+                    'recorded in ~/.sfp) and grow skills for it from research. mode "profile" shows their areas and the '
+                    'research topics it suggests (reads only). mode "grow" searches the paper indexes widely, has the local '
+                    'model read the best papers and write their practical lessons, and drafts one skill per topic for the '
+                    'user to approve. Only the search queries leave the machine. Growing takes several minutes per topic.',
+     'inputSchema': {'type': 'object', 'properties': {
+         'mode': {'type': 'string', 'enum': ['profile', 'grow'], 'description': 'profile (default) or grow.'},
+         'topics': {'type': 'array', 'items': {'type': 'string'}, 'description': 'Topics to grow instead of the suggested ones.'},
+         'papers': {'type': 'integer', 'description': 'Papers to read per topic (default 8, max 12).'}}},
+     'fn': tool_grow_skills},
 ]
 TOOL_INDEX = {t['name']: t for t in TOOLS}
+WRITERS = ('select_skills', 'give_feedback', 'research_skill', 'grow_skills')
 for _t in TOOLS:
-    # select_skills and give_feedback write to the hive's own logs in ~/.sfp; research_skill writes a draft there and asks
-    # the paper indexes on the internet. Nothing else writes or reaches out.
-    _t['annotations'] = {'readOnlyHint': _t['name'] not in ('select_skills', 'give_feedback', 'research_skill'),
-                         'openWorldHint': _t['name'] == 'research_skill'}
+    # select_skills and give_feedback write to the hive's own logs in ~/.sfp; research_skill and grow_skills write drafts
+    # there and ask the paper indexes on the internet. Nothing else writes or reaches out.
+    _t['annotations'] = {'readOnlyHint': _t['name'] not in WRITERS,
+                         'openWorldHint': _t['name'] in ('research_skill', 'grow_skills')}
 
 # ------------------------------------------------------------ resources/prompts
 

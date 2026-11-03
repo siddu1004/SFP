@@ -1000,6 +1000,15 @@
         "verticals/*/skills/*"
       ],
       "collision_prefix": "headcount-"
+    },
+    {
+      "repo": "siddu1004/SFP",
+      "license": "MIT",
+      "default": "sfp",
+      "skills": [
+        "."
+      ],
+      "local": "templates/skill-mentor"
     }
   ],
   "externals": {

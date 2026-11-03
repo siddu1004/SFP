@@ -361,5 +361,61 @@ class ResearchTest(unittest.TestCase):
         self.assertIsNone(second[0]['draft'], 'papers already seen do not make a second draft')
 
 
+class MentorTest(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.saved = {k: os.environ.get(k) for k in ('SFP_DATA_DIR', 'SFP_SEMANTIC')}
+        os.environ.update({'SFP_DATA_DIR': self.tmp, 'SFP_SEMANTIC': '0'})
+
+    def tearDown(self):
+        for k, v in self.saved.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v
+
+    def test_profile_leans_to_recent_helpful_work_and_names_gaps(self):
+        import sfp_mentor
+        import time as _t
+        now = _t.time()
+        with open(os.path.join(self.tmp, 'decisions.jsonl'), 'w', encoding='utf-8') as f:
+            for row in ({'t': now, 'stack': ['python-testing'], 'tech': ['python']},
+                        {'t': now - 400 * 86400, 'stack': ['blender-motion'], 'tech': ['blender']},
+                        {'t': now, 'stack': [], 'words': ['quantum']}):
+                print(json.dumps(row), file=f)
+        with open(os.path.join(self.tmp, 'feedback.jsonl'), 'w', encoding='utf-8') as f:
+            print(json.dumps({'t': now, 'skill': 'django-security', 'verdict': 'helped'}), file=f)
+        prof = sfp_mentor.profile(now=now)
+        names = [s['name'] for s in prof['skills']]
+        self.assertEqual(names[0], 'django-security', 'what helped counts most')
+        self.assertIn('python-testing', names)
+        self.assertLess(names.index('python-testing'), names.index('blender-motion') if 'blender-motion' in names else 99)
+        self.assertEqual(prof['gaps'][0]['name'], 'quantum')
+        self.assertEqual(prof['evidence'], {'decisions': 3, 'feedback': 1, 'activity': 0})
+
+    def test_grow_reads_each_paper_before_writing(self):
+        import sfp_mentor
+        papers = [{'title': 'P%d' % i, 'year': 2026, 'citations': i, 'url': 'https://doi.org/x%d' % i, 'abstract': LONG,
+                   'index': 'OpenAlex', 'score': 1.0 - i / 10} for i in range(4)]
+        seen = {}
+        orig = (research.make_queries, research.search_papers, research.rank, research.write_skill, sfp_mentor.learn)
+        research.make_queries = lambda t, role=None, ep=None: [t]
+        research.search_papers = lambda q, per_source=8, fetch=None, log=None, since=None: papers
+        research.rank = lambda t, p, limit=6, now_year=None: p
+        sfp_mentor.learn = lambda topic, ps, ep=None, chat=None: [dict(p, lesson='Technique: x', abstract='Lesson: x') for p in ps]
+        def write(task, role, best, ep=None, chat=None):
+            seen['abstracts'] = [p['abstract'] for p in best]
+            md = '\n'.join(['---', 'name: n', 'description: "d"', '---', '', '# T', '## Steps', '1. do [1]', ''])
+            return 'n', md, 'fake-14b'
+        research.write_skill = write
+        try:
+            res = sfp_mentor.grow(topics=['rag evaluation'], n_papers=3, log=lambda s: None)
+        finally:
+            research.make_queries, research.search_papers, research.rank, research.write_skill, sfp_mentor.learn = orig
+        self.assertEqual(res['drafts'][0]['draft'], 'rag-evaluation')
+        self.assertEqual(seen['abstracts'], ['Lesson: x'] * 3, 'the writer gets the lessons the model read, not raw abstracts')
+
+
 if __name__ == '__main__':
     unittest.main()
