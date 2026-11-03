@@ -1,3 +1,0 @@
-original summary (upstream none) License
-
-Source: https://github.com/vedangdhuri/RoastRoom

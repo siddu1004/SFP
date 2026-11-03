@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
-# Install SFP skills. Examples:
+# Install or update SFP skills. Examples:
 #   ./install.sh                          starter set into every tool found
+#   ./install.sh update                   pull latest updates from GitHub and refresh skills
 #   ./install.sh --profile everything
 #   ./install.sh list
 set -e

@@ -327,7 +327,8 @@ def skill_detail(ident):
 WORDS_CAP = 1.2      # the weight of query words that counts as a full match: a task needs two or three strong words, not all of them
 MATCH_MIN = 0.45     # a bundle is suggested from this score
 PUSH_MIN = 0.6       # a bundle is attached whole from this score
-
+DF_SCALE = 893       # the library size the weights above were tuned at: a word's count is read relative to it, so the
+                     # library growing does not drift every bundle's score down
 
 def _bundle_terms(b):
     words = set(core.tokens(' '.join([b['name'], b['goal'], b.get('when', '')]).replace('-', ' ')))
@@ -348,7 +349,8 @@ def match_bundles(task, chosen=(), limit=2, exclude=(), tech=None):
         return []
     skip = set(exclude)
     chosen = set(chosen)
-    weight = {t: 1.0 / (1.0 + 0.5 * __import__('math').log(1 + core.DF.get(t, 1))) for t in q}
+    scale = DF_SCALE / max(1, len(core.CATALOG['skills']))
+    weight = {t: 1.0 / (1.0 + 0.5 * __import__('math').log(1 + scale * core.DF.get(t, 1))) for t in q}
     total = sum(weight.values()) or 1.0
     out = []
     for b in bundles():

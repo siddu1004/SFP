@@ -100,7 +100,7 @@
         "skills/continuous-learning"
       ],
       "descriptions": {
-        "docker-patterns": "Docker and Docker Compose patterns: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration."
+        "docker-patterns": "Docker and Docker Compose patterns for apps and services: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration."
       }
     },
     {
@@ -884,114 +884,6 @@
       "local": "templates/gpt-image-prompting"
     },
     {
-      "repo": "dickwu/apple-design-skill",
-      "license": "original summary (upstream none)",
-      "default": "design-styles",
-      "skills": [
-        "."
-      ],
-      "local": "templates/apple-design-review"
-    },
-    {
-      "repo": "Zagitta/gpu-unlock",
-      "license": "original summary (upstream none)",
-      "default": "ai-ml",
-      "skills": [
-        "."
-      ],
-      "local": "templates/gpu-unlock"
-    },
-    {
-      "repo": "baidu/Unlimited-OCR",
-      "license": "original summary (upstream MIT)",
-      "default": "ai-ml",
-      "skills": [
-        "."
-      ],
-      "local": "templates/unlimited-ocr"
-    },
-    {
-      "repo": "matiasbattocchia/open-bsp-api",
-      "license": "original summary (upstream Unlicense)",
-      "default": "business-ops",
-      "skills": [
-        "."
-      ],
-      "local": "templates/open-bsp-api"
-    },
-    {
-      "repo": "amosblomqvist/learnharness",
-      "license": "original summary (upstream AGPL-3.0)",
-      "default": "research-docs",
-      "skills": [
-        "."
-      ],
-      "local": "templates/learnharness"
-    },
-    {
-      "repo": "ruvnet/RuView",
-      "license": "original summary (upstream MIT)",
-      "default": "science-hardware",
-      "skills": [
-        "."
-      ],
-      "local": "templates/ruview"
-    },
-    {
-      "repo": "vedangdhuri/RoastRoom",
-      "license": "original summary (upstream none)",
-      "default": "testing-quality",
-      "skills": [
-        "."
-      ],
-      "local": "templates/roastroom"
-    },
-    {
-      "repo": "666ghj/MiroFish",
-      "license": "original summary (upstream AGPL-3.0)",
-      "default": "research-docs",
-      "skills": [
-        "."
-      ],
-      "local": "templates/mirofish"
-    },
-    {
-      "repo": "AbdullahAlhariri/penmentor",
-      "license": "original summary (upstream MIT)",
-      "default": "ai-ml",
-      "skills": [
-        "."
-      ],
-      "local": "templates/penmentor"
-    },
-    {
-      "repo": "ruvnet/ruflo",
-      "license": "original summary (upstream MIT)",
-      "default": "agents",
-      "skills": [
-        "."
-      ],
-      "local": "templates/ruflo"
-    },
-    {
-      "repo": "makecindy/cindy",
-      "license": "original summary (upstream Apache-2.0)",
-      "default": "agents",
-      "skills": [
-        "."
-      ],
-      "local": "templates/cindy"
-    },
-    {
-      "repo": "msitarzewski/agency-agents",
-      "license": "original summary (upstream MIT)",
-      "default": "agents",
-      "skills": [
-        "."
-      ],
-      "local": "templates/agency-agents"
-    },
-    {
       "repo": "cbrock84/headcount",
       "license": "MIT",
       "default": "business-ops",
@@ -999,7 +891,18 @@
         "plugins/*/skills/*",
         "verticals/*/skills/*"
       ],
-      "collision_prefix": "headcount-"
+      "collision_prefix": "headcount-",
+      "descriptions": {
+        "code-review": "Headcount engineering organizational code review policy, team peer-review workflow standards, and feedback governance.",
+        "test-driven-development": "Headcount engineering policy for test-driven development adoption, unit testing expectations, and testing governance.",
+        "completion-verification": "Headcount organizational definition-of-done checklist, acceptance verification, and milestone sign-off criteria.",
+        "vulnerability-management": "Headcount organizational vulnerability management lifecycle: policies, SLAs, scanner triage, leadership posture reporting, and patch governance.",
+        "security-architecture-review": "Headcount enterprise security architecture review process for corporate systems, vendor integrations, and compliance sign-offs.",
+        "chief-information-security-officer": "Headcount executive CISO role guidance: enterprise security governance, risk acceptance, board reporting, and compliance posture.",
+        "skill-authoring": "Headcount guidelines for authoring, reviewing, and standardizing agent skills across company teams.",
+        "performance-management": "Headcount HR and management policy for employee performance management systems, review cycles, feedback calibration, and performance improvement plans.",
+        "product-launch": "Headcount go-to-market planning, launch readiness criteria, cross-functional tiering, and announcement coordination."
+      }
     },
     {
       "repo": "siddu1004/SFP",

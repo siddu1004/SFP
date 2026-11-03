@@ -1,5 +1,6 @@
-# Install SFP skills. Examples:
+# Install or update SFP skills. Examples:
 #   .\install.ps1                          starter set into every tool found
+#   .\install.ps1 update                   pull latest updates from GitHub and refresh skills
 #   .\install.ps1 --profile everything
 #   .\install.ps1 list
 $ErrorActionPreference = 'Stop'

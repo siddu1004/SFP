@@ -6,7 +6,7 @@
   },
   "frontend": {
    "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.",
-   "skills": 89
+   "skills": 88
   },
   "design-styles": {
    "description": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more.",
@@ -26,7 +26,7 @@
   },
   "testing-quality": {
    "description": "TDD, end-to-end tests, verification loops, code review, regression and quality gates.",
-   "skills": 39
+   "skills": 35
   },
   "devops": {
    "description": "Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation.",
@@ -34,11 +34,11 @@
   },
   "security": {
    "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
-   "skills": 34
+   "skills": 31
   },
   "agents": {
    "description": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.",
-   "skills": 112
+   "skills": 107
   },
   "agent-dev": {
    "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.",
@@ -46,7 +46,7 @@
   },
   "ai-ml": {
    "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
-   "skills": 15
+   "skills": 12
   },
   "ai-gateway": {
    "description": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
@@ -58,11 +58,11 @@
   },
   "content-media": {
    "description": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.",
-   "skills": 42
+   "skills": 38
   },
   "business-ops": {
    "description": "Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check.",
-   "skills": 193
+   "skills": 210
   },
   "industry": {
    "description": "Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy.",
@@ -70,11 +70,11 @@
   },
   "networking": {
    "description": "Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, config validation.",
-   "skills": 11
+   "skills": 10
   },
   "research-docs": {
    "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).",
-   "skills": 42
+   "skills": 40
   },
   "web3": {
    "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
@@ -82,11 +82,11 @@
   },
   "engineering": {
    "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
-   "skills": 30
+   "skills": 26
   },
   "science-hardware": {
    "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
-   "skills": 124
+   "skills": 123
   },
   "career": {
    "description": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
@@ -2123,7 +2123,7 @@
   {
    "name": "docker-patterns",
    "category": "devops",
-   "description": "Docker and Docker Compose patterns: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration.",
+   "description": "Docker and Docker Compose patterns for apps and services: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration.",
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/devops/skills/docker-patterns",
@@ -8276,114 +8276,6 @@
    "variants": {}
   },
   {
-   "name": "apple-design-review",
-   "category": "frontend",
-   "description": "Review UIs against Apple Human Interface Guidelines for Flutter, React Native, and other frameworks, ensuring accessibility, platform conventions, and design craft. Use when reviewing a UI for clarity, deference, depth and platform conventions in any framework.",
-   "source": "dickwu/apple-design-skill",
-   "license": "original summary (upstream none)",
-   "path": "plugins/frontend/skills/apple-design-review",
-   "variants": {}
-  },
-  {
-   "name": "gpu-unlock",
-   "category": "ai-ml",
-   "description": "Unlocks tensor cores on GeForce cards to boost AI performance without flashing firmware or changing drivers. Use when a GeForce RTX 20/30/40 card on Linux runs FP16/BF16 AI work slower than expected and the user asks about unlocking full tensor-core speed.",
-   "source": "Zagitta/gpu-unlock",
-   "license": "original summary (upstream none)",
-   "path": "plugins/ai-ml/skills/gpu-unlock",
-   "variants": {}
-  },
-  {
-   "name": "unlimited-ocr",
-   "category": "ai-ml",
-   "description": "Parse long documents using Baidu Unlimited-OCR in one shot. Use this skill when dealing with multi-page documents that need OCR processing.",
-   "source": "baidu/Unlimited-OCR",
-   "license": "original summary (upstream MIT)",
-   "path": "plugins/ai-ml/skills/unlimited-ocr",
-   "variants": {}
-  },
-  {
-   "name": "open-bsp-api",
-   "category": "business-ops",
-   "description": "Automate WhatsApp, Instagram, and TikTok messaging using OpenBSP API for businesses. Use this skill when you need to integrate AI-driven communication into your platform.",
-   "source": "matiasbattocchia/open-bsp-api",
-   "license": "original summary (upstream Unlicense)",
-   "path": "plugins/business-ops/skills/open-bsp-api",
-   "variants": {}
-  },
-  {
-   "name": "learnharness",
-   "category": "research-docs",
-   "description": "Enhance learning of complex topics through interactive AI tutoring sessions, adapting to your understanding and providing personalized practice. Use when the user wants to learn a difficult topic with the agent as a patient tutor.",
-   "source": "amosblomqvist/learnharness",
-   "license": "original summary (upstream AGPL-3.0)",
-   "path": "plugins/research-docs/skills/learnharness",
-   "variants": {}
-  },
-  {
-   "name": "ruview",
-   "category": "science-hardware",
-   "description": "Enable RuView to integrate with Home Assistant for real-time spatial sensing and vital sign monitoring. Use when working with WiFi-based spatial sensing or vital-sign monitoring through RuView.",
-   "source": "ruvnet/RuView",
-   "license": "original summary (upstream MIT)",
-   "path": "plugins/science-hardware/skills/ruview",
-   "variants": {}
-  },
-  {
-   "name": "roastroom",
-   "category": "testing-quality",
-   "description": "Provide humorous and constructive feedback on code ideas and implementations, fostering a positive yet challenging environment for growth. Use when the user asks for a brutally honest but constructive roast of their code or idea.",
-   "source": "vedangdhuri/RoastRoom",
-   "license": "original summary (upstream none)",
-   "path": "plugins/testing-quality/skills/roastroom",
-   "variants": {}
-  },
-  {
-   "name": "mirofish",
-   "category": "research-docs",
-   "description": "Run MiroFish swarm-intelligence simulations to explore scenarios in a digital sandbox. Use when exploring how a scenario might unfold with a multi-agent swarm simulation.",
-   "source": "666ghj/MiroFish",
-   "license": "original summary (upstream AGPL-3.0)",
-   "path": "plugins/research-docs/skills/mirofish",
-   "variants": {}
-  },
-  {
-   "name": "penmentor",
-   "category": "ai-ml",
-   "description": "Corrects handwritten math visually using a local model, enhancing learning through feedback and interactive animations. Use when checking handwritten math work visually with a local model.",
-   "source": "AbdullahAlhariri/penmentor",
-   "license": "original summary (upstream MIT)",
-   "path": "plugins/ai-ml/skills/penmentor",
-   "variants": {}
-  },
-  {
-   "name": "ruflo",
-   "category": "agents",
-   "description": "Deploy and coordinate multi-agent swarms using Ruflo for efficient task execution and collaboration. Use when deploying and coordinating swarms of agents with ruflo.",
-   "source": "ruvnet/ruflo",
-   "license": "original summary (upstream MIT)",
-   "path": "plugins/agents/skills/ruflo",
-   "variants": {}
-  },
-  {
-   "name": "cindy",
-   "category": "agents",
-   "description": "Automate computer tasks using Cindy's open-source desktop agent for multi-device access and AI-powered assistance. Use when the user wants an open-source desktop agent to carry out computer tasks.",
-   "source": "makecindy/cindy",
-   "license": "original summary (upstream Apache-2.0)",
-   "path": "plugins/agents/skills/cindy",
-   "variants": {}
-  },
-  {
-   "name": "agency-agents",
-   "category": "agents",
-   "description": "Selects and loads a specialist persona from the agency-agents collection based on task requirements. Use when a task needs a specialist persona (engineering, marketing, game development, security, design, sales, testing and more).",
-   "source": "msitarzewski/agency-agents",
-   "license": "original summary (upstream MIT)",
-   "path": "plugins/agents/skills/agency-agents",
-   "variants": {}
-  },
-  {
    "name": "chief-strategy-officer",
    "category": "business-ops",
    "description": "Owns where the business plays and how it wins over a multi-year horizon \u2014 portfolio choices, corporate development, strategic partnerships, and planning under uncertainty. Use this for a decision about which markets or businesses to be in, whether to build, buy, or partner, how to allocate capital across business lines, or when a long-horizon bet needs framing. Distinct from `chief-executive`, which arbitrates present-quarter conflicts.",
@@ -8637,11 +8529,11 @@
   },
   {
    "name": "marketing-analytics",
-   "category": "content-media",
+   "category": "business-ops",
    "description": "Sets up, audits, and reports on marketing measurement \u2014 tracking plans, event schemas, attribution models, and the dashboards built on them. Use this to instrument a site or product, audit tracking nobody trusts, choose or interpret an attribution model, build reporting that answers a specific question, or reconcile numbers that disagree between tools.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/content-media/skills/marketing-analytics",
+   "path": "plugins/business-ops/skills/marketing-analytics",
    "variants": {}
   },
   {
@@ -8673,11 +8565,11 @@
   },
   {
    "name": "agent-hierarchy",
-   "category": "agents",
+   "category": "business-ops",
    "description": "Designs orchestrator-and-subagent hierarchies for a repository \u2014 splitting agents by exclusive write surface, pairing every producer with an independent auditor, and enforcing the split with a script that runs in CI. Use this whenever the user wants to set up, expand, audit, or fix a multi-agent or subagent structure for a codebase; asks how to divide work between agents; wants agent charters, roles, or a surface map written; or is hitting agents that collide on the same files, review their own work, or drift from their remit. Also use when sizing a roster or deciding whether a new agent is justified.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/agents/skills/agent-hierarchy",
+   "path": "plugins/business-ops/skills/agent-hierarchy",
    "variants": {}
   },
   {
@@ -8916,11 +8808,11 @@
   },
   {
    "name": "network-administration",
-   "category": "networking",
+   "category": "business-ops",
    "description": "Designs and operates the corporate network \u2014 segmentation, remote access, wireless, DNS and addressing, and diagnosing network problems. Use this to segment a network, set up or fix remote access, diagnose intermittent connectivity, plan addressing or DNS, or assess whether the network's trust assumptions still hold.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/networking/skills/network-administration",
+   "path": "plugins/business-ops/skills/network-administration",
    "variants": {}
   },
   {
@@ -8997,11 +8889,11 @@
   },
   {
    "name": "enterprise-risk",
-   "category": "agents",
+   "category": "business-ops",
    "description": "Identifies, assesses, and tracks organizational risk \u2014 building and maintaining a risk register, scoring exposure, assigning owners and treatments, and preparing for audit. Use this to stand up a risk program, assess the risk in a decision or initiative, prepare for a certification or audit, decide whether a risk should be accepted, mitigated, transferred, or avoided, or report risk posture to leadership.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/agents/skills/enterprise-risk",
+   "path": "plugins/business-ops/skills/enterprise-risk",
    "variants": {}
   },
   {
@@ -9096,29 +8988,29 @@
   },
   {
    "name": "marketing-campaign-planner",
-   "category": "content-media",
+   "category": "business-ops",
    "description": "Designs a coordinated multi-channel campaign or product launch around one story \u2014 objective, message, channel sequencing, timeline, assets, and the checklist that gets it out the door. Use this to plan a launch or campaign, sequence a go-to-market push, pressure-test a campaign before committing budget, or turn a product change into a coordinated set of activity. For ongoing channel programs rather than a bounded push, use `marketing-planning`.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/content-media/skills/marketing-campaign-planner",
+   "path": "plugins/business-ops/skills/marketing-campaign-planner",
    "variants": {}
   },
   {
    "name": "marketing-copywriting",
-   "category": "content-media",
+   "category": "business-ops",
    "description": "Writes and edits marketing copy for any surface \u2014 homepage, product and pricing pages, ads, emails, and collateral \u2014 and sharpens existing copy that is not working. Use this to write or rewrite page copy, tighten a draft, fix copy that is vague or feature-led, adapt one message across formats, or review copy before it ships.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/content-media/skills/marketing-copywriting",
+   "path": "plugins/business-ops/skills/marketing-copywriting",
    "variants": {}
   },
   {
    "name": "marketing-planning",
-   "category": "content-media",
+   "category": "business-ops",
    "description": "Builds the marketing plan of record \u2014 objectives, channel mix, budget allocation, sequencing, and the measurement that says whether it worked. Use this for annual or quarterly planning, when budget must be allocated or defended, when marketing activity feels busy but undirected, or when a plan needs pressure-testing before commitment.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/content-media/skills/marketing-planning",
+   "path": "plugins/business-ops/skills/marketing-planning",
    "variants": {}
   },
   {
@@ -9150,11 +9042,11 @@
   },
   {
    "name": "product-launch",
-   "category": "engineering",
-   "description": "Takes something built and gets it into the market \u2014 tiering the launch to match what it actually warrants, sequencing internal readiness before external announcement, preparing sales and support to answer the questions it creates, choosing the date for a reason, and measuring adoption rather than announcement reach. Use this to plan a launch, right-size one that is consuming more than it deserves, work out why a released feature nobody uses was launched loudly, or run the weeks after launch day.",
+   "category": "business-ops",
+   "description": "Headcount go-to-market planning, launch readiness criteria, cross-functional tiering, and announcement coordination.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/engineering/skills/product-launch",
+   "path": "plugins/business-ops/skills/product-launch",
    "variants": {}
   },
   {
@@ -9402,11 +9294,11 @@
   },
   {
    "name": "performance-management",
-   "category": "engineering",
-   "description": "Runs performance systems that change behavior \u2014 expectations, feedback, review cycles, calibration, and handling underperformance. Use this to design or fix a review process, run calibration, write or coach on feedback, address sustained underperformance, or work out why reviews consume weeks and change nothing.",
+   "category": "business-ops",
+   "description": "Headcount HR and management policy for employee performance management systems, review cycles, feedback calibration, and performance improvement plans.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/engineering/skills/performance-management",
+   "path": "plugins/business-ops/skills/performance-management",
    "variants": {}
   },
   {
@@ -9564,20 +9456,20 @@
   },
   {
    "name": "product-discovery",
-   "category": "engineering",
+   "category": "business-ops",
    "description": "Finds out whether a problem is real and a solution would work, before building it \u2014 recruiting the right people, interviewing without leading them, separating what users say from what they do, naming the riskiest assumption and testing that one first, and reaching a decision rather than a summary. Use this to validate a problem, test an idea cheaply, decide whether to build something, or fix a discovery process that keeps confirming what the team already believed.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/engineering/skills/product-discovery",
+   "path": "plugins/business-ops/skills/product-discovery",
    "variants": {}
   },
   {
    "name": "product-requirements",
-   "category": "engineering",
+   "category": "business-ops",
    "description": "Writes down what is being built so a team can build it and know when they are done \u2014 problem and success measure before solution, scope stated by exclusion, user-visible behavior including the states everyone forgets, acceptance criteria someone can test, and the open questions named rather than buried. Use this to write a specification, review one that is causing rework, or work out why a delivered feature technically matched the request and still was not what anyone wanted.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/engineering/skills/product-requirements",
+   "path": "plugins/business-ops/skills/product-requirements",
    "variants": {}
   },
   {
@@ -9699,11 +9591,11 @@
   },
   {
    "name": "chief-information-security-officer",
-   "category": "security",
-   "description": "Owns the security posture of the organization \u2014 architecture, program strategy, risk acceptance, incident command, and the authority to stop work that creates unacceptable exposure. Use this for a security strategy or program decision, when a technical choice creates security risk that needs a verdict, when deciding whether to accept or block a risk, when standing up a security function, or when security and delivery priorities conflict and someone has to decide.",
+   "category": "business-ops",
+   "description": "Headcount executive CISO role guidance: enterprise security governance, risk acceptance, board reporting, and compliance posture.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/security/skills/chief-information-security-officer",
+   "path": "plugins/business-ops/skills/chief-information-security-officer",
    "variants": {}
   },
   {
@@ -9735,11 +9627,11 @@
   },
   {
    "name": "security-architecture-review",
-   "category": "security",
-   "description": "Reviews a design or change for security before it ships \u2014 authentication and authorization, data handling, secrets, dependencies, and the secure-development practices around it. Use this to review an architecture or pull request for security, set secure coding standards, choose or tune SAST and DAST tooling, assess a third-party integration, or decide whether a design is safe to build.",
+   "category": "business-ops",
+   "description": "Headcount enterprise security architecture review process for corporate systems, vendor integrations, and compliance sign-offs.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/security/skills/security-architecture-review",
+   "path": "plugins/business-ops/skills/security-architecture-review",
    "variants": {}
   },
   {
@@ -9753,11 +9645,11 @@
   },
   {
    "name": "vulnerability-management",
-   "category": "security",
-   "description": "Runs the loop from discovering a weakness to confirming it is fixed \u2014 scanning, triage, prioritization by real exploitability, remediation tracking, and patch policy. Use this to stand up or fix a vulnerability program, triage scanner output, decide what to fix first, set patch SLAs, handle a disclosure from an outside researcher, or report posture to leadership.",
+   "category": "business-ops",
+   "description": "Headcount organizational vulnerability management lifecycle: policies, SLAs, scanner triage, leadership posture reporting, and patch governance.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/security/skills/vulnerability-management",
+   "path": "plugins/business-ops/skills/vulnerability-management",
    "variants": {}
   },
   {
@@ -9807,20 +9699,20 @@
   },
   {
    "name": "code-review",
-   "category": "testing-quality",
-   "description": "Conducts and responds to code review \u2014 reviewing a change for correctness, design, and risk, and evaluating review feedback received on your own work. Use this before merging, when asked to review a diff or pull request, when review feedback has arrived and needs acting on, or when feedback seems wrong and needs a reasoned response rather than compliance.",
+   "category": "business-ops",
+   "description": "Headcount engineering organizational code review policy, team peer-review workflow standards, and feedback governance.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/testing-quality/skills/code-review",
+   "path": "plugins/business-ops/skills/code-review",
    "variants": {}
   },
   {
    "name": "completion-verification",
-   "category": "testing-quality",
-   "description": "Verifies that work is actually complete before it is claimed to be \u2014 running the checks, reading the output, and confirming the original request was satisfied rather than approximated. Use this before saying something is done, fixed, or passing; before committing or opening a pull request; and whenever a claim of success has not been backed by command output.",
+   "category": "business-ops",
+   "description": "Headcount organizational definition-of-done checklist, acceptance verification, and milestone sign-off criteria.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/testing-quality/skills/completion-verification",
+   "path": "plugins/business-ops/skills/completion-verification",
    "variants": {}
   },
   {
@@ -9879,11 +9771,11 @@
   },
   {
    "name": "skill-authoring",
-   "category": "agent-dev",
-   "description": "Writes and revises agent skills so they trigger at the right moments and give usable instruction when they do. Use this when creating a new skill, editing an existing one, diagnosing a skill that fires too often or never fires, or reviewing a set of skills for overlap. Also use before adding to a skill library, to check the capability is not already covered.",
+   "category": "business-ops",
+   "description": "Headcount guidelines for authoring, reviewing, and standardizing agent skills across company teams.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/agent-dev/skills/skill-authoring",
+   "path": "plugins/business-ops/skills/skill-authoring",
    "variants": {}
   },
   {
@@ -9924,11 +9816,20 @@
   },
   {
    "name": "test-driven-development",
-   "category": "testing-quality",
-   "description": "Drives implementation by writing a failing test first, then the smallest code that passes it. Use this before writing implementation code for any feature or bugfix, when a bug needs a regression test, when existing code is hard to change safely, or when someone asks whether a change is covered. Also use to decide what is worth testing and what is not.",
+   "category": "business-ops",
+   "description": "Headcount engineering policy for test-driven development adoption, unit testing expectations, and testing governance.",
    "source": "cbrock84/headcount",
    "license": "MIT",
-   "path": "plugins/testing-quality/skills/test-driven-development",
+   "path": "plugins/business-ops/skills/test-driven-development",
+   "variants": {}
+  },
+  {
+   "name": "skill-mentor",
+   "category": "agent-dev",
+   "description": "Grow new skills for the user from research: notice what they lean towards, find and read the best papers, and turn them into practical skills. Use when the user wants SFP to learn, asks for skills from research or the latest papers, keeps hitting gaps, or says to make them better at what they do.",
+   "source": "siddu1004/SFP",
+   "license": "MIT",
+   "path": "plugins/agent-dev/skills/skill-mentor",
    "variants": {}
   },
   {

@@ -35,9 +35,10 @@ class IsolatedData(unittest.TestCase):
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
-        self.saved = {k: os.environ.get(k) for k in ('SFP_USAGE_LOG', 'SFP_NO_LEARNING', 'SFP_NO_USAGE_LOG', 'SFP_LEARN_WORDS')}
+        self.saved = {k: os.environ.get(k) for k in ('SFP_DATA_DIR', 'SFP_USAGE_LOG', 'SFP_NO_LEARNING', 'SFP_NO_USAGE_LOG', 'SFP_LEARN_WORDS')}
         for k in ('SFP_NO_LEARNING', 'SFP_NO_USAGE_LOG', 'SFP_LEARN_WORDS'):
             os.environ.pop(k, None)
+        os.environ['SFP_DATA_DIR'] = os.path.join(self.tmp.name, 'data')
         os.environ['SFP_USAGE_LOG'] = os.path.join(self.tmp.name, 'data', 'usage.jsonl')
         learn._CACHE.clear()
         self.project = django_project(self.tmp.name)

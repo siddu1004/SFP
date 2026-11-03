@@ -334,6 +334,17 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                'phases': record['phases'], 'stack': [c['name'] for c in res['stack']], 'cand': record['candidates']}
         if keep_words():
             row['words'] = record['words']
+        import sfp_embed
+        if sfp_embed.enabled():
+            try:
+                near = sfp_embed.similar(task, 3)
+                if near:
+                    row['meaning'] = [[round(c, 3), n] for c, n in near[:3]]
+            except Exception:
+                pass
+            row['gap'] = bool(res.get('gap'))
+        elif res.get('gap'):
+            row['gap'] = True
         _append('decisions.jsonl', row)
         _compact_decisions()
         res['decision'] = did

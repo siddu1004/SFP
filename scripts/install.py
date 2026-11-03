@@ -20,6 +20,7 @@ Only folders this script created (they hold a .sfp marker) are replaced or remov
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -320,13 +321,17 @@ def install_app(spec, apps_dir):
 
 
 def claude_plugins(names):
-    if not shutil.which('claude'):
+    claude_bin = shutil.which('claude')
+    if not claude_bin:
         return False
     print('  Claude Code: installing categories as plugins')
-    subprocess.run(['claude', 'plugin', 'marketplace', 'add', ROOT], check=False)
-    for n in names:
-        subprocess.run(['claude', 'plugin', 'install', f'{n}@{MARKETPLACE}'], check=False)
-    return True
+    try:
+        subprocess.run([claude_bin, 'plugin', 'marketplace', 'add', ROOT], check=False, shell=(os.name == 'nt'))
+        for n in names:
+            subprocess.run([claude_bin, 'plugin', 'install', f'{n}@{MARKETPLACE}'], check=False, shell=(os.name == 'nt'))
+        return True
+    except Exception:
+        return False
 
 
 def record_root():
@@ -679,6 +684,52 @@ def cmd_rules(args):
         print(f'  {path}: {"removed the SFP block" if args.remove else "SFP block written"}')
 
 
+def latest_release_tag(root):
+    """Find the newest semantic release tag vX.Y.Z in the git repository."""
+    res = subprocess.run(['git', '-C', root, 'tag', '-l', 'v*'], capture_output=True, text=True)
+    tags = []
+    for line in res.stdout.splitlines():
+        m = re.match(r'^v(\d+)\.(\d+)\.(\d+)$', line.strip())
+        if m:
+            tags.append(((int(m.group(1)), int(m.group(2)), int(m.group(3))), line.strip()))
+    if tags:
+        tags.sort(key=lambda x: x[0], reverse=True)
+        return tags[0][1]
+    return None
+
+
+def cmd_update(cat, args):
+    """Update SFP to the latest release tag (never main) and refresh installed skills."""
+    git_dir = os.path.join(ROOT, '.git')
+    if os.path.isdir(git_dir):
+        print(f"Checking for updates (pinned to latest release tag) in {ROOT}...")
+        try:
+            status_res = subprocess.run(['git', '-C', ROOT, 'status', '--porcelain'], capture_output=True, text=True)
+            if status_res.stdout.strip():
+                print("  Note: Repository has local modifications; skipping tag checkout to preserve local edits.")
+            else:
+                subprocess.run(['git', '-C', ROOT, 'fetch', '--tags', 'origin'], capture_output=True, text=True)
+                newest = latest_release_tag(ROOT)
+                if newest:
+                    curr = subprocess.run(['git', '-C', ROOT, 'describe', '--tags', '--exact-match'], capture_output=True, text=True).stdout.strip()
+                    if curr == newest:
+                        print(f"  Already on latest release tag {newest}.")
+                    else:
+                        co = subprocess.run(['git', '-C', ROOT, 'checkout', newest], capture_output=True, text=True)
+                        if co.returncode == 0:
+                            print(f"  Checked out latest release tag {newest}.")
+                        else:
+                            print(f"  Warning: git checkout {newest} failed: {co.stderr.strip() or co.stdout.strip()}")
+                else:
+                    print("  No release tags found matching vX.Y.Z.")
+        except Exception as e:
+            print(f"  Warning: could not update release tags: {e}")
+    cat = load_catalog()
+    print("\nRefreshing installed skills into IDEs and tools...")
+    cmd_install(cat, args)
+    print("\nUpdate complete! Run `python3 mcp/sfp_hive.py doctor` to verify.")
+
+
 def cmd_apps(rest):
     """`install.py apps status|install|update|start|list [ID] [--yes]`: set up the programs some skills guide."""
     sys.path.insert(0, os.path.join(ROOT, 'apps'))
@@ -691,7 +742,7 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == 'apps':
         cmd_apps(sys.argv[2:])
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('command', choices=['list', 'install', 'uninstall', 'mcp', 'rules'])
+    ap.add_argument('command', choices=['list', 'install', 'uninstall', 'mcp', 'rules', 'update'])
     ap.add_argument('--remove', action='store_true', help='with `mcp` or `rules`: remove what was added')
     ap.add_argument('--tools', help='comma-separated tools, "all", or "auto" (default: tools found on this machine)')
     ap.add_argument('--categories', help='comma-separated categories or "all"')
@@ -707,6 +758,8 @@ def main():
         cmd_list(cat)
     elif args.command == 'install':
         cmd_install(cat, args)
+    elif args.command == 'update':
+        cmd_update(cat, args)
     elif args.command == 'mcp':
         cmd_mcp(args)
     elif args.command == 'rules':

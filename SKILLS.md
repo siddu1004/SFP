@@ -11,7 +11,7 @@ The router and the hive: find the right skill for any task, installed or not, an
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 | `sfp-hive` | Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work move… |
 
-## frontend (89)
+## frontend (88)
 
 UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.
 
@@ -105,7 +105,6 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `locomotive-scroll` | Implement smooth scrolling, parallax effects, and scroll-triggered animations using Locomotive Scroll. Use when adding smooth inertia scrolling, scroll-bound transforms, sticky containers, or scroll-r… |
 | `react-colorful` | Integrate ultra-lightweight, zero-dependency color pickers in React apps using react-colorful. Use when adding color pickers (Hex, RGB, HSL, HSV) with keyboard accessibility, custom styling, or alpha … |
 | `stageshow` | Build faux product UI that looks like a real product, as a still illustration or an animated demo with a cursor. Browser and app windows, dashboards, phones, notifications, terminals, bento grids and … |
-| `apple-design-review` | Review UIs against Apple Human Interface Guidelines for Flutter, React Native, and other frameworks, ensuring accessibility, platform conventions, and design craft. Use when reviewing a UI for clarity… |
 
 ## design-styles (67)
 
@@ -250,7 +249,7 @@ Language idioms, standards and testing for Go, Rust, Python, C++, C#, F#, Java, 
 | `python-patterns` | Pythonic idioms, PEP 8 standards, type hints, and best practices for building robust, efficient, and maintainable Python applications. Use when writing or reviewing Python code and idiomatic structure… |
 | `rust-patterns` | Idiomatic Rust patterns, ownership, error handling, traits, concurrency, and best practices for building safe, performant applications. Use when writing or reviewing Rust code and ownership, error han… |
 
-## testing-quality (39)
+## testing-quality (35)
 
 TDD, end-to-end tests, verification loops, code review, regression and quality gates.
 
@@ -291,10 +290,6 @@ TDD, end-to-end tests, verification loops, code review, regression and quality g
 | `rea-ci-tests-audit` | Audit REA CI and test suites for correctness, fixture drift, false passes, and measured performance; use for suite or workflow investigations and efficiency changes, rather than ordinary feature testi… |
 | `playwright-cli` | Automate browser interactions, test web pages and work with Playwright tests. |
 | `gsd-code-review` | Review source files changed during a phase for bugs, security issues, and code quality problems |
-| `roastroom` | Provide humorous and constructive feedback on code ideas and implementations, fostering a positive yet challenging environment for growth. Use when the user asks for a brutally honest but constructive… |
-| `code-review` | Conducts and responds to code review — reviewing a change for correctness, design, and risk, and evaluating review feedback received on your own work. Use this before merging, when asked to review a d… |
-| `completion-verification` | Verifies that work is actually complete before it is claimed to be — running the checks, reading the output, and confirming the original request was satisfied rather than approximated. Use this before… |
-| `test-driven-development` | Drives implementation by writing a failing test first, then the smallest code that passes it. Use this before writing implementation code for any feature or bugfix, when a bug needs a regression test,… |
 
 ## devops (15)
 
@@ -303,7 +298,7 @@ Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR an
 | Skill | What it does |
 |---|---|
 | `deployment-patterns` | Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production readiness checklists for web applications. Use when setting up CI/CD, contain… |
-| `docker-patterns` | Docker and Docker Compose patterns: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orch… |
+| `docker-patterns` | Docker and Docker Compose patterns for apps and services: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, … |
 | `flox-environments` | Create reproducible, cross-platform (macOS/Linux) development environments with Flox, a declarative Nix-based environment manager. Use when setting up project toolchains, installing system-level depen… |
 | `git-workflow` | Git workflow patterns including branching strategies, commit conventions, keeping history clean and readable, tidying local commits before merging, merge vs rebase, conflict resolution, and collaborat… |
 | `github-ops` | GitHub repository operations, automation, and management. Issue triage, PR management, CI/CD operations, release management, and security monitoring using the gh CLI. Use when the user wants to manage… |
@@ -318,7 +313,7 @@ Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR an
 | `sweep-reds` | Repair confirmed CI failures base-first, then prepare affected PRs one at a time with exact-candidate evidence. Use when asked to sweep reds or restore the queue. Never merges, closes PRs, weakens tes… |
 | `validate-release-green` | Run or inspect the local Release-Green observer for an exact base or combined PR candidate, separating hard failures, advisory drift and incomplete evidence. Use for maintainer preflight; full CI acce… |
 
-## security (34)
+## security (31)
 
 Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.
 
@@ -355,11 +350,8 @@ Strix autonomous pentesting, OWASP testing, secure coding for each framework, an
 | `detecting-container-escape-attempts` | Detects container escape at runtime across tooling - namespace manipulation, capability abuse, kernel exploits, sensitive host mounts, and anomalous syscalls - and explains which signals matter regard… |
 | `hardening-docker-containers-for-production` | Hardens Dockerfiles, images, and per-container runtime settings against the CIS Docker Benchmark v1.8.0: non-root users, dropped capabilities, read-only root filesystem, seccomp and AppArmor profiles,… |
 | `implementing-zero-trust-network-access` | Configures Zero Trust Network Access (ZTNA) in AWS, Azure, and GCP using identity-aware proxies, micro-segmentation, and continuous verification with conditional access policies, replacing VPN-based a… |
-| `chief-information-security-officer` | Owns the security posture of the organization — architecture, program strategy, risk acceptance, incident command, and the authority to stop work that creates unacceptable exposure. Use this for a sec… |
-| `security-architecture-review` | Reviews a design or change for security before it ships — authentication and authorization, data handling, secrets, dependencies, and the secure-development practices around it. Use this to review an … |
-| `vulnerability-management` | Runs the loop from discovering a weakness to confirming it is fixed — scanning, triage, prioritization by real exploitability, remediation tracking, and patch policy. Use this to stand up or fix a vul… |
 
-## agents (112)
+## agents (107)
 
 Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.
 
@@ -472,11 +464,6 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `browser-use` | Automate browser interactions for AI agents using the Browser-Use Python library and Playwright. Use when building web scraping agents, automating complex UI workflows, interacting with authenticated … |
 | `moli` | Fast, resource-light headless browser automation using Moli for web scraping and AI agent DOM extraction. Use when running lightweight browser automation, extracting clean DOM content, or scraping web… |
 | `graft` | Compile and execute declarative multi-agent pipelines using the Graft CLI runtime. Compose agent graphs, state handoffs, and verification steps into repeatable workflows. Use when orchestrating cooper… |
-| `ruflo` | Deploy and coordinate multi-agent swarms using Ruflo for efficient task execution and collaboration. Use when deploying and coordinating swarms of agents with ruflo. |
-| `cindy` | Automate computer tasks using Cindy's open-source desktop agent for multi-device access and AI-powered assistance. Use when the user wants an open-source desktop agent to carry out computer tasks. |
-| `agency-agents` | Selects and loads a specialist persona from the agency-agents collection based on task requirements. Use when a task needs a specialist persona (engineering, marketing, game development, security, des… |
-| `agent-hierarchy` | Designs orchestrator-and-subagent hierarchies for a repository — splitting agents by exclusive write surface, pairing every producer with an independent auditor, and enforcing the split with a script … |
-| `enterprise-risk` | Identifies, assesses, and tracks organizational risk — building and maintaining a risk register, scoring exposure, assigning owners and treatments, and preparing for audit. Use this to stand up a risk… |
 
 ## agent-dev (105)
 
@@ -588,9 +575,9 @@ Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budge
 | `cloudflare-codemode` | Build and run sandboxed agent tools using Cloudflare Code Mode (@cloudflare/codemode). Connects dynamic Worker sandboxes, Durable Objects, OpenAPI, and MCP servers safely. Use when creating agent sand… |
 | `harness-engineering` | Design, test, and optimize AI agent execution harnesses, test fixtures, action spaces, and evaluation gates. Use when building agent evaluation loops, configuring autonomous runtime environments, or o… |
 | `opencode` | Automate coding workflows using OpenCode CLI (opencode) and terminal subagents. Use when orchestrating background coding tasks, running automated pull request triage, or integrating multi-model coding… |
-| `skill-authoring` | Writes and revises agent skills so they trigger at the right moments and give usable instruction when they do. Use this when creating a new skill, editing an existing one, diagnosing a skill that fire… |
+| `skill-mentor` | Grow new skills for the user from research: notice what they lean towards, find and read the best papers, and turn them into practical skills. Use when the user wants SFP to learn, asks for skills fro… |
 
-## ai-ml (15)
+## ai-ml (12)
 
 LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.
 
@@ -608,9 +595,6 @@ LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems
 | `regex-vs-llm-structured-text` | Decision framework for parsing structured text (quizzes, forms, invoices, receipts, tables) with a hybrid regex-first pipeline — regex extraction handles 95%+ cheaply, a confidence scorer flags low-co… |
 | `prompt-master` | Generates optimized prompts for AI tools. Activates only when the user explicitly asks to write, fix, improve, or adapt a prompt for a specific AI tool (LLM, Cursor, Midjourney, image AI, video AI, co… |
 | `colibri` | Compile and run ultra-fast streaming MoE local model inference using the pure-C Colibri engine. Use when running minimal-footprint streaming model inference on CPU or lightweight machines. |
-| `gpu-unlock` | Unlocks tensor cores on GeForce cards to boost AI performance without flashing firmware or changing drivers. Use when a GeForce RTX 20/30/40 card on Linux runs FP16/BF16 AI work slower than expected a… |
-| `unlimited-ocr` | Parse long documents using Baidu Unlimited-OCR in one shot. Use this skill when dealing with multi-page documents that need OCR processing. |
-| `penmentor` | Corrects handwritten math visually using a local model, enhancing learning through feedback and interactive animations. Use when checking handwritten math work visually with a local model. |
 
 ## ai-gateway (45)
 
@@ -678,7 +662,7 @@ About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platf
 | `x-api` | X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants t… |
 | `freellmapi` | Run and use FreeLLMAPI, one OpenAI-compatible /v1 endpoint that stacks the free tiers of 34 LLM providers with automatic routing and failover. Use when the user wants free LLM inference, to point an O… |
 
-## content-media (42)
+## content-media (38)
 
 Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.
 
@@ -722,12 +706,8 @@ Writing, marketing and persuasion audits, SEO, video, slides, social posting, br
 | `lemo-opuscar` | Direct and produce short films made entirely in code using Lemo-Opuscar styles (oil painting, watercolor, ukiyo-e, teardown). Use when creating programmatic video, animations, explainers, or promo sho… |
 | `openmontage` | Create and render programmatic video montages from video clips, audio tracks, and timeline specs using OpenMontage. Use when automating video compilation, generating clip reels, or synchronizing video… |
 | `gpt-image-prompting` | Engineer detailed prompts and visual composition specifications for GPT-4o, DALL-E 3, and generative image models based on awesome-gpt-image-2 techniques. Use when creating UI mockups, icons, banners,… |
-| `marketing-analytics` | Sets up, audits, and reports on marketing measurement — tracking plans, event schemas, attribution models, and the dashboards built on them. Use this to instrument a site or product, audit tracking no… |
-| `marketing-campaign-planner` | Designs a coordinated multi-channel campaign or product launch around one story — objective, message, channel sequencing, timeline, assets, and the checklist that gets it out the door. Use this to pla… |
-| `marketing-copywriting` | Writes and edits marketing copy for any surface — homepage, product and pricing pages, ads, emails, and collateral — and sharpens existing copy that is not working. Use this to write or rewrite page c… |
-| `marketing-planning` | Builds the marketing plan of record — objectives, channel mix, budget allocation, sequencing, and the measurement that says whether it worked. Use this for annual or quarterly planning, when budget mu… |
 
-## business-ops (193)
+## business-ops (210)
 
 Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check.
 
@@ -771,7 +751,6 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `founder-ops` | Your operations manager. Works out how the business actually runs on day one: suppliers and what they cost, who works when, the step-by-step routines for opening, serving or shipping and closing, the … |
 | `founder-plan` | Your business planner. Compiles everything the other founder skills wrote (the board's verdict, the competitors, the buyer panel, pricing, the offer, the CFO's numbers, marketing, brand, operations an… |
 | `founder-pricing` | Finds the price buyers will actually pay. Reads the consumer panel's four price answers per buyer into a Van Westendorp price-sensitivity range (too cheap, a bargain, getting expensive, too expensive)… |
-| `open-bsp-api` | Automate WhatsApp, Instagram, and TikTok messaging using OpenBSP API for businesses. Use this skill when you need to integrate AI-driven communication into your platform. |
 | `chief-strategy-officer` | Owns where the business plays and how it wins over a multi-year horizon — portfolio choices, corporate development, strategic partnerships, and planning under uncertainty. Use this for a decision abou… |
 | `market-entry` | Decides whether and how to enter a new market — sizing demand from the bottom up rather than from a market report, testing whether your advantage transfers, choosing between organic entry, partnership… |
 | `mergers-and-acquisitions` | Runs corporate development — deal thesis, target screening, valuation framing, diligence, and integration planning. Use this when considering an acquisition or being approached about one, when evaluat… |
@@ -800,9 +779,11 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `lead-capture` | Converts anonymous traffic into known contacts — lead magnets, gated content, free tools, popups, and the forms behind them. Use this to design or improve a lead magnet, plan a free tool, add or fix p… |
 | `lifecycle-messaging` | Designs automated email and SMS programs — welcome and onboarding sequences, nurture, re-engagement, transactional messaging, and the timing and segmentation behind them. Use this to build or fix an e… |
 | `listing-distribution` | Gets a product listed where buyers and crawlers look — directories, marketplaces, review sites, comparison pages, and aggregators. Use this to plan a submission push, choose which directories are wort… |
+| `marketing-analytics` | Sets up, audits, and reports on marketing measurement — tracking plans, event schemas, attribution models, and the dashboards built on them. Use this to instrument a site or product, audit tracking no… |
 | `paid-advertising` | Plans, runs, and optimizes paid acquisition across search, social, and display — account structure, targeting, creative, bidding, budget, and the analysis that says whether to scale or stop. Use this … |
 | `programmatic-seo` | Builds large sets of search-targeted pages from a template and a dataset — the location, comparison, integration, and use-case pages that capture long-tail demand at scale. Use this when there is a re… |
 | `seo-strategy` | Audits and improves organic search performance — technical health, site architecture, internal linking, structured data, and the content decisions that determine what can rank. Use this to run an SEO … |
+| `agent-hierarchy` | Designs orchestrator-and-subagent hierarchies for a repository — splitting agents by exclusive write surface, pairing every producer with an independent auditor, and enforcing the split with a script … |
 | `ai-research-analyst` | Produces executive-level research — market sizing, competitor mapping, trend analysis, and strategic intelligence — grounded in cited sources with the confidence in each claim made explicit. Use this … |
 | `business-growth-consultant` | Finds the single constraint currently limiting a business's growth and the highest-leverage moves against it, rather than producing a list of everything that could be improved. Use this when growth ha… |
 | `ceo-advisor` | Pressure-tests a decision, plan, or idea before it is committed to — surfacing the assumption it rests on, the case against it, and what would have to be true for it to work. Use this when weighing op… |
@@ -829,6 +810,7 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `endpoint-management` | Manages laptops, desktops and mobile devices — enrollment, configuration, patching, software distribution, and lost or compromised devices. Use this to set up device management, standardize builds, ro… |
 | `identity-lifecycle-administration` | Executes joiner, mover and leaver processes — provisioning, group membership, access changes on role change, and complete deprovisioning. Use this to set up or fix joiner-mover-leaver, deprovision som… |
 | `it-asset-management` | Tracks hardware and software assets through their life — procurement, ownership, licensing, refresh, and disposal. Use this to build an asset register, prepare for a software audit, plan a refresh cyc… |
+| `network-administration` | Designs and operates the corporate network — segmentation, remote access, wireless, DNS and addressing, and diagnosing network problems. Use this to segment a network, set up or fix remote access, dia… |
 | `service-desk` | Runs the IT service desk — intake, triage, prioritization, escalation, knowledge, and the metrics that improve service rather than distort it. Use this to set up or fix a service desk, design ticket p… |
 | `systems-administration` | Runs servers and corporate systems — patching, configuration baselines, change control, capacity, and the routine that prevents incidents. Use this to establish a patching cadence, standardize server … |
 | `telephony-and-conferencing` | Runs voice and meeting infrastructure — phone systems and numbers, emergency calling obligations, conference rooms and their AV, call recording and its retention consequences, and the porting that mak… |
@@ -837,6 +819,7 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `contract-review` | Reviews and negotiates commercial agreements — MSAs, SOWs, order forms, NDAs, vendor and data-processing agreements — identifying material risk, proposing positions, and recommending a path rather tha… |
 | `corporate-governance` | Maintains the corporate record and the governance machinery — entity records, board and committee support, resolutions and minutes, delegations of authority, insurance, and business continuity. Use th… |
 | `disputes-and-legal-holds` | Handles a dispute from the first sign of it — recognizing when preservation obligations attach, issuing and scoping a legal hold, suspending automatic deletion across every system that holds relevant … |
+| `enterprise-risk` | Identifies, assesses, and tracks organizational risk — building and maintaining a risk register, scoring exposure, assigning owners and treatments, and preparing for audit. Use this to stand up a risk… |
 | `intellectual-property` | Covers what the organization owns and what it is only borrowing — trademarks and clearance, copyright and work-for-hire, patents and trade secrets, open-source license obligations and copyleft reach, … |
 | `privacy-and-data-protection` | Assesses and improves how personal data is collected, used, shared, and retained — data mapping, lawful basis, consent, processor agreements, subject rights, and breach obligations. Use this before la… |
 | `regulatory-compliance` | Identifies which regulations apply and builds the program that keeps you inside them — obligation mapping, controls, monitoring, and responding to regulators. Use this to work out what applies to your… |
@@ -847,9 +830,13 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `content-strategy` | Decides what content to make and why — topic territory, format mix, cadence, and how content connects to a business outcome rather than to traffic. Use this to plan a content program, choose topics, b… |
 | `customer-research` | Plans, runs, and synthesizes customer research — interviews, surveys, win-loss analysis, and message testing — into findings that change decisions. Use this when the customer is being guessed at, befo… |
 | `events-and-field-marketing` | Plans and runs events that produce pipeline — conferences, trade shows, webinars, field programs, and measuring whether any of it worked. Use this to decide whether to sponsor an event, plan a confere… |
+| `marketing-campaign-planner` | Designs a coordinated multi-channel campaign or product launch around one story — objective, message, channel sequencing, timeline, assets, and the checklist that gets it out the door. Use this to pla… |
+| `marketing-copywriting` | Writes and edits marketing copy for any surface — homepage, product and pricing pages, ads, emails, and collateral — and sharpens existing copy that is not working. Use this to write or rewrite page c… |
+| `marketing-planning` | Builds the marketing plan of record — objectives, channel mix, budget allocation, sequencing, and the measurement that says whether it worked. Use this for annual or quarterly planning, when budget mu… |
 | `newsletter-writer` | Writes and edits newsletters and marketing emails people actually open — subject lines, opening, structure, voice, and the conversion turn where there is one. Use this to draft or rewrite a newsletter… |
 | `partnership-marketing` | Builds reach through other people's audiences — co-marketing partnerships, creator and influencer programs, and community building. Use this to find and evaluate partners, structure a joint campaign o… |
 | `positioning-and-messaging` | Establishes what a product is understood to be, for whom, and instead of what — then turns that into the messaging every other surface inherits. Use this when messaging is inconsistent across channels… |
+| `product-launch` | Headcount go-to-market planning, launch readiness criteria, cross-functional tiering, and announcement coordination. |
 | `public-relations` | Plans and executes earned media — press strategy, journalist outreach, announcements, commentary, and crisis response. Use this to plan a press push, write a pitch or release, find and approach the ri… |
 | `social-post-craft` | Writes, structures, and evaluates social posts end to end — hooks, body, formatting for how each platform renders, and a quality check before publishing. Use this to draft a post, rewrite one that und… |
 | `video-content` | Plans and scripts short-form and long-form video, and designs the packaging — titles, thumbnails, and openings — that determines whether it gets watched. Use this to script a video, plan a series, fix… |
@@ -877,6 +864,7 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `onboarding-and-offboarding` | Designs the joining and leaving experience — first-day readiness, ramp to productivity, knowledge capture, and clean exits. Use this to design or fix onboarding, shorten time to productivity, structur… |
 | `org-design` | Designs how an organization is structured — reporting lines, team boundaries, spans and layers, role definition, and workforce planning against the strategy. Use this to structure a new team, restruct… |
 | `payroll-operations` | Runs the pay cycle so it is right, on time, and provable — the calendar and cutoffs, what feeds pay from the HRIS and time systems, gross-to-net and the deductions in it, multi-jurisdiction registrati… |
+| `performance-management` | Headcount HR and management policy for employee performance management systems, review cycles, feedback calibration, and performance improvement plans. |
 | `workforce-planning` | Plans the shape and size of the workforce — demand for roles, build-versus-buy, attrition, and sequencing hiring against budget. Use this to build a hiring plan, decide which roles to open and in what… |
 | `benefits-realization` | Ensures projects deliver the value they were approved on — defining measurable benefits, baselining, tracking after delivery, and honest post-implementation review. Use this to define benefits for a b… |
 | `change-and-adoption` | Gets people to actually use what was delivered — stakeholder analysis, communication, training, resistance, and measuring adoption. Use this to plan a rollout, recover an implementation nobody is usin… |
@@ -894,6 +882,8 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `interface-craft` | Raises the visual and interaction quality of an interface — layout, hierarchy, type, spacing, density, and the details that separate a considered product from a generic one. Use this when a screen wor… |
 | `interface-redesign` | Upgrades an existing interface to a higher standard without rebuilding it — auditing what is there, identifying what reads as generic or unfinished, and sequencing changes by impact. Use this when a p… |
 | `presentation-design` | Designs slide decks and one-pagers that carry an argument rather than decorate one — deck structure, headlines that state the takeaway, charts that make a single point, and the different rules board d… |
+| `product-discovery` | Finds out whether a problem is real and a solution would work, before building it — recruiting the right people, interviewing without leading them, separating what users say from what they do, naming … |
+| `product-requirements` | Writes down what is being built so a team can build it and know when they are done — problem and success measure before solution, scope stated by exclusion, user-visible behavior including the states … |
 | `ux-product-auditor` | Audits a website, app, onboarding flow, or design for usability, conversion, and product problems, tying every finding to a business outcome and a severity. Use this to review an interface, diagnose l… |
 | `visual-reference-generation` | Produces design reference imagery before implementation — screen concepts, layout directions, and flows for web or mobile that make a verbal brief concrete enough to argue with. Use this when a brief … |
 | `activation` | Gets new users from signup to first real value — signup flow, onboarding, time-to-value, and the early experience that determines whether someone becomes a user or a lapsed account. Use this to design… |
@@ -907,25 +897,32 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `sales-compensation-and-territory` | Designs quotas, territories and commission plans that produce the behavior the business needs — sizing territories against real potential, setting quotas people can hit often enough to believe in, cho… |
 | `sales-enablement` | Builds what a sales team needs to sell — pitch decks, one-pagers, objection handling, competitive battlecards, demo scripts, and case studies. Use this to create or fix sales collateral, prepare for a… |
 | `access-and-identity` | Designs and audits who can reach what — authentication, authorization models, privileged access, service credentials, and joiner-mover-leaver process. Use this to design a permissions model, run an ac… |
+| `chief-information-security-officer` | Headcount executive CISO role guidance: enterprise security governance, risk acceptance, board reporting, and compliance posture. |
 | `data-protection-and-encryption` | Protects data itself rather than the systems around it — classifying what you hold, encrypting in transit and at rest and understanding what each actually defends against, managing keys and their rota… |
 | `detection-and-monitoring` | Builds the capability to notice an attack in progress — deciding what to log and retain, centralizing it somewhere tamper-resistant, writing detections that fire on attacker behavior rather than on in… |
 | `incident-response` | Runs a security incident from detection to closure — triage, containment, investigation, communication, and the review afterward. Use this when a compromise is suspected or confirmed, when preparing a… |
+| `security-architecture-review` | Headcount enterprise security architecture review process for corporate systems, vendor integrations, and compliance sign-offs. |
 | `threat-modeling` | Identifies what could go wrong in a system before it is built or changed — the assets worth attacking, the entry points, the trust boundaries, and the controls that actually address the realistic thre… |
+| `vulnerability-management` | Headcount organizational vulnerability management lifecycle: policies, SLAs, scanner triage, leadership posture reporting, and patch governance. |
 | `ai-workflow-architect` | Designs AI systems, automations, and agent workflows for a business — identifying which manual work is worth automating, how to structure the system, which tools fit, and what could go wrong. Use this… |
 | `headcount-api-design` | Designs interfaces that survive their consumers — resource modeling, errors, versioning, pagination, and compatibility. Use this to design a new API, review one before it ships, decide how to version … |
 | `branch-and-worktree-workflow` | Isolates feature work in its own branch or worktree and integrates it cleanly when done. Use this when starting work that should not disturb the current workspace, when several efforts must proceed in… |
 | `chief-technology-officer` | Owns architecture, engineering delivery, infrastructure, data platform, and internal systems. Use this for build-versus-buy calls, technology selection, architectural direction, engineering capacity a… |
 | `cloud-infrastructure` | Designs and runs cloud infrastructure — environments, infrastructure as code, networking and isolation, scaling, and cost. Use this to design a cloud environment, control infrastructure spend, set up … |
+| `code-review` | Headcount engineering organizational code review policy, team peer-review workflow standards, and feedback governance. |
+| `completion-verification` | Headcount organizational definition-of-done checklist, acceptance verification, and milestone sign-off criteria. |
 | `data-migration` | Moves data from one system to another without losing it or corrupting it — profiling the source before mapping, deciding between big-bang and parallel-run cutover, reconciling counts and values rather… |
 | `implementation-planning` | Turns a spec or requirement into a written plan a separate session or agent can execute, then drives that plan through review checkpoints. Use this before touching code on any multi-step task, when wo… |
 | `observability-and-reliability` | Makes systems debuggable and reliably operable — instrumentation, alerting that is worth waking for, service objectives, and learning from failure. Use this to instrument a service, fix alerting that … |
 | `parallel-agent-delivery` | Splits work across multiple agents or sessions running at once, keeping their surfaces disjoint so results merge cleanly. Use this when facing several independent tasks with no shared state, when a pl… |
 | `headcount-prompt-optimizer` | Turns rough intent or a weak prompt into a reliable one — diagnosing why output is inconsistent, restructuring the instruction, and adapting it across models. Use this when a prompt is not producing w… |
 | `release-and-deployment` | Ships changes safely and often — pipelines, deployment strategies, feature flags, rollback, and database changes. Use this to design a deployment pipeline, reduce release risk, roll out a risky change… |
+| `skill-authoring` | Headcount guidelines for authoring, reviewing, and standardizing agent skills across company teams. |
 | `solution-architecture` | Designs system structure and makes architectural decisions defensible — boundaries, coupling, trade-offs, and recording why. Use this to design a new system or major component, choose between architec… |
 | `solution-exploration` | Explores the problem and the range of possible approaches before any code is written — clarifying what is actually being asked, surfacing options with their tradeoffs, and converging on one. Use this … |
 | `systematic-debugging` | Finds the root cause of a bug, test failure, or unexpected behavior before proposing any fix. Use this whenever something is broken and the cause is not yet proven — a failing test, a production error… |
 | `technical-debt-management` | Makes technical debt visible and decidable — distinguishing real debt from mess, quantifying its cost, and arguing for remediation in business terms. Use this to assess and prioritize debt, decide whe… |
+| `test-driven-development` | Headcount engineering policy for test-driven development adoption, unit testing expectations, and testing governance. |
 
 ## industry (13)
 
@@ -947,7 +944,7 @@ Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, 
 | `quality-nonconformance` | Quality control and non-conformance management for regulated manufacturing (FDA 21 CFR 820, IATF 16949, AS9100): NCR lifecycle and disposition, 5-Why/Ishikawa/fault-tree/8D root cause analysis, CAPA s… |
 | `returns-reverse-logistics` | Codified expertise for returns authorization, receipt and inspection, disposition decisions, refund processing, fraud detection, and warranty claims management. Informed by returns operations managers… |
 
-## networking (11)
+## networking (10)
 
 Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, config validation.
 
@@ -963,9 +960,8 @@ Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, conf
 | `network-bgp-diagnostics` | Diagnostics-only BGP troubleshooting patterns for neighbor state, route exchange, prefix policy, AS path inspection, and safe evidence collection. Use when a BGP neighbor is down, routes are missing, … |
 | `network-config-validation` | Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, stale references, management-plane risk, and IOS-style security hygiene. … |
 | `network-interface-health` | Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, switches, and Linux hosts. Use when an interface shows errors, drops, CRCs… |
-| `network-administration` | Designs and operates the corporate network — segmentation, remote access, wireless, DNS and addressing, and diagnosing network problems. Use this to segment a network, set up or fix remote access, dia… |
 
-## research-docs (42)
+## research-docs (40)
 
 Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).
 
@@ -1011,8 +1007,6 @@ Deep research, scientific databases, literature review, docs, ADRs, a teach-me t
 | `understand-onboard` | Use when you need to generate an onboarding guide for new team members joining a project |
 | `codebase-memory-mcp` | Connect persistent local code intelligence and architectural dependency graphs using Codebase Memory MCP. Use when exploring complex codebases, querying architectural relationships, or maintaining cro… |
 | `searxng` | Configure and query a private SearXNG metasearch instance to retrieve web search results without commercial tracking. Use when conducting private web research, aggregating search engines, or bypassing… |
-| `learnharness` | Enhance learning of complex topics through interactive AI tutoring sessions, adapting to your understanding and providing personalized practice. Use when the user wants to learn a difficult topic with… |
-| `mirofish` | Run MiroFish swarm-intelligence simulations to explore scenarios in a digital sandbox. Use when exploring how a scenario might unfold with a multi-agent swarm simulation. |
 
 ## web3 (9)
 
@@ -1030,7 +1024,7 @@ DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent secur
 | `prediction-market-oracle-research` | Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligence. Use for source-grounded analysis of market-implied probabilities, c… |
 | `prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and execution risk. Use before any workflow handles venue auth, user portfolio data… |
 
-## engineering (30)
+## engineering (26)
 
 General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.
 
@@ -1062,12 +1056,8 @@ General engineering practice: architecture, standards, error handling, performan
 | `difftastic` | Perform syntax-aware structural diffing on source code using Difftastic (difft). Compares code based on AST structure rather than lines. Use when reviewing syntactic changes, inspecting complex refact… |
 | `gitnexus` | Index codebase structure and query cross-repository knowledge graphs using GitNexus AST analysis. Use when navigating unfamiliar codebases, tracing cross-file dependencies, or mapping symbol reference… |
 | `trail-code` | Track AST changes, record contextual codebase learnings, and monitor symbol references using Trail-Code. Use when recording code learnings during refactoring or building automated context trails. |
-| `product-launch` | Takes something built and gets it into the market — tiering the launch to match what it actually warrants, sequencing internal readiness before external announcement, preparing sales and support to an… |
-| `performance-management` | Runs performance systems that change behavior — expectations, feedback, review cycles, calibration, and handling underperformance. Use this to design or fix a review process, run calibration, write or… |
-| `product-discovery` | Finds out whether a problem is real and a solution would work, before building it — recruiting the right people, interviewing without leading them, separating what users say from what they do, naming … |
-| `product-requirements` | Writes down what is being built so a team can build it and know when they are done — problem and success measure before solution, scope stated by exclusion, user-visible behavior including the states … |
 
-## science-hardware (124)
+## science-hardware (123)
 
 Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 
@@ -1196,7 +1186,6 @@ Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.
 | `deepchem` | Builds molecular property prediction and MoleculeNet workflows with DeepChem, including SMILES featurization, scaffold or grouped holdouts, masked labels, graph models and explicit pretrained encoder … |
 | `scientific-schematics` | Generates scientific diagram drafts using Nano Banana 2 AI with smart iterative refinement. Uses Gemini 3.7 Flash for quality review. Refines when the review requests improvement, with at most two gen… |
 | `scikit-bio` | Biological data toolkit. Sequence analysis, alignments, phylogenetic trees, diversity metrics (alpha/beta, UniFrac), ordination (PCoA), PERMANOVA, FASTA/Newick I/O, for microbiome analysis. |
-| `ruview` | Enable RuView to integrate with Home Assistant for real-time spatial sensing and vital sign monitoring. Use when working with WiFi-based spatial sensing or vital-sign monitoring through RuView. |
 
 ## career (3)
 

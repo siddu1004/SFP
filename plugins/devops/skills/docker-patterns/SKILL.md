@@ -1,6 +1,6 @@
 ---
 name: docker-patterns
-description: "Docker and Docker Compose patterns: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration."
+description: "Docker and Docker Compose patterns for apps and services: multi-stage builds for small production images, local development, hardened CLI installer harnesses, container security, networking, volumes, and multi-service orchestration."
 ---
 
 # Docker Patterns

@@ -186,6 +186,47 @@ class VSCodeAndRulesTest(InstallerTest):
         self.assertEqual(rules_done.returncode, 0, rules_done.stderr)
         self.assertTrue(os.path.isfile(os.path.join(self.home, '.gemini', 'GEMINI.md')))
 
+    def test_latest_release_tag_pins_to_highest_semver_tag(self):
+        import subprocess
+        from unittest.mock import patch
+        sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+        import install
+        
+        # Test semver parsing and ordering
+        fake_output = "v3.2.0\nv3.17.3\nv3.18.0\nv3.17.7\nbeta-v4.0\n"
+        with patch('subprocess.run') as mock_run:
+            mock_run.return_value.stdout = fake_output
+            mock_run.return_value.returncode = 0
+            tag = install.latest_release_tag(ROOT)
+            self.assertEqual(tag, 'v3.18.0')
+
+    def test_update_pins_to_release_tag_and_never_pulls_main(self):
+        from unittest.mock import patch
+        sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+        import install
+        
+        calls = []
+        def fake_run(cmd, *a, **kw):
+            calls.append(cmd)
+            res = unittest.mock.MagicMock()
+            res.returncode = 0
+            res.stdout = "v3.18.0\nv3.17.7\n" if 'tag' in cmd else ""
+            res.stderr = ""
+            return res
+
+        with patch('subprocess.run', side_effect=fake_run), patch('install.cmd_install'):
+            args = unittest.mock.MagicMock()
+            cat = {'skills': []}
+            install.cmd_update(cat, args)
+            
+            # Verify fetch was called with --tags
+            self.assertTrue(any('fetch' in c and '--tags' in c for c in calls))
+            # Verify checkout was called with the latest tag
+            self.assertTrue(any('checkout' in c and 'v3.18.0' in c for c in calls))
+            # Critical requirement: MUST NEVER pull main
+            for c in calls:
+                self.assertFalse('pull' in c and 'main' in c, f"Command pulled main: {c}")
+
 
 if __name__ == '__main__':
     unittest.main()

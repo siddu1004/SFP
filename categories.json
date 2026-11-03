@@ -189,7 +189,25 @@
     "graft": "agents",
     "trail-code": "engineering",
     "colibri": "ai-ml",
-    "gpt-image-prompting": "content-media"
+    "gpt-image-prompting": "content-media",
+    "marketing-analytics": "business-ops",
+    "agent-hierarchy": "business-ops",
+    "network-administration": "business-ops",
+    "enterprise-risk": "business-ops",
+    "marketing-campaign-planner": "business-ops",
+    "marketing-copywriting": "business-ops",
+    "marketing-planning": "business-ops",
+    "product-launch": "business-ops",
+    "performance-management": "business-ops",
+    "product-discovery": "business-ops",
+    "product-requirements": "business-ops",
+    "chief-information-security-officer": "business-ops",
+    "security-architecture-review": "business-ops",
+    "vulnerability-management": "business-ops",
+    "code-review": "business-ops",
+    "completion-verification": "business-ops",
+    "skill-authoring": "business-ops",
+    "test-driven-development": "business-ops"
   },
   "patterns": [
     [

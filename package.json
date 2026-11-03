@@ -30,9 +30,18 @@
     "hive",
     "vibecoding"
   ],
+  "main": "./bin/sfp.js",
   "bin": {
     "sfp": "./bin/sfp.js",
     "sfp-hive": "./bin/sfp.js"
+  },
+  "preferGlobal": true,
+  "scripts": {
+    "start": "node ./bin/sfp.js",
+    "sfp": "node ./bin/sfp.js",
+    "update": "node ./bin/sfp.js update",
+    "doctor": "node ./bin/sfp.js doctor",
+    "test": "node ./bin/sfp.js doctor"
   },
   "files": [
     "bin/",
