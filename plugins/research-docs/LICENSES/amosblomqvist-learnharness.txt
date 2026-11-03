@@ -1,0 +1,3 @@
+original summary (upstream AGPL-3.0) License
+
+Source: https://github.com/amosblomqvist/learnharness

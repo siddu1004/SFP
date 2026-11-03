@@ -279,7 +279,17 @@ cd SFP
 
 **C. Rust.** If you have Cargo: `cargo install --git https://github.com/siddu1004/SFP.git`, then `sfp install`.
 
-> An npm package (`npx sfp-hive ...`) is being prepared. Until it is on the public npm registry, use A, B or C.
+**D. NPM / NPX.** Install globally or run on demand via npm:
+
+```bash
+npm install -g sfp-hive
+sfp install
+
+# Or run directly without installing:
+npx sfp-hive install
+```
+
+When updates land on GitHub, npm users receive automatic update notifications, or can run `sfp update` (or `npx sfp-hive update`) to automatically pull updates and refresh skills. Set `SFP_AUTO_UPDATE=1` for seamless hands-free updates on every run.
 
 **Check:** the folder exists and holds `catalog.json`:
 

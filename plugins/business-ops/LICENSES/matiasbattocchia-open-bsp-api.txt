@@ -1,0 +1,3 @@
+original summary (upstream Unlicense) License
+
+Source: https://github.com/matiasbattocchia/open-bsp-api

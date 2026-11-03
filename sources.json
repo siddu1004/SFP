@@ -882,6 +882,124 @@
         "."
       ],
       "local": "templates/gpt-image-prompting"
+    },
+    {
+      "repo": "dickwu/apple-design-skill",
+      "license": "original summary (upstream none)",
+      "default": "design-styles",
+      "skills": [
+        "."
+      ],
+      "local": "templates/apple-design-review"
+    },
+    {
+      "repo": "Zagitta/gpu-unlock",
+      "license": "original summary (upstream none)",
+      "default": "ai-ml",
+      "skills": [
+        "."
+      ],
+      "local": "templates/gpu-unlock"
+    },
+    {
+      "repo": "baidu/Unlimited-OCR",
+      "license": "original summary (upstream MIT)",
+      "default": "ai-ml",
+      "skills": [
+        "."
+      ],
+      "local": "templates/unlimited-ocr"
+    },
+    {
+      "repo": "matiasbattocchia/open-bsp-api",
+      "license": "original summary (upstream Unlicense)",
+      "default": "business-ops",
+      "skills": [
+        "."
+      ],
+      "local": "templates/open-bsp-api"
+    },
+    {
+      "repo": "amosblomqvist/learnharness",
+      "license": "original summary (upstream AGPL-3.0)",
+      "default": "research-docs",
+      "skills": [
+        "."
+      ],
+      "local": "templates/learnharness"
+    },
+    {
+      "repo": "ruvnet/RuView",
+      "license": "original summary (upstream MIT)",
+      "default": "science-hardware",
+      "skills": [
+        "."
+      ],
+      "local": "templates/ruview"
+    },
+    {
+      "repo": "vedangdhuri/RoastRoom",
+      "license": "original summary (upstream none)",
+      "default": "testing-quality",
+      "skills": [
+        "."
+      ],
+      "local": "templates/roastroom"
+    },
+    {
+      "repo": "666ghj/MiroFish",
+      "license": "original summary (upstream AGPL-3.0)",
+      "default": "research-docs",
+      "skills": [
+        "."
+      ],
+      "local": "templates/mirofish"
+    },
+    {
+      "repo": "AbdullahAlhariri/penmentor",
+      "license": "original summary (upstream MIT)",
+      "default": "ai-ml",
+      "skills": [
+        "."
+      ],
+      "local": "templates/penmentor"
+    },
+    {
+      "repo": "ruvnet/ruflo",
+      "license": "original summary (upstream MIT)",
+      "default": "agents",
+      "skills": [
+        "."
+      ],
+      "local": "templates/ruflo"
+    },
+    {
+      "repo": "makecindy/cindy",
+      "license": "original summary (upstream Apache-2.0)",
+      "default": "agents",
+      "skills": [
+        "."
+      ],
+      "local": "templates/cindy"
+    },
+    {
+      "repo": "msitarzewski/agency-agents",
+      "license": "original summary (upstream MIT)",
+      "default": "agents",
+      "skills": [
+        "."
+      ],
+      "local": "templates/agency-agents"
+    },
+    {
+      "repo": "cbrock84/headcount",
+      "license": "MIT",
+      "default": "business-ops",
+      "skills": [
+        "plugins/*/skills/*",
+        "verticals/*/skills/*"
+      ],
+      "collision_prefix": "headcount-"
     }
   ],
   "externals": {

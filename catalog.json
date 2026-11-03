@@ -6,7 +6,7 @@
   },
   "frontend": {
    "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.",
-   "skills": 88
+   "skills": 89
   },
   "design-styles": {
    "description": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more.",
@@ -26,7 +26,7 @@
   },
   "testing-quality": {
    "description": "TDD, end-to-end tests, verification loops, code review, regression and quality gates.",
-   "skills": 35
+   "skills": 39
   },
   "devops": {
    "description": "Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR and merge automation.",
@@ -34,19 +34,19 @@
   },
   "security": {
    "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
-   "skills": 31
+   "skills": 34
   },
   "agents": {
    "description": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.",
-   "skills": 107
+   "skills": 112
   },
   "agent-dev": {
    "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.",
-   "skills": 104
+   "skills": 105
   },
   "ai-ml": {
    "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
-   "skills": 12
+   "skills": 15
   },
   "ai-gateway": {
    "description": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
@@ -58,11 +58,11 @@
   },
   "content-media": {
    "description": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.",
-   "skills": 38
+   "skills": 42
   },
   "business-ops": {
    "description": "Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check.",
-   "skills": 38
+   "skills": 193
   },
   "industry": {
    "description": "Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy.",
@@ -70,11 +70,11 @@
   },
   "networking": {
    "description": "Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, config validation.",
-   "skills": 10
+   "skills": 11
   },
   "research-docs": {
    "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).",
-   "skills": 40
+   "skills": 42
   },
   "web3": {
    "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
@@ -82,11 +82,11 @@
   },
   "engineering": {
    "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
-   "skills": 26
+   "skills": 30
   },
   "science-hardware": {
    "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
-   "skills": 123
+   "skills": 124
   },
   "career": {
    "description": "AI job search: evaluate offers, tailor CVs, scan portals, track applications.",
@@ -8273,6 +8273,1662 @@
    "source": "freestylefly/awesome-gpt-image-2",
    "license": "MIT",
    "path": "plugins/content-media/skills/gpt-image-prompting",
+   "variants": {}
+  },
+  {
+   "name": "apple-design-review",
+   "category": "frontend",
+   "description": "Review UIs against Apple Human Interface Guidelines for Flutter, React Native, and other frameworks, ensuring accessibility, platform conventions, and design craft. Use when reviewing a UI for clarity, deference, depth and platform conventions in any framework.",
+   "source": "dickwu/apple-design-skill",
+   "license": "original summary (upstream none)",
+   "path": "plugins/frontend/skills/apple-design-review",
+   "variants": {}
+  },
+  {
+   "name": "gpu-unlock",
+   "category": "ai-ml",
+   "description": "Unlocks tensor cores on GeForce cards to boost AI performance without flashing firmware or changing drivers. Use when a GeForce RTX 20/30/40 card on Linux runs FP16/BF16 AI work slower than expected and the user asks about unlocking full tensor-core speed.",
+   "source": "Zagitta/gpu-unlock",
+   "license": "original summary (upstream none)",
+   "path": "plugins/ai-ml/skills/gpu-unlock",
+   "variants": {}
+  },
+  {
+   "name": "unlimited-ocr",
+   "category": "ai-ml",
+   "description": "Parse long documents using Baidu Unlimited-OCR in one shot. Use this skill when dealing with multi-page documents that need OCR processing.",
+   "source": "baidu/Unlimited-OCR",
+   "license": "original summary (upstream MIT)",
+   "path": "plugins/ai-ml/skills/unlimited-ocr",
+   "variants": {}
+  },
+  {
+   "name": "open-bsp-api",
+   "category": "business-ops",
+   "description": "Automate WhatsApp, Instagram, and TikTok messaging using OpenBSP API for businesses. Use this skill when you need to integrate AI-driven communication into your platform.",
+   "source": "matiasbattocchia/open-bsp-api",
+   "license": "original summary (upstream Unlicense)",
+   "path": "plugins/business-ops/skills/open-bsp-api",
+   "variants": {}
+  },
+  {
+   "name": "learnharness",
+   "category": "research-docs",
+   "description": "Enhance learning of complex topics through interactive AI tutoring sessions, adapting to your understanding and providing personalized practice. Use when the user wants to learn a difficult topic with the agent as a patient tutor.",
+   "source": "amosblomqvist/learnharness",
+   "license": "original summary (upstream AGPL-3.0)",
+   "path": "plugins/research-docs/skills/learnharness",
+   "variants": {}
+  },
+  {
+   "name": "ruview",
+   "category": "science-hardware",
+   "description": "Enable RuView to integrate with Home Assistant for real-time spatial sensing and vital sign monitoring. Use when working with WiFi-based spatial sensing or vital-sign monitoring through RuView.",
+   "source": "ruvnet/RuView",
+   "license": "original summary (upstream MIT)",
+   "path": "plugins/science-hardware/skills/ruview",
+   "variants": {}
+  },
+  {
+   "name": "roastroom",
+   "category": "testing-quality",
+   "description": "Provide humorous and constructive feedback on code ideas and implementations, fostering a positive yet challenging environment for growth. Use when the user asks for a brutally honest but constructive roast of their code or idea.",
+   "source": "vedangdhuri/RoastRoom",
+   "license": "original summary (upstream none)",
+   "path": "plugins/testing-quality/skills/roastroom",
+   "variants": {}
+  },
+  {
+   "name": "mirofish",
+   "category": "research-docs",
+   "description": "Run MiroFish swarm-intelligence simulations to explore scenarios in a digital sandbox. Use when exploring how a scenario might unfold with a multi-agent swarm simulation.",
+   "source": "666ghj/MiroFish",
+   "license": "original summary (upstream AGPL-3.0)",
+   "path": "plugins/research-docs/skills/mirofish",
+   "variants": {}
+  },
+  {
+   "name": "penmentor",
+   "category": "ai-ml",
+   "description": "Corrects handwritten math visually using a local model, enhancing learning through feedback and interactive animations. Use when checking handwritten math work visually with a local model.",
+   "source": "AbdullahAlhariri/penmentor",
+   "license": "original summary (upstream MIT)",
+   "path": "plugins/ai-ml/skills/penmentor",
+   "variants": {}
+  },
+  {
+   "name": "ruflo",
+   "category": "agents",
+   "description": "Deploy and coordinate multi-agent swarms using Ruflo for efficient task execution and collaboration. Use when deploying and coordinating swarms of agents with ruflo.",
+   "source": "ruvnet/ruflo",
+   "license": "original summary (upstream MIT)",
+   "path": "plugins/agents/skills/ruflo",
+   "variants": {}
+  },
+  {
+   "name": "cindy",
+   "category": "agents",
+   "description": "Automate computer tasks using Cindy's open-source desktop agent for multi-device access and AI-powered assistance. Use when the user wants an open-source desktop agent to carry out computer tasks.",
+   "source": "makecindy/cindy",
+   "license": "original summary (upstream Apache-2.0)",
+   "path": "plugins/agents/skills/cindy",
+   "variants": {}
+  },
+  {
+   "name": "agency-agents",
+   "category": "agents",
+   "description": "Selects and loads a specialist persona from the agency-agents collection based on task requirements. Use when a task needs a specialist persona (engineering, marketing, game development, security, design, sales, testing and more).",
+   "source": "msitarzewski/agency-agents",
+   "license": "original summary (upstream MIT)",
+   "path": "plugins/agents/skills/agency-agents",
+   "variants": {}
+  },
+  {
+   "name": "chief-strategy-officer",
+   "category": "business-ops",
+   "description": "Owns where the business plays and how it wins over a multi-year horizon \u2014 portfolio choices, corporate development, strategic partnerships, and planning under uncertainty. Use this for a decision about which markets or businesses to be in, whether to build, buy, or partner, how to allocate capital across business lines, or when a long-horizon bet needs framing. Distinct from `chief-executive`, which arbitrates present-quarter conflicts.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-strategy-officer",
+   "variants": {}
+  },
+  {
+   "name": "market-entry",
+   "category": "business-ops",
+   "description": "Decides whether and how to enter a new market \u2014 sizing demand from the bottom up rather than from a market report, testing whether your advantage transfers, choosing between organic entry, partnership and acquisition, sequencing the operational and regulatory work that entry actually requires, and setting the criteria that would tell you to stop. Use this to evaluate a new geography, segment or vertical, pressure-test an entry plan, or work out why a launched market never reached scale.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/market-entry",
+   "variants": {}
+  },
+  {
+   "name": "mergers-and-acquisitions",
+   "category": "business-ops",
+   "description": "Runs corporate development \u2014 deal thesis, target screening, valuation framing, diligence, and integration planning. Use this when considering an acquisition or being approached about one, when evaluating build-versus-buy at company scale, when running or reviewing diligence, or when planning how an acquired business will actually be integrated.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/mergers-and-acquisitions",
+   "variants": {}
+  },
+  {
+   "name": "portfolio-strategy",
+   "category": "business-ops",
+   "description": "Decides where capital and attention go across business lines, products, and markets \u2014 what to fund, hold, harvest, or exit, and on what evidence. Use this to allocate budget across businesses, evaluate whether a product line should continue, decide whether to exit one, structure a portfolio review, or when several initiatives compete for the same limited investment.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/portfolio-strategy",
+   "variants": {}
+  },
+  {
+   "name": "scenario-planning",
+   "category": "business-ops",
+   "description": "Plans under genuine uncertainty \u2014 building scenarios, identifying which assumptions are load-bearing, setting early-warning indicators, and stress-testing a plan against futures rather than forecasting one. Use this when a decision depends on something unknowable, when a plan assumes conditions that may not hold, before a large irreversible commitment, or when a market, regulatory, or technology shift could invalidate the strategy.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/scenario-planning",
+   "variants": {}
+  },
+  {
+   "name": "strategic-alliances",
+   "category": "business-ops",
+   "description": "Structures partnerships that change what the business can do \u2014 technology integrations, channel and reseller arrangements, joint ventures, and OEM relationships. Use this to evaluate or structure a strategic partnership, decide between partnering and building, negotiate commercial terms of an alliance, or diagnose a partnership that is signed but not producing. For audience-borrowing partnerships, use `marketing:partnership-marketing`.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/strategic-alliances",
+   "variants": {}
+  },
+  {
+   "name": "chief-customer-officer",
+   "category": "business-ops",
+   "description": "Owns the customer's experience after the sale \u2014 support, success, escalation, and the feedback loop back into product. Use this for a decision spanning support and product, when service quality and cost are in tension, when deciding what to staff or automate, when a customer relationship is at risk above the account-manager level, or when nobody owns a recurring customer problem.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-customer-officer",
+   "variants": {}
+  },
+  {
+   "name": "customer-onboarding-and-implementation",
+   "category": "business-ops",
+   "description": "Takes a new customer from signature to working \u2014 setting a definition of live that both sides agreed before the contract was signed, planning and staffing the implementation, running data migration and integration realistically, training the people who will actually use it, and handing over to the ongoing relationship. Use this to design an onboarding motion, rescue a stalled implementation, work out why customers who bought never went live, or scope the services a deal actually needs.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/customer-onboarding-and-implementation",
+   "variants": {}
+  },
+  {
+   "name": "customer-success-management",
+   "category": "business-ops",
+   "description": "Runs the ongoing relationship with accounts after the sale \u2014 segmenting coverage against account value, building a health score that predicts rather than describes, running reviews customers find worth attending, forecasting renewals honestly, and finding expansion that follows usage instead of quota. Use this to design a customer success motion, decide who gets a named contact, work out why renewals surprise you, or fix a health score everyone ignores.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/customer-success-management",
+   "variants": {}
+  },
+  {
+   "name": "escalation-management",
+   "category": "business-ops",
+   "description": "Handles customer situations that have exceeded normal support \u2014 severity assessment, incident communication, executive escalation, and recovering a relationship after a failure. Use this when a customer issue is escalating or has gone to leadership, during a customer-affecting outage, when a major account is at risk, when a relationship needs repairing after a failure, or to design the escalation path itself.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/escalation-management",
+   "variants": {}
+  },
+  {
+   "name": "self-service-and-knowledge",
+   "category": "business-ops",
+   "description": "Builds the help center, in-product guidance, and knowledge base that let customers resolve problems without contacting anyone \u2014 content, findability, maintenance, and deflection measurement. Use this to build or fix a help center, reduce support volume, write documentation for customers, improve findability, or decide what deserves a help article versus a product fix.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/self-service-and-knowledge",
+   "variants": {}
+  },
+  {
+   "name": "support-operations",
+   "category": "business-ops",
+   "description": "Designs and runs the support function \u2014 channels, queues, routing, staffing, service levels, quality, and the metrics that show whether it is working. Use this to set up or fix support operations, choose channels, size a team, set or renegotiate service levels, reduce cost per contact, diagnose long queues or poor quality, or decide what to automate.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/support-operations",
+   "variants": {}
+  },
+  {
+   "name": "voice-of-customer",
+   "category": "business-ops",
+   "description": "Builds the loop from what customers say to what gets changed \u2014 collecting feedback, distinguishing signal from noise, routing it to owners, and closing the loop back to the customer. Use this to set up a feedback program, design or interpret CSAT/NPS, decide what customer feedback deserves action, get product to act on recurring issues, or diagnose why feedback is collected but nothing changes.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/voice-of-customer",
+   "variants": {}
+  },
+  {
+   "name": "ai-ml-governance",
+   "category": "business-ops",
+   "description": "Governs models and AI systems in production \u2014 intended use, evaluation, monitoring, human oversight, documentation, and the decision to deploy or retire. Use this before deploying a model or AI feature, when defining evaluation criteria, when a model's behavior has drifted, when assessing AI risk or regulatory exposure, or when deciding whether an AI system is fit for a consequential decision.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/ai-ml-governance",
+   "variants": {}
+  },
+  {
+   "name": "business-intelligence",
+   "category": "business-ops",
+   "description": "Builds reporting and self-serve analytics that people actually use \u2014 metric trees, dashboard design, distribution, and the discipline that stops dashboards proliferating. Use this to build a dashboard or report, design a metrics framework, set up self-serve analytics, decide what to measure, or diagnose why reporting exists but nobody uses it or trusts it.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/business-intelligence",
+   "variants": {}
+  },
+  {
+   "name": "chief-data-officer",
+   "category": "business-ops",
+   "description": "Owns data as an asset \u2014 governance, quality, the warehouse and semantic layer, analytics capability, and the governance of models built on top. Use this for a decision about how data is collected, stored, defined, or shared; when numbers disagree between teams; when deciding what to build in-house versus buy; when standing up a data function; or when an AI or model decision needs governance rather than engineering.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-data-officer",
+   "variants": {}
+  },
+  {
+   "name": "data-engineering",
+   "category": "business-ops",
+   "description": "Builds and operates data pipelines \u2014 ingestion, transformation, orchestration, quality testing, and reliability of data delivery. Use this to design or debug a pipeline, decide batch versus streaming, add data quality checks, handle late or duplicate data, or work out why a dashboard's numbers changed without anyone changing the dashboard.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/data-engineering",
+   "variants": {}
+  },
+  {
+   "name": "data-governance",
+   "category": "business-ops",
+   "description": "Establishes ownership, definitions, quality, access, and lineage for the organization's data. Use this when metrics disagree between teams, when nobody knows which dataset is authoritative, when setting up data ownership or access policy, when data quality is unreliable, or before opening a dataset to a wider audience.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/data-governance",
+   "variants": {}
+  },
+  {
+   "name": "data-modeling",
+   "category": "business-ops",
+   "description": "Designs the warehouse and semantic layer \u2014 source-to-mart structure, dimensional modeling, grain, slowly changing dimensions, and the metric layer analytics reads through. Use this to design or restructure a warehouse, model a new source, decide on grain or table structure, build a semantic or metric layer, or diagnose why queries are slow, wrong, or impossible to write.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/data-modeling",
+   "variants": {}
+  },
+  {
+   "name": "quantitative-analysis",
+   "category": "business-ops",
+   "description": "Answers a business question with data without fooling yourself \u2014 framing the question so an answer would change something, choosing the right comparison, checking the data before trusting it, recognizing the traps that produce confident wrong answers (aggregation reversals, survivorship, regression to the mean, multiple comparisons), and reporting uncertainty honestly. Use this to run an analysis, review one before acting on it, or work out why two people looking at the same data reached opposite conclusions.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/quantitative-analysis",
+   "variants": {}
+  },
+  {
+   "name": "account-based-marketing",
+   "category": "business-ops",
+   "description": "Concentrates marketing and sales effort on a named set of accounts rather than on volume \u2014 qualifying whether the model fits your economics at all, building the account list and the buying group inside each, tiering effort against account value, coordinating so the account experiences one campaign rather than several, and measuring account progression instead of leads. Use this to decide whether to run an account-based program, build one, or work out why an existing one produces activity and no pipeline.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/account-based-marketing",
+   "variants": {}
+  },
+  {
+   "name": "ai-search-optimization",
+   "category": "business-ops",
+   "description": "Optimizes for AI assistants and AI-generated answers \u2014 being retrievable, being cited, and being represented accurately when a model answers on your behalf. Use this when traffic is shifting from links to AI answers, when a brand is misrepresented or absent in AI responses, when planning content for retrieval rather than ranking, or when deciding how AI search changes an existing SEO program.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/ai-search-optimization",
+   "variants": {}
+  },
+  {
+   "name": "app-store-optimization",
+   "category": "business-ops",
+   "description": "Improves visibility and conversion in the App Store and Google Play \u2014 metadata, keywords, screenshots, ratings, and the listing experience that turns an impression into an install. Use this to audit or optimize an app listing, plan a launch listing, diagnose poor install conversion, or improve store search visibility.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/app-store-optimization",
+   "variants": {}
+  },
+  {
+   "name": "experimentation",
+   "category": "business-ops",
+   "description": "Designs, runs, and reads A/B tests and growth experiments \u2014 hypothesis, sample size, duration, and honest interpretation. Use this to plan a test, judge whether a result is real, build an experimentation program, decide what to test next, or diagnose why tests keep producing inconclusive or non-replicating results.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/experimentation",
+   "variants": {}
+  },
+  {
+   "name": "landing-page-cro-expert",
+   "category": "business-ops",
+   "description": "Audits and rewrites landing pages, homepages, and sales pages to increase conversion \u2014 diagnosing why a page is not converting, rewriting headlines, hero copy and calls to action, and prioritizing which changes to test first. Use this when a page underperforms, when someone pastes a URL or screenshot asking what is wrong, when writing a new page, or when deciding which conversion changes are worth testing.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/landing-page-cro-expert",
+   "variants": {}
+  },
+  {
+   "name": "lead-capture",
+   "category": "business-ops",
+   "description": "Converts anonymous traffic into known contacts \u2014 lead magnets, gated content, free tools, popups, and the forms behind them. Use this to design or improve a lead magnet, plan a free tool, add or fix popups and overlays, improve form conversion, or decide what is worth gating and what should stay open.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/lead-capture",
+   "variants": {}
+  },
+  {
+   "name": "lifecycle-messaging",
+   "category": "business-ops",
+   "description": "Designs automated email and SMS programs \u2014 welcome and onboarding sequences, nurture, re-engagement, transactional messaging, and the timing and segmentation behind them. Use this to build or fix an email sequence, plan lifecycle automation, improve open or click performance, set up SMS flows, or decide what messages a customer should receive and when.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/lifecycle-messaging",
+   "variants": {}
+  },
+  {
+   "name": "listing-distribution",
+   "category": "business-ops",
+   "description": "Gets a product listed where buyers and crawlers look \u2014 directories, marketplaces, review sites, comparison pages, and aggregators. Use this to plan a submission push, choose which directories are worth the effort, prepare listing assets, build comparison and alternative pages, or manage presence on review platforms.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/listing-distribution",
+   "variants": {}
+  },
+  {
+   "name": "marketing-analytics",
+   "category": "content-media",
+   "description": "Sets up, audits, and reports on marketing measurement \u2014 tracking plans, event schemas, attribution models, and the dashboards built on them. Use this to instrument a site or product, audit tracking nobody trusts, choose or interpret an attribution model, build reporting that answers a specific question, or reconcile numbers that disagree between tools.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/marketing-analytics",
+   "variants": {}
+  },
+  {
+   "name": "paid-advertising",
+   "category": "business-ops",
+   "description": "Plans, runs, and optimizes paid acquisition across search, social, and display \u2014 account structure, targeting, creative, bidding, budget, and the analysis that says whether to scale or stop. Use this to set up or restructure campaigns, write and iterate ad creative, diagnose rising costs or falling performance, decide budget allocation, or judge whether a channel is working.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/paid-advertising",
+   "variants": {}
+  },
+  {
+   "name": "programmatic-seo",
+   "category": "business-ops",
+   "description": "Builds large sets of search-targeted pages from a template and a dataset \u2014 the location, comparison, integration, and use-case pages that capture long-tail demand at scale. Use this when there is a repeating query pattern with real volume, when a dataset could answer many similar searches, or to judge whether a programmatic approach is viable before building it.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/programmatic-seo",
+   "variants": {}
+  },
+  {
+   "name": "seo-strategy",
+   "category": "business-ops",
+   "description": "Audits and improves organic search performance \u2014 technical health, site architecture, internal linking, structured data, and the content decisions that determine what can rank. Use this to run an SEO audit, diagnose why pages are not ranking or were deindexed, plan a site's URL and navigation structure, add structured data, or prioritize which SEO fixes are worth doing.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/seo-strategy",
+   "variants": {}
+  },
+  {
+   "name": "agent-hierarchy",
+   "category": "agents",
+   "description": "Designs orchestrator-and-subagent hierarchies for a repository \u2014 splitting agents by exclusive write surface, pairing every producer with an independent auditor, and enforcing the split with a script that runs in CI. Use this whenever the user wants to set up, expand, audit, or fix a multi-agent or subagent structure for a codebase; asks how to divide work between agents; wants agent charters, roles, or a surface map written; or is hitting agents that collide on the same files, review their own work, or drift from their remit. Also use when sizing a roster or deciding whether a new agent is justified.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/agents/skills/agent-hierarchy",
+   "variants": {}
+  },
+  {
+   "name": "ai-research-analyst",
+   "category": "business-ops",
+   "description": "Produces executive-level research \u2014 market sizing, competitor mapping, trend analysis, and strategic intelligence \u2014 grounded in cited sources with the confidence in each claim made explicit. Use this to analyze a market or industry, map competitors, evaluate a market-entry or build-versus-buy decision, produce a research brief, or assemble evidence for a decision. Also use when comparing options that need a structured, evidence-based verdict rather than an opinion.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/ai-research-analyst",
+   "variants": {}
+  },
+  {
+   "name": "business-growth-consultant",
+   "category": "business-ops",
+   "description": "Finds the single constraint currently limiting a business's growth and the highest-leverage moves against it, rather than producing a list of everything that could be improved. Use this when growth has stalled or slowed, when deciding where to spend limited time or budget, when revenue rises but profit does not, when prioritizing growth initiatives, or when a business feels busy without compounding.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/business-growth-consultant",
+   "variants": {}
+  },
+  {
+   "name": "ceo-advisor",
+   "category": "business-ops",
+   "description": "Pressure-tests a decision, plan, or idea before it is committed to \u2014 surfacing the assumption it rests on, the case against it, and what would have to be true for it to work. Use this when weighing options, when a plan needs challenging before commitment, when you have already decided and want a genuine gut check, when processing meeting notes into decisions, or when competing initiatives need ranking. Distinct from `chief-executive`, which owns direction; this one interrogates a specific decision.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/ceo-advisor",
+   "variants": {}
+  },
+  {
+   "name": "chief-executive",
+   "category": "business-ops",
+   "description": "Sets direction, allocates capital and attention, and makes the calls no one else can make. Use this when a decision spans more than one function, when priorities conflict and something must be cut, when a plan needs pressure-testing before commitment, or when the question is what the organization should do rather than how to do it. Also use to route a request to the right executive when it is unclear who owns it.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-executive",
+   "variants": {}
+  },
+  {
+   "name": "fundraising-and-investor-relations",
+   "category": "business-ops",
+   "description": "Raises capital and manages the relationship afterward \u2014 deciding how much and why, understanding what dilution and preferences actually cost, running a process with real competitive tension, preparing for diligence before it starts, and reporting to investors and a board in a way that keeps support when results are bad. Use this to plan a raise, evaluate a term sheet beyond the valuation, prepare a data room, or fix reporting that is producing surprises.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/fundraising-and-investor-relations",
+   "variants": {}
+  },
+  {
+   "name": "saas-idea-validator",
+   "category": "business-ops",
+   "description": "Evaluates a software or startup idea against problem, market, competition, monetization, defensibility, and execution, and returns a verdict rather than encouragement. Use this when an idea needs pressure-testing before anyone builds, when deciding whether something is worth pursuing, when assessing competition or willingness to pay, or when a validated idea needs a first-customers and MVP plan. Default to scrutiny; the useful answer is usually the unwelcome one.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/saas-idea-validator",
+   "variants": {}
+  },
+  {
+   "name": "budgeting-and-forecasting",
+   "category": "business-ops",
+   "description": "Runs the planning cycle \u2014 annual budget, rolling forecast, consolidation of business unit inputs, and the variance analysis that explains actuals against plan. Use this to build or challenge a budget, run a forecast cycle, consolidate departmental submissions, explain why results diverged from plan, or improve forecast accuracy.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/budgeting-and-forecasting",
+   "variants": {}
+  },
+  {
+   "name": "capital-allocation",
+   "category": "business-ops",
+   "description": "Evaluates where to spend limited capital \u2014 investment appraisal, hurdle rates, payback, and comparing proposals that are not alike. Use this to evaluate an investment or major purchase, compare competing funding requests, set a hurdle rate, decide between building and buying, or review whether past investments delivered what was claimed.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/capital-allocation",
+   "variants": {}
+  },
+  {
+   "name": "capital-structure-and-covenants",
+   "category": "business-ops",
+   "description": "Decides how the business is financed and what that financing then requires of it \u2014 debt versus equity, weighted average cost of capital as a hurdle rate, how much leverage cash flow can carry, and the financial, affirmative and negative covenants, definitions, test dates and cure rights that come attached. Use this to evaluate a financing option, set an investment hurdle, check whether a planned decision will trip a covenant, or work out what a lender can do when one breaks.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/capital-structure-and-covenants",
+   "variants": {}
+  },
+  {
+   "name": "chief-financial-officer",
+   "category": "business-ops",
+   "description": "Owns the financial position: planning, budgeting, forecasting, unit economics, cash, and the numbers the business is run and reported on. Use this to build or challenge a budget, model a decision's financial consequence, assess unit economics or runway, evaluate an investment or spend request, set financial controls, or when a plan's numbers do not reconcile. Also use to decide whether the business can afford something.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-financial-officer",
+   "variants": {}
+  },
+  {
+   "name": "cost-accounting",
+   "category": "business-ops",
+   "description": "Establishes what something actually costs \u2014 fixed, variable and mixed cost behavior, absorption versus variable costing, job-order, process and activity-based methods, breakeven and operating leverage, and price/volume/mix decomposition. Use this to set a price floor, explain why revenue or margin moved, decide make versus buy, judge whether a product line earns its place, or work out how an allocation basis is distorting a reported margin.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/cost-accounting",
+   "variants": {}
+  },
+  {
+   "name": "financial-modeling",
+   "category": "business-ops",
+   "description": "Builds and stress-tests financial models for forecasting, scenario planning, and decision support \u2014 revenue build, cost structure, driver logic, and the sensitivities that show where a plan breaks. Use this to model a decision's financial consequence, build a forecast or long-range plan, evaluate an investment or hire, or pressure-test someone else's model before relying on it.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/financial-modeling",
+   "variants": {}
+  },
+  {
+   "name": "financial-reporting-and-close",
+   "category": "business-ops",
+   "description": "Runs the period-end close and produces reporting \u2014 close calendar, reconciliations, accruals, variance analysis, and reporting that gets read. Use this to shorten or stabilize a monthly close, design a close checklist, investigate a variance, structure management reporting, or work out why the numbers keep changing after close.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/financial-reporting-and-close",
+   "variants": {}
+  },
+  {
+   "name": "financial-statement-analysis",
+   "category": "business-ops",
+   "description": "Reads a set of financial statements and establishes what changed and why \u2014 fluctuation analysis against prior period and against budget, profitability, liquidity, solvency and efficiency ratios, benchmarking, and the non-GAAP measures presented alongside them. Use this to interpret results, review a counterparty's or target's financials, diagnose a deteriorating trend, explain a variance to someone who will act on it, or test whether an adjusted number is honest.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/financial-statement-analysis",
+   "variants": {}
+  },
+  {
+   "name": "internal-controls-and-audit",
+   "category": "business-ops",
+   "description": "Designs and tests controls over financial reporting \u2014 segregation of duties, approval limits, evidence, and preparing for audit. Use this to design controls for a process, prepare for an external audit, respond to an audit finding, set approval thresholds, or assess where a small team's segregation of duties is genuinely broken.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/internal-controls-and-audit",
+   "variants": {}
+  },
+  {
+   "name": "revenue-recognition",
+   "category": "business-ops",
+   "description": "Determines when and how revenue is recognized \u2014 performance obligations, contract terms that change the answer, and the deal structures that create accounting problems. Use this to work out how a contract should be recognized, review a non-standard deal before it is signed, understand deferred revenue, or spot terms that would delay or reverse recognition.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/revenue-recognition",
+   "variants": {}
+  },
+  {
+   "name": "tax",
+   "category": "business-ops",
+   "description": "Structures the tax questions a growing business faces \u2014 corporate income, sales and use, payroll, nexus, and the obligations created by hiring or selling somewhere new. Use this to work out what a new state or country obligates you to, prepare for a tax filing or audit, understand sales tax on your product, or check what a remote hire or new market triggers.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/tax",
+   "variants": {}
+  },
+  {
+   "name": "treasury-and-liquidity",
+   "category": "business-ops",
+   "description": "Manages cash and liquidity \u2014 cash forecasting, runway, working capital, banking structure, and currency and counterparty exposure. Use this to build a cash forecast, extend runway, improve working capital, decide where cash should sit, or assess exposure to a bank, currency, or customer concentration.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/treasury-and-liquidity",
+   "variants": {}
+  },
+  {
+   "name": "unit-economics",
+   "category": "business-ops",
+   "description": "Establishes whether the business makes money on each customer or unit \u2014 contribution margin, acquisition cost, payback period, lifetime value, and the cohort behavior underneath. Use this to assess whether growth is profitable, evaluate a channel or segment, support a pricing decision, judge how fast the business can afford to grow, or diagnose why revenue growth is not producing profit.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/unit-economics",
+   "variants": {}
+  },
+  {
+   "name": "backup-and-recovery",
+   "category": "business-ops",
+   "description": "Protects and restores data \u2014 backup coverage and scope, retention, immutability against ransomware, and proving restores actually work. Use this to design a backup regime, verify restores, plan retention, protect backups from ransomware, or recover from data loss.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/backup-and-recovery",
+   "variants": {}
+  },
+  {
+   "name": "chief-information-officer",
+   "category": "business-ops",
+   "description": "The CIO's remit \u2014 running the technology the company works on, service quality, IT spend, and the boundary with product engineering. Use this to set IT priorities, decide what IT owns versus engineering, structure IT spend or an IT roadmap, judge whether to build, buy or outsource, or work out why IT is seen as a cost center rather than an enabler.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-information-officer",
+   "variants": {}
+  },
+  {
+   "name": "cloud-administration",
+   "category": "business-ops",
+   "description": "Administers the cloud the company runs on rather than the one it sells \u2014 tenant and subscription structure, the SaaS estate and who owns each app, identity as the real perimeter, cloud spend that arrives as a surprise, and what the provider does not do for you. Use this to structure subscriptions or tenants, get control of sprawling SaaS, cut a cloud bill, work out who owns an application nobody admits to buying, or decide what corporate workloads belong in cloud at all.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/cloud-administration",
+   "variants": {}
+  },
+  {
+   "name": "collaboration-platform-administration",
+   "category": "business-ops",
+   "description": "Administers the email, chat, meeting and file-sharing platform the organization runs on \u2014 tenant and domain configuration, mail authentication and routing, phishing and spam controls, shared mailboxes and distribution groups, external sharing and guest access, permission sprawl in file storage, and retention and legal hold. Use this to configure a tenant, tighten sharing, investigate a mail delivery or phishing problem, or work out who can see a file and why.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/collaboration-platform-administration",
+   "variants": {}
+  },
+  {
+   "name": "endpoint-management",
+   "category": "business-ops",
+   "description": "Manages laptops, desktops and mobile devices \u2014 enrollment, configuration, patching, software distribution, and lost or compromised devices. Use this to set up device management, standardize builds, roll out software or an OS upgrade, handle a lost device, or bring an unmanaged fleet under control.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/endpoint-management",
+   "variants": {}
+  },
+  {
+   "name": "identity-lifecycle-administration",
+   "category": "business-ops",
+   "description": "Executes joiner, mover and leaver processes \u2014 provisioning, group membership, access changes on role change, and complete deprovisioning. Use this to set up or fix joiner-mover-leaver, deprovision someone completely, clean up accumulated access, audit group membership, or find accounts that outlived their owners.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/identity-lifecycle-administration",
+   "variants": {}
+  },
+  {
+   "name": "it-asset-management",
+   "category": "business-ops",
+   "description": "Tracks hardware and software assets through their life \u2014 procurement, ownership, licensing, refresh, and disposal. Use this to build an asset register, prepare for a software audit, plan a refresh cycle, control license spend, or dispose of equipment safely.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/it-asset-management",
+   "variants": {}
+  },
+  {
+   "name": "network-administration",
+   "category": "networking",
+   "description": "Designs and operates the corporate network \u2014 segmentation, remote access, wireless, DNS and addressing, and diagnosing network problems. Use this to segment a network, set up or fix remote access, diagnose intermittent connectivity, plan addressing or DNS, or assess whether the network's trust assumptions still hold.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/networking/skills/network-administration",
+   "variants": {}
+  },
+  {
+   "name": "service-desk",
+   "category": "business-ops",
+   "description": "Runs the IT service desk \u2014 intake, triage, prioritization, escalation, knowledge, and the metrics that improve service rather than distort it. Use this to set up or fix a service desk, design ticket priority and escalation, reduce repeat contacts, structure a knowledge base, or work out why a desk hitting its targets still frustrates everyone.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/service-desk",
+   "variants": {}
+  },
+  {
+   "name": "systems-administration",
+   "category": "business-ops",
+   "description": "Runs servers and corporate systems \u2014 patching, configuration baselines, change control, capacity, and the routine that prevents incidents. Use this to establish a patching cadence, standardize server configuration, plan a maintenance window, decide change control for infrastructure, or clean up systems that have drifted from any known state.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/systems-administration",
+   "variants": {}
+  },
+  {
+   "name": "telephony-and-conferencing",
+   "category": "business-ops",
+   "description": "Runs voice and meeting infrastructure \u2014 phone systems and numbers, emergency calling obligations, conference rooms and their AV, call recording and its retention consequences, and the porting that makes provider changes go badly. Use this to replace a phone system, fix rooms nobody can start a meeting in, meet emergency-calling requirements, port numbers without losing service, or work out why voice quality degrades only sometimes.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/telephony-and-conferencing",
+   "variants": {}
+  },
+  {
+   "name": "virtualization-operations",
+   "category": "business-ops",
+   "description": "Runs the hypervisor layer beneath the servers \u2014 host capacity and consolidation ratios, VM sprawl, snapshot discipline, resilience and live migration, and licensing that counts cores rather than instances. Use this to size or expand a cluster, work out why VMs are slow when the hosts look idle, clean up sprawl, set snapshot and template policy, or decide what stays virtualized and what moves to cloud.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/virtualization-operations",
+   "variants": {}
+  },
+  {
+   "name": "chief-legal-and-risk-officer",
+   "category": "business-ops",
+   "description": "Owns legal, contracts, intellectual property, regulatory compliance, privacy, security governance, enterprise risk, and audit readiness. Use this to review a contract or commitment, assess regulatory or privacy exposure, evaluate an IP or licensing question, judge the risk in a business decision, prepare for an audit or certification, or when a plan may create obligations the business cannot meet. Also use to decide whether a risk should be accepted, mitigated, or refused.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-legal-and-risk-officer",
+   "variants": {}
+  },
+  {
+   "name": "contract-review",
+   "category": "business-ops",
+   "description": "Reviews and negotiates commercial agreements \u2014 MSAs, SOWs, order forms, NDAs, vendor and data-processing agreements \u2014 identifying material risk, proposing positions, and recommending a path rather than listing issues. Use this to review a contract before signature, prepare a negotiation position, build fallback positions and approval thresholds, or assess exposure in terms already agreed.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/contract-review",
+   "variants": {}
+  },
+  {
+   "name": "corporate-governance",
+   "category": "business-ops",
+   "description": "Maintains the corporate record and the governance machinery \u2014 entity records, board and committee support, resolutions and minutes, delegations of authority, insurance, and business continuity. Use this to prepare board or committee materials, record a decision that needs to be minuted, set or check approval authority, review insurance and continuity coverage, establish a retention policy, or work out where a responsibility belongs when it falls between functions.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/corporate-governance",
+   "variants": {}
+  },
+  {
+   "name": "disputes-and-legal-holds",
+   "category": "business-ops",
+   "description": "Handles a dispute from the first sign of it \u2014 recognizing when preservation obligations attach, issuing and scoping a legal hold, suspending automatic deletion across every system that holds relevant material, preserving privilege, managing outside counsel and cost, and evaluating settlement against the real cost of continuing. Use this to respond to a claim or demand letter, issue a hold, work out which systems the hold has to reach, or decide whether to fight.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/disputes-and-legal-holds",
+   "variants": {}
+  },
+  {
+   "name": "enterprise-risk",
+   "category": "agents",
+   "description": "Identifies, assesses, and tracks organizational risk \u2014 building and maintaining a risk register, scoring exposure, assigning owners and treatments, and preparing for audit. Use this to stand up a risk program, assess the risk in a decision or initiative, prepare for a certification or audit, decide whether a risk should be accepted, mitigated, transferred, or avoided, or report risk posture to leadership.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/agents/skills/enterprise-risk",
+   "variants": {}
+  },
+  {
+   "name": "intellectual-property",
+   "category": "business-ops",
+   "description": "Covers what the organization owns and what it is only borrowing \u2014 trademarks and clearance, copyright and work-for-hire, patents and trade secrets, open-source license obligations and copyleft reach, and IP terms in customer, contractor and AI-tool agreements. Use this to check whether a name is usable, establish that you own work you paid for, decide how to handle a license obligation in a dependency, or respond to an infringement claim.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/intellectual-property",
+   "variants": {}
+  },
+  {
+   "name": "privacy-and-data-protection",
+   "category": "business-ops",
+   "description": "Assesses and improves how personal data is collected, used, shared, and retained \u2014 data mapping, lawful basis, consent, processor agreements, subject rights, and breach obligations. Use this before launching anything that handles personal data, when adding a vendor that will process it, when a data subject request arrives, when assessing exposure under GDPR or US state privacy laws, or when preparing for a privacy review.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/privacy-and-data-protection",
+   "variants": {}
+  },
+  {
+   "name": "regulatory-compliance",
+   "category": "business-ops",
+   "description": "Identifies which regulations apply and builds the program that keeps you inside them \u2014 obligation mapping, controls, monitoring, and responding to regulators. Use this to work out what applies to your business, stand up a compliance program, prepare for a regulatory exam or certification, respond to a finding, or assess exposure before entering a new market.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/regulatory-compliance",
+   "variants": {}
+  },
+  {
+   "name": "behavioral-marketing",
+   "category": "business-ops",
+   "description": "Applies decision science and cognitive bias research to marketing and product decisions \u2014 how people actually choose under uncertainty, and how framing, defaults, sequencing, and social context change behavior. Use this to diagnose why a well-argued offer is not converting, to structure choices and pricing presentation, to design an experience around how attention and memory work, or to pressure-test whether a persuasion tactic is legitimate or manipulative.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/behavioral-marketing",
+   "variants": {}
+  },
+  {
+   "name": "headcount-brand-voice",
+   "category": "business-ops",
+   "description": "Captures how a person or brand actually writes and turns it into reusable voice instructions every other content skill draws from. Use this before drafting any content for a new brand or client, when output keeps coming back sounding generic, when several writers need to sound like one, or when a voice needs defining without existing samples to learn from.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/headcount-brand-voice",
+   "variants": {}
+  },
+  {
+   "name": "chief-content-officer",
+   "category": "business-ops",
+   "description": "Runs content as an operation \u2014 the production pipeline, editorial calendar, repurposing engine, competitive content intelligence, and audits of what already exists. Use this to build or fix a content production system, plan a calendar, decide how one piece becomes many, rank content ideas by expected impact, or audit an existing library for what to update, consolidate, or retire. For deciding what territory to own and why, use `content-strategy` first.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-content-officer",
+   "variants": {}
+  },
+  {
+   "name": "chief-marketing-officer",
+   "category": "business-ops",
+   "description": "Owns brand, demand generation, content, communications, and how the market understands what the business does. Use this to set marketing strategy, allocate budget across channels, decide positioning and messaging, judge whether a campaign is worth running, diagnose why demand has stalled, or arbitrate between brand-building and short-term acquisition. Also use to decide which marketing work to stop.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-marketing-officer",
+   "variants": {}
+  },
+  {
+   "name": "content-strategy",
+   "category": "business-ops",
+   "description": "Decides what content to make and why \u2014 topic territory, format mix, cadence, and how content connects to a business outcome rather than to traffic. Use this to plan a content program, choose topics, build an editorial calendar, decide which formats and platforms to commit to, or diagnose why content is producing audience but not results.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/content-strategy",
+   "variants": {}
+  },
+  {
+   "name": "customer-research",
+   "category": "business-ops",
+   "description": "Plans, runs, and synthesizes customer research \u2014 interviews, surveys, win-loss analysis, and message testing \u2014 into findings that change decisions. Use this when the customer is being guessed at, before positioning or a major launch, when churn or conversion has an unexplained cause, or when a team is arguing from anecdotes. Also use to turn raw interview notes into usable findings.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/customer-research",
+   "variants": {}
+  },
+  {
+   "name": "events-and-field-marketing",
+   "category": "business-ops",
+   "description": "Plans and runs events that produce pipeline \u2014 conferences, trade shows, webinars, field programs, and measuring whether any of it worked. Use this to decide whether to sponsor an event, plan a conference presence or webinar, design a field program, or work out why event spend is not producing pipeline.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/events-and-field-marketing",
+   "variants": {}
+  },
+  {
+   "name": "marketing-campaign-planner",
+   "category": "content-media",
+   "description": "Designs a coordinated multi-channel campaign or product launch around one story \u2014 objective, message, channel sequencing, timeline, assets, and the checklist that gets it out the door. Use this to plan a launch or campaign, sequence a go-to-market push, pressure-test a campaign before committing budget, or turn a product change into a coordinated set of activity. For ongoing channel programs rather than a bounded push, use `marketing-planning`.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/marketing-campaign-planner",
+   "variants": {}
+  },
+  {
+   "name": "marketing-copywriting",
+   "category": "content-media",
+   "description": "Writes and edits marketing copy for any surface \u2014 homepage, product and pricing pages, ads, emails, and collateral \u2014 and sharpens existing copy that is not working. Use this to write or rewrite page copy, tighten a draft, fix copy that is vague or feature-led, adapt one message across formats, or review copy before it ships.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/marketing-copywriting",
+   "variants": {}
+  },
+  {
+   "name": "marketing-planning",
+   "category": "content-media",
+   "description": "Builds the marketing plan of record \u2014 objectives, channel mix, budget allocation, sequencing, and the measurement that says whether it worked. Use this for annual or quarterly planning, when budget must be allocated or defended, when marketing activity feels busy but undirected, or when a plan needs pressure-testing before commitment.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/marketing-planning",
+   "variants": {}
+  },
+  {
+   "name": "newsletter-writer",
+   "category": "business-ops",
+   "description": "Writes and edits newsletters and marketing emails people actually open \u2014 subject lines, opening, structure, voice, and the conversion turn where there is one. Use this to draft or rewrite a newsletter or email, sharpen weak email copy, plan a newsletter's structure and cadence, write a sequence, or repurpose an issue into other formats. For automated lifecycle and SMS programs, use `lifecycle-messaging`.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/newsletter-writer",
+   "variants": {}
+  },
+  {
+   "name": "partnership-marketing",
+   "category": "business-ops",
+   "description": "Builds reach through other people's audiences \u2014 co-marketing partnerships, creator and influencer programs, and community building. Use this to find and evaluate partners, structure a joint campaign or creator deal, plan a community strategy, or decide whether a partnership is worth the coordination cost.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/partnership-marketing",
+   "variants": {}
+  },
+  {
+   "name": "positioning-and-messaging",
+   "category": "business-ops",
+   "description": "Establishes what a product is understood to be, for whom, and instead of what \u2014 then turns that into the messaging every other surface inherits. Use this when messaging is inconsistent across channels, when prospects misunderstand what the product does, when entering a new segment, when competitors are being compared against you unfavorably, or before any campaign, launch, or site rewrite.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/positioning-and-messaging",
+   "variants": {}
+  },
+  {
+   "name": "product-launch",
+   "category": "engineering",
+   "description": "Takes something built and gets it into the market \u2014 tiering the launch to match what it actually warrants, sequencing internal readiness before external announcement, preparing sales and support to answer the questions it creates, choosing the date for a reason, and measuring adoption rather than announcement reach. Use this to plan a launch, right-size one that is consuming more than it deserves, work out why a released feature nobody uses was launched loudly, or run the weeks after launch day.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/product-launch",
+   "variants": {}
+  },
+  {
+   "name": "public-relations",
+   "category": "business-ops",
+   "description": "Plans and executes earned media \u2014 press strategy, journalist outreach, announcements, commentary, and crisis response. Use this to plan a press push, write a pitch or release, find and approach the right journalists, prepare for an interview, decide whether something is newsworthy, or respond to a story going badly.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/public-relations",
+   "variants": {}
+  },
+  {
+   "name": "social-post-craft",
+   "category": "business-ops",
+   "description": "Writes, structures, and evaluates social posts end to end \u2014 hooks, body, formatting for how each platform renders, and a quality check before publishing. Use this to draft a post, rewrite one that underperformed, turn a longer piece into social content, sharpen an opening, or judge whether a draft is worth publishing.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/social-post-craft",
+   "variants": {}
+  },
+  {
+   "name": "video-content",
+   "category": "business-ops",
+   "description": "Plans and scripts short-form and long-form video, and designs the packaging \u2014 titles, thumbnails, and openings \u2014 that determines whether it gets watched. Use this to script a video, plan a series, fix retention or click-through problems, design thumbnail and title concepts, or turn written content into video. For a YouTube channel specifically \u2014 idea selection, retention teardowns, and channel-level strategy \u2014 use `youtube-producer`.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/video-content",
+   "variants": {}
+  },
+  {
+   "name": "visual-content",
+   "category": "business-ops",
+   "description": "Designs and directs the visual assets that carry content \u2014 carousels, infographics, quote graphics, diagrams, and social imagery \u2014 including the generation prompts where they are AI-produced. Use this to turn a written piece into a visual format, design a carousel or infographic, create social graphics, or fix visuals that are not stopping the scroll.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/visual-content",
+   "variants": {}
+  },
+  {
+   "name": "youtube-producer",
+   "category": "business-ops",
+   "description": "Plans, packages, and scripts long-form video for retention and channel growth \u2014 idea selection, titles and thumbnails, script structure, and diagnosing why a video or channel underperforms. Use this for video ideas, packaging, scripting, a retention teardown, or channel strategy \u2014 including when someone describes a topic and wants it turned into something publishable. For short-form and cross-platform video, use `video-content`.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/youtube-producer",
+   "variants": {}
+  },
+  {
+   "name": "business-continuity-and-resilience",
+   "category": "business-ops",
+   "description": "Plans for operating through disruption \u2014 impact analysis, recovery objectives, continuity plans, and the exercises that prove they work. Use this to run a business impact analysis, set RTO and RPO, write or test a continuity plan, prepare for a supplier or site failure, or answer a customer's resilience questionnaire.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/business-continuity-and-resilience",
+   "variants": {}
+  },
+  {
+   "name": "capacity-and-demand-planning",
+   "category": "business-ops",
+   "description": "Matches operational capacity to expected demand \u2014 forecasting load, sizing teams and systems, managing queues, and deciding when to add capacity. Use this to plan staffing for expected volume, diagnose a queue that keeps growing, size support or fulfillment capacity, or decide whether a bottleneck needs more capacity or better flow.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/capacity-and-demand-planning",
+   "variants": {}
+  },
+  {
+   "name": "chief-operating-officer",
+   "category": "business-ops",
+   "description": "Owns execution: how work actually gets done across the organization, including process, program management, capacity, vendors, supply chain, and service delivery. Use this when execution is the problem rather than strategy, to design or fix a process, to resolve cross-functional handoff failures, to plan capacity, to assess delivery risk, or when the same failure keeps recurring. Also use to decide whether to build, hire, or outsource a capability.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-operating-officer",
+   "variants": {}
+  },
+  {
+   "name": "facilities-and-workplace",
+   "category": "business-ops",
+   "description": "Runs the physical and hybrid workplace \u2014 space planning, leases, health and safety, office services, and the operational side of where people work. Use this to plan space, evaluate a lease or office move, set up a hybrid workplace, handle facilities incidents, or decide what office services are worth funding.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/facilities-and-workplace",
+   "variants": {}
+  },
+  {
+   "name": "incident-management",
+   "category": "business-ops",
+   "description": "Runs an operational incident from detection to closed action \u2014 declaring it and naming a commander, separating the people restoring service from the people communicating, keeping a timeline as it happens, deciding when it is over, and running a review that produces a small number of changes someone actually completes. Use this to set up an incident process, run one, work out why the same failure keeps recurring, or fix a review practice that generates findings nobody closes.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/incident-management",
+   "variants": {}
+  },
+  {
+   "name": "operating-cadence",
+   "category": "business-ops",
+   "description": "Designs the rhythm an organization runs on \u2014 which reviews happen weekly, monthly and quarterly, what each one decides, who owns the numbers presented, and how a signal at the front line reaches the people who can act on it. Use this to set up a management operating system, fix a meeting calendar that produces no decisions, work out where a recurring problem keeps failing to surface, or cut a review structure that has grown past what it informs.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/operating-cadence",
+   "variants": {}
+  },
+  {
+   "name": "process-design",
+   "category": "business-ops",
+   "description": "Designs, documents, and fixes operational processes \u2014 mapping the current state, finding where work actually stalls, redesigning the flow, and building controls that hold. Use this when the same failure keeps recurring, when a handoff between teams is unreliable, when onboarding a repeated task, when work takes far longer than the work itself, or when deciding whether to automate, standardize, or eliminate a process.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/process-design",
+   "variants": {}
+  },
+  {
+   "name": "procurement-and-sourcing",
+   "category": "business-ops",
+   "description": "Buys well \u2014 specifying need, running competitive sourcing, negotiating, and category strategy before a contract exists. Use this to run an RFP or vendor selection, negotiate a purchase, consolidate spend across a category, decide between single and multiple suppliers, or bring uncontrolled spending under management.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/procurement-and-sourcing",
+   "variants": {}
+  },
+  {
+   "name": "quality-management",
+   "category": "business-ops",
+   "description": "Builds quality into operations \u2014 defining standards, catching defects at the right point, root cause analysis, and continuous improvement. Use this to reduce a defect or error rate, design quality controls into a process, run a root cause analysis, respond to a customer quality complaint, or set up quality metrics that drive behavior.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/quality-management",
+   "variants": {}
+  },
+  {
+   "name": "service-level-management",
+   "category": "business-ops",
+   "description": "Defines and manages service levels \u2014 setting targets that reflect what customers need, measuring honestly, and handling breaches. Use this to write or negotiate an SLA, decide what to measure and at what threshold, respond to a missed service level, or work out why a service that meets its targets still has unhappy customers.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/service-level-management",
+   "variants": {}
+  },
+  {
+   "name": "supply-chain-and-logistics",
+   "category": "business-ops",
+   "description": "Manages the flow of goods and inputs \u2014 sourcing, inventory, lead times, fulfillment, and supply risk. Use this to reduce stockouts or excess inventory, plan for a supplier failure, decide reorder points and safety stock, improve fulfillment reliability, or assess concentration risk in a supply base.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/supply-chain-and-logistics",
+   "variants": {}
+  },
+  {
+   "name": "vendor-management",
+   "category": "business-ops",
+   "description": "Selects, contracts, and manages suppliers and vendors \u2014 requirements, evaluation, negotiation support, onboarding, performance management, and exit. Use this to choose a vendor, run a selection process, structure a service agreement's operational terms, manage an underperforming supplier, plan an exit or migration, or assess concentration and continuity risk.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/vendor-management",
+   "variants": {}
+  },
+  {
+   "name": "benefits-and-leave",
+   "category": "business-ops",
+   "description": "Designs and runs employee benefits and leave \u2014 health and retirement plans, leave policy, cost and renewal, and the administration that keeps them compliant. Use this to design or review a benefits package, prepare for a renewal, write leave policy, handle a leave request, or decide what benefits are worth their cost.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/benefits-and-leave",
+   "variants": {}
+  },
+  {
+   "name": "chief-human-resources-officer",
+   "category": "business-ops",
+   "description": "Owns the organization itself: org design, hiring, performance, compensation, development, culture, and employee relations. Use this to design or restructure a team, plan hiring, write a role or leveling definition, handle a performance or compensation question, diagnose why a team is underperforming for non-technical reasons, or assess the people risk in a plan. Also use for onboarding design and retention of key staff.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-human-resources-officer",
+   "variants": {}
+  },
+  {
+   "name": "compensation-and-leveling",
+   "category": "business-ops",
+   "description": "Builds and maintains the leveling framework and pay structure \u2014 level definitions, salary bands, benchmarking, pay equity, and how raises and promotions are decided. Use this to design or revise leveling, set or adjust salary bands, benchmark against market, handle a compensation request or counteroffer, run a review cycle, or diagnose pay compression and equity issues.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/compensation-and-leveling",
+   "variants": {}
+  },
+  {
+   "name": "employee-relations",
+   "category": "business-ops",
+   "description": "Handles the difficult human situations \u2014 grievances, complaints, investigations, conflict, and separations conducted properly. Use this to respond to a complaint or grievance, structure an investigation, handle a conflict between colleagues, prepare for a difficult conversation, or work out what a manager can and cannot do in a given situation.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/employee-relations",
+   "variants": {}
+  },
+  {
+   "name": "employment-compliance",
+   "category": "business-ops",
+   "description": "Covers the employment rules that carry real penalties \u2014 exempt and non-exempt classification, overtime and hours, employee versus contractor status, work authorization and recordkeeping, accommodation requests, and the notices and retention obligations that go with them. Use this to classify a role, review a contractor arrangement, respond to an accommodation request, work out what records to keep and for how long, or sanity-check a practice you inherited.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/employment-compliance",
+   "variants": {}
+  },
+  {
+   "name": "hiring-and-interviewing",
+   "category": "business-ops",
+   "description": "Designs and runs hiring \u2014 role definition, sourcing, interview loop design, structured evaluation, and the decision itself. Use this to open a role, write a job description or scorecard, design an interview process, prepare interview questions, calibrate a hiring decision, or diagnose why a hiring process produces poor outcomes.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/hiring-and-interviewing",
+   "variants": {}
+  },
+  {
+   "name": "learning-and-development",
+   "category": "business-ops",
+   "description": "Builds capability \u2014 skills gaps, career frameworks, training that transfers to the job, and internal mobility. Use this to design a career ladder, close a capability gap, decide whether to build or hire a skill, structure onboarding into a role, or work out why training keeps failing to change anything.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/learning-and-development",
+   "variants": {}
+  },
+  {
+   "name": "onboarding-and-offboarding",
+   "category": "business-ops",
+   "description": "Designs the joining and leaving experience \u2014 first-day readiness, ramp to productivity, knowledge capture, and clean exits. Use this to design or fix onboarding, shorten time to productivity, structure a leaver process, capture knowledge before someone leaves, or coordinate the access and asset steps around a joiner or leaver.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/onboarding-and-offboarding",
+   "variants": {}
+  },
+  {
+   "name": "org-design",
+   "category": "business-ops",
+   "description": "Designs how an organization is structured \u2014 reporting lines, team boundaries, spans and layers, role definition, and workforce planning against the strategy. Use this to structure a new team, restructure an existing one, resolve unclear ownership between teams, plan headcount, or diagnose why a team underperforms for structural rather than individual reasons.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/org-design",
+   "variants": {}
+  },
+  {
+   "name": "payroll-operations",
+   "category": "business-ops",
+   "description": "Runs the pay cycle so it is right, on time, and provable \u2014 the calendar and cutoffs, what feeds pay from the HRIS and time systems, gross-to-net and the deductions in it, multi-jurisdiction registration and tax filing, off-cycle payments and corrections, and the reconciliation to the general ledger. Use this to design or audit a payroll process, work out what happens when someone is paid wrong, or understand what changes when you hire in a new state or country.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/payroll-operations",
+   "variants": {}
+  },
+  {
+   "name": "performance-management",
+   "category": "engineering",
+   "description": "Runs performance systems that change behavior \u2014 expectations, feedback, review cycles, calibration, and handling underperformance. Use this to design or fix a review process, run calibration, write or coach on feedback, address sustained underperformance, or work out why reviews consume weeks and change nothing.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/performance-management",
+   "variants": {}
+  },
+  {
+   "name": "workforce-planning",
+   "category": "business-ops",
+   "description": "Plans the shape and size of the workforce \u2014 demand for roles, build-versus-buy, attrition, and sequencing hiring against budget. Use this to build a hiring plan, decide which roles to open and in what order, model attrition and backfill, plan for a growth or contraction scenario, or connect headcount plans to the budget.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/workforce-planning",
+   "variants": {}
+  },
+  {
+   "name": "benefits-realization",
+   "category": "business-ops",
+   "description": "Ensures projects deliver the value they were approved on \u2014 defining measurable benefits, baselining, tracking after delivery, and honest post-implementation review. Use this to define benefits for a business case, set a baseline, track whether value actually landed, or run a post-implementation review that produces something useful.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/benefits-realization",
+   "variants": {}
+  },
+  {
+   "name": "change-and-adoption",
+   "category": "business-ops",
+   "description": "Gets people to actually use what was delivered \u2014 stakeholder analysis, communication, training, resistance, and measuring adoption. Use this to plan a rollout, recover an implementation nobody is using, handle resistance to a change, sequence communications, or work out why a technically successful project changed nothing.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/change-and-adoption",
+   "variants": {}
+  },
+  {
+   "name": "dependency-and-risk-management",
+   "category": "business-ops",
+   "description": "Manages delivery risk and cross-team dependencies \u2014 identifying, sizing, mitigating and escalating what could stop the work. Use this to build a risk register that gets used, manage dependencies between teams, decide what to escalate and when, or work out why the same risks keep materializing unmanaged.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/dependency-and-risk-management",
+   "variants": {}
+  },
+  {
+   "name": "estimating-and-contingency",
+   "category": "business-ops",
+   "description": "Produces a cost or effort estimate someone can defend \u2014 decomposing the work, choosing between analogous, parametric and bottom-up methods, documenting the basis and its assumptions, expressing confidence as a range, and sizing contingency and management reserve separately. Use this to build an estimate, challenge one you have been handed, work out why estimates keep coming in low, or decide how much reserve a portfolio actually needs.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/estimating-and-contingency",
+   "variants": {}
+  },
+  {
+   "name": "head-of-pmo",
+   "category": "business-ops",
+   "description": "The EPMO lead's remit \u2014 what the PMO governs, what it must never become, and how it earns standing rather than compliance. Use this to stand up or reform a PMO, decide what it should and should not control, judge whether it is adding value or overhead, or work out why teams route around it.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/head-of-pmo",
+   "variants": {}
+  },
+  {
+   "name": "portfolio-governance",
+   "category": "business-ops",
+   "description": "Governs the portfolio of work \u2014 intake, prioritization, stage gates, resource contention, and stopping things. Use this to set up intake and prioritization, run a stage gate, decide between competing initiatives, resolve resource contention across projects, or work out why everything is in flight and nothing is finishing.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/portfolio-governance",
+   "variants": {}
+  },
+  {
+   "name": "program-management",
+   "category": "business-ops",
+   "description": "Plans and drives cross-functional programs to delivery \u2014 scope, sequencing, dependencies, status, risk, and the escalations that keep work moving. Use this to run a multi-team initiative, recover a program that is slipping, build a delivery plan with dependencies, structure status reporting, or diagnose why cross-team work keeps missing dates.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/program-management",
+   "variants": {}
+  },
+  {
+   "name": "project-delivery",
+   "category": "business-ops",
+   "description": "Plans and delivers a single project \u2014 scope, estimation, scheduling, critical path, tracking, and recovering when it slips. Use this to plan a project, build or challenge a schedule, estimate credibly, track progress meaningfully, or recover a project that is late.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/project-delivery",
+   "variants": {}
+  },
+  {
+   "name": "schedule-development-and-analysis",
+   "category": "business-ops",
+   "description": "Builds and interrogates a project schedule \u2014 logic-driven sequencing, dependency types and lags, float and the critical path, resource loading and leveling, schedule risk analysis, and measuring progress against a baseline rather than against optimism. Use this to construct a schedule, audit one you have inherited, find out why a plan keeps slipping, work out what a date change actually costs, or judge whether a reported percentage complete means anything.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/schedule-development-and-analysis",
+   "variants": {}
+  },
+  {
+   "name": "brand-identity",
+   "category": "business-ops",
+   "description": "Defines and applies visual brand \u2014 logo usage, palette, typography, imagery direction, and the guidelines that keep expression consistent across product and marketing surfaces. Use this to establish a brand from scratch, audit whether an existing brand is being applied consistently, build brand guidelines, or decide how a brand should express itself in an unfamiliar format.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/brand-identity",
+   "variants": {}
+  },
+  {
+   "name": "chief-product-officer",
+   "category": "business-ops",
+   "description": "Owns what gets built and why: product strategy, roadmap, discovery, user experience, and the definition of success for each release. Use this to decide what to build next, to cut scope, to turn a business goal into a product bet, to judge whether a feature is worth its cost, or when engineering and go-to-market disagree about what a release is for. Also use for roadmap sequencing and for killing work that is not earning its place.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-product-officer",
+   "variants": {}
+  },
+  {
+   "name": "design-styles",
+   "category": "business-ops",
+   "description": "Applies a deliberate visual direction to an interface \u2014 minimalist editorial, industrial utilitarian, or high-polish commercial \u2014 each with its own type scale, palette behavior, surface treatment, and motion. Use this when a product needs a point of view rather than defaults, when choosing between visual directions, when an interface reads as generic, or when restyling something without changing its structure.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/design-styles",
+   "variants": {}
+  },
+  {
+   "name": "headcount-design-system",
+   "category": "business-ops",
+   "description": "Builds and maintains the design system a product is assembled from \u2014 tokens for color, type, spacing and elevation, component contracts, and the rules that keep them coherent as the product grows. Use this when starting a new interface, when screens have drifted apart visually, when the same component exists three times in slightly different forms, or when a token or component needs adding without breaking what exists.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/headcount-design-system",
+   "variants": {}
+  },
+  {
+   "name": "interface-craft",
+   "category": "business-ops",
+   "description": "Raises the visual and interaction quality of an interface \u2014 layout, hierarchy, type, spacing, density, and the details that separate a considered product from a generic one. Use this when a screen works but looks unfinished or default, when a layout feels crowded or arbitrary, when a page has no clear focal point, or when an interface needs to feel trustworthy rather than merely functional.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/interface-craft",
+   "variants": {}
+  },
+  {
+   "name": "interface-redesign",
+   "category": "business-ops",
+   "description": "Upgrades an existing interface to a higher standard without rebuilding it \u2014 auditing what is there, identifying what reads as generic or unfinished, and sequencing changes by impact. Use this when a product works but looks dated or default, when a redesign is being considered, when deciding whether to restyle or rebuild, or when a screen needs to look substantially better with limited effort.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/interface-redesign",
+   "variants": {}
+  },
+  {
+   "name": "presentation-design",
+   "category": "business-ops",
+   "description": "Designs slide decks and one-pagers that carry an argument rather than decorate one \u2014 deck structure, headlines that state the takeaway, charts that make a single point, and the different rules board decks and conference talks follow. Use this to build or fix a pitch deck, board deck, or conference talk, to design a one-pager, or when a deck is dense, unfocused, or being read aloud from the slides. For social graphics, carousels and infographics, use `marketing:visual-content` instead.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/presentation-design",
+   "variants": {}
+  },
+  {
+   "name": "product-discovery",
+   "category": "engineering",
+   "description": "Finds out whether a problem is real and a solution would work, before building it \u2014 recruiting the right people, interviewing without leading them, separating what users say from what they do, naming the riskiest assumption and testing that one first, and reaching a decision rather than a summary. Use this to validate a problem, test an idea cheaply, decide whether to build something, or fix a discovery process that keeps confirming what the team already believed.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/product-discovery",
+   "variants": {}
+  },
+  {
+   "name": "product-requirements",
+   "category": "engineering",
+   "description": "Writes down what is being built so a team can build it and know when they are done \u2014 problem and success measure before solution, scope stated by exclusion, user-visible behavior including the states everyone forgets, acceptance criteria someone can test, and the open questions named rather than buried. Use this to write a specification, review one that is causing rework, or work out why a delivered feature technically matched the request and still was not what anyone wanted.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/product-requirements",
+   "variants": {}
+  },
+  {
+   "name": "ux-product-auditor",
+   "category": "business-ops",
+   "description": "Audits a website, app, onboarding flow, or design for usability, conversion, and product problems, tying every finding to a business outcome and a severity. Use this to review an interface, diagnose low conversion or activation, find where users drop off, get structured product feedback, or decide which UX fixes to ship first. For raising visual quality rather than finding problems, use `interface-craft`.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/ux-product-auditor",
+   "variants": {}
+  },
+  {
+   "name": "visual-reference-generation",
+   "category": "business-ops",
+   "description": "Produces design reference imagery before implementation \u2014 screen concepts, layout directions, and flows for web or mobile that make a verbal brief concrete enough to argue with. Use this when a brief needs visualizing before anyone builds, when comparing layout directions, when handing a developer a target, or when stakeholders are describing different things with the same words.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/visual-reference-generation",
+   "variants": {}
+  },
+  {
+   "name": "activation",
+   "category": "business-ops",
+   "description": "Gets new users from signup to first real value \u2014 signup flow, onboarding, time-to-value, and the early experience that determines whether someone becomes a user or a lapsed account. Use this to design or fix signup and onboarding, diagnose why signups do not convert to active use, reduce time-to-value, or decide what a new user must accomplish first.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/activation",
+   "variants": {}
+  },
+  {
+   "name": "chief-revenue-officer",
+   "category": "business-ops",
+   "description": "Owns the revenue engine end to end: sales, monetization, pricing, customer success, retention, and partnerships. Use this for pricing and packaging decisions, sales strategy and coverage, forecast and pipeline health, churn and expansion, partner and channel strategy, or when marketing-sourced demand is not converting. Also use to decide which segments to pursue and which to decline.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-revenue-officer",
+   "variants": {}
+  },
+  {
+   "name": "deal-negotiation",
+   "category": "business-ops",
+   "description": "Negotiates a commercial deal without giving away the terms that matter \u2014 preparing your walk-away and theirs, trading concessions rather than conceding them, recognizing the tactics that create false urgency, protecting price by moving other variables, and closing on terms someone can actually deliver. Use this to prepare for a negotiation, respond to a demand mid-deal, work out why discounts keep landing at quarter end, or review terms before they are signed.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/deal-negotiation",
+   "variants": {}
+  },
+  {
+   "name": "outbound-prospecting",
+   "category": "business-ops",
+   "description": "Finds, qualifies, and reaches prospects through cold outreach \u2014 list building, qualification criteria, cold email and multi-channel sequences, and the follow-up that actually gets replies. Use this to build a prospect list, write cold outreach, fix a sequence that is not getting responses, define qualification criteria, or decide whether a segment is worth pursuing.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/outbound-prospecting",
+   "variants": {}
+  },
+  {
+   "name": "pricing-and-packaging",
+   "category": "business-ops",
+   "description": "Sets price, structures packages and tiers, and designs the monetization surfaces that carry them \u2014 upgrade paths, paywalls, and offer construction. Use this to set or change pricing, design or restructure tiers, choose a pricing metric, build an offer, design upgrade prompts and paywalls, or evaluate whether a pricing change is safe to make.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/pricing-and-packaging",
+   "variants": {}
+  },
+  {
+   "name": "referral-programs",
+   "category": "business-ops",
+   "description": "Designs and improves referral, affiliate, and word-of-mouth programs \u2014 incentive structure, mechanics, timing, and fraud control. Use this to build a referral or affiliate program, diagnose one that is not producing, decide what incentive to offer, or judge whether referral is a realistic channel for a product.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/referral-programs",
+   "variants": {}
+  },
+  {
+   "name": "retention",
+   "category": "business-ops",
+   "description": "Diagnoses and reduces churn \u2014 cancellation flows, save offers, failed-payment recovery, at-risk detection, and the product and service causes underneath. Use this when churn is rising or unexplained, to design a cancellation or win-back flow, to recover involuntary churn, to identify at-risk accounts before they leave, or to decide whether a retention problem is a product problem.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/retention",
+   "variants": {}
+  },
+  {
+   "name": "revenue-operations",
+   "category": "business-ops",
+   "description": "Runs the mechanics of the revenue engine \u2014 lead lifecycle definitions, routing, CRM hygiene, forecasting process, pipeline reporting, and the marketing-to-sales handoff. Use this to fix a broken handoff, define lifecycle stages, improve forecast accuracy, clean up CRM data, design territory or routing rules, or diagnose why pipeline numbers are not trusted.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/revenue-operations",
+   "variants": {}
+  },
+  {
+   "name": "sales-compensation-and-territory",
+   "category": "business-ops",
+   "description": "Designs quotas, territories and commission plans that produce the behavior the business needs \u2014 sizing territories against real potential, setting quotas people can hit often enough to believe in, choosing what to pay on, handling accelerators, draws, clawbacks and disputes, and changing a plan without destroying trust. Use this to build or fix a comp plan, allocate territories, work out why reps are chasing the wrong deals, or plan a mid-year change.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/sales-compensation-and-territory",
+   "variants": {}
+  },
+  {
+   "name": "sales-enablement",
+   "category": "business-ops",
+   "description": "Builds what a sales team needs to sell \u2014 pitch decks, one-pagers, objection handling, competitive battlecards, demo scripts, and case studies. Use this to create or fix sales collateral, prepare for a competitive deal, build a demo flow, document objection responses, or diagnose why a pitch is not converting.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/sales-enablement",
+   "variants": {}
+  },
+  {
+   "name": "access-and-identity",
+   "category": "business-ops",
+   "description": "Designs and audits who can reach what \u2014 authentication, authorization models, privileged access, service credentials, and joiner-mover-leaver process. Use this to design a permissions model, run an access review, reduce standing privilege, handle offboarding, set up SSO or MFA, manage service and machine credentials, or diagnose why permissions have sprawled.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/access-and-identity",
+   "variants": {}
+  },
+  {
+   "name": "chief-information-security-officer",
+   "category": "security",
+   "description": "Owns the security posture of the organization \u2014 architecture, program strategy, risk acceptance, incident command, and the authority to stop work that creates unacceptable exposure. Use this for a security strategy or program decision, when a technical choice creates security risk that needs a verdict, when deciding whether to accept or block a risk, when standing up a security function, or when security and delivery priorities conflict and someone has to decide.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/security/skills/chief-information-security-officer",
+   "variants": {}
+  },
+  {
+   "name": "data-protection-and-encryption",
+   "category": "business-ops",
+   "description": "Protects data itself rather than the systems around it \u2014 classifying what you hold, encrypting in transit and at rest and understanding what each actually defends against, managing keys and their rotation, handling secrets in applications and pipelines, minimizing and de-identifying, and deleting on purpose. Use this to design data protection for a system, assess an encryption claim, set up key or secret management, or work out what a stolen backup would actually expose.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/data-protection-and-encryption",
+   "variants": {}
+  },
+  {
+   "name": "detection-and-monitoring",
+   "category": "business-ops",
+   "description": "Builds the capability to notice an attack in progress \u2014 deciding what to log and retain, centralizing it somewhere tamper-resistant, writing detections that fire on attacker behavior rather than on individual events, tuning out the noise that trains people to ignore alerts, and defining what happens when something fires. Use this to design or assess monitoring coverage, work out why an incident went unnoticed, cut alert volume without losing signal, or decide what a detection capability should cost.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/detection-and-monitoring",
+   "variants": {}
+  },
+  {
+   "name": "incident-response",
+   "category": "business-ops",
+   "description": "Runs a security incident from detection to closure \u2014 triage, containment, investigation, communication, and the review afterward. Use this when a compromise is suspected or confirmed, when preparing an incident response plan or running an exercise, when deciding whether something is an incident, or when a breach may trigger notification obligations.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/incident-response",
+   "variants": {}
+  },
+  {
+   "name": "security-architecture-review",
+   "category": "security",
+   "description": "Reviews a design or change for security before it ships \u2014 authentication and authorization, data handling, secrets, dependencies, and the secure-development practices around it. Use this to review an architecture or pull request for security, set secure coding standards, choose or tune SAST and DAST tooling, assess a third-party integration, or decide whether a design is safe to build.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/security/skills/security-architecture-review",
+   "variants": {}
+  },
+  {
+   "name": "threat-modeling",
+   "category": "business-ops",
+   "description": "Identifies what could go wrong in a system before it is built or changed \u2014 the assets worth attacking, the entry points, the trust boundaries, and the controls that actually address the realistic threats. Use this when designing a feature or system, when a change touches authentication, data handling, payments, or external input, before a security review, or when deciding which security work is worth doing at all.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/threat-modeling",
+   "variants": {}
+  },
+  {
+   "name": "vulnerability-management",
+   "category": "security",
+   "description": "Runs the loop from discovering a weakness to confirming it is fixed \u2014 scanning, triage, prioritization by real exploitability, remediation tracking, and patch policy. Use this to stand up or fix a vulnerability program, triage scanner output, decide what to fix first, set patch SLAs, handle a disclosure from an outside researcher, or report posture to leadership.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/security/skills/vulnerability-management",
+   "variants": {}
+  },
+  {
+   "name": "ai-workflow-architect",
+   "category": "business-ops",
+   "description": "Designs AI systems, automations, and agent workflows for a business \u2014 identifying which manual work is worth automating, how to structure the system, which tools fit, and what could go wrong. Use this to automate part of an operation, design an agent or MCP workflow, reduce repetitive manual work, connect tools into a system, decide which automation to build first, or audit an automation that is not delivering.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/ai-workflow-architect",
+   "variants": {}
+  },
+  {
+   "name": "headcount-api-design",
+   "category": "business-ops",
+   "description": "Designs interfaces that survive their consumers \u2014 resource modeling, errors, versioning, pagination, and compatibility. Use this to design a new API, review one before it ships, decide how to version or deprecate, fix an interface consumers keep misusing, or work out whether a change is breaking.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/headcount-api-design",
+   "variants": {}
+  },
+  {
+   "name": "branch-and-worktree-workflow",
+   "category": "business-ops",
+   "description": "Isolates feature work in its own branch or worktree and integrates it cleanly when done. Use this when starting work that should not disturb the current workspace, when several efforts must proceed in parallel on one repository, or when implementation is finished and the change needs merging, rebasing, or splitting for review.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/branch-and-worktree-workflow",
+   "variants": {}
+  },
+  {
+   "name": "chief-technology-officer",
+   "category": "business-ops",
+   "description": "Owns architecture, engineering delivery, infrastructure, data platform, and internal systems. Use this for build-versus-buy calls, technology selection, architectural direction, engineering capacity and delivery risk, technical debt tradeoffs, platform and tooling decisions, or when a technical choice has business consequences that need stating in business terms. Also use to judge whether a technical plan is sound before it is committed to.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/chief-technology-officer",
+   "variants": {}
+  },
+  {
+   "name": "cloud-infrastructure",
+   "category": "business-ops",
+   "description": "Designs and runs cloud infrastructure \u2014 environments, infrastructure as code, networking and isolation, scaling, and cost. Use this to design a cloud environment, control infrastructure spend, set up environment separation, plan for scale or region failure, or review infrastructure someone configured by hand.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/cloud-infrastructure",
+   "variants": {}
+  },
+  {
+   "name": "code-review",
+   "category": "testing-quality",
+   "description": "Conducts and responds to code review \u2014 reviewing a change for correctness, design, and risk, and evaluating review feedback received on your own work. Use this before merging, when asked to review a diff or pull request, when review feedback has arrived and needs acting on, or when feedback seems wrong and needs a reasoned response rather than compliance.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/testing-quality/skills/code-review",
+   "variants": {}
+  },
+  {
+   "name": "completion-verification",
+   "category": "testing-quality",
+   "description": "Verifies that work is actually complete before it is claimed to be \u2014 running the checks, reading the output, and confirming the original request was satisfied rather than approximated. Use this before saying something is done, fixed, or passing; before committing or opening a pull request; and whenever a claim of success has not been backed by command output.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/testing-quality/skills/completion-verification",
+   "variants": {}
+  },
+  {
+   "name": "data-migration",
+   "category": "business-ops",
+   "description": "Moves data from one system to another without losing it or corrupting it \u2014 profiling the source before mapping, deciding between big-bang and parallel-run cutover, reconciling counts and values rather than assuming, handling the records that will not map cleanly, and planning a rollback that is actually executable. Use this to plan or run a migration, assess a migration plan someone else wrote, work out why a completed migration is producing wrong numbers, or size how long one will really take.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/data-migration",
+   "variants": {}
+  },
+  {
+   "name": "implementation-planning",
+   "category": "business-ops",
+   "description": "Turns a spec or requirement into a written plan a separate session or agent can execute, then drives that plan through review checkpoints. Use this before touching code on any multi-step task, when work needs handing to someone else, when a task keeps sprawling mid-implementation, or when a plan exists and needs executing in order with verification between steps.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/implementation-planning",
+   "variants": {}
+  },
+  {
+   "name": "observability-and-reliability",
+   "category": "business-ops",
+   "description": "Makes systems debuggable and reliably operable \u2014 instrumentation, alerting that is worth waking for, service objectives, and learning from failure. Use this to instrument a service, fix alerting that is ignored, set error budgets or reliability targets, prepare for on-call, or run a blameless post-incident review.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/observability-and-reliability",
+   "variants": {}
+  },
+  {
+   "name": "parallel-agent-delivery",
+   "category": "business-ops",
+   "description": "Splits work across multiple agents or sessions running at once, keeping their surfaces disjoint so results merge cleanly. Use this when facing several independent tasks with no shared state, when a plan has parallelizable steps, when a broad search or audit would be faster fanned out, or when deciding whether work can safely be split at all.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/parallel-agent-delivery",
+   "variants": {}
+  },
+  {
+   "name": "headcount-prompt-optimizer",
+   "category": "business-ops",
+   "description": "Turns rough intent or a weak prompt into a reliable one \u2014 diagnosing why output is inconsistent, restructuring the instruction, and adapting it across models. Use this when a prompt is not producing what was wanted, when output varies run to run, when writing a prompt for a repeated task, when moving a prompt between models, or when someone describes what they want an AI to do and needs it written properly.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/headcount-prompt-optimizer",
+   "variants": {}
+  },
+  {
+   "name": "release-and-deployment",
+   "category": "business-ops",
+   "description": "Ships changes safely and often \u2014 pipelines, deployment strategies, feature flags, rollback, and database changes. Use this to design a deployment pipeline, reduce release risk, roll out a risky change gradually, plan a schema migration, or work out why releases are infrequent and frightening.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/release-and-deployment",
+   "variants": {}
+  },
+  {
+   "name": "skill-authoring",
+   "category": "agent-dev",
+   "description": "Writes and revises agent skills so they trigger at the right moments and give usable instruction when they do. Use this when creating a new skill, editing an existing one, diagnosing a skill that fires too often or never fires, or reviewing a set of skills for overlap. Also use before adding to a skill library, to check the capability is not already covered.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/agent-dev/skills/skill-authoring",
+   "variants": {}
+  },
+  {
+   "name": "solution-architecture",
+   "category": "business-ops",
+   "description": "Designs system structure and makes architectural decisions defensible \u2014 boundaries, coupling, trade-offs, and recording why. Use this to design a new system or major component, choose between architectural options, review an existing design, decide where a boundary belongs, or document an architectural decision so it survives the people who made it.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/solution-architecture",
+   "variants": {}
+  },
+  {
+   "name": "solution-exploration",
+   "category": "business-ops",
+   "description": "Explores the problem and the range of possible approaches before any code is written \u2014 clarifying what is actually being asked, surfacing options with their tradeoffs, and converging on one. Use this at the start of any feature, component, or behavior change, when a request is ambiguous, when the first idea is the only idea on the table, or when a design decision needs pressure-testing before commitment.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/solution-exploration",
+   "variants": {}
+  },
+  {
+   "name": "systematic-debugging",
+   "category": "business-ops",
+   "description": "Finds the root cause of a bug, test failure, or unexpected behavior before proposing any fix. Use this whenever something is broken and the cause is not yet proven \u2014 a failing test, a production error, intermittent behavior, or a symptom that appeared after a change. Also use when a fix has been attempted and did not work, or when the same bug keeps coming back.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/systematic-debugging",
+   "variants": {}
+  },
+  {
+   "name": "technical-debt-management",
+   "category": "business-ops",
+   "description": "Makes technical debt visible and decidable \u2014 distinguishing real debt from mess, quantifying its cost, and arguing for remediation in business terms. Use this to assess and prioritize debt, decide whether to fix or live with something, justify remediation work to non-engineers, or plan a migration off a system nobody wants to touch.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/technical-debt-management",
+   "variants": {}
+  },
+  {
+   "name": "test-driven-development",
+   "category": "testing-quality",
+   "description": "Drives implementation by writing a failing test first, then the smallest code that passes it. Use this before writing implementation code for any feature or bugfix, when a bug needs a regression test, when existing code is hard to change safely, or when someone asks whether a change is covered. Also use to decide what is worth testing and what is not.",
+   "source": "cbrock84/headcount",
+   "license": "MIT",
+   "path": "plugins/testing-quality/skills/test-driven-development",
    "variants": {}
   },
   {
