@@ -149,30 +149,35 @@ def parse_s2(text):
 
 
 SOURCES = (
-    ('OpenAlex', lambda q, n: 'https://api.openalex.org/works?' + urllib.parse.urlencode(
-        {'search': q, 'per-page': n, 'filter': 'has_abstract:true',
+    ('OpenAlex', lambda q, n, since=None: 'https://api.openalex.org/works?' + urllib.parse.urlencode(
+        {'search': q, 'per-page': n, 'filter': 'has_abstract:true' + (',from_publication_date:%s' % since if since else ''),
          'select': 'id,doi,title,display_name,publication_year,cited_by_count,abstract_inverted_index,primary_location'}),
      parse_openalex),
-    ('arXiv', lambda q, n: 'https://export.arxiv.org/api/query?' + urllib.parse.urlencode(
-        {'search_query': 'all:' + q, 'start': 0, 'max_results': n, 'sortBy': 'relevance'}), parse_arxiv),
-    ('Semantic Scholar', lambda q, n: 'https://api.semanticscholar.org/graph/v1/paper/search?' + urllib.parse.urlencode(
-        {'query': q, 'limit': n, 'fields': 'title,abstract,year,citationCount,url'}), parse_s2),
+    ('arXiv', lambda q, n, since=None: 'https://export.arxiv.org/api/query?' + urllib.parse.urlencode(
+        {'search_query': 'all:' + q, 'start': 0, 'max_results': n, 'sortBy': 'submittedDate' if since else 'relevance'}),
+     parse_arxiv),
+    ('Semantic Scholar', lambda q, n, since=None: 'https://api.semanticscholar.org/graph/v1/paper/search?' + urllib.parse.urlencode(
+        dict({'query': q, 'limit': n, 'fields': 'title,abstract,year,citationCount,url'}, **({'year': since[:4] + '-'} if since else {}))),
+     parse_s2),
 )
 
 
-def search_papers(queries, per_source=8, fetch=_get, log=None):
-    """Papers from every index for every query, without duplicates (same title)."""
+def search_papers(queries, per_source=8, fetch=_get, log=None, since=None):
+    """Papers from every index for every query, without duplicates (same title); with `since` (YYYY-MM-DD), only papers
+    from that year on."""
     seen, papers = set(), []
     for q in queries:
         for name, url_of, parse in SOURCES:
             try:
-                found = parse(fetch(url_of(q, per_source)))
+                found = parse(fetch(url_of(q, per_source, since)))
             except (OSError, ValueError, ET.ParseError, urllib.error.URLError) as e:
                 if log:
                     log('  %s: %s' % (name, type(e).__name__))
                 continue
             for p in found:
                 key = re.sub(r'[^a-z0-9]', '', p['title'].lower())[:80]
+                if since and (p.get('year') or 0) < int(since[:4]):
+                    continue
                 if key and key not in seen and len(p['abstract']) >= MIN_ABSTRACT:
                     seen.add(key)
                     papers.append(p)
@@ -240,7 +245,8 @@ DESCRIPTION: <one sentence: what the skill does and when to use it>
 ## What the research says
 <3-6 bullets, each with its citation>
 ## Steps
-<a numbered list of concrete steps the agent takes, specific to the task>
+<a numbered list of concrete steps the agent takes, specific to the task. Turn the theory into practice: each step names the
+library, tool or code change to make, and the last steps say how to measure that it worked (a metric, a test, a comparison)>
 ## Checks
 <bullets: how the agent verifies the result>
 ## Pitfalls
@@ -342,6 +348,127 @@ def draft(task, role=None, n_papers=6, log=print, fetch=_get):
     return {'name': name, 'path': os.path.join(folder, 'SKILL.md'), 'papers': len(best), 'model': model}
 
 
+# ---- 5. keeping up: newer research for a skill, and a watch over topics -------------------------------------------
+
+UPDATE_TASK = ('{goal}. The agent already has the skill below; write what the research published since {since} adds to it: '
+               'new techniques, better defaults, and what to stop doing. Do not repeat what the skill already says.\n\n'
+               '<current-skill>\n{skill}\n</current-skill>')
+DEFAULT_TOPICS = ['retrieval-augmented generation (RAG)', 'agent memory for LLM agents', 'evaluating LLM applications',
+                  'LLM tool use and function calling', 'prompt caching and context compression', 'code generation agents']
+
+
+def _since(months):
+    d = datetime.date.today() - datetime.timedelta(days=int(months * 30.5))
+    return d.isoformat()
+
+
+def find_skill(name):
+    """(path to SKILL.md, text) of a skill in the library or among the user's own skills."""
+    import sfp_mcp as core
+    cands = [os.path.join(data_dir(), 'skills', name, 'SKILL.md')]
+    if name in core.SKILLS:
+        cands.insert(0, os.path.join(core.ROOT, core.SKILLS[name]['path'], 'SKILL.md'))
+    for p in cands:
+        if os.path.isfile(p):
+            with open(p, encoding='utf-8', errors='replace') as f:
+                return p, f.read()
+    raise RuntimeError('no skill named %s' % name)
+
+
+def _save_draft(name, md, meta):
+    folder = os.path.join(drafts_dir(), name)
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, 'SKILL.md'), 'w', encoding='utf-8') as f:
+        f.write(md)
+    with open(os.path.join(folder, 'sources.json'), 'w', encoding='utf-8') as f:
+        json.dump(dict(meta, written=int(time.time())), f, indent=1)
+    return os.path.join(folder, 'SKILL.md')
+
+
+def refresh(skill, months=18, n_papers=6, log=print, fetch=_get):
+    """Draft "<skill>-latest": what research published in the last `months` adds to an existing skill, as practice."""
+    path, text = find_skill(skill)
+    import sfp_mcp as core
+    desc = core.SKILLS.get(skill, {}).get('description') or text[:400]
+    since = _since(months)
+    log('Newer research for %s (since %s)' % (skill, since))
+    queries = make_queries(desc)
+    papers = search_papers(queries, fetch=fetch, log=log, since=since)
+    best = rank(desc, papers, n_papers)
+    if not best:
+        raise RuntimeError('no papers since %s were found for %s' % (since, skill))
+    for i, p in enumerate(best, 1):
+        log('  [%d] %s (%s, %d citations)' % (i, p['title'][:90], p['year'], p['citations']))
+    body = re.sub(r'^---\s*\n.*?\n---\s*\n', '', text, count=1, flags=re.S)[:4000]
+    task = UPDATE_TASK.format(goal='Bring the skill "%s" up to date with recent research' % skill, since=since, skill=body)
+    _, md, model = write_skill(task, None, best)
+    name = slugify(skill + '-latest')
+    md = re.sub(r'^name: .*$', 'name: ' + name, md, count=1, flags=re.M)
+    md = md.replace('\n---\n\n', '\n---\n\n> Builds on the skill `%s`; use both.\n' % skill, 1)
+    p = _save_draft(name, md, {'refresh_of': skill, 'since': since, 'queries': queries, 'model': model, 'papers': best})
+    return {'name': name, 'path': p, 'papers': len(best), 'model': model}
+
+
+def topics_path():
+    return os.path.join(data_dir(), 'research_topics.json')
+
+
+def load_topics():
+    try:
+        with open(topics_path(), encoding='utf-8') as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return list(DEFAULT_TOPICS)
+
+
+def save_topics(topics):
+    os.makedirs(data_dir(), exist_ok=True)
+    with open(topics_path(), 'w', encoding='utf-8') as f:
+        json.dump(topics, f, indent=1)
+
+
+def _seen_path():
+    return os.path.join(data_dir(), 'research_seen.json')
+
+
+def watch(topics=None, days=45, n_papers=5, min_new=2, log=print, fetch=_get):
+    """For each topic, look for papers from the last `days` days that this watch has not seen; when at least `min_new`
+    relevant ones turned up, draft "<topic>-latest" from them. Seen papers are remembered, so a run only acts on what
+    is new. Returns one result per topic."""
+    topics = topics or load_topics()
+    try:
+        with open(_seen_path(), encoding='utf-8') as f:
+            seen = set(json.load(f))
+    except (OSError, ValueError):
+        seen = set()
+    since = (datetime.date.today() - datetime.timedelta(days=days)).isoformat()
+    out = []
+    for topic in topics:
+        log('Watching: %s (since %s)' % (topic, since))
+        queries = make_queries('the newest practical techniques in ' + topic)
+        papers = [p for p in search_papers(queries, fetch=fetch, log=log, since=since)
+                  if (p.get('url') or p['title']) not in seen]
+        best = rank(topic, papers, n_papers)
+        if len(best) < min_new:
+            out.append({'topic': topic, 'new_papers': len(best), 'draft': None})
+            continue
+        task = ('Apply the newest research on %s in practice: what a working engineer should now do differently, with '
+                'concrete steps' % topic)
+        try:
+            _, md, model = write_skill(task, None, best)
+        except RuntimeError as e:
+            out.append({'topic': topic, 'new_papers': len(best), 'draft': None, 'error': str(e)})
+            continue
+        name = slugify(topic.split('(')[0] + '-latest')
+        md = re.sub(r'^name: .*$', 'name: ' + name, md, count=1, flags=re.M)
+        p = _save_draft(name, md, {'watch_topic': topic, 'since': since, 'queries': queries, 'model': model, 'papers': best})
+        seen |= {(x.get('url') or x['title']) for x in best}
+        with open(_seen_path(), 'w', encoding='utf-8') as f:
+            json.dump(sorted(seen), f)
+        out.append({'topic': topic, 'new_papers': len(best), 'draft': name, 'path': p})
+    return out
+
+
 def list_drafts():
     base = drafts_dir()
     out = []
@@ -388,6 +515,15 @@ def main(argv=None):
     d.add_argument('task')
     d.add_argument('--role')
     d.add_argument('--papers', type=int, default=6)
+    rf = sub.add_parser('refresh', help='draft <skill>-latest from research newer than the skill')
+    rf.add_argument('skill')
+    rf.add_argument('--months', type=float, default=18)
+    w = sub.add_parser('watch', help='draft <topic>-latest skills from new papers on your topics')
+    w.add_argument('--days', type=int, default=45)
+    w.add_argument('--topic', action='append', help='watch only this topic (repeatable)')
+    t = sub.add_parser('topics', help='list, add or remove the watched topics')
+    t.add_argument('--add', action='append', default=[])
+    t.add_argument('--remove', action='append', default=[])
     sub.add_parser('drafts')
     a_ = sub.add_parser('approve')
     a_.add_argument('name')
@@ -400,6 +536,16 @@ def main(argv=None):
             res = draft(a.task, a.role, a.papers, log=lambda s: print(s, file=sys.stderr))
             print('Draft written: %s\nRead it, then: python3 mcp/sfp_research.py approve %s [--install <tools>]'
                   % (res['path'], res['name']))
+        elif a.cmd == 'refresh':
+            res = refresh(a.skill, a.months, log=lambda s: print(s, file=sys.stderr))
+            print('Draft written: %s\nRead it, then: python3 mcp/sfp_research.py approve %s' % (res['path'], res['name']))
+        elif a.cmd == 'watch':
+            print(json.dumps(watch(a.topic, a.days, log=lambda s: print(s, file=sys.stderr)), indent=1))
+        elif a.cmd == 'topics':
+            topics = [x for x in load_topics() if x not in a.remove] + [x for x in a.add if x not in load_topics()]
+            if a.add or a.remove:
+                save_topics(topics)
+            print(json.dumps(topics, indent=1))
         elif a.cmd == 'drafts':
             print(json.dumps(list_drafts(), indent=1))
         elif a.cmd == 'approve':

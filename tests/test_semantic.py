@@ -328,6 +328,38 @@ class ResearchTest(unittest.TestCase):
         best = research.rank('tune the pi controller of a buck converter', papers, 1, now_year=2026)
         self.assertEqual(best[0]['title'], 'PI control of buck converters')
 
+    def test_since_keeps_only_recent_papers_and_asks_the_indexes_for_them(self):
+        urls = []
+        old = json.dumps({'results': [{'title': 'Old RAG', 'publication_year': 2020, 'cited_by_count': 900, 'doi': 'd1',
+                                        'abstract_inverted_index': {'word%d' % i: [i] for i in range(60)}}]})
+        new = json.dumps({'results': [{'title': 'New RAG', 'publication_year': 2026, 'cited_by_count': 3, 'doi': 'd2',
+                                        'abstract_inverted_index': {'word%d' % i: [i] for i in range(60)}}]})
+        def fetch(url):
+            urls.append(url)
+            if 'openalex' in url:
+                return new if 'from_publication_date' in url else old
+            raise OSError('offline')
+        got = research.search_papers(['rag'], fetch=fetch, since='2025-06-01')
+        self.assertEqual([p['title'] for p in got], ['New RAG'])
+        self.assertTrue(any('from_publication_date%3A2025-06-01' in u for u in urls))
+
+    def test_watch_drafts_from_new_papers_once(self):
+        papers = [{'title': 'Paper %d on retrieval' % i, 'year': 2026, 'citations': i, 'url': 'u%d' % i,
+                   'abstract': LONG, 'index': 'OpenAlex'} for i in range(3)]
+        orig = (research.make_queries, research.search_papers, research.write_skill)
+        research.make_queries = lambda task, role=None, ep=None: [task]
+        research.search_papers = lambda queries, fetch=None, log=None, since=None: list(papers)
+        research.write_skill = lambda task, role, best, ep=None, chat=None: (
+            'x', '---\nname: x\ndescription: "New RAG practice."\n---\n\n# RAG now\n## Steps\n1. Measure recall [1].\n', 'fake-14b')
+        try:
+            first = research.watch(['retrieval-augmented generation (RAG)'], log=lambda s: None)
+            second = research.watch(['retrieval-augmented generation (RAG)'], log=lambda s: None)
+        finally:
+            research.make_queries, research.search_papers, research.write_skill = orig
+        self.assertEqual(first[0]['draft'], 'retrieval-augmented-generation-latest')
+        self.assertIn('name: retrieval-augmented-generation-latest', open(first[0]['path'], encoding='utf-8').read())
+        self.assertIsNone(second[0]['draft'], 'papers already seen do not make a second draft')
+
 
 if __name__ == '__main__':
     unittest.main()
