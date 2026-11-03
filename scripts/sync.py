@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IGNORE = shutil.ignore_patterns('.git', '.github', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
-VERSION = '3.18.0'
+VERSION = '3.19.0'
 OUT = os.path.join(ROOT, 'plugins')
 
 
@@ -459,6 +459,9 @@ def measure(cfg, cats, catalog):
     # The hive, scored against the earlier engine and plain search on the same tasks, and whether it learns. Words alone
     # (SFP_SEMANTIC=0), so the README's figures are the same on every machine and no local model is asked per task.
     os.environ['SFP_SEMANTIC'] = '0'
+    # An empty data folder too: the user's own history and taste must not change the published figures or tables.
+    import tempfile
+    os.environ['SFP_DATA_DIR'] = tempfile.mkdtemp(prefix='sfp-readme-')
     sys.modules['sfp_mcp'] = mod
     sys.path.insert(0, os.path.join(ROOT, 'mcp'))
     for stale in ('sfp_stack', 'sfp_hive', 'sfp_learn'):
