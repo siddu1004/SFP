@@ -178,6 +178,85 @@ class IntentTest(LocalModelCase):
         self.assertEqual(FakeModels.calls.count('/v1/chat/completions'), 1, 'the second rewrite comes from the cache')
 
 
+class ModelChoiceTest(unittest.TestCase):
+    """Which local model the hive asks: drafters skipped, a mixture of experts judged by its active size, and a probe's
+    measured score and speed outranking the size written in a name."""
+    LISTING = {'data': [{'id': 'qwen2.5-coder-14b-instruct', 'type': 'llm', 'arch': 'qwen2', 'state': 'not-loaded'},
+                        {'id': 'lfm2-24b-a2b', 'type': 'llm', 'arch': 'lfm2moe', 'state': 'not-loaded'},
+                        {'id': 'deepseek-v4-flash-0731', 'type': 'llm', 'arch': 'dflash', 'state': 'not-loaded'},
+                        {'id': 'big-70b', 'type': 'llm', 'arch': 'llama', 'state': 'not-loaded'},
+                        {'id': 'tiny-3b', 'type': 'llm', 'arch': 'llama', 'state': 'not-loaded'},
+                        {'id': 'nomic-embed-text', 'type': 'embeddings'}]}
+
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.saved = {k: os.environ.pop(k, None) for k in ('SFP_REWRITE_URL', 'SFP_REWRITE_MODEL', 'SFP_DATA_DIR')}
+        os.environ['SFP_DATA_DIR'] = self.tmp
+        self.get_json, self.runtimes = sfp_embed._get_json, sfp_embed.RUNTIMES
+        sfp_embed.RUNTIMES = [('LM Studio', 'http://127.0.0.1:1/v1', 'http://127.0.0.1:1/v1/models')]
+        sfp_embed._get_json = lambda url, timeout: self.LISTING
+
+    def tearDown(self):
+        sfp_embed._get_json, sfp_embed.RUNTIMES = self.get_json, self.runtimes
+        os.environ.pop('SFP_DATA_DIR', None)
+        for k, v in self.saved.items():
+            if v is not None:
+                os.environ[k] = v
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def names(self, **kw):
+        return [ep['model'] for ep in sfp_intent.candidates(**kw)]
+
+    def measure(self, recs):
+        with open(sfp_intent.measured_path(), 'w', encoding='utf-8') as f:
+            json.dump(recs, f)
+
+    def test_sizes_read_a_mixture_of_experts(self):
+        self.assertEqual(sfp_intent.sizes('lfm2-24b-a2b'), (24.0, 2.0))
+        self.assertEqual(sfp_intent.sizes('qwen2.5-coder-14b-instruct'), (14.0, None))
+        self.assertEqual(sfp_intent.sizes('deepseek-v4-flash'), (None, None))
+
+    def test_drafters_and_embedders_are_not_asked(self):
+        self.assertNotIn('deepseek-v4-flash-0731', self.names())
+        self.assertNotIn('nomic-embed-text', self.names())
+
+    def test_unprobed_models_rank_by_strength_and_too_slow_ones_last(self):
+        self.assertEqual(self.names(), ['qwen2.5-coder-14b-instruct', 'lfm2-24b-a2b', 'tiny-3b', 'big-70b'])
+
+    def test_a_probe_outranks_the_size_in_a_name(self):
+        self.measure({'lfm2-24b-a2b': {'ok': True, 'score': 0.9, 'seconds': 0.8},
+                      'qwen2.5-coder-14b-instruct': {'ok': True, 'score': 0.6, 'seconds': 2.0}})
+        self.assertEqual(self.names()[0], 'lfm2-24b-a2b')
+
+    def test_when_someone_waits_the_quicker_of_two_equal_models_wins(self):
+        self.measure({'lfm2-24b-a2b': {'ok': True, 'score': 1.0, 'seconds': 2.5},
+                      'qwen2.5-coder-14b-instruct': {'ok': True, 'score': 1.0, 'seconds': 6.5}})
+        self.assertEqual(self.names(max_seconds=8)[0], 'lfm2-24b-a2b')
+        self.assertEqual(self.names()[0], 'qwen2.5-coder-14b-instruct', 'with time to spare the stronger one')
+
+    def test_a_failed_or_slow_model_is_not_chosen(self):
+        self.measure({'qwen2.5-coder-14b-instruct': {'ok': False, 'error': 'URLError'},
+                      'lfm2-24b-a2b': {'ok': True, 'score': 0.9, 'seconds': 30.0}})
+        self.assertEqual(self.names(max_seconds=8)[0], 'tiny-3b')
+        self.assertEqual(self.names()[0], 'lfm2-24b-a2b', 'with no time limit the slow model is still the best')
+        self.assertEqual(self.names()[-1], 'qwen2.5-coder-14b-instruct', 'a model that failed its probe comes last')
+
+    def test_probe_scores_expert_terms(self):
+        calls = []
+
+        def fake_ask(ep, task, timeout):
+            calls.append(ep['model'])
+            return ['brute force protection', 'rate limiting', 'lazy loading', 'caching', 'disk encryption', 'aes']
+        old, sfp_intent.ask = sfp_intent.ask, fake_ask
+        try:
+            out = sfp_intent.probe(['lfm2-24b-a2b'])
+        finally:
+            sfp_intent.ask = old
+        self.assertEqual(set(calls), {'lfm2-24b-a2b'}, 'only the named model is probed')
+        self.assertEqual(out['lfm2-24b-a2b']['score'], 1.0)
+        self.assertEqual(sfp_intent.load_measured()['lfm2-24b-a2b']['ok'], True)
+
+
 class HiveMeaningTest(unittest.TestCase):
     def test_when_the_words_find_nothing_the_meaning_still_does(self):
         # No word of the task is in the library; only the meaning signal knows security-review belongs to it.

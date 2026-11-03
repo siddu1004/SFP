@@ -107,6 +107,11 @@ def checks(router_port=8787, project=None):
             rw = sfp_intent.find_model(timeout=0.4)
             add('Task rewrite', 'ok' if rw else 'warn', rw['model'] if rw else 'no local chat model',
                 'Load a chat model in LM Studio or Ollama; the hive then reads tasks in an expert\'s terms.')
+            measured = sfp_intent.load_measured()
+            new = [m['model'] for m in sfp_intent.found(timeout=0.4) if m['model'] not in measured]
+            if new:
+                add('New local models', 'warn', '%d not probed yet: %s' % (len(new), ', '.join(new[:4])),
+                    'Run python3 mcp/sfp_intent.py probe: the hive then picks the model that answers best, not the biggest name.')
     except Exception as e:  # noqa: BLE001
         add('Meaning search', 'fail', '%s: %s' % (type(e).__name__, e))
     try:
