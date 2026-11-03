@@ -594,10 +594,65 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     picks = rerank(sit, votes, quality, exclude)
     for i, n in enumerate(picks):
         quality[n] = RERANK_LEAD - 0.01 * i
+
+    import sfp_cards
+    import sfp_learn
+    task_job, named_form = sfp_cards.task_intent(task)
+    taste = sfp_learn.load_taste()
+
+    for n in list(quality):
+        card = sfp_cards.get_card(n)
+        forms = card.get('output', ['text'])
+        needs = card.get('needs', [])
+        tools_installed = any(t in sit['ctx'] or t in sit['words'] for t in needs) if needs else True
+        fit_mult = 1.15 if (needs and tools_installed) else (0.85 if needs and not tools_installed else 1.0)
+
+        matching_form = (named_form in forms) or (named_form == 'text' and any(f in forms for f in ('text', 'document')))
+        if named_form:
+            if matching_form:
+                quality[n] = quality[n] * 2.5
+            else:
+                quality[n] = quality[n] * 0.3
+        else:
+            form_pref = max([taste.get('output', {}).get(f, 0.0) for f in forms] or [0.0])
+            style_pref = taste.get('style', {}).get(card.get('style'), 0.0)
+            taste_mult = 1.0 + 0.6 * form_pref + 0.2 * style_pref
+            quality[n] = quality[n] * fit_mult * taste_mult
     why = {}
     pinned = [n for n in include if n not in exclude]
     rest = {n: q for n, q in quality.items() if n not in pinned}
     chosen, reserve, spent, left = assemble(rest, sit['demand'], budget, max(0, max_skills - len(pinned)), why)
+
+    # Deduplicate substitutes: never stack two substitutes that do the same job
+    sub_groups = {}
+    for item in chosen:
+        name = item[0]
+        c = sfp_cards.get_card(name)
+        sub = c.get('substitutes_for')
+        sub_groups.setdefault(sub, []).append(item)
+
+    filtered_chosen = []
+    alternatives = []
+    for sub, items in sub_groups.items():
+        if len(items) <= 1 or sub in ('software-engineering-patterns',):
+            filtered_chosen.extend(items)
+        else:
+            items_sorted = sorted(items, key=lambda it: -quality.get(it[0], 0.0))
+            best_item = items_sorted[0]
+            filtered_chosen.append(best_item)
+            best_form = sfp_cards.get_card(best_item[0]).get('output', ['text'])[0]
+            for alt_it in items_sorted[1:]:
+                alt_card = sfp_cards.get_card(alt_it[0])
+                alt_form = alt_card.get('output', ['text'])[0]
+                if alt_form != best_form:
+                    alternatives.append({
+                        'name': alt_it[0],
+                        'form': alt_form,
+                        'substitutes_for': sub,
+                        'reason': f"alternative: {alt_form} format ({alt_it[0]})"
+                    })
+                    break
+    chosen = filtered_chosen
     for n in pinned:
         # The user's choice: it takes the job it suits best, and is listed with the others.
         aff = affinity(n)
@@ -631,6 +686,16 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             reasons.append('down-weighted by feedback')
         if name in picks:
             reasons.append('judged the best fit by the local model')
+        card = sfp_cards.get_card(name)
+        if named_form and named_form in card.get('output', []):
+            reasons.append('requested format: ' + named_form)
+        else:
+            form_pref = max([taste.get('output', {}).get(f, 0.0) for f in card.get('output', [])] or [0.0])
+            best_f = [f for f in card.get('output', []) if taste.get('output', {}).get(f, 0.0) == form_pref]
+            if form_pref > 0.1 and best_f:
+                reasons.append('you usually prefer ' + best_f[0] + ' format')
+            if card.get('needs') and any(t in sit['ctx'] for t in card.get('needs')):
+                reasons.append(f"{card.get('needs')[0]} is installed in this project")
         if name in pinned:
             reasons.insert(0, 'pinned by you')
         else:
@@ -638,7 +703,8 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         stack.append({'name': name, 'phase': phase, 'layer': v1.LAYER[phase], 'category': core.SKILLS[name]['category'],
                       'tokens': v1.body_tokens(name), 'score': round(quality[name], 3), 'support': len(backers(v)),
                       'response': round(resp, 3), 'relevance': round(v['words'], 3),
-                      'path': core.SKILLS[name]['path'] + '/SKILL.md', 'reasons': reasons})
+                      'path': core.SKILLS[name]['path'] + '/SKILL.md', 'reasons': reasons,
+                      'card': card})
     stack.sort(key=lambda c: (v1.PHASE_ORDER.index(c['phase']), -c['score']))
 
     used = {c['name'] for c in stack}
@@ -669,6 +735,8 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         'missing': missing,
         'understood': (sit['semantic'] or {}).get('terms') or [],
         'reranked': picks,
+        'alternatives': alternatives,
+        'task_intent': {'job': task_job, 'named_form': named_form},
         'role': role and {k: role[k] for k in ('role', 'confidence', 'evidence', 'stacks')},
         'gap': find_gap(task, sit, stack, votes, missing, role),
         'project': {'technologies': v1.show(sorted(sit['ctx_tech'], key=lambda t: (-ctx[t], t))[:8]),
@@ -826,6 +894,9 @@ def format_stack(res):
         lines.insert(-1, 'Hive: %d scouted, %d reached quorum, %d took a job.' % (info['candidates'], info['agreed'], len(res['stack'])))
         if info.get('unmet'):
             lines.insert(-1, 'No skill took: %s' % ', '.join(info['unmet']))
+    if res.get('alternatives'):
+        alts = ', '.join(f"{a['name']} ({a['form']})" for a in res['alternatives'])
+        lines.insert(-1, 'Alternatives (different format): ' + alts)
     if res.get('decision'):
         lines.insert(-1, 'Decision %s. Tell it what helped: sfp_hive.py feedback %s --helped <skill> --unhelpful <skill>'
                      % (res['decision'], res['decision']))
@@ -927,7 +998,25 @@ def main(argv=None):
     tr = sub.add_parser('train', help='train the hive learning model from the benchmark task suites')
     tr.add_argument('--reset', action='store_true', help='reset prior feedback before training')
     tr.add_argument('--json', action='store_true')
+    tst = sub.add_parser('taste', help='view or reset learned taste preferences')
+    tst.add_argument('--reset', action='store_true', help='clear learned taste preferences')
+    tst.add_argument('--json', action='store_true')
     a = ap.parse_args(argv)
+
+    if a.cmd == 'taste':
+        if a.reset:
+            sfp_learn.reset_taste()
+            print("Learned taste has been reset.")
+        else:
+            t = sfp_learn.load_taste()
+            print(json.dumps({
+                'events': t.get('events', 0),
+                'decayed_events': t.get('decayed_events', 0),
+                'output': t.get('output', {}),
+                'style': t.get('style', {}),
+                'depth': t.get('depth', {})
+            }, indent=2))
+        return
 
     if a.cmd == 'select':
         after = [x for x in a.after.split(',') if x.strip()]

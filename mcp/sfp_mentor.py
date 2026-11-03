@@ -116,9 +116,21 @@ def profile(now=None, top=8):
         return [{'name': n, 'weight': round(v, 2)} for n, v in sorted(table.items(), key=lambda kv: -kv[1])[:k] if v > 0]
 
     unmet_list = best(unmet, 5)
-    return {'skills': best({n: v for n, v in skill.items() if n in core.SKILLS}, top), 'categories': best(cats, 5),
-            'tech': best(tech, 6), 'gaps': best(gaps, 6), 'unmet_needs': unmet_list, 'unmet': unmet_list,
-            'evidence': counts}
+    taste = sfp_learn.load_taste(now)
+    res = {'skills': best({n: v for n, v in skill.items() if n in core.SKILLS}, top), 'categories': best(cats, 5),
+           'tech': best(tech, 6), 'gaps': best(gaps, 6), 'unmet_needs': unmet_list, 'unmet': unmet_list,
+           'evidence': counts}
+    if taste.get('events', 0) > 0:
+        top_outs = sorted(taste.get('output', {}).items(), key=lambda kv: -kv[1])
+        top_styles = sorted(taste.get('style', {}).items(), key=lambda kv: -kv[1])
+        taste_str = []
+        if top_outs and top_outs[0][1] > 0:
+            taste_str.append(f"{top_outs[0][0]} {top_outs[0][1]:.1f}")
+        if top_styles and top_styles[0][1] > 0:
+            taste_str.append(f"{top_styles[0][0]} {top_styles[0][1]:.1f}")
+        if taste_str:
+            res['taste'] = 'learns best from: ' + ', '.join(taste_str)
+    return res
 
 
 def topics_for(prof, n=3, ep=None):

@@ -44,6 +44,19 @@ def checks(router_port=8787, project=None):
     except (OSError, ValueError):
         add('Search index', 'warn', 'index.json missing or unreadable', 'Run python3 scripts/sync.py.')
 
+    cards_path = os.path.join(ROOT, 'skill_cards.json')
+    try:
+        with open(cards_path, encoding='utf-8') as f:
+            cards_data = json.load(f).get('cards', {})
+        total_skills = len(v1.core.CATALOG['skills'])
+        missing = total_skills - len(cards_data)
+        card_ok = (missing == 0)
+        detail = f"{len(cards_data)}/{total_skills} cards" + (f", {missing} missing" if missing else "")
+        add('Skill cards', 'ok' if card_ok else 'warn', detail, 'Run python3 scripts/make_cards.py.')
+    except Exception:
+        add('Skill cards', 'warn', 'skill_cards.json missing or unreadable', 'Run python3 scripts/make_cards.py.')
+
+
     d = sfp_learn.data_dir()
     try:
         os.makedirs(d, exist_ok=True)

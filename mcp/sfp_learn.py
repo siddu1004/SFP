@@ -410,6 +410,10 @@ def give_feedback(decision=None, helped=(), unhelpful=(), ignored=(), missing=()
             if own_words:
                 row['words'] = own_words
             _append('feedback.jsonl', row)
+            if verdict == 'helped':
+                update_taste(n, 1.0, now)
+            elif verdict == 'unhelpful':
+                update_taste(n, -1.0, now)
     after = load_model()
     out = {'recorded': sum(len(v) for v in groups.values()), 'decision': decision, 'examples': after.examples,
            'moved': [{'skill': n, 'before': round(before.preference(n, words), 3), 'after': round(after.preference(n, words), 3)}
@@ -440,10 +444,124 @@ def record_reward(skill, reward, decision=None, task=None, source='rl'):
     return row
 
 
+
+# -------------------------------------------------------------------- taste
+
+HALF_LIFE_TASTE_DAYS = 30.0
+
+def taste_path():
+    return _path('taste.json')
+
+
+def load_taste(now=None):
+    """Learned preferences for card facets: output, style, depth.
+    Stores numbers only, never task text. Cold start returns empty dicts."""
+    now = time.time() if now is None else now
+    try:
+        with open(taste_path(), encoding='utf-8') as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return {'output': {}, 'style': {}, 'depth': {}, 'events': 0, 'history': []}
+
+    history = data.get('history', [])
+    if not history:
+        return {'output': {}, 'style': {}, 'depth': {}, 'events': 0, 'history': []}
+
+    scores = {'output': {}, 'style': {}, 'depth': {}}
+    decayed_events = 0.0
+    for ev in history:
+        t = ev.get('t', now)
+        w = ev.get('weight', 1.0)
+        decay = math.exp(-max(0.0, now - t) / 86400.0 * math.log(2) / HALF_LIFE_TASTE_DAYS)
+        decayed_events += decay
+        facets = ev.get('facets', {})
+        for out_form in facets.get('output', []):
+            scores['output'][out_form] = scores['output'].get(out_form, 0.0) + w * decay
+        st = facets.get('style')
+        if st:
+            scores['style'][st] = scores['style'].get(st, 0.0) + w * decay
+        dp = facets.get('depth')
+        if dp:
+            scores['depth'][dp] = scores['depth'].get(dp, 0.0) + w * decay
+
+    return {
+        'output': {k: round(v, 3) for k, v in scores['output'].items()},
+        'style': {k: round(v, 3) for k, v in scores['style'].items()},
+        'depth': {k: round(v, 3) for k, v in scores['depth'].items()},
+        'events': len(history),
+        'decayed_events': round(decayed_events, 2),
+        'history': history[-500:]
+    }
+
+
+def update_taste(skill, weight=1.0, t=None):
+    """Update taste preference for the facets of a skill."""
+    if not enabled():
+        return
+    import sfp_cards
+    card = sfp_cards.get_card(skill)
+    if not card:
+        return
+    now = time.time() if t is None else t
+    cur = load_taste(now)
+    history = cur.get('history', [])
+    event = {
+        't': int(now),
+        'weight': float(weight),
+        'facets': {
+            'output': card.get('output', []),
+            'style': card.get('style'),
+            'depth': card.get('depth')
+        }
+    }
+    history.append(event)
+    history = history[-500:]
+
+    # Recompute aggregate scores with decay
+    scores = {'output': {}, 'style': {}, 'depth': {}}
+    for ev in history:
+        ev_t = ev.get('t', now)
+        ev_w = ev.get('weight', 1.0)
+        decay = math.exp(-max(0.0, now - ev_t) / 86400.0 * math.log(2) / HALF_LIFE_TASTE_DAYS)
+        facets = ev.get('facets', {})
+        for out_form in facets.get('output', []):
+            scores['output'][out_form] = scores['output'].get(out_form, 0.0) + ev_w * decay
+        st = facets.get('style')
+        if st:
+            scores['style'][st] = scores['style'].get(st, 0.0) + ev_w * decay
+        dp = facets.get('depth')
+        if dp:
+            scores['depth'][dp] = scores['depth'].get(dp, 0.0) + ev_w * decay
+
+    try:
+        os.makedirs(data_dir(), exist_ok=True)
+        tmp = taste_path() + '.tmp'
+        with open(tmp, 'w', encoding='utf-8') as f:
+            json.dump({
+                'output': {k: round(v, 3) for k, v in scores['output'].items()},
+                'style': {k: round(v, 3) for k, v in scores['style'].items()},
+                'depth': {k: round(v, 3) for k, v in scores['depth'].items()},
+                'events': len(history),
+                'history': history
+            }, f, indent=1)
+        os.replace(tmp, taste_path())
+    except OSError:
+        pass
+
+
+def reset_taste():
+    """Clear learned taste."""
+    try:
+        if os.path.exists(taste_path()):
+            os.remove(taste_path())
+    except OSError:
+        pass
+
+
 def forget():
     """Delete everything recorded and learned. Returns what was removed."""
     removed = []
-    for name in ('decisions.jsonl', 'feedback.jsonl', 'aliases.json'):
+    for name in ('decisions.jsonl', 'feedback.jsonl', 'aliases.json', 'taste.json'):
         p = _path(name)
         if os.path.exists(p):
             os.remove(p)

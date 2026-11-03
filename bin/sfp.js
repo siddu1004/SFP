@@ -385,6 +385,7 @@ Give your AI coding agent the right skills for the job, not all of them.
   \x1b[33mdoctor\x1b[0m              Check catalog, index, local models, and hive connections
   \x1b[33mroute\x1b[0m [args]          Manage or start the local model router (Ollama, LM Studio, etc.)
   \x1b[33mmodels\x1b[0m [probe|add|remove] The models the hive asks: local ones found, plus any you add by API
+  \x1b[33mtaste\x1b[0m [--reset]        Learned facet preferences (output forms, delivery style, depth)
   \x1b[33mmentor\x1b[0m [profile|grow]  What you lean towards, and new skills grown from research for it
   \x1b[33mresearch\x1b[0m [args]       Draft, refresh, approve or reject skills written from research papers
   \x1b[33mapps\x1b[0m [args]           Manage companion apps (OmniRoute, Strix, etc.)
@@ -510,6 +511,10 @@ function run() {
       targetArgs = args.length > 1 ? args.slice(1) : ['models'];
       break;
 
+    case 'taste':
+      targetScript = path.join(rootDir, 'mcp', 'sfp_hive.py');
+      targetArgs = ['taste', ...args.slice(1)];
+      break;
     case 'mentor':
       targetScript = path.join(rootDir, 'mcp', 'sfp_mentor.py');
       targetArgs = args.length > 1 ? args.slice(1) : ['profile'];
