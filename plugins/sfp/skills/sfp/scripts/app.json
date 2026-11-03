@@ -438,5 +438,179 @@
     "after": [
       "Run `graphify install` once: it detects your assistant and registers the skill and hooks. If `graphify` is not found afterwards, run `uv tool update-shell` and restart the shell. Then type `/graphify .` in the project. Needs uv or pipx; with neither, install one first."
     ]
+  },
+  "difftastic": {
+    "name": "Difftastic",
+    "homepage": "https://github.com/Wilfred/difftastic",
+    "what": "A structural diff tool that compares code syntax rather than lines.",
+    "sources": [
+      "Wilfred/difftastic"
+    ],
+    "needs": [
+      {
+        "tool": "cargo",
+        "label": "Cargo (Rust toolchain)",
+        "url": "https://rustup.rs/",
+        "soft": true
+      }
+    ],
+    "installed": {
+      "command": [
+        "difft",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "cargo",
+          "install",
+          "--locked",
+          "difftastic"
+        ],
+        "why": "compiles and installs the difft binary via Cargo"
+      }
+    ],
+    "after": [
+      "Run `difft <file1> <file2>` to compare code ASTs."
+    ]
+  },
+  "browser-use": {
+    "name": "Browser-Use",
+    "homepage": "https://github.com/browser-use/browser-use",
+    "what": "Make websites accessible for AI agents via Playwright and Chromium.",
+    "sources": [
+      "browser-use/browser-use"
+    ],
+    "needs": [
+      {
+        "tool": "python3"
+      },
+      {
+        "tool": "pip"
+      }
+    ],
+    "installed": {
+      "command": [
+        "python",
+        "-c",
+        "import browser_use"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "pip",
+          "install",
+          "browser-use"
+        ],
+        "why": "installs the browser-use Python library"
+      }
+    ],
+    "after": [
+      "Install browser binaries with `playwright install chromium`."
+    ]
+  },
+  "opencode": {
+    "name": "OpenCode",
+    "homepage": "https://github.com/anomalyco/opencode",
+    "what": "Open-source AI coding agent CLI and desktop interface.",
+    "sources": [
+      "anomalyco/opencode"
+    ],
+    "needs": [
+      {
+        "tool": "npm"
+      }
+    ],
+    "installed": {
+      "command": [
+        "opencode",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "npm",
+          "install",
+          "-g",
+          "@opencode/cli@latest"
+        ],
+        "why": "installs the opencode command globally via npm"
+      }
+    ],
+    "after": [
+      "Run `opencode` inside any project directory to launch the assistant."
+    ]
+  },
+  "skillspector": {
+    "name": "SkillSpector",
+    "homepage": "https://github.com/NVIDIA/SkillSpector",
+    "what": "Security scanner for AI agent skills from NVIDIA.",
+    "sources": [
+      "NVIDIA/SkillSpector"
+    ],
+    "needs": [
+      {
+        "tool": "python3"
+      }
+    ],
+    "installed": {
+      "command": [
+        "skillspector",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "pip",
+          "install",
+          "git+https://github.com/NVIDIA/skillspector.git"
+        ],
+        "why": "installs skillspector CLI"
+      }
+    ],
+    "after": [
+      "Run `skillspector scan <folder> --no-llm` to scan an agent skill directory."
+    ]
+  },
+  "openviking": {
+    "name": "OpenViking",
+    "homepage": "https://github.com/volcengine/OpenViking",
+    "what": "A context database and virtual filesystem for AI agents.",
+    "sources": [
+      "volcengine/OpenViking"
+    ],
+    "needs": [
+      {
+        "tool": "python3"
+      }
+    ],
+    "installed": {
+      "command": [
+        "viking",
+        "--version"
+      ]
+    },
+    "install": [
+      {
+        "os": "any",
+        "run": [
+          "pip",
+          "install",
+          "openviking"
+        ],
+        "why": "installs openviking CLI"
+      }
+    ],
+    "after": [
+      "Run `viking init` to initialize the agent context filesystem."
+    ]
   }
 }

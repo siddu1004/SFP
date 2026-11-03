@@ -94,7 +94,10 @@
         ".agents/skills/ecc-conventions",
         "pi/core/skills/ecc-council"
       ],
-      "collision_prefix": "ecc-"
+      "collision_prefix": "ecc-",
+      "exclude": [
+        "skills/frontend-slides"
+      ]
     },
     {
       "repo": "diegosouzapw/OmniRoute",
@@ -188,6 +191,12 @@
         "graphify/skill.md": "SKILL.md",
         "README.md": "reference/readme.md"
       }
+    },
+    {
+      "repo": "Graphify-Labs/graphify",
+      "license": "MIT",
+      "default": "engineering",
+      "template": "templates/graphify"
     },
     {
       "repo": "pmndrs/react-three-fiber",
@@ -522,14 +531,230 @@
       ]
     },
     {
-      "repo": "Graphify-Labs/graphify",
-      "license": "MIT",
-      "default": "engineering",
-      "template": "templates/graphify"
-    },
-    {
       "repo": "siddu1004/laws-of-designing",
       "local": "templates/laws-of-designing",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "haydenschmitty/floorplan",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        "skills/floorplan"
+      ]
+    },
+    {
+      "repo": "Egonex-AI/Understand-Anything",
+      "license": "MIT",
+      "default": "research-docs",
+      "skills": [
+        "understand-anything-plugin/skills/*"
+      ]
+    },
+    {
+      "repo": "vercel-labs/skills",
+      "license": "MIT",
+      "default": "agent-dev",
+      "skills": [
+        "skills/find-skills"
+      ]
+    },
+    {
+      "repo": "Nutlope/hallmark",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "skills/hallmark"
+      ]
+    },
+    {
+      "repo": "cloudflare/security-audit-skill",
+      "license": "MIT",
+      "default": "security",
+      "skills": [
+        "skills/security-audit"
+      ]
+    },
+    {
+      "repo": "Jakeschincariol/founder-skill",
+      "license": "MIT",
+      "default": "business-ops",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "zarazhangrui/frontend-slides",
+      "license": "MIT",
+      "default": "content-media",
+      "skills": [
+        "plugins/frontend-slides/skills/*"
+      ]
+    },
+    {
+      "repo": "NVIDIA/SkillSpector",
+      "license": "Apache-2.0",
+      "default": "security",
+      "skills": [
+        "skills/skill-inspector"
+      ]
+    },
+    {
+      "repo": "blader/humanizer",
+      "license": "MIT",
+      "default": "content-media",
+      "skills": [
+        "."
+      ],
+      "collision_prefix": "content-"
+    },
+    {
+      "repo": "Nanako0129/sepia",
+      "license": "MIT",
+      "default": "content-media",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "nidhinjs/prompt-master",
+      "license": "MIT",
+      "default": "agent-dev",
+      "skills": [
+        "."
+      ],
+      "collision_prefix": "agent-"
+    },
+    {
+      "repo": "cathrynlavery/diagram-design",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "skills/diagram-design"
+      ]
+    },
+    {
+      "repo": "lucasmarkes/hairline",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "skills/*"
+      ]
+    },
+    {
+      "repo": "lemomo-ai/lemo-opuscar",
+      "license": "MIT",
+      "default": "content-media",
+      "skills": [
+        "plugin/skills/*"
+      ]
+    },
+    {
+      "repo": "cloudflare/codemode",
+      "local": "templates/cloudflare-codemode",
+      "license": "Apache-2.0",
+      "default": "agent-dev",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "sfp/interface-review",
+      "local": "templates/interface-review",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "walkinglabs/awesome-harness-engineering",
+      "local": "templates/harness-engineering",
+      "license": "CC0-1.0",
+      "default": "agent-dev",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "codecrafters-io/build-your-own-x",
+      "local": "templates/build-your-own-x",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "Wilfred/difftastic",
+      "local": "templates/difftastic",
+      "license": "MIT",
+      "default": "engineering",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "browser-use/browser-use",
+      "local": "templates/browser-use",
+      "license": "MIT",
+      "default": "agents",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "volcengine/OpenViking",
+      "local": "templates/openviking",
+      "license": "Apache-2.0",
+      "default": "memory",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "anomalyco/opencode",
+      "local": "templates/opencode",
+      "license": "MIT",
+      "default": "agent-dev",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "lexmount/moli",
+      "local": "templates/moli",
+      "license": "MIT",
+      "default": "agents",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "DeusData/codebase-memory-mcp",
+      "local": "templates/codebase-memory-mcp",
+      "license": "MIT",
+      "default": "research-docs",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "locomotivemtl/locomotive-scroll",
+      "local": "templates/locomotive-scroll",
+      "license": "MIT",
+      "default": "frontend",
+      "skills": [
+        "."
+      ]
+    },
+    {
+      "repo": "omgovich/react-colorful",
+      "local": "templates/react-colorful",
       "license": "MIT",
       "default": "frontend",
       "skills": [

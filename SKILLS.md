@@ -11,7 +11,7 @@ The router and the hive: find the right skill for any task, installed or not, an
 | `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 | `sfp-hive` | Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work move… |
 
-## frontend (80)
+## frontend (87)
 
 UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.
 
@@ -97,6 +97,13 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `gsap` | Build high-performance web animations with GSAP (GreenSock Animation Platform) — tweens, timelines, ScrollTrigger, Flip, MorphSVG, SplitText, and physics. Use when implementing fluid transitions, scro… |
 | `react-bits` | Curated collection of rich, animated React components, interactive text, dynamic backgrounds, audio synthesizers, and micro-interactions. Use when building eye-catching landing pages, creative interfa… |
 | `laws-of-designing` | Follow these 20 foundational UX laws and core design principles whenever designing, building, reviewing, or revising a user interface. Applies across layouts, navigation, onboarding, forms, settings, … |
+| `hallmark` | Design skill for websites and new pages that look designed, not generated. Use when the user asks to build or design something new, or names Hallmark. Never use it on an existing design unless the use… |
+| `diagram-design` | Create branded architecture, flowchart, sequence, ER, timeline, and data diagrams as HTML/SVG with Mermaid import and export. Use when designing diagrams, system architectures, data flows, or technica… |
+| `hairline-adopt` | Use when someone has an SVG (an icon, a logo, an illustration) and wants it as a Hairline figure, or runs /hairline-adopt with a file. Reads the drawing, rebuilds its object as an isometric line figur… |
+| `hairline-create` | Use when someone asks for a new Hairline figure, or runs /hairline-create with an idea. Draws one isometric line figure that answers the pointer, in the style and on the engine of @lucasmarkes/hairlin… |
+| `interface-review` | Review UI code systematically across accessibility, layout, writing, typography, and polish. Produces prioritized, evidence-based file:line findings table. Use when reviewing UI code, evaluating desig… |
+| `locomotive-scroll` | Implement smooth scrolling, parallax effects, and scroll-triggered animations using Locomotive Scroll. Use when adding smooth inertia scrolling, scroll-bound transforms, sticky containers, or scroll-r… |
+| `react-colorful` | Integrate ultra-lightweight, zero-dependency color pickers in React apps using react-colorful. Use when adding color pickers (Hex, RGB, HSL, HSV) with keyboard accessibility, custom styling, or alpha … |
 
 ## design-styles (67)
 
@@ -305,7 +312,7 @@ Docker, Kubernetes, deployment, git and GitHub workflows, terminals, green-PR an
 | `sweep-reds` | Repair confirmed CI failures base-first, then prepare affected PRs one at a time with exact-candidate evidence. Use when asked to sweep reds or restore the queue. Never merges, closes PRs, weakens tes… |
 | `validate-release-green` | Run or inspect the local Release-Green observer for an exact base or combined PR candidate, separating hard failures, advisory drift and incomplete evidence. Use for maintainer preflight; full CI acce… |
 
-## security (22)
+## security (23)
 
 Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.
 
@@ -333,8 +340,9 @@ Strix autonomous pentesting, OWASP testing, secure coding for each framework, an
 | `security-scan` | Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks using AgentShield. Checks CLAUDE.md, settings.json, MCP servers, hooks, an… |
 | `springboot-security` | Spring Security best practices for authn/authz, validation, CSRF, secrets, headers, rate limiting, and dependency security in Java Spring Boot services. Use when reviewing Spring Security authn/authz,… |
 | `reverse-engineer-anything` | Reverse engineer native, managed, Electron/JavaScript, packaged, firmware, and browser targets with REA. Use shipped-artifact or requested runtime evidence to explain features, compare versions, decom… |
+| `security-audit` | Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. Use for security questions, focused reviews, vulnerability research, security audits, or pe… |
 
-## agents (104)
+## agents (106)
 
 Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.
 
@@ -444,8 +452,10 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `gsd-verify-work` | Validate built features through conversational UAT |
 | `gsd-workspace` | Manage GSD workspaces — create, list, or remove isolated workspace environments |
 | `gsd-workstreams` | Manage parallel workstreams — list, create, switch, status, progress, complete, and resume |
+| `browser-use` | Automate browser interactions for AI agents using the Browser-Use Python library and Playwright. Use when building web scraping agents, automating complex UI workflows, interacting with authenticated … |
+| `moli` | Fast, resource-light headless browser automation using Moli for web scraping and AI agent DOM extraction. Use when running lightweight browser automation, extracting clean DOM content, or scraping web… |
 
-## agent-dev (100)
+## agent-dev (105)
 
 Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.
 
@@ -551,8 +561,13 @@ Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budge
 | `n8n-validation-expert` | Interpret validation errors and guide fixing them. Use when encountering validation errors, validation warnings, false positives, operator structure issues, or need help understanding validation resul… |
 | `n8n-workflow-patterns` | Proven workflow architectural patterns from real n8n workflows. Use when building new workflows, designing workflow structure, choosing workflow patterns, planning workflow architecture, or asking abo… |
 | `using-n8n-mcp-skills` | Use when building, editing, validating, testing, or debugging an n8n workflow through the n8n-mcp MCP server — designing a flow, configuring a node, writing an expression or Code node, wiring credenti… |
+| `find-skills` | Helps users discover and install agent skills when they ask questions like "how do I do X", "find a skill for X", "is there a skill that can...", or express interest in extending capabilities. This sk… |
+| `skill-inspector` | Review AI agent skills before installation using NVIDIA SkillSpector and source-aware semantic review. Use when asked whether a skill or downloaded skill folder is safe, trustworthy, installable, over… |
+| `cloudflare-codemode` | Build and run sandboxed agent tools using Cloudflare Code Mode (@cloudflare/codemode). Connects dynamic Worker sandboxes, Durable Objects, OpenAPI, and MCP servers safely. Use when creating agent sand… |
+| `harness-engineering` | Design, test, and optimize AI agent execution harnesses, test fixtures, action spaces, and evaluation gates. Use when building agent evaluation loops, configuring autonomous runtime environments, or o… |
+| `opencode` | Automate coding workflows using OpenCode CLI (opencode) and terminal subagents. Use when orchestrating background coding tasks, running automated pull request triage, or integrating multi-model coding… |
 
-## ai-ml (10)
+## ai-ml (11)
 
 LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.
 
@@ -568,6 +583,7 @@ LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems
 | `pytorch-patterns` | PyTorch deep learning patterns and best practices for building robust, efficient, and reproducible training pipelines, model architectures, and data loading. Use when writing or reviewing PyTorch trai… |
 | `recsys-pipeline-architect` | Design composable recommendation, ranking, and feed pipelines using the six-stage Source→Hydrator→Filter→Scorer→Selector→SideEffect framework popularized by xAI's open-sourced For You algorithm. Use t… |
 | `regex-vs-llm-structured-text` | Decision framework for parsing structured text (quizzes, forms, invoices, receipts, tables) with a hybrid regex-first pipeline — regex extraction handles 95%+ cheaply, a confidence scorer flags low-co… |
+| `prompt-master` | Generates optimized prompts for AI tools. Activates only when the user explicitly asks to write, fix, improve, or adapt a prompt for a specific AI tool (LLM, Cursor, Midjourney, image AI, video AI, co… |
 
 ## ai-gateway (45)
 
@@ -635,7 +651,7 @@ About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platf
 | `x-api` | X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate limits, and platform-native content posting. Use when the user wants t… |
 | `freellmapi` | Run and use FreeLLMAPI, one OpenAI-compatible /v1 endpoint that stacks the free tiers of 34 LLM providers with automatic routing and failover. Use when the user wants free LLM inference, to point an O… |
 
-## content-media (28)
+## content-media (36)
 
 Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.
 
@@ -648,7 +664,6 @@ Writing, marketing and persuasion audits, SEO, video, slides, social posting, br
 | `brand-voice` | Build a source-derived writing style profile from real posts, essays, launch notes, docs, or site copy, then reuse that profile across content, outreach, and social workflows. Use when the user wants … |
 | `content-engine` | Create platform-native content systems for X, LinkedIn, TikTok, YouTube, newsletters, and repurposed multi-platform campaigns. Use when the user wants social posts, threads, scripts, content calendars… |
 | `crosspost` | Multi-platform content distribution across X, LinkedIn, Threads, and Bluesky. Adapts content per platform using content-engine patterns. Never posts identical content cross-platform. Use when the user… |
-| `frontend-slides` | Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a ta… |
 | `manim-video` | Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the wider ECC video stack if needed. Use when the user wants a clean animate… |
 | `marketing-campaign` | End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing page copy, email sequences, social posts, ad copy, short-form video scri… |
 | `remotion-video-creation` | Best practices for Remotion - Video creation in React. 29 domain-specific rules covering 3D, animations, audio, captions, charts, transitions, and more. Use when building video in React with Remotion … |
@@ -669,8 +684,17 @@ Writing, marketing and persuasion audits, SEO, video, slides, social posting, br
 | `slack-gif-creator` | Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation concepts. Use when users request animated GIFs for Slack like "make me a G… |
 | `huashu-art-motion` | 艺术与视频动画：拆解复刻动画；36种既有实做风格＋16种可迁移研究配方；9种解说动画语法，8种可按口播参数渲片段；含口播整片参考代码及框景检查；人用AI生帧；可选已有录音、系统声音与语音复刻，按需配置。 |
 | `asd-ste100` | Use when English text must be parsed without a human to resolve ambiguity — tool descriptions, error messages, inter-agent instructions, system prompts, status reports — and misreading has a real cost… |
+| `frontend-slides` | Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a ta… |
+| `humanizer` | Rewrite AI-sounding text so it reads like the writer without changing what it says. Use when editing or reviewing prose for AI tells: not-X-but-Y contrasts, one-line closers, staged openers, forced tr… |
+| `sepia` | Make AI-generated fiction and professional prose read as human-written. Use when revising or humanizing AI writing, eliminating AI patterns, or reviewing fiction and documents for authentic human voic… |
+| `sepia-hemingway` | Use when a user asks to write or revise fiction in the Hemingway manner, or asks for strong de-AI on a story; applies Sepia's built-in Hemingway voice profile. |
+| `sepia-recreate` | Use when a user explicitly requests Sepia recreate for a full rewrite. |
+| `sepia-refactor` | Use when a user explicitly requests Sepia refactor for minimal in-place prose revision. |
+| `sepia-review` | Use when a user explicitly requests Sepia review to diagnose prose without editing. |
+| `sepia-write` | Use when a user explicitly requests Sepia write to create new prose. |
+| `lemo-opuscar` | Direct and produce short films made entirely in code using Lemo-Opuscar styles (oil painting, watercolor, ukiyo-e, teardown). Use when creating programmatic video, animations, explainers, or promo sho… |
 
-## business-ops (27)
+## business-ops (38)
 
 Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check.
 
@@ -703,6 +727,17 @@ Billing, finance, investors, market research, leads, contracts, email, tickets, 
 | `visa-doc-translate` | Translate visa document images (bank deposit, employment, income, and retirement certificates; HEIC, PNG, or JPG) into English via OCR and produce a bilingual PDF pairing the original image with a for… |
 | `ops-check` | AI executive operations assistant. Scans your inbox, surfaces priority items, tracks follow-ups, and drafts responses. Powered by GIA. Triggers on: check my inbox, catch me up, what do I need to do, d… |
 | `internal-comms` | A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude should use this skill whenever asked to write some sort of internal com… |
+| `founder-board` | Your board of directors. Puts a business idea in front of a three-member board, each a sub-agent reading the idea through one published framework: the Offers lens (from Alex Hormozi's $100M Offers), t… |
+| `founder-brand` | Establish startup brand identity, company naming, domain checks, and founder look. Use when naming a new business or startup, creating a brand tagline, or defining initial founder brand voice and logo… |
+| `founder-cfo` | Your CFO. Builds the unit economics of a business before money is spent: what one unit earns after its direct costs, the real profit margin at the planned volume, the break-even point in units a day, … |
+| `founder-competitors` | Maps every competitor and the gap they leave. Finds the direct competitors, indirect ones and the substitutes a buyer would use instead, from public sources only, and records what each sells, at what … |
+| `founder-consumer` | The consumer panel. Spins up a swarm of buyer sub-agents (default 100, --quick for 20) trained on the user's target customer, each with a different income, age, buying behaviour and objection, shows e… |
+| `founder-launch` | Your launch lead. Builds a dated, step-by-step launch plan: a cheap real-world test first (a waitlist, a pre-sale or a pop-up with a real price, so real buyers confirm what the simulated panel said), … |
+| `founder-marketing` | Your marketing director. Turns the buyer panel and the competitor map into positioning, the channels the target customer actually uses, a 30-day launch campaign with dated posts and ads, the first ten… |
+| `founder-offer` | Builds an offer too good to refuse. Lists every problem the buyer hits on the way to the result they want, turns each into a solution, trims to what is cheap to deliver and valuable to the buyer, and … |
+| `founder-ops` | Your operations manager. Works out how the business actually runs on day one: suppliers and what they cost, who works when, the step-by-step routines for opening, serving or shipping and closing, the … |
+| `founder-plan` | Your business planner. Compiles everything the other founder skills wrote (the board's verdict, the competitors, the buyer panel, pricing, the offer, the CFO's numbers, marketing, brand, operations an… |
+| `founder-pricing` | Finds the price buyers will actually pay. Reads the consumer panel's four price answers per buyer into a Van Westendorp price-sensitivity range (too cheap, a bargain, getting expensive, too expensive)… |
 
 ## industry (13)
 
@@ -741,7 +776,7 @@ Network engineering and homelab: Cisco IOS, BGP, VLANs, WireGuard, Pi-hole, conf
 | `network-config-validation` | Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, stale references, management-plane risk, and IOS-style security hygiene. … |
 | `network-interface-health` | Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, switches, and Linux hosts. Use when an interface shows errors, drops, CRCs… |
 
-## research-docs (29)
+## research-docs (39)
 
 Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).
 
@@ -776,6 +811,16 @@ Deep research, scientific databases, literature review, docs, ADRs, a teach-me t
 | `obsidian-cli` | Interact with Obsidian vaults using the Obsidian CLI to read, create, search, and manage notes, tasks, properties, and more. Also supports plugin and theme development with commands to reload plugins,… |
 | `obsidian-markdown` | Create and edit Obsidian Flavored Markdown with wikilinks, embeds, callouts, properties, and other Obsidian-specific syntax. Use when working with .md files in Obsidian, or when the user mentions wiki… |
 | `notebooklm` | Install, authenticate, troubleshoot, and operate Gemini Notebook through the notebooklm-py CLI or typed async Python API. Use for notebook and source management, grounded chat and research, and artifa… |
+| `understand` | Analyze a codebase to produce an interactive knowledge graph for understanding architecture, components, and relationships |
+| `understand-chat` | Use when you need to ask questions about a codebase or understand code using a knowledge graph |
+| `understand-dashboard` | Launch the interactive web dashboard to visualize a codebase's knowledge graph |
+| `understand-diff` | Use when you need to analyze git diffs or pull requests to understand what changed, affected components, and risks |
+| `understand-domain` | Extract business domain knowledge from a codebase and generate an interactive domain flow graph. Works standalone (lightweight scan) or derives from an existing /understand knowledge graph. |
+| `understand-explain` | Use when you need a deep-dive explanation of a specific file, function, or module in the codebase |
+| `understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, component sets, instances, design tokens) with a kind:"design" dashboard. |
+| `understand-knowledge` | Analyze a Karpathy-pattern LLM wiki knowledge base and generate an interactive knowledge graph with entity extraction, implicit relationships, and topic clustering. |
+| `understand-onboard` | Use when you need to generate an onboarding guide for new team members joining a project |
+| `codebase-memory-mcp` | Connect persistent local code intelligence and architectural dependency graphs using Codebase Memory MCP. Use when exploring complex codebases, querying architectural relationships, or maintaining cro… |
 
 ## web3 (9)
 
@@ -793,7 +838,7 @@ DeFi, EVM, prediction markets, Itô baskets and compute, and trading-agent secur
 | `prediction-market-oracle-research` | Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligence. Use for source-grounded analysis of market-implied probabilities, c… |
 | `prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and execution risk. Use before any workflow handles venue auth, user portfolio data… |
 
-## engineering (21)
+## engineering (24)
 
 General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.
 
@@ -814,12 +859,15 @@ General engineering practice: architecture, standards, error handling, performan
 | `search-first` | Research-before-coding workflow: search npm/PyPI, MCP servers, skills, and GitHub for existing tools before writing custom code, then adopt, extend, or build. Launches the researcher agent for non-tri… |
 | `ecc-conventions` | Development conventions and patterns for ECC. JavaScript project with conventional commits. |
 | `ponytail` | External agent skill (MIT, github.com/DietrichGebert/ponytail). Forces the laziest solution that actually works: question whether the task needs to exist at all (YAGNI), reuse what is already in the c… |
+| `engineering-graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question should be treated as a graphify query first. … |
 | `rea-analysis-optimization` | Optimize REA providers and shared analysis workflows for agent context, latency, CPU, and memory while preserving correctness and Evidence. Use for analysis bottlenecks and cache or query design; CI/t… |
 | `rea-changelog-update` | Prepare or rewrite REA release changelogs and GitHub release notes from pinned Git history, with verified contributor thanks and Release Please synchronization. |
 | `rea-tool-design` | Design or change REA investigation tools, CLI/MCP contracts, provider capabilities, and Evidence semantics. |
 | `unlazy` | Anti-laziness execution discipline for substantial tasks. Use when work keeps coming back half done, when an agent reports done before it is done, when output must be exhaustive rather than fast, on l… |
 | `karpathy-guidelines` | Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiabl… |
-| `engineering-graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ exists, where the question should be treated as a graphify query first. … |
+| `floorplan` | Draw a floorplan of an app's codebase (one repo or several side by side), an interactive node-graph map where every subsystem, module, file and HTTP route has a human-readable name and a one-line desc… |
+| `build-your-own-x` | Recreate core technologies from scratch step-by-step: Git, Redis, Docker, SQLite, HTTP servers, or compilers. Use when building deep foundational systems, designing zero-dependency implementations, or… |
+| `difftastic` | Perform syntax-aware structural diffing on source code using Difftastic (difft). Compares code based on AST structure rather than lines. Use when reviewing syntactic changes, inspecting complex refact… |
 
 ## science-hardware (116)
 
@@ -952,7 +1000,7 @@ AI job search: evaluate offers, tailor CVs, scan portals, track applications.
 |---|---|
 | `career-ops` | Open-source AI job search agent -- evaluate offers, generate CVs, scan portals, track applications. Use when the user pastes a job URL or JD, asks to scan portals, generate a CV/PDF, track application… |
 
-## memory (30)
+## memory (31)
 
 claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.
 
@@ -988,6 +1036,7 @@ claude-mem's skills: search past work, timelines, handoffs and planning with per
 | `claude-mem-install` | Use this when setting up claude-mem on Cursor: local or remote worker, local host-login observer or remote cmem.ai inference. |
 | `mem-host-observer` | Use this when fulfilling claude-mem observer jobs on Grok Bot: reply only skip_summary or one full observation XML, never prose. |
 | `mem-openclaw` | This guide walks through setting up the claude-mem plugin on an OpenClaw gateway. By the end, your agents will have persistent memory across sessions via system prompt context injection, and optionall… |
+| `openviking` | Manage agent memory, knowledge, and context hierarchy using OpenViking's virtual filesystem (viking://). Use when structuring multi-tier agent context, managing persistent memory across sessions, or i… |
 
 ## session-memory (plugin)
 

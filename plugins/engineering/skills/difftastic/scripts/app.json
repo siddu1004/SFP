@@ -1,0 +1,38 @@
+{
+  "name": "Difftastic",
+  "homepage": "https://github.com/Wilfred/difftastic",
+  "what": "A structural diff tool that compares code syntax rather than lines.",
+  "sources": [
+    "Wilfred/difftastic"
+  ],
+  "needs": [
+    {
+      "tool": "cargo",
+      "label": "Cargo (Rust toolchain)",
+      "url": "https://rustup.rs/",
+      "soft": true
+    }
+  ],
+  "installed": {
+    "command": [
+      "difft",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "cargo",
+        "install",
+        "--locked",
+        "difftastic"
+      ],
+      "why": "compiles and installs the difft binary via Cargo"
+    }
+  ],
+  "after": [
+    "Run `difft <file1> <file2>` to compare code ASTs."
+  ],
+  "id": "difftastic"
+}

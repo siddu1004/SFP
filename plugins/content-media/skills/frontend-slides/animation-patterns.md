@@ -6,7 +6,7 @@ Use this reference when generating presentations. Match animations to the intend
 
 | Feeling | Animations | Visual Cues |
 |---------|-----------|-------------|
-| **Dramatic / Cinematic** | Slow fade-ins (1-1.5s), large-scale transitions (0.9 to 1), parallax scrolling | Dark backgrounds, spotlight effects, full-bleed images |
+| **Dramatic / Cinematic** | Slow fade-ins (1-1.5s), large scale transitions (0.9 to 1), parallax scrolling | Dark backgrounds, spotlight effects, full-bleed images |
 | **Techy / Futuristic** | Neon glow (box-shadow), glitch/scramble text, grid reveals | Particle systems (canvas), grid patterns, monospace accents, cyan/magenta/electric blue |
 | **Playful / Friendly** | Bouncy easing (spring physics), floating/bobbing | Rounded corners, pastel/bright colors, hand-drawn elements |
 | **Professional / Corporate** | Subtle fast animations (200-300ms), clean slides | Navy/slate/charcoal, precise spacing, data visualization focus |
@@ -34,10 +34,6 @@ Use this reference when generating presentations. Match animations to the intend
     transform: scale(0.9);
     transition: opacity 0.6s, transform 0.6s var(--ease-out-expo);
 }
-.visible .reveal-scale {
-    opacity: 1;
-    transform: scale(1);
-}
 
 /* Slide from Left */
 .reveal-left {
@@ -45,20 +41,12 @@ Use this reference when generating presentations. Match animations to the intend
     transform: translateX(-50px);
     transition: opacity 0.6s, transform 0.6s var(--ease-out-expo);
 }
-.visible .reveal-left {
-    opacity: 1;
-    transform: translateX(0);
-}
 
 /* Blur In */
 .reveal-blur {
     opacity: 0;
     filter: blur(10px);
     transition: opacity 0.8s, filter 0.8s var(--ease-out-expo);
-}
-.visible .reveal-blur {
-    opacity: 1;
-    filter: blur(0);
 }
 ```
 

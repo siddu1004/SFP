@@ -1,0 +1,38 @@
+{
+  "name": "Browser-Use",
+  "homepage": "https://github.com/browser-use/browser-use",
+  "what": "Make websites accessible for AI agents via Playwright and Chromium.",
+  "sources": [
+    "browser-use/browser-use"
+  ],
+  "needs": [
+    {
+      "tool": "python3"
+    },
+    {
+      "tool": "pip"
+    }
+  ],
+  "installed": {
+    "command": [
+      "python",
+      "-c",
+      "import browser_use"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "pip",
+        "install",
+        "browser-use"
+      ],
+      "why": "installs the browser-use Python library"
+    }
+  ],
+  "after": [
+    "Install browser binaries with `playwright install chromium`."
+  ],
+  "id": "browser-use"
+}

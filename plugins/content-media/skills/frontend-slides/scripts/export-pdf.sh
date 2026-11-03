@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# export-pdf.sh - Export an HTML presentation to PDF
+# export-pdf.sh — Export an HTML presentation to PDF
 #
 # Usage:
 #   bash scripts/export-pdf.sh <path-to-html> [output.pdf]
@@ -14,11 +14,11 @@
 #   3. Combines all screenshots into a single PDF
 #   4. Cleans up the server and temp files
 #
-# The PDF preserves colors, fonts, and layout - but not animations.
+# The PDF preserves colors, fonts, and layout — but not animations.
 # Perfect for email attachments, printing, or embedding in documents.
 set -euo pipefail
 
-# --- Colors ---
+# ─── Colors ────────────────────────────────────────────────
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
@@ -26,12 +26,12 @@ YELLOW='\033[1;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-info()  { echo -e "${CYAN}INFO:${NC} $*"; }
-ok()    { echo -e "${GREEN}OK:${NC} $*"; }
-warn()  { echo -e "${YELLOW}WARNING:${NC} $*"; }
-err()   { echo -e "${RED}ERROR:${NC} $*" >&2; }
+info()  { echo -e "${CYAN}ℹ${NC} $*"; }
+ok()    { echo -e "${GREEN}✓${NC} $*"; }
+warn()  { echo -e "${YELLOW}⚠${NC} $*"; }
+err()   { echo -e "${RED}✗${NC} $*" >&2; }
 
-# --- Parse flags ---
+# ─── Parse flags ──────────────────────────────────────────
 
 # Default resolution: 1920x1080 (full HD, ~1-2MB per slide)
 # Compact resolution: 1280x720 (HD, ~50-70% smaller files)
@@ -52,9 +52,9 @@ for arg in "$@"; do
             ;;
     esac
 done
-set -- ${POSITIONAL[@]+"${POSITIONAL[@]}"}
+set -- "${POSITIONAL[@]}"
 
-# --- Input validation ---
+# ─── Input validation ─────────────────────────────────────
 
 if [[ $# -lt 1 ]]; then
     err "Usage: bash scripts/export-pdf.sh <path-to-html> [output.pdf] [--compact]"
@@ -88,12 +88,12 @@ mkdir -p "$OUTPUT_DIR"
 OUTPUT_PDF="$OUTPUT_DIR/$(basename "$OUTPUT_PDF")"
 
 echo ""
-echo -e "${BOLD}========================================${NC}"
-echo -e "${BOLD}       Export Slides to PDF${NC}"
-echo -e "${BOLD}========================================${NC}"
+echo -e "${BOLD}╔══════════════════════════════════════╗${NC}"
+echo -e "${BOLD}║       Export Slides to PDF            ║${NC}"
+echo -e "${BOLD}╚══════════════════════════════════════╝${NC}"
 echo ""
 
-# --- Step 1: Check dependencies ---
+# ─── Step 1: Check dependencies ───────────────────────────
 
 info "Checking dependencies..."
 
@@ -108,7 +108,7 @@ fi
 
 ok "Node.js found"
 
-# --- Step 2: Create the export script ---
+# ─── Step 2: Create the export script ─────────────────────
 
 # We use a temporary Node.js script with Playwright to:
 # 1. Start a local server (so fonts load correctly)
@@ -124,7 +124,7 @@ SERVE_DIR=$(dirname "$INPUT_HTML")
 HTML_FILENAME=$(basename "$INPUT_HTML")
 
 cat > "$TEMP_SCRIPT" << 'EXPORT_SCRIPT'
-// export-slides.mjs - Playwright script to export HTML slides to PDF
+// export-slides.mjs — Playwright script to export HTML slides to PDF
 //
 // How it works:
 // 1. Starts a local HTTP server (needed for fonts/assets to load)
@@ -136,7 +136,7 @@ cat > "$TEMP_SCRIPT" << 'EXPORT_SCRIPT'
 import { chromium } from 'playwright';
 import { createServer } from 'http';
 import { readFileSync, existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs';
-import { join, extname, resolve, sep } from 'path';
+import { join, extname, resolve } from 'path';
 import { execSync } from 'child_process';
 
 const SERVE_DIR = process.argv[2];
@@ -146,7 +146,7 @@ const SCREENSHOT_DIR = process.argv[5];
 const VP_WIDTH = parseInt(process.argv[6]) || 1920;
 const VP_HEIGHT = parseInt(process.argv[7]) || 1080;
 
-// --- Simple static file server ---
+// ─── Simple static file server ────────────────────────────
 // (We need HTTP so that Google Fonts and relative assets load correctly)
 
 const MIME_TYPES = {
@@ -166,25 +166,10 @@ const MIME_TYPES = {
   '.eot': 'application/vnd.ms-fontobject',
 };
 
-// Every request is confined to the deck directory: resolve the decoded path
-// against SERVE_ROOT and refuse anything that escapes it (../, %2e%2e, %2f).
-const SERVE_ROOT = resolve(SERVE_DIR);
 const server = createServer((req, res) => {
-  // Decode URL-encoded characters (e.g., %20 -> space) so filenames with spaces resolve correctly
-  let decodedUrl;
-  try {
-    decodedUrl = decodeURIComponent((req.url || '/').split('?')[0]);
-  } catch {
-    res.writeHead(400);
-    res.end('Bad request');
-    return;
-  }
-  const filePath = resolve(SERVE_ROOT, '.' + (decodedUrl === '/' ? '/' + HTML_FILE : decodedUrl));
-  if (filePath !== SERVE_ROOT && !filePath.startsWith(SERVE_ROOT + sep)) {
-    res.writeHead(403);
-    res.end('Forbidden');
-    return;
-  }
+  // Decode URL-encoded characters (e.g., %20 → space) so filenames with spaces resolve correctly
+  const decodedUrl = decodeURIComponent(req.url);
+  let filePath = join(SERVE_DIR, decodedUrl === '/' ? HTML_FILE : decodedUrl);
   try {
     const content = readFileSync(filePath);
     const ext = extname(filePath).toLowerCase();
@@ -196,14 +181,14 @@ const server = createServer((req, res) => {
   }
 });
 
-// Find a free port on loopback only; the deck is rendered by the local headless browser
+// Find a free port
 const port = await new Promise((resolve) => {
-  server.listen(0, '127.0.0.1', () => resolve(server.address().port));
+  server.listen(0, () => resolve(server.address().port));
 });
 
 console.log(`  Local server on port ${port}`);
 
-// --- Screenshot each slide ---
+// ─── Screenshot each slide ────────────────────────────────
 
 const browser = await chromium.launch();
 const page = await browser.newPage({
@@ -301,7 +286,7 @@ for (let i = 0; i < slideCount; i++) {
 await browser.close();
 server.close();
 
-// --- Combine screenshots into PDF ---
+// ─── Combine screenshots into PDF ─────────────────────────
 // Use a second Playwright page to generate a PDF from the screenshots
 
 console.log('  Assembling PDF...');
@@ -353,10 +338,10 @@ await browser2.close();
 // Clean up screenshots
 screenshotPaths.forEach(p => unlinkSync(p));
 
-console.log(`  OK: PDF saved to: ${OUTPUT_PDF}`);
+console.log(`  ✓ PDF saved to: ${OUTPUT_PDF}`);
 EXPORT_SCRIPT
 
-# --- Step 3: Install Playwright in temp directory ---
+# ─── Step 3: Install Playwright in temp directory ──────────
 # We install Playwright locally in the temp dir so the Node script can import it.
 # This avoids polluting global packages and ensures the script is self-contained.
 
@@ -389,7 +374,7 @@ npx playwright install chromium 2>/dev/null || {
 ok "Playwright ready"
 echo ""
 
-# --- Step 4: Run the export ---
+# ─── Step 4: Run the export ───────────────────────────────
 
 SCREENSHOT_DIR="$TEMP_DIR/screenshots"
 
@@ -398,7 +383,7 @@ echo ""
 
 # Run from the temp dir so Node can find the locally-installed playwright
 if [[ "$COMPACT" == "true" ]]; then
-    info "Using compact mode (1280x720) for smaller file size"
+    info "Using compact mode (1280×720) for smaller file size"
 fi
 
 node "$TEMP_SCRIPT" "$SERVE_DIR" "$HTML_FILENAME" "$OUTPUT_PDF" "$SCREENSHOT_DIR" "$VIEWPORT_W" "$VIEWPORT_H" || {
@@ -407,12 +392,12 @@ node "$TEMP_SCRIPT" "$SERVE_DIR" "$HTML_FILENAME" "$OUTPUT_PDF" "$SCREENSHOT_DIR
     exit 1
 }
 
-# --- Step 5: Cleanup and success ---
+# ─── Step 5: Cleanup and success ──────────────────────────
 
 rm -rf "$TEMP_DIR"
 
 echo ""
-echo -e "${BOLD}========================================${NC}"
+echo -e "${BOLD}════════════════════════════════════════${NC}"
 ok "PDF exported successfully!"
 echo ""
 echo -e "  ${BOLD}File:${NC}  $OUTPUT_PDF"
@@ -420,9 +405,9 @@ echo ""
 FILE_SIZE=$(du -h "$OUTPUT_PDF" | cut -f1 | xargs)
 echo "  Size: $FILE_SIZE"
 echo ""
-echo "  This PDF works everywhere - email, Slack, Notion, print."
+echo "  This PDF works everywhere — email, Slack, Notion, print."
 echo "  Note: Animations are not preserved (it's a static export)."
-echo -e "${BOLD}========================================${NC}"
+echo -e "${BOLD}════════════════════════════════════════${NC}"
 echo ""
 
 # Open the PDF automatically

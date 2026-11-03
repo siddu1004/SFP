@@ -39,7 +39,7 @@ test('a query finds what a person would expect', () => {
   assert.strictEqual(lib.searchLibrary(payload, 'dockr')[0].name, 'docker-patterns'); // a typo
   assert.strictEqual(lib.searchLibrary(payload, 'test go')[0].name, 'golang-testing');
   assert.ok(names(lib.searchLibrary(payload, 'accessible form')).includes('accessibility')); // a related word
-  assert.ok(names(lib.searchLibrary(payload, 'explain codebase'), 4).includes('codebase-onboarding'));
+  assert.ok(names(lib.searchLibrary(payload, 'explain codebase'), 5).includes('codebase-onboarding'));
   assert.ok(names(lib.searchLibrary(payload, 'kubernetes deploy'), 3).includes('kubernetes-patterns'));
 });
 

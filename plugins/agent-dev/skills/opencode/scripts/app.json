@@ -1,0 +1,35 @@
+{
+  "name": "OpenCode",
+  "homepage": "https://github.com/anomalyco/opencode",
+  "what": "Open-source AI coding agent CLI and desktop interface.",
+  "sources": [
+    "anomalyco/opencode"
+  ],
+  "needs": [
+    {
+      "tool": "npm"
+    }
+  ],
+  "installed": {
+    "command": [
+      "opencode",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "npm",
+        "install",
+        "-g",
+        "@opencode/cli@latest"
+      ],
+      "why": "installs the opencode command globally via npm"
+    }
+  ],
+  "after": [
+    "Run `opencode` inside any project directory to launch the assistant."
+  ],
+  "id": "opencode"
+}

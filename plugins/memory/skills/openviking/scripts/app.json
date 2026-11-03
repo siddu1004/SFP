@@ -1,0 +1,34 @@
+{
+  "name": "OpenViking",
+  "homepage": "https://github.com/volcengine/OpenViking",
+  "what": "A context database and virtual filesystem for AI agents.",
+  "sources": [
+    "volcengine/OpenViking"
+  ],
+  "needs": [
+    {
+      "tool": "python3"
+    }
+  ],
+  "installed": {
+    "command": [
+      "viking",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "pip",
+        "install",
+        "openviking"
+      ],
+      "why": "installs openviking CLI"
+    }
+  ],
+  "after": [
+    "Run `viking init` to initialize the agent context filesystem."
+  ],
+  "id": "openviking"
+}

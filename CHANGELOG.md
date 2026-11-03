@@ -9,6 +9,14 @@
 - **Gaps and research.** Selection reports a `gap` when no skill fits, the task's words are unknown, or even the closest skill is far in meaning; and when the project's stack has fewer than three skills. `mcp/sfp_research.py` (and the new MCP tool `research_skill`) searches OpenAlex, arXiv and Semantic Scholar, ranks papers by meaning, citations and recency, and has the strongest loaded local model write a cited skill. Paper text is treated as data: commands that download or run code, links and citations to unknown sources are removed, and the source list is written from the papers' records. Drafts wait in `~/.sfp/skills/drafts` until approved.
 - **Benchmark.** `tests/search_reworded.json` and `tests/search_reworded_holdout.json`: the benchmark tasks reworded by a local model without their concept words (70 kept of 91), half to tune on, half held out. `sfp_hive.py evaluate --semantic` scores with the local models; published figures stay words-only so they are the same on every machine.
 
+## 3.18.0
+
+- **Integrated new upstream sources:** Added 14 new skill repositories (`floorplan`, `understand-*` suite, `find-skills`, `hallmark`, `security-audit`, `founder-*` suite, `frontend-slides` from Zarazhangrui, `skill-inspector`, `humanizer`, `sepia-*` suite, `prompt-master`, `diagram-design`, `hairline-*`, `lemo-opuscar`).
+- **Programs, CLI tools, and libraries:** Added `apps/apps.json` entries and companion usage skills for `difftastic`, `browser-use`, `openviking`, `opencode`, `moli`, `codebase-memory-mcp`, `locomotive-scroll`, and `react-colorful`.
+- **Authored knowledge skills:** Added `cloudflare-codemode` (Cloudflare Agent Code Mode APIs), `interface-review` (evidence-based UI review against design rules), `harness-engineering` (agent harness architecture and evals), and `build-your-own-x` (step-by-step TDD recreation of core technologies).
+- **Library cleanup and deduping:** Canonicalized `zarazhangrui/frontend-slides` to eliminate the redundant `content-media-frontend-slides`, preserved `engineering-graphify` for benchmark bundle compatibility, and tuned trigger descriptions for `sepia` and `founder-brand` to prevent false positive keyword collisions.
+- **Verification:** 331 Python unit tests green, zero regression on Hive selection benchmarks (bench 89.0%, proj 79.2%, fresh 86.4%), semantic evaluation up to 94.5% on benchmark, 0 failures in Hive Doctor, and 86 of 86 extension tests green.
+
 ## 3.17.7
 
 - **README.** New hero tile of three numbers under the banner, a "Does It Make the Agent Better?" section with charts of the design test and of held-out accuracy (light and dark), a tip on how the feedback loop learns (94% of reported mistakes fixed on the same task, +0.7 points on new ones), and an honest note on where skills do not help yet. `bench/charts.py` draws the charts from the saved results.

@@ -34,11 +34,36 @@ SFP collects skills written by other people. Each skill keeps the license of the
 | [diegosouzapw/OmniRoute](https://github.com/diegosouzapw/OmniRoute) | MIT | |
 | [career-ops-hq/career-ops](https://github.com/career-ops-hq/career-ops) | MIT | Cloned at a pinned commit by the `career` launcher, with a small patch (`templates/career/patches/data-root.patch`) |
 | [thedotmack/claude-mem](https://github.com/thedotmack/claude-mem) | Apache-2.0 | |
+| [haydenschmitty/floorplan](https://github.com/haydenschmitty/floorplan) | MIT | Hayden Schmitt |
+| [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything) | MIT | Egonex AI |
+| [vercel-labs/skills](https://github.com/vercel-labs/skills) | MIT | Vercel Labs |
+| [Nutlope/hallmark](https://github.com/Nutlope/hallmark) | MIT | Hassan El Mghari |
+| [cloudflare/security-audit-skill](https://github.com/cloudflare/security-audit-skill) | MIT | Cloudflare |
+| [Jakeschincariol/founder-skill](https://github.com/Jakeschincariol/founder-skill) | MIT | Jake Schincariol |
+| [zarazhangrui/frontend-slides](https://github.com/zarazhangrui/frontend-slides) | MIT | Zara Zhang |
+| [NVIDIA/SkillSpector](https://github.com/NVIDIA/SkillSpector) | Apache-2.0 | NVIDIA Corporation |
+| [blader/humanizer](https://github.com/blader/humanizer) | MIT | Siqi Chen |
+| [Nanako0129/sepia](https://github.com/Nanako0129/sepia) | MIT | Nanako Tsuno |
+| [nidhinjs/prompt-master](https://github.com/nidhinjs/prompt-master) | MIT | Nidhin Joseph |
+| [cathrynlavery/diagram-design](https://github.com/cathrynlavery/diagram-design) | MIT | Cathryn Lavery |
+| [lucasmarkes/hairline](https://github.com/lucasmarkes/hairline) | MIT | Lucas Markes |
+| [lemomo-ai/lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar) | MIT | Lemo AI |
+| [cloudflare/codemode](https://github.com/cloudflare/codemode) | Apache-2.0 | Cloudflare |
+| [Wilfred/difftastic](https://github.com/Wilfred/difftastic) | MIT | Wilfred Hughes |
+| [browser-use/browser-use](https://github.com/browser-use/browser-use) | MIT | Browser-Use contributors |
+| [volcengine/OpenViking](https://github.com/volcengine/OpenViking) | Apache-2.0 | Volcengine / ByteDance |
+| [anomalyco/opencode](https://github.com/anomalyco/opencode) | MIT | Anomaly |
+| [lexmount/moli](https://github.com/lexmount/moli) | MIT | Lexmount |
+| [DeusData/codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) | MIT | DeusData |
+| [locomotivemtl/locomotive-scroll](https://github.com/locomotivemtl/locomotive-scroll) | MIT | Locomotive |
+| [omgovich/react-colorful](https://github.com/omgovich/react-colorful) | MIT | Vlad Shilov |
+| [walkinglabs/awesome-harness-engineering](https://github.com/walkinglabs/awesome-harness-engineering) | CC0-1.0 | WalkingLabs |
+| [codecrafters-io/build-your-own-x](https://github.com/codecrafters-io/build-your-own-x) | MIT | CodeCrafters |
 
 `session-memory` is installed from its own repo and is not copied into SFP. The `career` launcher clones career-ops when you first use it.
 
 Plugins with no public source repo (the rows from teach-me down to the Anthropic example skills) are kept as snapshots in `vendor/`, each with its license file. Not included, because their licenses do not allow republishing: Greenhouse's plugin (customer use only), Anthropic's docx, pdf, pptx, xlsx and browser skills (all rights reserved), and claude-mem-cowork (noncommercial only).
 
-The tooling in `scripts/`, the router skill in `templates/sfp/` and the `public-apis` skill wrapper in `templates/public-apis/` were written for SFP.
+The tooling in `scripts/`, the router skill in `templates/sfp/`, the `public-apis` skill wrapper in `templates/public-apis/`, and the `interface-review` skill in `templates/interface-review/` were written for SFP under the MIT license.
 
 Commits that the author's forks held and the original projects did not are saved as patch files in `archive/fork-patches/`.

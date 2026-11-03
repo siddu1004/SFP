@@ -65,6 +65,15 @@ class Case(unittest.TestCase):
 
 
 class FromReadmeTest(Case):
+    def setUp(self):
+        super().setUp()
+        self._orig_llm = rts.query_local_llm
+        rts.query_local_llm = lambda *a, **k: None
+
+    def tearDown(self):
+        rts.query_local_llm = self._orig_llm
+        super().tearDown()
+
     def test_the_skill_carries_the_real_commands_and_variables(self):
         context, readme = rts.extract_context(self.repo_dir)
         md = rts.distill_markdown('promptkit', 'ai-ml', context, readme)

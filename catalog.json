@@ -6,7 +6,7 @@
   },
   "frontend": {
    "description": "UI design and components, motion, accessibility, UX research and critique, React, Vue, Next.js, Angular, Vite. Includes Impeccable, the Taste skills, Emil Kowalski's animation skills, the Vercel web interface guidelines, and 3D and shader effects: React Three Fiber, liquid glass, ShaderGradient and Liquid Logo.",
-   "skills": 80
+   "skills": 87
   },
   "design-styles": {
    "description": "67 named visual styles to build in: brutalism, glassmorphism, editorial, retro, shadcn and more.",
@@ -34,19 +34,19 @@
   },
   "security": {
    "description": "Strix autonomous pentesting, OWASP testing, secure coding for each framework, and agent security hardening.",
-   "skills": 22
+   "skills": 23
   },
   "agents": {
    "description": "Agent-driven work: autonomous loops, orchestration, councils, dev teams, planning and feature pipelines.",
-   "skills": 104
+   "skills": 106
   },
   "agent-dev": {
    "description": "Building for agents: skills, plugins, hooks, MCP servers, harnesses, token budgets, context compression and Cowork plugin tools.",
-   "skills": 100
+   "skills": 105
   },
   "ai-ml": {
    "description": "LLM pipelines, prompts, evals, RAG, PyTorch, ML engineering, recommender systems and AI media.",
-   "skills": 10
+   "skills": 11
   },
   "ai-gateway": {
    "description": "Driving an OmniRoute AI gateway: routing, providers, budgets, caching, compression, MCP and A2A.",
@@ -58,11 +58,11 @@
   },
   "content-media": {
    "description": "Writing, marketing and persuasion audits, SEO, video, slides, social posting, brand guidelines, canvas and generative art.",
-   "skills": 28
+   "skills": 36
   },
   "business-ops": {
    "description": "Billing, finance, investors, market research, leads, contracts, email, tickets, internal comms and a chief-of-staff ops check.",
-   "skills": 27
+   "skills": 38
   },
   "industry": {
    "description": "Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, production and energy.",
@@ -74,7 +74,7 @@
   },
   "research-docs": {
    "description": "Deep research, scientific databases, literature review, docs, ADRs, a teach-me tutor, rederive (which teaches a codebase by making you design it yourself) and Graphify (a queryable knowledge graph of a project).",
-   "skills": 29
+   "skills": 39
   },
   "web3": {
    "description": "DeFi, EVM, prediction markets, It\u00f4 baskets and compute, and trading-agent security.",
@@ -82,7 +82,7 @@
   },
   "engineering": {
    "description": "General engineering practice: architecture, standards, error handling, performance, benchmarks and refactoring.",
-   "skills": 21
+   "skills": 24
   },
   "science-hardware": {
    "description": "Math proof and olympiad work, Blender, and M5Stack and Cardputer hardware.",
@@ -94,7 +94,7 @@
   },
   "memory": {
    "description": "claude-mem's skills: search past work, timelines, handoffs and planning with persistent memory.",
-   "skills": 30
+   "skills": 31
   },
   "session-memory": {
    "description": "Persistent memory across Claude Code sessions (claude-mem), with search, timelines and handoffs. Claude Code only: it needs claude-mem's hooks and worker.",
@@ -1574,7 +1574,7 @@
   {
    "name": "blueprint",
    "category": "agents",
-   "description": "Turn a one-line objective into a step-by-step construction plan for multi-session, multi-agent engineering projects: one-PR-sized steps with self-contained context briefs, dependency graph with parallel-step detection, adversarial review gate, and plan mutation protocol. Use when planning a large feature, refactor, or roadmap that spans multiple PRs or sessions; not for single-PR tasks or when the user says \\\"just do it\\\".",
+   "description": "Turn a one-line objective into a step-by-step construction plan for multi-session, multi-agent engineering projects: one-PR-sized steps with self-contained context briefs, dependency graph with parallel-step detection, adversarial review gate, and plan mutation protocol. Use when planning a large feature, refactor, or roadmap that spans multiple PRs or sessions; not for single-PR tasks or when the user says \"just do it\".",
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/agents/skills/blueprint",
@@ -2361,15 +2361,6 @@
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/frontend/skills/frontend-patterns",
-   "variants": {}
-  },
-  {
-   "name": "frontend-slides",
-   "category": "content-media",
-   "description": "Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a talk/pitch. Helps non-designers discover their aesthetic through visual exploration rather than abstract choices.",
-   "source": "affaan-m/everything-claude-code",
-   "license": "MIT",
-   "path": "plugins/content-media/skills/frontend-slides",
    "variants": {}
   },
   {
@@ -5005,6 +4996,16 @@
    "app": "graphify"
   },
   {
+   "name": "engineering-graphify",
+   "category": "engineering",
+   "description": "Use for any question about a codebase, its architecture, file relationships, or project content \u2014 especially when graphify-out/ exists, where the question should be treated as a graphify query first. Turns any input (code, docs, papers, images, videos) into a persistent knowledge graph with god nodes, community detection, and query/path/explain tools.",
+   "source": "Graphify-Labs/graphify",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/engineering-graphify",
+   "variants": {},
+   "app": "graphify"
+  },
+  {
    "name": "react-three-fiber",
    "category": "frontend",
    "description": "Build 3D scenes in React with React Three Fiber (@react-three/fiber), the React renderer for three.js. Use when the user wants 3D in a React or Next.js app, a Canvas with meshes, lights and cameras, animation with useFrame, loading models or textures, pointer events on 3D objects, on-demand rendering and performance work, a v8 to v9 migration, or to fix a React Three Fiber problem such as setState in a render loop or a Next.js server-component error.",
@@ -5205,7 +5206,7 @@
   {
    "name": "ops-check",
    "category": "business-ops",
-   "description": "AI executive operations assistant. Scans your inbox, surfaces priority items, tracks follow-ups, and drafts responses. Powered by GIA. Triggers on: check my inbox, catch me up, what do I need to do, daily briefing, ops check, what did I miss, prioritize my day, status update, morning check, business update, standup, or any request about current business status and priorities.\\n",
+   "description": "AI executive operations assistant. Scans your inbox, surfaces priority items, tracks follow-ups, and drafts responses. Powered by GIA. Triggers on: check my inbox, catch me up, what do I need to do, daily briefing, ops check, what did I miss, prioritize my day, status update, morning check, business update, standup, or any request about current business status and priorities.",
    "source": "aceexperts.org/gia-chief-of-staff",
    "license": "MIT",
    "path": "plugins/business-ops/skills/ops-check",
@@ -5214,7 +5215,7 @@
   {
    "name": "cowork-plugin-customizer",
    "category": "agent-dev",
-   "description": "Customize a Claude Code plugin for a specific organization's tools and workflows. Use when: customize plugin, set up plugin, configure plugin, tailor plugin, adjust plugin settings, customize plugin connectors, customize plugin skill, tweak plugin, modify plugin configuration.\\n",
+   "description": "Customize a Claude Code plugin for a specific organization's tools and workflows. Use when: customize plugin, set up plugin, configure plugin, tailor plugin, adjust plugin settings, customize plugin connectors, customize plugin skill, tweak plugin, modify plugin configuration.",
    "source": "anthropics/cowork-plugin-management",
    "license": "Apache-2.0",
    "path": "plugins/agent-dev/skills/cowork-plugin-customizer",
@@ -5223,7 +5224,7 @@
   {
    "name": "create-cowork-plugin",
    "category": "agent-dev",
-   "description": "Guide users through creating a new plugin from scratch in a cowork session. Use when users want to create a plugin, build a plugin, make a new plugin, develop a plugin, scaffold a plugin, start a plugin from scratch, or design a plugin. This skill requires Cowork mode with access to the outputs directory for delivering the final .plugin file.\\n",
+   "description": "Guide users through creating a new plugin from scratch in a cowork session. Use when users want to create a plugin, build a plugin, make a new plugin, develop a plugin, scaffold a plugin, start a plugin from scratch, or design a plugin. This skill requires Cowork mode with access to the outputs directory for delivering the final .plugin file.",
    "source": "anthropics/cowork-plugin-management",
    "license": "Apache-2.0",
    "path": "plugins/agent-dev/skills/create-cowork-plugin",
@@ -6834,7 +6835,7 @@
   {
    "name": "n8n-code-tool",
    "category": "agent-dev",
-   "description": "Write JavaScript or Python for the n8n Custom Code Tool (@n8n/n8n-nodes-langchain.toolCode) \u2014 the AI-agent-callable tool, NOT the workflow Code node. Use when building a Code Tool attached to an AI Agent, writing code that an LLM will invoke, parsing the `query` input, returning a string result, defining an input schema for structured arguments (specifyInputSchema, jsonSchemaExample, DynamicStructuredTool), or troubleshooting errors like \\\"Wrong output type returned\\\", \\\"No execution data available\\\", \\\"The response property should be a string, but it is an object\\\", \\\"Cannot assign to read only property 'name'\\\", or an AI agent that refuses to call the tool. Covers the critical differences between Code node and Code Tool: return format (string vs `[{json:{...}}]`), unavailability of `$fromAI`/`$input`/`$helpers` in the Code Tool sandbox, naming rules for AI invocation, and when to use `toolWorkflow`/HTTP Request Tool instead.",
+   "description": "Write JavaScript or Python for the n8n Custom Code Tool (@n8n/n8n-nodes-langchain.toolCode) \u2014 the AI-agent-callable tool, NOT the workflow Code node. Use when building a Code Tool attached to an AI Agent, writing code that an LLM will invoke, parsing the `query` input, returning a string result, defining an input schema for structured arguments (specifyInputSchema, jsonSchemaExample, DynamicStructuredTool), or troubleshooting errors like \"Wrong output type returned\", \"No execution data available\", \"The response property should be a string, but it is an object\", \"Cannot assign to read only property 'name'\", or an AI agent that refuses to call the tool. Covers the critical differences between Code node and Code Tool: return format (string vs `[{json:{...}}]`), unavailability of `$fromAI`/`$input`/`$helpers` in the Code Tool sandbox, naming rules for AI invocation, and when to use `toolWorkflow`/HTTP Request Tool instead.",
    "source": "czlonkowski/n8n-mcp",
    "license": "MIT",
    "path": "plugins/agent-dev/skills/n8n-code-tool",
@@ -7579,22 +7580,467 @@
    "variants": {}
   },
   {
-   "name": "engineering-graphify",
-   "category": "engineering",
-   "description": "Use for any question about a codebase, its architecture, file relationships, or project content \u2014 especially when graphify-out/ exists, where the question should be treated as a graphify query first. Turns any input (code, docs, papers, images, videos) into a persistent knowledge graph with god nodes, community detection, and query/path/explain tools.",
-   "source": "Graphify-Labs/graphify",
-   "license": "MIT",
-   "path": "plugins/engineering/skills/engineering-graphify",
-   "variants": {},
-   "app": "graphify"
-  },
-  {
    "name": "laws-of-designing",
    "category": "frontend",
    "description": "Follow these 20 foundational UX laws and core design principles whenever designing, building, reviewing, or revising a user interface. Applies across layouts, navigation, onboarding, forms, settings, dashboards, and interactive flows to minimize confusion, reduce friction, prevent errors, and optimize task completion.",
    "source": "siddu1004/laws-of-designing",
    "license": "MIT",
    "path": "plugins/frontend/skills/laws-of-designing",
+   "variants": {}
+  },
+  {
+   "name": "floorplan",
+   "category": "engineering",
+   "description": "Draw a floorplan of an app's codebase (one repo or several side by side), an interactive node-graph map where every subsystem, module, file and HTTP route has a human-readable name and a one-line description, connected by the imports and HTTP calls between them, at several zoom levels. It is saved as a self-contained floorplan/index.html in the codebase. Use whenever the user wants to visualize, map, diagram, document or get an architectural overview of a codebase, repo or monorepo, understand how their app works or is connected under the hood, onboard onto unfamiliar code, see how the frontend talks to the backend, or update an existing floorplan, even if they don't say \"visualize\". Also use it before any code exists: when the user shares a PRD, a spec or a description of something they want to build and asks what pieces it needs or how they'd fit together, it draws a blueprint, the same map planned from the document.",
+   "source": "haydenschmitty/floorplan",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/floorplan",
+   "variants": {}
+  },
+  {
+   "name": "understand",
+   "category": "research-docs",
+   "description": "Analyze a codebase to produce an interactive knowledge graph for understanding architecture, components, and relationships",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand",
+   "variants": {}
+  },
+  {
+   "name": "understand-chat",
+   "category": "research-docs",
+   "description": "Use when you need to ask questions about a codebase or understand code using a knowledge graph",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand-chat",
+   "variants": {}
+  },
+  {
+   "name": "understand-dashboard",
+   "category": "research-docs",
+   "description": "Launch the interactive web dashboard to visualize a codebase's knowledge graph",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand-dashboard",
+   "variants": {}
+  },
+  {
+   "name": "understand-diff",
+   "category": "research-docs",
+   "description": "Use when you need to analyze git diffs or pull requests to understand what changed, affected components, and risks",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand-diff",
+   "variants": {}
+  },
+  {
+   "name": "understand-domain",
+   "category": "research-docs",
+   "description": "Extract business domain knowledge from a codebase and generate an interactive domain flow graph. Works standalone (lightweight scan) or derives from an existing /understand knowledge graph.",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand-domain",
+   "variants": {}
+  },
+  {
+   "name": "understand-explain",
+   "category": "research-docs",
+   "description": "Use when you need a deep-dive explanation of a specific file, function, or module in the codebase",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand-explain",
+   "variants": {}
+  },
+  {
+   "name": "understand-figma",
+   "category": "research-docs",
+   "description": "Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, component sets, instances, design tokens) with a kind:\"design\" dashboard.",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand-figma",
+   "variants": {}
+  },
+  {
+   "name": "understand-knowledge",
+   "category": "research-docs",
+   "description": "Analyze a Karpathy-pattern LLM wiki knowledge base and generate an interactive knowledge graph with entity extraction, implicit relationships, and topic clustering.",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand-knowledge",
+   "variants": {}
+  },
+  {
+   "name": "understand-onboard",
+   "category": "research-docs",
+   "description": "Use when you need to generate an onboarding guide for new team members joining a project",
+   "source": "Egonex-AI/Understand-Anything",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/understand-onboard",
+   "variants": {}
+  },
+  {
+   "name": "find-skills",
+   "category": "agent-dev",
+   "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+   "source": "vercel-labs/skills",
+   "license": "MIT",
+   "path": "plugins/agent-dev/skills/find-skills",
+   "variants": {}
+  },
+  {
+   "name": "hallmark",
+   "category": "frontend",
+   "description": "Design skill for websites and new pages that look designed, not generated. Use when the user asks to build or design something new, or names Hallmark. Never use it on an existing design unless the user names Hallmark, as in `/hallmark redesign <path>`.",
+   "source": "Nutlope/hallmark",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/hallmark",
+   "variants": {}
+  },
+  {
+   "name": "security-audit",
+   "category": "security",
+   "description": "Security guidance and vulnerability review for codebases, APIs, services, CLI tools, libraries, and daemons. Use for security questions, focused reviews, vulnerability research, security audits, or pen tests. Run the complete workflow only for explicit codebase audit or pen-test requests, full/comprehensive/end-to-end reviews, or requested report artifacts.",
+   "source": "cloudflare/security-audit-skill",
+   "license": "MIT",
+   "path": "plugins/security/skills/security-audit",
+   "variants": {}
+  },
+  {
+   "name": "founder-board",
+   "category": "business-ops",
+   "description": "Your board of directors. Puts a business idea in front of a three-member board, each a sub-agent reading the idea through one published framework: the Offers lens (from Alex Hormozi's $100M Offers), the Monopoly lens (from Peter Thiel's Zero to One) and the Product lens (from Walter Isaacson's biography of Steve Jobs). Each member scores the idea, names the risks that would kill it and votes fund, fund with conditions, or pass. Use when the user says \"test my business idea\", \"would this work\", \"pressure-test this\", \"what would a board say\", \"is this a good business\", or starts the founder pack on a new idea.",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-board",
+   "variants": {}
+  },
+  {
+   "name": "founder-brand",
+   "category": "business-ops",
+   "description": "Establish startup brand identity, company naming, domain checks, and founder look. Use when naming a new business or startup, creating a brand tagline, or defining initial founder brand voice and logo direction.",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-brand",
+   "variants": {}
+  },
+  {
+   "name": "founder-cfo",
+   "category": "business-ops",
+   "description": "Your CFO. Builds the unit economics of a business before money is spent: what one unit earns after its direct costs, the real profit margin at the planned volume, the break-even point in units a day, year 1 month by month, the cash needed before it pays for itself, how long the startup spend takes to earn back, and what happens if the price drops, sales come in low or costs rise. Every number traces to an input the user can check. Use when the user says \"find the profit margins\", \"do the numbers\", \"is this profitable\", \"break-even\", \"unit economics\", \"how much do I need to start\", or \"run the CFO\".",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-cfo",
+   "variants": {}
+  },
+  {
+   "name": "founder-competitors",
+   "category": "business-ops",
+   "description": "Maps every competitor and the gap they leave. Finds the direct competitors, indirect ones and the substitutes a buyer would use instead, from public sources only, and records what each sells, at what price, how they position themselves and what their customers complain about in public reviews, every fact with a link. Ends with a positioning map and the gap the new business can own. Use when the user says \"who are my competitors\", \"is this market crowded\", \"what else is out there\", \"competitor analysis\", \"find the gap\", or \"who am I up against\".",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-competitors",
+   "variants": {}
+  },
+  {
+   "name": "founder-consumer",
+   "category": "business-ops",
+   "description": "The consumer panel. Spins up a swarm of buyer sub-agents (default 100, --quick for 20) trained on the user's target customer, each with a different income, age, buying behaviour and objection, shows every one the same pitch, and runs the business through 100 buyer scenarios to see who buys, who doesn't, and why. Tallies the answers into buy rates by segment, the reasons people pass in their own words, what would flip a no, and price answers for founder-pricing. Use when the user says \"would people buy this\", \"test it on customers\", \"run the consumer panel\", \"simulate buyers\", \"who is my customer\", or \"validate demand\".",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-consumer",
+   "variants": {}
+  },
+  {
+   "name": "founder-launch",
+   "category": "business-ops",
+   "description": "Your launch lead. Builds a dated, step-by-step launch plan: a cheap real-world test first (a waitlist, a pre-sale or a pop-up with a real price, so real buyers confirm what the simulated panel said), then the countdown to opening day with owners and deadlines, the launch-day run sheet, and the first 30 days of what to measure and what to change. Use when the user says \"how do I launch\", \"launch plan\", \"when can I open\", \"launch checklist\", \"go live\", or \"soft open\".",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-launch",
+   "variants": {}
+  },
+  {
+   "name": "founder-marketing",
+   "category": "business-ops",
+   "description": "Your marketing director. Turns the buyer panel and the competitor map into positioning, the channels the target customer actually uses, a 30-day launch campaign with dated posts and ads, the first ten hooks, a budget split and the numbers to watch. Every message answers an objection real or simulated buyers raised. Use when the user says \"how do I market this\", \"marketing plan\", \"launch campaign\", \"how do I get customers\", \"where do I advertise\", \"write my ads\", or \"positioning\".",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-marketing",
+   "variants": {}
+  },
+  {
+   "name": "founder-offer",
+   "category": "business-ops",
+   "description": "Builds an offer too good to refuse. Lists every problem the buyer hits on the way to the result they want, turns each into a solution, trims to what is cheap to deliver and valuable to the buyer, and stacks it with honest bonuses, a guarantee the CFO can afford, real urgency and a clear name. Scores it on the value equation (outcome, likelihood, time, effort) and re-tests it on a quick buyer panel. Use when the user says \"make my offer better\", \"why won't people buy\", \"what should I include\", \"guarantee\", \"bonuses\", \"grand slam offer\", or after the panel shows people passing.",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-offer",
+   "variants": {}
+  },
+  {
+   "name": "founder-ops",
+   "category": "business-ops",
+   "description": "Your operations manager. Works out how the business actually runs on day one: suppliers and what they cost, who works when, the step-by-step routines for opening, serving or shipping and closing, the tools to run it, the licences and permits to check, and a risk register with what to do when each thing goes wrong. Feeds real costs back to the CFO. Use when the user says \"how do I run this\", \"operations\", \"suppliers\", \"staffing\", \"SOPs\", \"what do I need to open\", \"permits\", or \"day one\".",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-ops",
+   "variants": {}
+  },
+  {
+   "name": "founder-plan",
+   "category": "business-ops",
+   "description": "Your business planner. Compiles everything the other founder skills wrote (the board's verdict, the competitors, the buyer panel, pricing, the offer, the CFO's numbers, marketing, brand, operations and the launch plan) into one business plan with a verdict at the top that is computed from the numbers, never written by hand: Profitable, Not yet (with the failing numbers) or Incomplete. Adds an executive summary and a one-page version for a partner, lender or investor. Use when the user says \"write my business plan\", \"put it all together\", \"is it profitable\", \"give me the plan\", or at the end of the founder pack.",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-plan",
+   "variants": {}
+  },
+  {
+   "name": "founder-pricing",
+   "category": "business-ops",
+   "description": "Finds the price buyers will actually pay. Reads the consumer panel's four price answers per buyer into a Van Westendorp price-sensitivity range (too cheap, a bargain, getting expensive, too expensive), sets it against what competitors really charge and against the CFO's margin, and recommends a price, a price ladder (good / better / best) and an opening offer to test. Use when the user says \"how much should I charge\", \"price this\", \"is $X too expensive\", \"pricing strategy\", \"what price\", or after the consumer panel.",
+   "source": "Jakeschincariol/founder-skill",
+   "license": "MIT",
+   "path": "plugins/business-ops/skills/founder-pricing",
+   "variants": {}
+  },
+  {
+   "name": "frontend-slides",
+   "category": "content-media",
+   "description": "Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to build a presentation, convert a PPT/PPTX to web, or create slides for a talk/pitch. Helps non-designers discover their aesthetic through visual exploration rather than abstract choices.",
+   "source": "zarazhangrui/frontend-slides",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/frontend-slides",
+   "variants": {}
+  },
+  {
+   "name": "skill-inspector",
+   "category": "agent-dev",
+   "description": "Review AI agent skills before installation using NVIDIA SkillSpector and source-aware semantic review. Use when asked whether a skill or downloaded skill folder is safe, trustworthy, installable, over-permissioned, or malicious.",
+   "source": "NVIDIA/SkillSpector",
+   "license": "Apache-2.0",
+   "path": "plugins/agent-dev/skills/skill-inspector",
+   "variants": {},
+   "app": "skillspector"
+  },
+  {
+   "name": "humanizer",
+   "category": "content-media",
+   "description": "Rewrite AI-sounding text so it reads like the writer without changing what it says. Use when editing or reviewing prose for AI tells: not-X-but-Y contrasts, one-line closers, staged openers, forced triads, dashes everywhere, inflated claims, sales language, stock AI words, bold labels, or filler. Based on Wikipedia's \"Signs of AI writing.",
+   "source": "blader/humanizer",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/humanizer",
+   "variants": {}
+  },
+  {
+   "name": "sepia",
+   "category": "content-media",
+   "description": "Make AI-generated fiction and professional prose read as human-written. Use when revising or humanizing AI writing, eliminating AI patterns, or reviewing fiction and documents for authentic human voice.",
+   "source": "Nanako0129/sepia",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/sepia",
+   "variants": {}
+  },
+  {
+   "name": "sepia-hemingway",
+   "category": "content-media",
+   "description": "Use when a user asks to write or revise fiction in the Hemingway manner, or asks for strong de-AI on a story; applies Sepia's built-in Hemingway voice profile.",
+   "source": "Nanako0129/sepia",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/sepia-hemingway",
+   "variants": {}
+  },
+  {
+   "name": "sepia-recreate",
+   "category": "content-media",
+   "description": "Use when a user explicitly requests Sepia recreate for a full rewrite.",
+   "source": "Nanako0129/sepia",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/sepia-recreate",
+   "variants": {}
+  },
+  {
+   "name": "sepia-refactor",
+   "category": "content-media",
+   "description": "Use when a user explicitly requests Sepia refactor for minimal in-place prose revision.",
+   "source": "Nanako0129/sepia",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/sepia-refactor",
+   "variants": {}
+  },
+  {
+   "name": "sepia-review",
+   "category": "content-media",
+   "description": "Use when a user explicitly requests Sepia review to diagnose prose without editing.",
+   "source": "Nanako0129/sepia",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/sepia-review",
+   "variants": {}
+  },
+  {
+   "name": "sepia-write",
+   "category": "content-media",
+   "description": "Use when a user explicitly requests Sepia write to create new prose.",
+   "source": "Nanako0129/sepia",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/sepia-write",
+   "variants": {}
+  },
+  {
+   "name": "prompt-master",
+   "category": "ai-ml",
+   "description": "Generates optimized prompts for AI tools. Activates only when the user explicitly asks to write, fix, improve, or adapt a prompt for a specific AI tool (LLM, Cursor, Midjourney, image AI, video AI, coding agents, etc.). Does not activate for general conversation, coding tasks, document writing, or other non-prompt-engineering work.",
+   "source": "nidhinjs/prompt-master",
+   "license": "MIT",
+   "path": "plugins/ai-ml/skills/prompt-master",
+   "variants": {}
+  },
+  {
+   "name": "diagram-design",
+   "category": "frontend",
+   "description": "Create branded architecture, flowchart, sequence, ER, timeline, and data diagrams as HTML/SVG with Mermaid import and export. Use when designing diagrams, system architectures, data flows, or technical visuals.",
+   "source": "cathrynlavery/diagram-design",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/diagram-design",
+   "variants": {}
+  },
+  {
+   "name": "hairline-adopt",
+   "category": "frontend",
+   "description": "Use when someone has an SVG (an icon, a logo, an illustration) and wants it as a Hairline figure, or runs /hairline-adopt with a file. Reads the drawing, rebuilds its object as an isometric line figure on the engine of @lucasmarkes/hairline, and gives it a gesture that answers the pointer.",
+   "source": "lucasmarkes/hairline",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/hairline-adopt",
+   "variants": {}
+  },
+  {
+   "name": "hairline-create",
+   "category": "frontend",
+   "description": "Use when someone asks for a new Hairline figure, or runs /hairline-create with an idea. Draws one isometric line figure that answers the pointer, in the style and on the engine of @lucasmarkes/hairline, and hands it over as a single self-contained HTML file.",
+   "source": "lucasmarkes/hairline",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/hairline-create",
+   "variants": {}
+  },
+  {
+   "name": "lemo-opuscar",
+   "category": "content-media",
+   "description": "Direct and produce short films made entirely in code using Lemo-Opuscar styles (oil painting, watercolor, ukiyo-e, teardown). Use when creating programmatic video, animations, explainers, or promo shorts from code or real archive material, or customizing film styles.",
+   "source": "lemomo-ai/lemo-opuscar",
+   "license": "MIT",
+   "path": "plugins/content-media/skills/lemo-opuscar",
+   "variants": {}
+  },
+  {
+   "name": "cloudflare-codemode",
+   "category": "agent-dev",
+   "description": "Build and run sandboxed agent tools using Cloudflare Code Mode (@cloudflare/codemode). Connects dynamic Worker sandboxes, Durable Objects, OpenAPI, and MCP servers safely. Use when creating agent sandboxes, building code tools, or integrating Cloudflare Workers with agents.",
+   "source": "cloudflare/codemode",
+   "license": "Apache-2.0",
+   "path": "plugins/agent-dev/skills/cloudflare-codemode",
+   "variants": {}
+  },
+  {
+   "name": "interface-review",
+   "category": "frontend",
+   "description": "Review UI code systematically across accessibility, layout, writing, typography, and polish. Produces prioritized, evidence-based file:line findings table. Use when reviewing UI code, evaluating design quality, checking UX polish, or conducting pre-merge frontend craft audits.",
+   "source": "sfp/interface-review",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/interface-review",
+   "variants": {}
+  },
+  {
+   "name": "harness-engineering",
+   "category": "agent-dev",
+   "description": "Design, test, and optimize AI agent execution harnesses, test fixtures, action spaces, and evaluation gates. Use when building agent evaluation loops, configuring autonomous runtime environments, or optimizing agent action spaces.",
+   "source": "walkinglabs/awesome-harness-engineering",
+   "license": "CC0-1.0",
+   "path": "plugins/agent-dev/skills/harness-engineering",
+   "variants": {}
+  },
+  {
+   "name": "build-your-own-x",
+   "category": "engineering",
+   "description": "Recreate core technologies from scratch step-by-step: Git, Redis, Docker, SQLite, HTTP servers, or compilers. Use when building deep foundational systems, designing zero-dependency implementations, or mastering low-level software architecture.",
+   "source": "codecrafters-io/build-your-own-x",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/build-your-own-x",
+   "variants": {}
+  },
+  {
+   "name": "difftastic",
+   "category": "engineering",
+   "description": "Perform syntax-aware structural diffing on source code using Difftastic (difft). Compares code based on AST structure rather than lines. Use when reviewing syntactic changes, inspecting complex refactors, or comparing nested code blocks across files.",
+   "source": "Wilfred/difftastic",
+   "license": "MIT",
+   "path": "plugins/engineering/skills/difftastic",
+   "variants": {},
+   "app": "difftastic"
+  },
+  {
+   "name": "browser-use",
+   "category": "agents",
+   "description": "Automate browser interactions for AI agents using the Browser-Use Python library and Playwright. Use when building web scraping agents, automating complex UI workflows, interacting with authenticated web apps, or testing browser tasks.",
+   "source": "browser-use/browser-use",
+   "license": "MIT",
+   "path": "plugins/agents/skills/browser-use",
+   "variants": {},
+   "app": "browser-use"
+  },
+  {
+   "name": "openviking",
+   "category": "memory",
+   "description": "Manage agent memory, knowledge, and context hierarchy using OpenViking's virtual filesystem (viking://). Use when structuring multi-tier agent context, managing persistent memory across sessions, or integrating agent filesystem RAG.",
+   "source": "volcengine/OpenViking",
+   "license": "Apache-2.0",
+   "path": "plugins/memory/skills/openviking",
+   "variants": {},
+   "app": "openviking"
+  },
+  {
+   "name": "opencode",
+   "category": "agent-dev",
+   "description": "Automate coding workflows using OpenCode CLI (opencode) and terminal subagents. Use when orchestrating background coding tasks, running automated pull request triage, or integrating multi-model coding workflows.",
+   "source": "anomalyco/opencode",
+   "license": "MIT",
+   "path": "plugins/agent-dev/skills/opencode",
+   "variants": {},
+   "app": "opencode"
+  },
+  {
+   "name": "moli",
+   "category": "agents",
+   "description": "Fast, resource-light headless browser automation using Moli for web scraping and AI agent DOM extraction. Use when running lightweight browser automation, extracting clean DOM content, or scraping web data without heavy Chromium overhead.",
+   "source": "lexmount/moli",
+   "license": "MIT",
+   "path": "plugins/agents/skills/moli",
+   "variants": {}
+  },
+  {
+   "name": "codebase-memory-mcp",
+   "category": "research-docs",
+   "description": "Connect persistent local code intelligence and architectural dependency graphs using Codebase Memory MCP. Use when exploring complex codebases, querying architectural relationships, or maintaining cross-session code context.",
+   "source": "DeusData/codebase-memory-mcp",
+   "license": "MIT",
+   "path": "plugins/research-docs/skills/codebase-memory-mcp",
+   "variants": {}
+  },
+  {
+   "name": "locomotive-scroll",
+   "category": "frontend",
+   "description": "Implement smooth scrolling, parallax effects, and scroll-triggered animations using Locomotive Scroll. Use when adding smooth inertia scrolling, scroll-bound transforms, sticky containers, or scroll-reveal effects in web interfaces.",
+   "source": "locomotivemtl/locomotive-scroll",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/locomotive-scroll",
+   "variants": {}
+  },
+  {
+   "name": "react-colorful",
+   "category": "frontend",
+   "description": "Integrate ultra-lightweight, zero-dependency color pickers in React apps using react-colorful. Use when adding color pickers (Hex, RGB, HSL, HSV) with keyboard accessibility, custom styling, or alpha support to React interfaces.",
+   "source": "omgovich/react-colorful",
+   "license": "MIT",
+   "path": "plugins/frontend/skills/react-colorful",
    "variants": {}
   },
   {

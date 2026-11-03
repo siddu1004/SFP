@@ -1,0 +1,34 @@
+{
+  "name": "SkillSpector",
+  "homepage": "https://github.com/NVIDIA/SkillSpector",
+  "what": "Security scanner for AI agent skills from NVIDIA.",
+  "sources": [
+    "NVIDIA/SkillSpector"
+  ],
+  "needs": [
+    {
+      "tool": "python3"
+    }
+  ],
+  "installed": {
+    "command": [
+      "skillspector",
+      "--version"
+    ]
+  },
+  "install": [
+    {
+      "os": "any",
+      "run": [
+        "pip",
+        "install",
+        "git+https://github.com/NVIDIA/skillspector.git"
+      ],
+      "why": "installs skillspector CLI"
+    }
+  ],
+  "after": [
+    "Run `skillspector scan <folder> --no-llm` to scan an agent skill directory."
+  ],
+  "id": "skillspector"
+}
