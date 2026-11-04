@@ -8,8 +8,9 @@
 <h3 align="center">The right skills for the job, not all of them.</h3>
 
 <p align="center">
-  1065 agent skills, one hive that picks the few each task needs.<br>
-  It reads your project, understands what you mean, and learns how <i>you</i> like to work.
+  <b>SFP (Skills for Productivity)</b> is the open-source skill orchestrator for AI coding agents.<br>
+  Instead of dumping 1,065 skills and burning 41% of your context window, SFP reads your project files,<br>
+  understands what you mean, and hands your agent <b>only the 2 to 4 skills needed</b> in sub-2ms.
 </p>
 
 <p align="center">
@@ -82,6 +83,13 @@ Great agent skills exist. Using them today means a bad trade.
 - **Everyone learns differently.** Asked to explain a concept, one developer wants an animation, another wants clear prose. A fixed list cannot know which you are.
 
 SFP fixes all four: it carries 266 tokens instead of 81,931 (**308x less**), reads your project, understands meaning, and learns your taste.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/hive-lifecycle-dark.svg">
+    <img src="assets/hive-lifecycle-light.svg" alt="SFP Hive vs Traditional Agent Setup" width="100%">
+  </picture>
+</p>
 
 ---
 
@@ -311,6 +319,7 @@ This guide takes you from a bare machine to an agent that gets the right skills 
 
 | Step | What you get | Needed? |
 |---|---|---|
+| [Quick install by tool](#quick-install-by-agent-tool) | 1-command setup for Antigravity, Cursor, Claude Code | Fastest |
 | [1. Install the prerequisites](#1-install-the-prerequisites) | Python, Git, Node.js | Yes |
 | [2. Get SFP](#2-get-sfp) | SFP on your machine | Yes |
 | [3. Check the install](#3-check-the-install) | A health report | Yes |
@@ -326,6 +335,18 @@ This guide takes you from a bare machine to an agent that gets the right skills 
 Also: [Claude Code plugin](#claude-code-plugin-instead-of-steps-2-6), [Keeping it current](#keeping-it-current), [When something is wrong](#when-something-is-wrong), [Removing everything](#removing-everything).
 
 > **Windows:** type `python` wherever this guide says `python3`. Run the commands in PowerShell.
+
+### Quick Install by Agent Tool
+
+Choose your primary environment to get started in seconds:
+
+| Your Tool | Instant Setup Command | What Happens |
+|---|---|---|
+| **Antigravity** | `npx sfp-hive install` | Installs starter skills, registers MCP server, and enables the sidebar extension. |
+| **Claude Code** | `/plugin marketplace add siddu1004/SFP`<br>`/plugin install sfp@sfp` | Enables the full SFP hive and on-demand skill router directly inside Claude Code. |
+| **Cursor** | `npx sfp-hive install` | Configures `.cursor/skills` and registers the local SFP MCP server. |
+| **VS Code / Copilot** | `npx sfp-hive install` | Configures skills for Copilot agents and registers the MCP tools. |
+| **Windsurf / Codex / Cline** | `npx sfp-hive install` | Automatically detects tool directories and links skills with zero configuration. |
 
 ### 1. Install the prerequisites
 

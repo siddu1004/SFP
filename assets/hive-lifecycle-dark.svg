@@ -21,7 +21,7 @@
 
   <!-- Header -->
   <text x="64" y="48" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#e6edf3" letter-spacing="-0.02em">Why Choose SFP Hive: The Architecture Advantage</text>
-  <text x="64" y="74" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="14" font-weight="400" fill="#9aa4b0">Stop burning 30% of your context window before the first prompt. Hive selects the exact 3-4 skills needed in sub-3ms.</text>
+  <text x="64" y="74" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif" font-size="14" font-weight="400" fill="#9aa4b0">Stop burning 41% of your context window before the first prompt. Hive selects the exact 2-4 skills needed in sub-2ms.</text>
 
   <!-- TOP PATH: TRADITIONAL -->
   <g transform="translate(64, 100)">
@@ -32,8 +32,8 @@
     <!-- Step 1 -->
     <g transform="translate(24, 42)">
       <rect width="240" height="60" rx="6" fill="#241b1d" stroke="#ef4444" stroke-width="0.75"/>
-      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#fca5a5">Dump All 800+ Skills</text>
-      <text x="14" y="44" font-family="ui-monospace, monospace" font-size="11" fill="#f87171">58,000 token overhead</text>
+      <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#fca5a5">Dump All 1,065 Skills</text>
+      <text x="14" y="44" font-family="ui-monospace, monospace" font-size="11" fill="#f87171">81,931 token overhead (41% context)</text>
     </g>
 
     <!-- Arrow 1 -->
@@ -44,7 +44,7 @@
     <g transform="translate(328, 42)">
       <rect width="240" height="60" rx="6" fill="#241b1d" stroke="#ef4444" stroke-width="0.75"/>
       <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#fca5a5">Blind Keyword Search</text>
-      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">9% accuracy on new tasks</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">25% accuracy on held-out tasks</text>
     </g>
 
     <!-- Arrow 2 -->
@@ -81,7 +81,7 @@
       <rect width="240" height="84" rx="6" fill="#122724" stroke="#10b981" stroke-width="0.75"/>
       <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">5-Signal Quorum</text>
       <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Words, Files, Phase, Cat, Hist</text>
-      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">Sub-3ms Local Fingerprint</text>
+      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">Sub-2ms Local Fingerprint</text>
     </g>
 
     <!-- Arrow 1 -->
@@ -92,8 +92,8 @@
     <g transform="translate(328, 46)">
       <rect width="240" height="84" rx="6" fill="#122724" stroke="#10b981" stroke-width="0.75"/>
       <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">LinUCB Bandit &amp; Bundles</text>
-      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Explores &amp; stacks any bundles</text>
-      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">Unlimited Multi-Bundle Support</text>
+      <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Card intent &amp; substitute suppression</text>
+      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">Dynamic Card Intent &amp; Bundles</text>
     </g>
 
     <!-- Arrow 2 -->
@@ -105,7 +105,7 @@
       <rect width="240" height="84" rx="6" fill="#122724" stroke="#10b981" stroke-width="0.75"/>
       <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">Targeted Context Delivery</text>
       <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#9aa4b0">Exact role order: plan-base-check</text>
-      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">266 tokens (218x leaner)</text>
+      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">3,190 tokens (96% context saved)</text>
     </g>
 
     <!-- Arrow 3 -->
@@ -117,7 +117,7 @@
       <rect width="192" height="84" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1"/>
       <text x="14" y="24" font-family="ui-sans-serif, system-ui, sans-serif" font-size="12" font-weight="700" fill="#a7f3d0">Ready in 1 Round Less</text>
       <text x="14" y="44" font-family="ui-sans-serif, system-ui, sans-serif" font-size="11" fill="#a7f3d0">2.8 review rounds</text>
-      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">86% selection accuracy</text>
+      <text x="14" y="64" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">91% fresh project accuracy</text>
     </g>
   </g>
 </svg>

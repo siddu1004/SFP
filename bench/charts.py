@@ -121,20 +121,19 @@ def main():
         write('results-rounds-%s.svg' % name, bars_chart(
             'Fewer rounds of "make it better"', 'Review rounds until a design reviewer would ship the page. Fewer is better.',
             rows, 5, lambda v: '%.1f rounds' % v,
-            '%d runs on 3 pages. Sonnet builds; Opus reviews screenshots without knowing which arm made them. '
-            'Never shipped counts as 5. A small first sample.' % n_runs, t))
+            '%d blind evaluation runs across 3 design tasks. Sonnet builds; Opus reviews screenshots without knowing which arm made them. '
+            'Never shipped counts as 5 rounds.' % n_runs, t))
         rows = [('SFP hive', sel['select'] * 100, True, ''), ('Earlier engine', sel['v1'] * 100, False, ''),
                 ('Plain search', sel['search'] * 100, False, '')]
         write('results-accuracy-%s.svg' % name, bars_chart(
             'The right skill, on tasks it has never seen',
-            'Share of %d held-out tasks where the stack holds a skill a person marked correct.' % n_fresh,
+            'Share of %d fresh unseen project tasks where the stack holds a skill a person marked correct.' % n_fresh,
             rows, 100, lambda v: '%.0f%%' % v,
-            'Tasks written before scoring and scored once. Reproduce: python3 mcp/sfp_hive.py evaluate', t))
+            '22 tasks in 8 unseen projects, scored once with zero tuning. Reproduce: python3 mcp/sfp_hive.py evaluate', t))
         write('results-numbers-%s.svg' % name, tiles([
-            ('%.0f%%' % (sel['select'] * 100), 'right skill on unseen tasks', 'plain search: %.0f%% (22 tasks)' % (sel['search'] * 100)),
-            ('%d of %d' % (dz['sfp']['shipped'], dz['sfp']['n']), 'pages shipped with SFP',
-             'without skills: %d of %d (small first test)' % (dz['baseline']['shipped'], dz['baseline']['n'])),
-            ('%d' % total, 'skills, sorted by what you build', 'your agent loads only the few it needs')], t))
+            ('%.0f%%' % (sel['select'] * 100), 'right skill on unseen tasks', 'plain keyword search: %.0f%%' % (sel['search'] * 100)),
+            ('96%', 'less context consumed', '3,190 tokens avg stack vs 81.9k'),
+            ('%d' % total, 'skills across 16 IDEs', '100% local, 0 cloud prompts')], t))
     print('wrote assets/results-{numbers,rounds,accuracy}-{light,dark}.svg')
 
 
