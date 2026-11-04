@@ -581,7 +581,7 @@ def generate_all_charts(data):
         w, h = 900, 380
         out = [svg_header(w, h, "Format Accuracy per Persona (Taste vs Cold Start)", t)]
         out.append(f'<text x="40" y="48" font-family="{FONT}" font-size="22" font-weight="700" fill="{t["ink"]}">Format Accuracy: Cold Start vs Learned Taste</text>')
-        out.append(f'<text x="40" y="76" font-family="{FONT}" font-size="14" fill="{t["ink2"]}">4 personas x 20 tasks (60% unnamed form, 40% explicit override). Stored in taste.json.</text>')
+        out.append(f'<text x="40" y="76" font-family="{FONT}" font-size="14" fill="{t["ink2"]}">4 personas x 10 held-out tasks (70% unnamed form, 30% explicit override). Stored in taste.json.</text>')
         
         y0 = 110
         span = 380

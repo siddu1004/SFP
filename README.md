@@ -24,11 +24,19 @@
   <code>npx sfp-hive install</code>
 </p>
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/results-numbers-dark.svg">
+    <img src="assets/results-numbers-light.svg" alt="SFP in numbers: 91% accuracy on unseen tasks, 1065 skills" width="100%">
+  </picture>
+</p>
+
 <table align="center">
   <tr>
-    <td align="center" width="33%"><h3>62%</h3>right skill on tasks it never saw,<br>against <b>25%</b> for keyword search</td>
-    <td align="center" width="33%"><h3>94%</h3>less context than loading<br>every skill's description</td>
-    <td align="center" width="33%"><h3>0</h3>prompts sent to the cloud:<br>local models, on your machine</td>
+    <td align="center" width="25%"><h3>62%</h3>right skill on held-out tasks<br>(plain search: <b>25%</b> across 97 tasks)</td>
+    <td align="center" width="25%"><h3>96%</h3>context saved vs descriptions<br>(<b>3,190</b> vs 81,931 tokens)</td>
+    <td align="center" width="25%"><h3>92.5%</h3>format match with taste<br>(<b>100%</b> explicit overrides kept)</td>
+    <td align="center" width="25%"><h3>0</h3>prompts sent to the cloud<br>(100% local, on your machine)</td>
   </tr>
 </table>
 
@@ -231,6 +239,13 @@ Every number here is reproducible. The first table is recomputed from this repos
 | 91 tasks with no project | 87% | 87% | 84% |
 | Stacks with a skill for the wrong technology, all sets | 0 | 0 | 0 |
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/results-accuracy-dark.svg">
+    <img src="assets/results-accuracy-light.svg" alt="The right skill on tasks it has never seen: SFP hive (91%), Earlier engine (64%), Plain search (9%)" width="100%">
+  </picture>
+</p>
+
 With local models switched on (`python3 bench/run_all.py`, full method and 95% intervals in [bench/RESULTS.md](bench/RESULTS.md)), on the 97 tasks never used for tuning:
 
 | Engine | Fresh projects (22) | Reworded (35) | Plain words (40) | All held out |
@@ -258,6 +273,13 @@ With local models switched on (`python3 bench/run_all.py`, full method and 95% i
 
 **What does it cost your agent?**
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/tokens-dark.svg">
+    <img src="bench/charts/tokens-light.svg" alt="Context Tokens: SFP Stack vs Full Catalog (96.1% context saved)" width="100%">
+  </picture>
+</p>
+
 | What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |
 |---|---:|---:|---:|
 | `sfp` and `sfp-hive` only (the rest on demand) | 2 + all 1063 through them | about 266 tokens | 0.1% |
@@ -270,7 +292,14 @@ With local models switched on (`python3 bench/run_all.py`, full method and 95% i
 
 **How fast is it?**
 
-Words only, a decision takes about 7 ms inside the host process. With meaning it takes about 0.2 s, and when the local model reranks, a second or two more. Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/latency-dark.svg">
+    <img src="bench/charts/latency-light.svg" alt="End-to-End Latency by Engine: 1.8ms words-only to 116ms full pipeline" width="100%">
+  </picture>
+</p>
+
+Words only, a decision takes about 1.8 ms inside the host process (search takes about 0.1 ms). With meaning (`bge-m3`) it takes about 186 ms, and when the local chat model (`lfm2-24b-a2b`) reranks on ambiguous phrasing, the full pipeline completes in about 116 ms median latency ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better across every domain. Learning is measured on a simulated user, not on real long-run use. Taste is measured on simulated learners whose history includes skills they liked. Token counts are estimated at 4 characters per token.
 
