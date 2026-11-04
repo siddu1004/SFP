@@ -233,5 +233,5 @@
     <path d="M340 172 V76 H386 A24 24 0 0 1 386 124 H340"/>
   </g>
   <text x="64" y="232" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="36" font-weight="600" fill="#1a1d21">Skills for Productivity</text>
-  <text x="64" y="272" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#565c64">1065 skills. The hive picks the few you need, and learns.</text>
+  <text x="64" y="272" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="26" fill="#565c64">1065 skills. SFP picks the few you need.</text>
 </svg>

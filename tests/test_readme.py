@@ -81,7 +81,7 @@ class ReadmeTest(unittest.TestCase):
         who = section('Who It Is For')
         for name in re.findall(r'`([a-z0-9-]+)`', who):
             if name in ('frontend-dev', 'backend-dev', 'mobile-dev', 'agent-builder', 'security', 'business-ops',
-                        'content-media', 'career'):
+                        'content-media', 'career', 'research-docs'):
                 continue
             self.assertIn(name, SKILLS, name)
 

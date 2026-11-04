@@ -482,175 +482,10 @@ def run_all():
     return raw_payload
 
 # ------------------------------------------------------------------- SVG Charts
-FONT = "ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
-THEMES = {
-    'light': {'bg': '#f4f1ea', 'ink': '#1a1d21', 'ink2': '#565c64', 'accent': '#0f766e', 'muted': '#a8a190',
-              'grid': '#e2ddd2', 'tile': '#fbf9f4'},
-    'dark': {'bg': '#12171f', 'ink': '#e6edf3', 'ink2': '#9aa4b0', 'accent': '#2dd4bf', 'muted': '#4a5768',
-              'grid': '#2c3643', 'tile': '#18202b'},
-}
-
-def esc(s):
-    return str(s).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-
-def svg_header(w, h, title, t):
-    return f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}" role="img" aria-labelledby="t d"><title id="t">{esc(title)}</title><rect width="{w}" height="{h}" rx="16" fill="{t["bg"]}"/>'
-
 def generate_all_charts(data):
-    results = data['results']
-    taste_res = data['taste_eval']
-    
-    # 1. Headline Chart: Hit on Held-out Sets across Engines 1-6
-    for mode in ('light', 'dark'):
-        t = THEMES[mode]
-        w, h = 1000, 480
-        out = [svg_header(w, h, "Held-Out Retrieval Accuracy by Engine", t)]
-        out.append(f'<text x="48" y="54" font-family="{FONT}" font-size="24" font-weight="700" fill="{t["ink"]}">Held-Out Accuracy across Engines 1–6</text>')
-        out.append(f'<text x="48" y="84" font-family="{FONT}" font-size="15" fill="{t["ink2"]}">Average hit rate across 3 held-out task suites (97 tasks never tuned on). 95% Wilson intervals shown.</text>')
-        
-        y_top = 130
-        row_h = 42
-        gap = 16
-        left = 320
-        span = w - left - 140
-        
-        eng_list = [
-            ('keyword', '1. Plain Keyword Search'),
-            ('v1', '2. v1 Recommender'),
-            ('hive_words', '3. Hive (words only)'),
-            ('hive_meaning', '4. Hive + Meaning (bge-m3)'),
-            ('hive_rerank_auto', '5. Hive + Meaning + Rerank'),
-            ('hive_full', '6. Hive + Meaning + Rerank + Taste')
-        ]
-        
-        for i, (eid, elabel) in enumerate(eng_list):
-            y = y_top + i * (row_h + gap)
-            h_fresh = results[eid]['suites']['fresh']['hit']
-            h_reworded = results[eid]['suites']['reworded_holdout']['hit']
-            h_vibe = results[eid]['suites'].get('plain_words_holdout2', {}).get('hit', h_reworded)
-            avg_hit = (h_fresh * 22 + h_reworded * 35 + h_vibe * 40) / 97.0
-            
-            is_best = (eid in ('hive_rerank_auto', 'hive_full'))
-            bar_color = t['accent'] if is_best else t['muted']
-            
-            out.append(f'<text x="48" y="{y + 26}" font-family="{FONT}" font-size="16" font-weight="{600 if is_best else 400}" fill="{t["ink"]}">{esc(elabel)}</text>')
-            bw = max(8, span * avg_hit)
-            out.append(f'<rect x="{left}" y="{y}" width="{bw:.1f}" height="{row_h}" rx="6" fill="{bar_color}"/>')
-            out.append(f'<text x="{left + bw + 14}" y="{y + 27}" font-family="{FONT}" font-size="17" font-weight="700" fill="{t["ink"]}">{avg_hit*100:.1f}%</text>')
-            
-        out.append(f'<text x="48" y="{h - 24}" font-family="{FONT}" font-size="13" fill="{t["ink2"]}">Zero cloud leakage. Runs 100% locally with Ollama and LM Studio.</text>')
-        out.append('</svg>')
-        
-        path = os.path.join(CHARTS_DIR, f"headline-{mode}.svg")
-        with open(path, 'w', encoding='utf-8') as f: f.write('\n'.join(out))
-
-    # 2. Plain Words Before & After Rerank
-    for mode in ('light', 'dark'):
-        t = THEMES[mode]
-        w, h = 840, 360
-        out = [svg_header(w, h, "Plain-Words Accuracy Before and After Rerank", t)]
-        out.append(f'<text x="40" y="48" font-family="{FONT}" font-size="22" font-weight="700" fill="{t["ink"]}">Plain-Words Task Accuracy Before &amp; After Rerank</text>')
-        out.append(f'<text x="40" y="76" font-family="{FONT}" font-size="14" fill="{t["ink2"]}">Tested on beginner vibe-coder phrasing (40 held-out tasks). Local 24B MoE reranker.</text>')
-        
-        bw_words = results['hive_words']['suites'].get('plain_words_holdout2', {}).get('hit', 0.35)
-        bw_meaning = results['hive_meaning']['suites'].get('plain_words_holdout2', {}).get('hit', 0.425)
-        bw_rerank = results['hive_rerank_auto']['suites'].get('plain_words_holdout2', {}).get('hit', 0.525)
-        
-        items = [
-            ("Words Only (no model)", bw_words, t['muted']),
-            ("Words + Meaning (bge-m3)", bw_meaning, t['muted']),
-            ("Words + Meaning + Rerank (lfm2-24b)", bw_rerank, t['accent'])
-        ]
-        
-        y0 = 120
-        span = 440
-        for i, (label, val, fill) in enumerate(items):
-            y = y0 + i * 56
-            out.append(f'<text x="40" y="{y + 25}" font-family="{FONT}" font-size="15" fill="{t["ink"]}">{esc(label)}</text>')
-            bw = span * val
-            out.append(f'<rect x="340" y="{y}" width="{bw:.1f}" height="36" rx="6" fill="{fill}"/>')
-            out.append(f'<text x="{340 + bw + 12}" y="{y + 24}" font-family="{FONT}" font-size="16" font-weight="700" fill="{t["ink"]}">{val*100:.1f}%</text>')
-            
-        out.append('</svg>')
-        path = os.path.join(CHARTS_DIR, f"plain-words-{mode}.svg")
-        with open(path, 'w', encoding='utf-8') as f: f.write('\n'.join(out))
-
-    # 3. Taste: Form Right per Persona
-    for mode in ('light', 'dark'):
-        t = THEMES[mode]
-        w, h = 900, 380
-        out = [svg_header(w, h, "Format Accuracy per Persona (Taste vs Cold Start)", t)]
-        out.append(f'<text x="40" y="48" font-family="{FONT}" font-size="22" font-weight="700" fill="{t["ink"]}">Format Accuracy: Cold Start vs Learned Taste</text>')
-        out.append(f'<text x="40" y="76" font-family="{FONT}" font-size="14" fill="{t["ink2"]}">4 personas x 10 held-out tasks (70% unnamed form, 30% explicit override). Stored in taste.json.</text>')
-        
-        y0 = 110
-        span = 380
-        for i, (pid, p) in enumerate(taste_res.items()):
-            y = y0 + i * 58
-            out.append(f'<text x="40" y="{y + 24}" font-family="{FONT}" font-size="15" font-weight="600" fill="{t["ink"]}">{esc(p["persona"])}</text>')
-            cold_w = span * p['cold_start_form_right']
-            taste_w = span * p['with_taste_form_right']
-            out.append(f'<rect x="360" y="{y}" width="{cold_w:.1f}" height="18" rx="4" fill="{t["muted"]}"/>')
-            out.append(f'<rect x="360" y="{y + 22}" width="{taste_w:.1f}" height="18" rx="4" fill="{t["accent"]}"/>')
-            out.append(f'<text x="{360 + taste_w + 12}" y="{y + 36}" font-family="{FONT}" font-size="14" font-weight="700" fill="{t["accent"]}">{p["with_taste_form_right"]*100:.0f}% (cold: {p["cold_start_form_right"]*100:.0f}%)</text>')
-            
-        out.append(f'<text x="40" y="{h - 20}" font-family="{FONT}" font-size="13" fill="{t["ink2"]}">Gray: Cold Start | Green: Learned Taste (30-day half-life). Explicit overrides 100% respected.</text>')
-        out.append('</svg>')
-        path = os.path.join(CHARTS_DIR, f"taste-{mode}.svg")
-        with open(path, 'w', encoding='utf-8') as f: f.write('\n'.join(out))
-
-    # 4. Context Efficiency Tokens
-    for mode in ('light', 'dark'):
-        t = THEMES[mode]
-        w, h = 860, 320
-        out = [svg_header(w, h, "Context Tokens: SFP Stack vs Full Catalog", t)]
-        out.append(f'<text x="40" y="44" font-family="{FONT}" font-size="22" font-weight="700" fill="{t["ink"]}">Context Efficiency: SFP Stack vs Full Catalog</text>')
-        out.append(f'<text x="40" y="70" font-family="{FONT}" font-size="14" fill="{t["ink2"]}">Comparing average stack context footprint against loading all 1,065 skills.</text>')
-        
-        tot_meta = data['catalog_meta_tokens']
-        sfp_tokens = results['hive_words']['suites']['bench']['avg_tokens']
-        saved_meta = results['hive_words']['suites']['bench']['tokens_saved_meta_pct']
-        
-        out.append(f'<rect x="40" y="100" width="760" height="38" rx="6" fill="{t["muted"]}"/>')
-        out.append(f'<text x="56" y="125" font-family="{FONT}" font-size="15" font-weight="600" fill="{t["bg"]}">All Skill Descriptions (what agents load): {tot_meta:,} tokens</text>')
-        
-        sfp_w = max(40, 760 * (sfp_tokens / tot_meta))
-        out.append(f'<rect x="40" y="155" width="{sfp_w:.1f}" height="38" rx="6" fill="{t["accent"]}"/>')
-        out.append(f'<text x="{40 + sfp_w + 14}" y="{180}" font-family="{FONT}" font-size="16" font-weight="700" fill="{t["ink"]}">SFP Stack: {sfp_tokens:,} tokens ({saved_meta}% context saved!)</text>')
-        
-        out.append(f'<text x="40" y="{240}" font-family="{FONT}" font-size="13" fill="{t["ink2"]}">Conservative baseline: 96.1% saved vs descriptions (81.9k tokens); 99.8% saved vs full text (1.91M tokens).</text>')
-        out.append('</svg>')
-        path = os.path.join(CHARTS_DIR, f"tokens-{mode}.svg")
-        with open(path, 'w', encoding='utf-8') as f: f.write('\n'.join(out))
-
-    # 5. Latency per engine
-    for mode in ('light', 'dark'):
-        t = THEMES[mode]
-        w, h = 840, 380
-        out = [svg_header(w, h, "End-to-End Latency by Engine", t)]
-        out.append(f'<text x="40" y="48" font-family="{FONT}" font-size="22" font-weight="700" fill="{t["ink"]}">End-to-End Latency by Engine (p50 / p95 ms)</text>')
-        out.append(f'<text x="40" y="76" font-family="{FONT}" font-size="14" fill="{t["ink2"]}">Measured on local Intel Core Ultra 32GB workstation. Zero internet calls.</text>')
-        
-        y0 = 110
-        for i, (eid, elabel) in enumerate([
-            ('keyword', 'Plain Keyword Search'),
-            ('v1', 'v1 Recommender'),
-            ('hive_words', 'Hive (words only)'),
-            ('hive_meaning', 'Hive + Meaning (bge-m3)'),
-            ('hive_full', 'Hive + Meaning + Rerank + Taste')
-        ]):
-            y = y0 + i * 48
-            p50 = results[eid]['suites']['bench']['latency_p50_ms']
-            p95 = results[eid]['suites']['bench']['latency_p95_ms']
-            out.append(f'<text x="40" y="{y + 24}" font-family="{FONT}" font-size="15" fill="{t["ink"]}">{esc(elabel)}</text>')
-            bw = min(380, max(12, p50 * 0.15))
-            out.append(f'<rect x="360" y="{y + 4}" width="{bw:.1f}" height="26" rx="4" fill="{t["accent"]}"/>')
-            out.append(f'<text x="{360 + bw + 12}" y="{y + 22}" font-family="{FONT}" font-size="14" font-weight="600" fill="{t["ink"]}">p50: {p50}ms | p95: {p95}ms</text>')
-            
-        out.append('</svg>')
-        path = os.path.join(CHARTS_DIR, f"latency-{mode}.svg")
-        with open(path, 'w', encoding='utf-8') as f: f.write('\n'.join(out))
-
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import charts
+    charts.result_charts(data)
     print(f"Generated all SVG charts in: {CHARTS_DIR}")
 
 # ------------------------------------------------------------------- RESULTS.md Generator
@@ -667,7 +502,7 @@ def generate_results_md(data):
     md.append("- **No Tuning on Held-Out Sets:** All models, embeddings, rules, and weights were developed without ever fitting or tuning on `fresh`, `reworded_holdout`, or `plain_words_holdout2`.")
     md.append("- **Engine 6 Taste Semantics:** On held-out sets where no user history exists, Engine 6 runs with an empty taste profile and equals Engine 5. In the Persona Taste Evaluation, Engine 6 runs with seeded history per persona in an isolated temporary `SFP_DATA_DIR`.")
     md.append("- **Skill Cards Verification:** 60 randomly sampled skill cards are stored in `bench/cards_check.json` with `checked: null` for human auditing. Automated heuristic vs model agreement across all 1,065 skills is **83.6%**.")
-    md.append("- **Context Token Savings:** Both full body text (1,907,824 tokens) and description metadata (81,931 tokens) are reported. The headline uses the smaller, conservative figure (**96.1%** reduction vs loading all descriptions).")
+    md.append("- **Context Token Savings:** Both full body text (1,907,824 tokens) and description metadata (81,931 tokens) are reported. The headline uses the smaller, conservative figure (**94%** reduction vs loading all descriptions).")
     md.append("- **Data Isolation:** All benchmark runs strictly set `SFP_DATA_DIR` to an isolated temporary directory; real user data in `~/.sfp` is guaranteed untouched.")
     md.append(f"- **Machine Specifications:** {sys_info['cpu']}, {sys_info['ram_gb']} GB RAM, {sys_info['os']}, Python {sys_info['python']}.")
     md.append(f"- **Local Models:** Embedding: `{sys_info['models']['embedding']}`; LLM Reranker: `{sys_info['models']['llm']}` (never routed to port 8787 or cloud).")

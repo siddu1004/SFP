@@ -6,7 +6,7 @@
 - **No Tuning on Held-Out Sets:** All models, embeddings, rules, and weights were developed without ever fitting or tuning on `fresh`, `reworded_holdout`, or `plain_words_holdout2`.
 - **Engine 6 Taste Semantics:** On held-out sets where no user history exists, Engine 6 runs with an empty taste profile and equals Engine 5. In the Persona Taste Evaluation, Engine 6 runs with seeded history per persona in an isolated temporary `SFP_DATA_DIR`.
 - **Skill Cards Verification:** 60 randomly sampled skill cards are stored in `bench/cards_check.json` with `checked: null` for human auditing. Automated heuristic vs model agreement across all 1,065 skills is **83.6%**.
-- **Context Token Savings:** Both full body text (1,907,824 tokens) and description metadata (81,931 tokens) are reported. The headline uses the smaller, conservative figure (**96.1%** reduction vs loading all descriptions).
+- **Context Token Savings:** Both full body text (1,907,824 tokens) and description metadata (81,931 tokens) are reported. The headline uses the smaller, conservative figure (**94%** reduction vs loading all descriptions).
 - **Data Isolation:** All benchmark runs strictly set `SFP_DATA_DIR` to an isolated temporary directory; real user data in `~/.sfp` is guaranteed untouched.
 - **Machine Specifications:** Intel64 Family 6 Model 197 Stepping 2, GenuineIntel, 32.0 GB RAM, Windows-11-10.0.26300-SP0, Python 3.13.14.
 - **Local Models:** Embedding: `bge-m3:latest (Ollama, 1024-dim, F16)`; LLM Reranker: `lfm2-24b-a2b (LM Studio, 24B MoE, Q4_K_M)` (never routed to port 8787 or cloud).

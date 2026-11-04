@@ -5,142 +5,145 @@
   </picture>
 </h1>
 
-<h3 align="center">The right skills for the job, not all of them.</h3>
-
-<p align="center">
-  @@TOTAL@@ agent skills, one hive that picks the few each task needs.<br>
-  It reads your project, understands what you mean, and learns how <i>you</i> like to work.
-</p>
+<h3 align="center">Your AI coding tool gets the right instructions for the job, and only those.</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/sfp-hive"><img src="https://img.shields.io/npm/v/sfp-hive?style=flat-square&labelColor=3b4350&color=0f766e&label=npm" alt="npm version"></a>
   <img src="https://img.shields.io/badge/skills-@@TOTAL@@-0f766e?style=flat-square&labelColor=3b4350" alt="@@TOTAL@@ skills">
-  <img src="https://img.shields.io/badge/installs_into-16_IDEs-0f766e?style=flat-square&labelColor=3b4350" alt="Installs into 16 IDEs and CLIs">
-  <img src="https://img.shields.io/badge/runs-100%25_local-0f766e?style=flat-square&labelColor=3b4350" alt="Runs 100% local">
-  <img src="https://img.shields.io/badge/license-MIT-0f766e?style=flat-square&labelColor=3b4350" alt="MIT license">
+  <img src="https://img.shields.io/badge/works_with-16_AI_tools-0f766e?style=flat-square&labelColor=3b4350" alt="Works with 16 AI coding tools">
+  <img src="https://img.shields.io/badge/picks_skills-on_your_machine-0f766e?style=flat-square&labelColor=3b4350" alt="Picks skills on your machine">
+  <img src="https://img.shields.io/badge/price-free_(MIT)-0f766e?style=flat-square&labelColor=3b4350" alt="Free, MIT license">
 </p>
 
 <p align="center">
-  <code>npx sfp-hive install</code>
-</p>
-
-<table align="center">
-  <tr>
-    <td align="center" width="33%"><h3>62%</h3>right skill on tasks it never saw,<br>against <b>25%</b> for keyword search</td>
-    <td align="center" width="33%"><h3>94%</h3>less context than loading<br>every skill's description</td>
-    <td align="center" width="33%"><h3>0</h3>prompts sent to the cloud:<br>local models, on your machine</td>
-  </tr>
-</table>
-
-<p align="center">
-  <sub>Held-out figures from <a href="bench/RESULTS.md">bench/RESULTS.md</a> (version 3.19.0, words + meaning + rerank, 97 tasks never used for tuning).</sub>
-</p>
-
-<p align="center">
-  <a href="#try-it-in-60-seconds"><b>Try it</b></a> &middot;
-  <a href="#how-sfp-picks"><b>How it picks</b></a> &middot;
+  <a href="#what-is-this"><b>What is this?</b></a> &middot;
+  <a href="#start-here"><b>Start here</b></a> &middot;
   <a href="#see-it-choose"><b>See it choose</b></a> &middot;
-  <a href="#it-learns-how-you-learn"><b>It learns you</b></a> &middot;
+  <a href="#common-questions"><b>Questions</b></a> &middot;
   <a href="#the-proof"><b>The proof</b></a> &middot;
+  <a href="#for-experts"><b>For experts</b></a> &middot;
   <a href="#install"><b>Install</b></a>
 </p>
 
 ---
 
-## Try It in 60 Seconds
+## What Is This?
 
-| Where you are | Run this |
-|---|---|
-| Any machine with Node.js | `npx sfp-hive install` |
-| macOS and Linux | `curl -fsSL https://raw.githubusercontent.com/siddu1004/SFP/main/get.sh \| sh` |
-| Windows PowerShell | `irm https://raw.githubusercontent.com/siddu1004/SFP/main/get.ps1 \| iex` |
-| Claude Code | `/plugin marketplace add siddu1004/SFP`, then `/plugin install sfp@sfp` |
+AI coding tools like Claude Code, Cursor and Copilot do better work when they are given **skills**: short written guides that teach one job well, such as "how to write good tests in Rust". Thousands exist, but your AI can only hold so much in mind at once. Load them all and there is little room left for your code.
 
-Needs Python 3.8+ (and Git for the one-line scripts). It installs the starter preset into every IDE it finds. Restart your IDE, then ask your agent:
-
-> Use sfp-hive for this task: add tests for the checkout form.
-
-The agent loads a few skills that fit your stack, says why it chose each one, and follows them in order. Tell it `helped` or `unhelpful` afterwards and the hive chooses better next time.
-
----
-
-## The Problem
-
-Great agent skills exist. Using them today means a bad trade.
-
-- **The context tax.** An agent reads every installed skill's description at the start of each session. All @@TOTAL@@ cost **@@ALL_TOKENS@@ tokens**, @@ALL_PERCENT@@% of a 200k window, before you type a word.
-- **Search cannot see your project.** "Write tests" needs `react-testing` in Next.js, `django-tdd` in Django and `rust-testing` in Rust. A keyword search gives all three the same answer.
-- **People do not talk in keywords.** "My app is slow when lots of people use it" shares no word with the skills that fix it.
-- **Everyone learns differently.** Asked to explain a concept, one developer wants an animation, another wants clear prose. A fixed list cannot know which you are.
-
-SFP fixes all four: it carries @@SFP_TOKENS@@ tokens instead of @@ALL_TOKENS@@ (**@@RATIO@@x less**), reads your project, understands meaning, and learns your taste.
-
----
-
-## How SFP Picks
+**SFP is a librarian for your AI.** It keeps @@TOTAL@@ skills on the shelf. For each task, it reads what you asked and what your project is, and hands your AI only the few that fit. It remembers what helped you, so its choices get better for you over time.
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/hive-architecture-dark.svg">
-    <img src="assets/hive-architecture-light.svg" alt="The SFP hive: scouts, quorum and division of labour" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/how-it-works-dark.svg">
+    <img src="assets/how-it-works-light.svg" alt="How SFP works: you ask, SFP reads your words and project, it picks a few skills, your AI follows them, you say if they helped, and it learns." width="100%">
   </picture>
 </p>
 
-Every task goes through five layers. Each one is optional except the first, and each runs on your machine.
+<table align="center">
+  <tr>
+    <td align="center" valign="top" width="33%"><h3>62%</h3>right skill on tasks it never saw, against <b>25%</b> for keyword search</td>
+    <td align="center" valign="top" width="33%"><h3>94%</h3>less for your AI to carry than having every skill always on</td>
+    <td align="center" valign="top" width="33%"><h3>0</h3>words sent out by SFP when it picks: it runs on your machine</td>
+  </tr>
+</table>
 
-| Layer | What it does | Needs |
-|---|---|---|
-| **1. Words and your project** | Five scouts vote on every candidate: the task's words, your project files (`package.json`, `Cargo.toml`, `go.mod` ...), the phase of work, the category and what usually comes next. A skill joins only with a quorum, and never one for the wrong technology. | Nothing |
-| **2. Meaning** | A local embedding model finds skills close to what you *mean*, so "make the login not get hacked" still finds the security skills. | Ollama or LM Studio with `bge-m3` |
-| **3. A model's judgement** | When the words are weak, a local chat model reads the 20 closest candidates and picks the best. It never overrules a skill that fits your project's technology. | A local chat model (`lfm2-24b-a2b` is fast) |
-| **4. Skill cards** | Each of the @@TOTAL@@ skills has a card: its job, what it produces (code, text, animation, video, diagram ...), its style and depth. Two skills that do the same job are never stacked. | Nothing |
-| **5. Your taste** | From your feedback, SFP learns which formats and skills help *you*, with a 30-day memory. A format you name in the task always wins over taste. | Your feedback |
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/headline-dark.svg">
-    <img src="bench/charts/headline-light.svg" alt="Held-out accuracy for each engine, from keyword search to the full hive" width="100%">
-  </picture>
-</p>
-
-When nothing in the library fits, the hive says so instead of guessing, and offers to grow a skill for it from research ([It learns how you learn](#it-learns-how-you-learn)).
+<p align="center"><sub>62% uses optional local models; without them it is 47%. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
 
 <details>
-<summary><b>Stacking whole bundles</b></summary>
+<summary><b>New to this? What the words mean</b></summary>
 <br>
 
-Bundles are named sets of skills for one job ("Fix a bug properly", "Accessible form"). When a task fits one well, the hive attaches it whole and in order; several can stack, with duplicates removed.
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/hive-multibundle-dark.svg">
-    <img src="assets/hive-multibundle-light.svg" alt="Several bundles stacked into one ordered plan" width="100%">
-  </picture>
-</p>
+| Word | In plain language |
+|---|---|
+| **AI coding tool, agent** | The AI that writes code with you: Claude Code, Cursor, Copilot, Antigravity and others |
+| **Skill** | A short guide your AI reads before a job. Written in plain text, in a file called `SKILL.md` |
+| **Hive** | The part of SFP that chooses skills. Many small signals vote, like bees choosing a new home |
+| **Token** | The unit AI models read text in, roughly three quarters of a word. An AI can only hold so many at once |
+| **Context** | Everything your AI is holding in mind right now |
+| **IDE** | The program you write code in, such as VS Code |
+| **MCP** | A standard way for AI tools to use outside helpers. SFP can run as one |
+| **Local model** | An AI model running on your own computer, through a free program like Ollama or LM Studio |
 
 </details>
 
 ---
 
+## Start Here
+
+You need **Node.js** ([download](https://nodejs.org/)), **Python 3.8 or newer** ([download](https://www.python.org/downloads/); on Windows tick "Add python.exe to PATH") and an AI coding tool.
+
+**1. Open a terminal and run this.** It finds the AI tools on your computer and installs a starter set of skills into each.
+
+```bash
+npx sfp-hive install
+```
+
+**2. Restart your AI tool.**
+
+**3. Ask it something, and mention SFP:**
+
+> Use sfp-hive for this task: add tests for the checkout form.
+
+**How do you know it worked?** Your AI names the skills it chose and why, then follows them. You can also ask SFP directly, without any AI, from your project's folder:
+
+```bash
+npx sfp-hive select "write tests for the orders" --project .
+```
+
+In a Rust project, that prints (shortened):
+
+```text
+Stack for: write tests for the orders
+Project: rust
+Phase of work: test 100%
+
+1. [check] rust-testing  (testing-quality, test, about 2,949 tokens)
+   why: task words: tests; fits project: rust; backed by: words, project, role, category
+
+Chose from 133 candidates in 2 ms.
+```
+
+**4. Tell it how it went.** Say whether the skill helped. That is how SFP learns what works for you.
+
+Using Claude Code? You can install SFP as a plugin instead: `/plugin marketplace add siddu1004/SFP`, then `/plugin install sfp@sfp`. Something wrong? Run `npx sfp-hive doctor`: it names the problem and the fix.
+
+---
+
 ## See It Choose
 
-The same words, *"write tests for the orders"*, in five different projects. This table is generated by the hive itself every time the README is built:
+The same words, *"write tests for the orders"*, in five different projects. The hive itself generates this table each time this page is built:
 
 @@SAME_WORDS_TABLE@@
 
-A keyword search would give all five the same list. The hive reads each project, so no stack gets a skill for the wrong technology.
+A keyword search gives all five the same list. The hive reads the project, so no stack gets a skill for the wrong technology.
 
-And the same question from people who work differently:
+And with plain words, or with people who learn differently (real output, with the local models on):
 
-| What you ask | Who is asking | SFP picks | Why |
-|---|---|---|---|
-| *"explain how attention works in transformers"* | Learns from animation | `manim-video` | Their feedback favours animated explanations |
-| *"explain how attention works in transformers"* | Learns from reading | `teach-me` | Their feedback favours clear, structured prose |
-| *"just give me a text summary of attention"* | Learns from animation | `teach-me` | They named a format, so it beats their taste |
-| *"showcase the new checkout flow"* | Makes demo videos | `remotion-video-creation` | Their feedback favours video walkthroughs |
-| *"check for sneaky memory leaks in the goroutines"* | A Go project | `golang-patterns`, `golang-testing` | Meaning bridges the words, the project picks Go |
+| What you ask | Who is asking | SFP's first pick |
+|---|---|---|
+| *"make the login not get hacked"* | Anyone | `security-review` |
+| *"test all the buttons on my website automatically"* | Anyone | `playwright-cli` |
+| *"check for sneaky memory leaks in the goroutines"* | A Go project | `golang-patterns` |
+| *"explain how attention works in transformers"* | Someone who learns from animation | `manim-video` |
+| *"explain how attention works in transformers"* | Someone who learns from reading | `understand-explain` |
 
-<sub>Rows from the 3.19.0 benchmark runs in <a href="bench/RESULTS.md">bench/RESULTS.md</a>; the learners are simulated users with a seeded history.</sub>
+It does not always get it right. [Where it still fails](#where-it-still-fails) lists real misses.
+
+---
+
+## Common Questions
+
+| Question | Answer |
+|---|---|
+| **Is it free?** | Yes. MIT license, no account, no sign-up |
+| **Do I need a powerful computer or a GPU?** | No. SFP works on any computer with Python. Local models are an optional upgrade: the meaning model (`bge-m3`) is about 1 GB, and a good small chat model is about 14 GB of disk and memory |
+| **Is my code sent anywhere?** | SFP picks skills on your machine and sends nothing. Your AI tool still talks to its own provider, as it does today. Two opt-in exceptions: the mentor sends search queries to paper libraries, and a hosted model you add receives what you allow it |
+| **Which tools does it work with?** | Claude Code, Codex, Cursor, Gemini CLI, Antigravity, GitHub Copilot, VS Code, Windsurf, Kiro, OpenCode and [more](#supported-ides). Anything that speaks MCP works too |
+| **Will it slow things down?** | Barely. A choice takes a few milliseconds with words only, and about 0.2 seconds with a local meaning model |
+| **Do I have to change how I work?** | No. Add the standing instruction ([step 5](#5-add-the-standing-instruction)) and your AI consults SFP by itself |
+| **How do I remove it?** | `python3 scripts/install.py uninstall` removes only what SFP installed ([details](#removing-everything)) |
+| **How do I update?** | `sfp update`, or `/plugin marketplace update sfp` in Claude Code. Updates follow releases, and never move you to an older version |
 
 ---
 
@@ -148,7 +151,7 @@ And the same question from people who work differently:
 
 A parent who notices a child lighting up at music finds them a good teacher. SFP does the same for you.
 
-**Taste.** Every time a skill helps, SFP remembers what kind of help it was: an animation, a step-by-step text, hands-on code, a video. Over time it hands you the kind you learn from best.
+**Taste.** When a skill helps you, SFP notes what kind of help it was: an animation, a step-by-step text, hands-on code, a video. Over time it hands you the kind you learn from best.
 
 ```bash
 sfp taste            # what SFP has learned about you
@@ -158,41 +161,47 @@ sfp taste --reset    # start again from neutral
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="bench/charts/taste-dark.svg">
-    <img src="bench/charts/taste-light.svg" alt="Right format with and without learned taste, per simulated learner" width="100%">
+    <img src="bench/charts/taste-light.svg" alt="How often the first pick is in the format a person likes, before and after SFP learns their taste" width="100%">
   </picture>
 </p>
 
-**The mentor.** SFP watches what you lean towards and where its library falls short. When it sees a gap, it goes to the research library (OpenAlex, arXiv, Semantic Scholar), picks well-cited papers, has a local model read them and writes a practical skill for you. Every skill it writes is a draft until you approve it.
+**The mentor.** SFP notices what you lean towards and where its library falls short. It then goes to the research library (OpenAlex, arXiv, Semantic Scholar), picks well-cited papers, has a local model read them, and writes a practical skill for you. Every skill it writes is a draft until you approve it.
 
 ```bash
-sfp mentor                        # your areas, gaps, and the research topics it suggests
-sfp mentor grow                   # read the best papers and draft skills for those topics
-sfp mentor grow --topic "RAG evaluation"
-sfp research drafts               # review what it wrote
-sfp research approve <name>       # only you add a skill to the library
+sfp mentor                                 # your areas, your gaps, and research topics it suggests
+sfp mentor grow --topic "RAG evaluation"   # read the best papers and draft a skill
+sfp research drafts                        # review what it wrote
+sfp research approve <name>                # only you add a skill to the library
 ```
 
-Only the search queries leave your machine. Your history stays in `~/.sfp`, as numbers and word stems, never your task text.
+Your history stays in `~/.sfp` on your machine, as numbers and word stems, never your task text.
 
 ---
 
-## Choose Models
+## Make It Smarter (Optional)
 
-SFP works with no model at all. With local models it understands more, and it finds them itself: Ollama, LM Studio, llama.cpp, Jan and vLLM.
+SFP works with no model at all. Run a free local model and it also understands what you *mean*, not just the words you used. It finds models by itself in Ollama, LM Studio, llama.cpp, Jan and vLLM.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/plain-words-dark.svg">
+    <img src="bench/charts/plain-words-light.svg" alt="How often the right skill is chosen for tasks in plain words, as meaning and a model check are added" width="100%">
+  </picture>
+</p>
 
 ```bash
-sfp models                 # every model found, its size, and how it did when probed
-sfp models probe           # give each one three test tasks and keep the score and speed
+ollama pull bge-m3         # the meaning model, about 1 GB
+sfp doctor                 # checks that SFP sees it
+sfp models                 # every chat model found, and how it did when tested
+sfp models probe           # test each one, so SFP picks what really answers best
 ```
 
-SFP picks the model that answers best, not the one with the biggest name, and skips draft models that cannot answer on their own. Want a hosted model too?
+Prefer a hosted model? Add any OpenAI-compatible service. Your key stays in an environment variable, never in a file. With `--research-only`, the model only reads papers; your coding tasks never reach it.
 
 ```bash
 sfp models add groq https://api.groq.com/openai/v1 llama-3.3-70b-versatile --key-env GROQ_API_KEY
 sfp models add deep https://api.deepseek.com/v1 deepseek-reasoner --key-env DEEPSEEK_API_KEY --research-only
 ```
-
-API keys are never written to a file: SFP reads them from the environment variable you name. A model added with `--research-only` only reads papers and drafts skills; your coding tasks never reach it.
 
 ---
 
@@ -205,18 +214,36 @@ API keys are never written to a file: SFP reads them from the environment variab
 | A mobile developer | `mobile-dev` | `swiftui-patterns`, `dart-flutter-patterns`, `android-clean-architecture`, `compose-multiplatform-patterns` | "Review this Flutter screen for state-management problems." |
 | Building agents, plugins or MCP servers | `agent-builder` | `skill-creator`, `hook-development`, `mcp-builder`, `agent-eval`, `mem-search` | "Help me design an MCP server for our ticket system." |
 | Security-minded | `backend-dev` and `security` | `penetration-testing-with-strix`, `owasp-top-10-testing`, `find-security-vulnerabilities-in-code`, `security-review` | "Check this service against the OWASP top 10." |
-| Learning something new | the starter preset | `teach-me`, `manim-video`, `understand-explain` | "Explain how a B-tree splits a node." |
+| Learning something new | `research-docs` and `content-media` | `teach-me`, `manim-video`, `understand-explain` | "Explain how a B-tree splits a node." |
 | A founder or marketer | `business-ops` and `content-media` | `investor-materials`, `marketing-campaign`, `article-writing`, `persuasion-audit`, `price-framing` | "Draft this month's investor update." |
 | Job hunting | `career` | `career-ops` | "Evaluate this job posting against my CV." |
 | Using an IDE with no skills folder | the MCP server | every skill, through `search_skills` and `get_skill` | "Search SFP for a skill that fits this task." |
 
-**Three ways in.** Native skill folders in 16 IDEs; an MCP server that serves all @@TOTAL@@ skills on demand with nothing copied; and the **SFP Hive** sidebar for Antigravity and VS Code, which follows your work and keeps the agent's skills current on every turn.
+Install a set with `npx sfp-hive install --profile frontend-dev`. The hive can still reach every other skill on demand through the MCP server.
 
 ---
 
 ## The Proof
 
-Every number here is reproducible. The first table is recomputed from this repository each time the README is built, with words only, so it is the same on every machine (`python3 mcp/sfp_hive.py evaluate`).
+Every number here can be reproduced. A task counts as right when the chosen skills (2 or 3 on average) include one a person marked correct. **Held out** means the tasks were never used to tune SFP.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/headline-dark.svg">
+    <img src="bench/charts/headline-light.svg" alt="How often the right skill is chosen on 97 tasks SFP had never seen, from keyword search at 25 percent to the full hive at 62 percent" width="100%">
+  </picture>
+</p>
+
+With local models on (`python3 bench/run_all.py`; full method in [bench/RESULTS.md](bench/RESULTS.md)). Each cell shows **right skill chosen / right skill first**:
+
+| Engine | Fresh projects (22) | Reworded (35) | Plain words (40) | All held out (97) | 95% range, chosen |
+|---|---:|---:|---:|---:|---:|
+| Keyword search | 9 / 9 | 26 / 17 | 32 / 30 | **25 / 21** | 17 to 34 |
+| SFP, words only | 91 / 68 | 34 / 23 | 35 / 28 | **47 / 35** | 38 to 57 |
+| + meaning (`bge-m3`) | 91 / 68 | 40 / 26 | 52 / 30 | **57 / 37** | 47 to 66 |
+| + model check (`lfm2-24b-a2b`) | 91 / 68 | 51 / 40 | 55 / 35 | **62 / 44** | 52 to 71 |
+
+Words only, recomputed from this repository each time this page is built, so it is the same on every machine (`python3 mcp/sfp_hive.py evaluate`):
 
 | Task set | Hive @@SEL_VERSION@@ | Earlier engine | Plain search |
 |---|---:|---:|---:|
@@ -225,23 +252,7 @@ Every number here is reproducible. The first table is recomputed from this repos
 | 91 tasks with no project | @@BENCH_SEL@@ | @@BENCH_V1@@ | @@BENCH_SEARCH@@ |
 | Stacks with a skill for the wrong technology, all sets | @@WRONG_SEL@@ | @@WRONG_V1@@ | @@WRONG_SEARCH@@ |
 
-With local models switched on (`python3 bench/run_all.py`, full method and 95% intervals in [bench/RESULTS.md](bench/RESULTS.md)), on the 97 tasks never used for tuning:
-
-| Engine | Fresh projects (22) | Reworded (35) | Plain words (40) | All held out |
-|---|---:|---:|---:|---:|
-| Plain keyword search | 9% | 26% | 33% | 25% |
-| Hive, words only | 91% | 34% | 35% | 47% |
-| Hive + meaning | 91% | 40% | 53% | 57% |
-| **Hive + meaning + rerank** | **91%** | **51%** | **55%** | **62%** |
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/plain-words-dark.svg">
-    <img src="bench/charts/plain-words-light.svg" alt="Accuracy on tasks said in plain words, before and after meaning and rerank" width="100%">
-  </picture>
-</p>
-
-**Does it make the work better?** In blind design reviews, agents with SFP shipped a page a reviewer would accept in **2.8 rounds** against **3.7** without skills. Given a tool they had never seen, agents without skills passed 0 of 7 checks and with SFP passed all 7 ([docs/EFFECT.md](docs/EFFECT.md)).
+**Does it make the work better?** In blind design reviews, agents with SFP produced a page a reviewer would accept in **2.8 rounds**, against **3.7** with no skills. Given a tool they had never seen, agents with no skills passed 0 of 7 checks, and with SFP passed all 7 ([docs/EFFECT.md](docs/EFFECT.md)).
 
 <p align="center">
   <picture>
@@ -252,17 +263,103 @@ With local models switched on (`python3 bench/run_all.py`, full method and 95% i
 
 **What does it cost your agent?**
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/tokens-dark.svg">
+    <img src="bench/charts/tokens-light.svg" alt="Every skill always on costs 81,931 tokens; only what SFP picked costs about 5,000" width="100%">
+  </picture>
+</p>
+
 @@COST_TABLE@@
 
 **How fast is it?**
 
-Words only, a decision takes about @@SEL_MS@@ ms inside the host process. With meaning it takes about 0.2 s, and when the local model reranks, a second or two more. Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
+Words only, a choice takes about @@SEL_MS@@ ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
 
-> **What has not been measured.** Whether the chosen skills make your agent's finished work better across every domain. Learning is measured on a simulated user, not on real long-run use. Taste is measured on simulated learners whose history includes skills they liked. Token counts are estimated at 4 characters per token.
+### Where It Still Fails
+
+We would rather you hear this from us. These are real results from version @@SEL_VERSION@@:
+
+- **Some picks are simply wrong.** *"my app is slow when lots of people use it"* leads with `app-store-optimization`. On plain-words tasks, the right skill is missing about 45% of the time.
+- **Extra skills can be unrelated.** *"make the login not get hacked"* leads with the right `security-review`, but the stack also holds `blend-genre-action-combat`. The main score only asks whether a right skill is present, so it does not catch this.
+- **Naming a format does not always win.** It is meant to beat taste, but SFP followed it on only 75% of test tasks. *"just give me a text summary of attention"* leads with `ops-check`.
+- **A gap is flagged, but picks still appear.** *"simulate quantum teleportation with qiskit"* correctly reports a gap, yet still lists unrelated skills.
+- **The model check has a cost.** It lifts "right skill chosen" on held-out tasks, but on the 91 tuned tasks "right skill first" falls from 81% to 75%.
+
+> **What has not been measured.** Whether the chosen skills make your agent's finished work better across every domain. Learning is measured on a simulated user, not on real long-run use. Taste is measured on simulated learners whose history includes skills they liked, so it shows SFP remembering what they liked more than judging new skills it has never seen them use. Task sets are small: read the ranges, not just the headline. Token counts are estimated at 4 characters per token.
+
+---
+
+## For Experts
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/hive-architecture-dark.svg">
+    <img src="assets/hive-architecture-light.svg" alt="Inside the hive: it reads the task, project, phase, history and feedback; signals vote; quorum, rerank, cards, taste and roles choose; it hands over ordered skills, a bundle, a gap and what is likely next." width="100%">
+  </picture>
+</p>
+
+<details>
+<summary><b>The five layers</b></summary>
+<br>
+
+| Layer | What it does | Needs |
+|---|---|---|
+| **1. Words and project** | Scouts vote on every candidate: task words, project manifests (`package.json`, `Cargo.toml`, `go.mod` ...), work phase, category, and what usually comes next. A skill joins only with a quorum, and a skill for another technology is dropped | Nothing |
+| **2. Meaning** | A local embedding model scores closeness to the skill's description and to example requests. When the best word match carries under half the task's words, meaning may lead | `bge-m3` (preferred) or any local embedder |
+| **3. Model check** | When words are weak and no candidate fits the project, a chat model reads the 20 closest candidates and picks up to 3. Its prompt has no project context, so it never overrules a project fit | A local chat model |
+| **4. Skill cards** | `skill_cards.json` gives each skill a job, outputs, style, depth and a substitute group. Candidates are found by card, with no skill names in the selection code. Substitutes do not stack | Nothing |
+| **5. Taste** | Facet preferences from your helped feedback, with a 30-day half-life, plus a regularized LinUCB word-to-skill model | Your feedback |
+
+</details>
+
+<details>
+<summary><b>Settings, files and tools</b></summary>
+<br>
+
+| Setting | Effect |
+|---|---|
+| `SFP_SEMANTIC=0` | Words only: no embeddings and no chat model |
+| `SFP_RERANK=auto` | `auto` (default) asks the model when words are weak; `1` always; `0` never |
+| `SFP_REWRITE=1` | Also rewrite each task in expert terms first. Off by default: slow for a small gain |
+| `SFP_EXPLORE` | Exploration strength of the LinUCB bonus |
+| `SFP_DATA_DIR` | Where history and taste live (default `~/.sfp`). Set a temporary folder for scripted runs |
+| `SFP_EMBED_URL`, `SFP_EMBED_MODEL` | Use this embedding endpoint |
+| `SFP_REWRITE_URL`, `SFP_REWRITE_MODEL` | Use this chat endpoint |
+| `SFP_AUTO_UPDATE=1` | Move to new release tags automatically |
+
+| In `~/.sfp` | Holds |
+|---|---|
+| `decisions.jsonl`, `feedback.jsonl`, `skill_history.jsonl` | What was chosen and how it went: numbers and word stems, not your task text |
+| `taste.json` | Learned format, style and depth preferences |
+| `models.json`, `api_models.json` | Model probe results; API models you added (the name of the key's variable, never the key) |
+| `embeddings/`, `rewrites.json` | Rebuildable caches |
+| `skills/drafts/` | Skills the mentor wrote, waiting for your approval |
+
+**MCP tools:** `select_skills`, `search_skills`, `get_skill`, `use_skill`, `read_skill_file`, `list_categories`, `find_api`, `install_command`, `give_feedback`, `learning_status`, `predict_next`, `research_skill`, `grow_skills`.
+
+**Trust.** Skills are text your agent will follow, from @@SOURCES@@ upstream repositories. Versions are pinned in `sources.lock.json`, licenses are listed in [NOTICE.md](NOTICE.md), and research drafts are never installed without your approval. Read a skill before you rely on it.
+
+**Reproduce everything:**
+
+```bash
+python3 -m unittest discover -s tests         # the test suite
+python3 mcp/sfp_hive.py evaluate              # words-only figures, no models
+python3 bench/run_all.py                      # all engines with local models; writes bench/results and bench/RESULTS.md
+python3 bench/charts.py                       # redraws every chart from the saved results
+```
+
+</details>
 
 ---
 
 ## Install
+
+Most people only need [Start Here](#start-here). This guide covers everything else: other install methods, choosing a skill set, the MCP server, the sidebar extension, local models and the router.
+
+<details>
+<summary><b>Open the full step-by-step guide</b></summary>
+<br>
 
 This guide takes you from a bare machine to an agent that gets the right skills on its own. Every step ends with a **Check**, so you know it worked before you move on. Allow about fifteen minutes; steps 7 to 10 are optional.
 
@@ -552,6 +649,8 @@ python3 scripts/install.py rules --remove         # the standing instruction
 ```
 
 Uninstall **SFP Hive** from the editor's Extensions view. Your history, taste, feedback and settings are in `~/.sfp`; delete that folder to remove them and SFP itself.
+
+</details>
 
 ---
 
