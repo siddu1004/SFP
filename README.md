@@ -50,6 +50,16 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 
 <p align="center"><sub>62% uses optional local models; without them it is 47%. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
 
+### Why Not Just Use Search, or Turn Everything On?
+
+| | Keyword search | Every skill always on | SFP |
+|---|---|---|---|
+| **What your AI carries** | Only what it finds | 81,931 tokens (41% of its memory) | About 5,000 tokens |
+| **Knows your project** | No | No | Yes: it reads your project files |
+| **Right skill on new tasks** | 25% | Left for your AI to work out | 62% with local models, 47% without |
+| **Learns what you like** | No | No | Yes, from your feedback |
+| **Time to choose** | Instant | Nothing to choose | A few ms; up to about 1.7 s with local models |
+
 <details>
 <summary><b>New to this? What the words mean</b></summary>
 <br>
@@ -288,7 +298,7 @@ Words only, recomputed from this repository each time this page is built, so it 
 
 **How fast is it?**
 
-Words only, a choice takes about 14 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
+Words only, a choice takes about 13 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 ### Where It Still Fails
 
@@ -369,7 +379,25 @@ python3 bench/charts.py                       # redraws every chart from the sav
 
 ## Install
 
-Most people only need [Start Here](#start-here). This guide covers everything else: other install methods, choosing a skill set, the MCP server, the sidebar extension, local models and the router.
+Most people only need [Start Here](#start-here). Here is the one command for each tool:
+
+| Your tool | Run this | What happens |
+|---|---|---|
+| **Claude Code** | `/plugin marketplace add siddu1004/SFP`, then `/plugin install sfp@sfp` | The hive and skill router, inside Claude Code |
+| **Antigravity, Cursor, VS Code with Copilot, Windsurf, Codex, Cline** | `npx sfp-hive install` | Finds each tool's skills folder and installs the starter set |
+| **Any MCP client** | `npx sfp-hive mcp --tools <your tool>` | Registers the MCP server, so all 1065 skills are available on demand |
+
+Using Antigravity or VS Code? The **SFP Hive** sidebar ([step 7](#7-install-the-sfp-hive-extension)) follows your work and keeps your AI's skills current:
+
+<p align="center">
+  <img src="extensions/antigravity-hive/media/screenshot-bundle.png" width="31%" alt="Bundles in the Skill Library">
+  &nbsp;
+  <img src="extensions/antigravity-hive/media/screenshot-areas.png" width="31%" alt="Browsing skills by area">
+  &nbsp;
+  <img src="extensions/antigravity-hive/media/screenshot-detail.png" width="31%" alt="A skill's details">
+</p>
+
+The full guide covers everything else: other install methods, choosing a skill set, the extension, local models and the router.
 
 <details>
 <summary><b>Open the full step-by-step guide</b></summary>
