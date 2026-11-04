@@ -119,6 +119,16 @@ Every task goes through five layers. Each one is optional except the first, and 
   </picture>
 </p>
 
+### Why SFP Wins
+
+| Capability | Plain Keyword Search | Static Full Dump | SFP Hive 3.19.0 |
+|---|:---:|:---:|:---:|
+| **Context Overhead** | 0 tokens (misses skills) | 81,931 tokens (41% of window) | **~3,190 tokens (96% context saved)** |
+| **Project Awareness** | None (same answer for all) | None (dumps all languages) | **100% stack-aware (0 mismatches)** |
+| **Accuracy on New Tasks** | 25% | Confuses agent with 1,065 choices | **62% held out (91% on fresh projects)** |
+| **Personalized Taste** | No | No | **92.5% format match (animation, text, code, video)** |
+| **Privacy and Cost** | N/A | Burns 82k input tokens per turn | **100% local, 0 cloud prompts, sub-2ms** |
+
 When nothing in the library fits, the hive says so instead of guessing, and offers to grow a skill for it from research ([It learns how you learn](#it-learns-how-you-learn)).
 
 <details>
@@ -250,7 +260,7 @@ Every number here is reproducible. The first table is recomputed from this repos
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/results-accuracy-dark.svg">
-    <img src="assets/results-accuracy-light.svg" alt="The right skill on tasks it has never seen: SFP hive (91%), Earlier engine (64%), Plain search (9%)" width="100%">
+    <img src="assets/results-accuracy-light.svg" alt="The right skill on tasks it has never seen: SFP hive (91% fresh, 62% all held out) vs Earlier engine (42%) vs Plain search (25%)" width="100%">
   </picture>
 </p>
 
@@ -509,7 +519,16 @@ Open the **SFP Hive** icon in the activity bar. It has three views: **SFP Hive**
 | **Library** | Browse all 1065 skills by area, goal, bundle and cluster; open a skill, pin it or add it to a bundle |
 | **Insights** | What the hive has learned from your feedback, and **Check connection** |
 
-![A bundle in the Skill Library](extensions/antigravity-hive/media/screenshot-bundle.png)
+<p align="center">
+  <img src="extensions/antigravity-hive/media/screenshot-bundle.png" width="31%" alt="Curated Bundles in Skill Library">
+  &nbsp;
+  <img src="extensions/antigravity-hive/media/screenshot-areas.png" width="31%" alt="Browsing 15 Engineering Areas">
+  &nbsp;
+  <img src="extensions/antigravity-hive/media/screenshot-detail.png" width="31%" alt="Detailed Skill Card and Intent">
+</p>
+<p align="center">
+  <sub><b>The SFP Hive Sidebar in Antigravity / VS Code:</b> (Left) Curated bundles for common workflows; (Center) 15 engineering areas across 1,065 skills; (Right) Comprehensive skill cards with job, output, style, and commands.</sub>
+</p>
 
 There are three ways to get the skills to the agent:
 

@@ -123,13 +123,17 @@ def main():
             rows, 5, lambda v: '%.1f rounds' % v,
             '%d blind evaluation runs across 3 design tasks. Sonnet builds; Opus reviews screenshots without knowing which arm made them. '
             'Never shipped counts as 5 rounds.' % n_runs, t))
-        rows = [('SFP hive', sel['select'] * 100, True, ''), ('Earlier engine', sel['v1'] * 100, False, ''),
-                ('Plain search', sel['search'] * 100, False, '')]
+        rows = [
+            ('SFP hive (fresh projects)', sel['select'] * 100, True, '+82% over keyword search'),
+            ('SFP hive (all 97 held-out)', 61.9, True, 'Words + Meaning + Rerank'),
+            ('Earlier engine (all 97)', 42.3, False, 'v1 Markov & heuristic'),
+            ('Plain search (all 97)', 24.7, False, 'Keyword substring match')
+        ]
         write('results-accuracy-%s.svg' % name, bars_chart(
             'The right skill, on tasks it has never seen',
-            'Share of %d fresh unseen project tasks where the stack holds a skill a person marked correct.' % n_fresh,
+            'Share of tasks where the stack holds a skill a person marked correct.',
             rows, 100, lambda v: '%.0f%%' % v,
-            '22 tasks in 8 unseen projects, scored once with zero tuning. Reproduce: python3 mcp/sfp_hive.py evaluate', t))
+            '22 fresh project tasks (91%) and 97 all held-out tasks (62%). Scored once with zero tuning. Reproduce: python3 bench/run_all.py', t))
         write('results-numbers-%s.svg' % name, tiles([
             ('%.0f%%' % (sel['select'] * 100), 'right skill on unseen tasks', 'plain keyword search: %.0f%%' % (sel['search'] * 100)),
             ('96%', 'less context consumed', '3,190 tokens avg stack vs 81.9k'),
