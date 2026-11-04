@@ -1,0 +1,413 @@
+{
+  "projects": {
+    "sveltekit": {
+      "package.json": "{\"dependencies\": {\"@sveltejs/kit\": \"^2.0.0\", \"svelte\": \"^5.0.0\"}, \"devDependencies\": {\"vite\": \"^5.4.0\", \"@playwright/test\": \"^1.48.0\"}}",
+      "src/routes/+page.svelte": "<script>let count = 0;</script><button on:click={() => count++}>{count}</button>",
+      "src/routes/+layout.svelte": "<slot />",
+      "vite.config.ts": "import { sveltekit } from '@sveltejs/kit/vite';\nexport default { plugins: [sveltekit()] };"
+    },
+    "rust_cli": {
+      "Cargo.toml": "[package]\nname = \"logparser\"\nversion = \"0.1.0\"\nedition = \"2021\"\n[dependencies]\nclap = { version = \"4.4\", features = [\"derive\"] }\ntokio = { version = \"1.36\", features = [\"full\"] }\nserde = { version = \"1.0\", features = [\"derive\"] }\nserde_json = \"1.0\"",
+      "src/main.rs": "fn main() { println!(\"logparser\"); }",
+      "src/parser.rs": "pub fn parse_line(line: &str) -> Result<(), ()> { Ok(()) }"
+    },
+    "flask_api": {
+      "pyproject.toml": "[project]\nname = \"store-api\"\nversion = \"1.0.0\"\ndependencies = [\"flask>=3.0.0\", \"sqlalchemy>=2.0.0\", \"marshmallow>=3.20.0\"]\n[tool.pytest.ini_options]\ntestpaths = [\"tests\"]",
+      "app/__init__.py": "from flask import Flask\napp = Flask(__name__)",
+      "app/models.py": "from sqlalchemy.orm import DeclarativeBase\nclass Base(DeclarativeBase): pass",
+      "app/routes.py": "from app import app\n@app.route('/health')\ndef health(): return {'status': 'ok'}"
+    },
+    "go_service": {
+      "go.mod": "module company.com/inventory\n\ngo 1.22\n\nrequire (\n\tgithub.com/gin-gonic/gin v1.10.0\n\tgo.uber.org/zap v1.27.0\n)",
+      "main.go": "package main\nfunc main() {}",
+      "handlers/items.go": "package handlers",
+      "Dockerfile": "FROM golang:1.22-alpine\nWORKDIR /app"
+    },
+    "dotnet_core": {
+      "Billing.csproj": "<Project Sdk=\"Microsoft.NET.Sdk.Web\">\n  <PropertyGroup>\n    <TargetFramework>net8.0</TargetFramework>\n  </PropertyGroup>\n  <ItemGroup>\n    <PackageReference Include=\"Microsoft.EntityFrameworkCore\" Version=\"8.0.0\" />\n    <PackageReference Include=\"xunit\" Version=\"2.6.0\" />\n  </ItemGroup>\n</Project>",
+      "Program.cs": "var builder = WebApplication.CreateBuilder(args);\nvar app = builder.Build();\napp.Run();",
+      "Services/InvoiceService.cs": "namespace Billing.Services;\npublic class InvoiceService {}"
+    },
+    "kotlin_service": {
+      "build.gradle.kts": "plugins {\n    kotlin(\"jvm\") version \"1.9.22\"\n    kotlin(\"plugin.spring\") version \"1.9.22\"\n    id(\"org.springframework.boot\") version \"3.2.2\"\n}\ndependencies {\n    implementation(\"org.springframework.boot:spring-boot-starter-web\")\n    testImplementation(\"org.springframework.boot:spring-boot-starter-test\")\n}",
+      "src/main/kotlin/Application.kt": "package com.example\nimport org.springframework.boot.autoconfigure.SpringBootApplication\n@SpringBootApplication\nclass Application",
+      "src/main/kotlin/OrderController.kt": "package com.example"
+    },
+    "react_native": {
+      "package.json": "{\"name\": \"riderapp\", \"dependencies\": {\"react\": \"18.2.0\", \"react-native\": \"0.74.0\", \"@react-navigation/native\": \"^6.1.9\"}, \"devDependencies\": {\"@testing-library/react-native\": \"^12.4.0\", \"typescript\": \"^5.0.4\"}}",
+      "App.tsx": "import React from 'react';\nimport { View, Text } from 'react-native';\nexport default function App() { return <View><Text>Rider App</Text></View>; }",
+      "screens/MapScreen.tsx": "import React from 'react';",
+      "metro.config.js": "module.exports = {};"
+    },
+    "elixir_phoenix": {
+      "mix.exs": "defmodule Chat.MixProject do\n  use Mix.Project\n  def project do\n    [app: :chat, version: \"0.1.0\", deps: deps()]\n  end\n  defp deps do\n    [{:phoenix, \"~> 1.7.10\"}, {:ecto_sql, \"~> 3.10\"}, {:postgrex, \">= 0.0.0\"}]\n  end\nend",
+      "lib/chat_web/router.ex": "defmodule ChatWeb.Router do\n  use ChatWeb, :router\nend",
+      "lib/chat/messages.ex": "defmodule Chat.Messages do\nend"
+    },
+    "terraform_k8s": {
+      "main.tf": "terraform {\n  required_providers {\n    kubernetes = { source = \"hashicorp/kubernetes\", version = \"~> 2.26\" }\n  }\n}",
+      "variables.tf": "variable \"cluster_name\" { type = string }",
+      "k8s/deployment.yaml": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: payment-api\nspec:\n  replicas: 3",
+      "k8s/ingress.yaml": "apiVersion: networking.k8s.io/v1\nkind: Ingress\nmetadata:\n  name: payment-ingress"
+    },
+    "fastapi_ml": {
+      "requirements.txt": "fastapi>=0.110.0\nuvicorn>=0.28.0\ntorch>=2.2.0\ntransformers>=4.38.0\npytest>=8.0.0\n",
+      "app/main.py": "from fastapi import FastAPI\napp = FastAPI()",
+      "app/model.py": "import torch\nclass TextClassifier:",
+      "app/inference.py": "def predict(text: str): pass"
+    }
+  },
+  "cases": [
+    {
+      "project": "sveltekit",
+      "task": "build an accessible navigation drawer with animated opening",
+      "expect": [
+        "frontend-patterns",
+        "animate",
+        "accessibility-audit"
+      ],
+      "avoid": [
+        "django-patterns",
+        "react-patterns"
+      ]
+    },
+    {
+      "project": "sveltekit",
+      "task": "write end to end browser tests for user authentication",
+      "expect": [
+        "e2e-testing",
+        "browser-qa",
+        "playwright-cli"
+      ],
+      "avoid": [
+        "django-tdd",
+        "golang-testing"
+      ]
+    },
+    {
+      "project": "sveltekit",
+      "task": "improve initial page load speed and bundle chunks",
+      "expect": [
+        "frontend-patterns",
+        "vite-patterns"
+      ],
+      "avoid": [
+        "django-patterns"
+      ]
+    },
+    {
+      "project": "rust_cli",
+      "task": "write property based tests for command line argument parsing",
+      "expect": [
+        "rust-testing"
+      ],
+      "avoid": [
+        "python-testing",
+        "golang-testing"
+      ]
+    },
+    {
+      "project": "rust_cli",
+      "task": "refactor error types to idiomatic rust using standard library traits",
+      "expect": [
+        "rust-patterns",
+        "error-handling"
+      ],
+      "avoid": [
+        "golang-patterns",
+        "python-patterns"
+      ]
+    },
+    {
+      "project": "rust_cli",
+      "task": "benchmark log parser throughput and memory allocations",
+      "expect": [
+        "benchmark",
+        "benchmark-methodology",
+        "latency-critical-systems"
+      ],
+      "avoid": [
+        "react-performance"
+      ]
+    },
+    {
+      "project": "flask_api",
+      "task": "write unit tests for the authentication blueprint",
+      "expect": [
+        "python-testing",
+        "tdd-workflow"
+      ],
+      "avoid": [
+        "react-testing",
+        "rust-testing",
+        "golang-testing"
+      ]
+    },
+    {
+      "project": "flask_api",
+      "task": "secure api endpoints against sql injection and xss",
+      "expect": [
+        "security-review",
+        "owasp-top-10-testing",
+        "find-security-vulnerabilities-in-code"
+      ],
+      "avoid": [
+        "springboot-security"
+      ]
+    },
+    {
+      "project": "flask_api",
+      "task": "add database migration scripts for new user columns",
+      "expect": [
+        "database-migrations",
+        "postgres-patterns"
+      ],
+      "avoid": [
+        "prisma-patterns"
+      ]
+    },
+    {
+      "project": "go_service",
+      "task": "write concurrent table driven unit tests with race detection",
+      "expect": [
+        "golang-testing"
+      ],
+      "avoid": [
+        "python-testing",
+        "csharp-testing"
+      ]
+    },
+    {
+      "project": "go_service",
+      "task": "profile memory allocations and eliminate allocations in the request loop",
+      "expect": [
+        "golang-patterns",
+        "latency-critical-systems"
+      ],
+      "avoid": [
+        "react-performance"
+      ]
+    },
+    {
+      "project": "go_service",
+      "task": "build a minimal multi stage docker container image",
+      "expect": [
+        "docker-patterns",
+        "deployment-patterns"
+      ],
+      "avoid": [
+        "rails-patterns"
+      ]
+    },
+    {
+      "project": "dotnet_core",
+      "task": "write xUnit unit tests with mock repository dependencies",
+      "expect": [
+        "csharp-testing"
+      ],
+      "avoid": [
+        "python-testing",
+        "golang-testing"
+      ]
+    },
+    {
+      "project": "dotnet_core",
+      "task": "implement clean dependency injection architecture and domain events",
+      "expect": [
+        "dotnet-patterns",
+        "hexagonal-architecture"
+      ],
+      "avoid": [
+        "django-patterns"
+      ]
+    },
+    {
+      "project": "dotnet_core",
+      "task": "validate jwt bearer tokens and configure role authorization",
+      "expect": [
+        "security-review",
+        "api-security-testing"
+      ],
+      "avoid": [
+        "django-security"
+      ]
+    },
+    {
+      "project": "kotlin_service",
+      "task": "write tests for coroutine flows and service logic",
+      "expect": [
+        "kotlin-testing",
+        "kotlin-coroutines-flows"
+      ],
+      "avoid": [
+        "python-testing",
+        "swiftui-patterns"
+      ]
+    },
+    {
+      "project": "kotlin_service",
+      "task": "design idiomatic domain models with immutable data classes",
+      "expect": [
+        "kotlin-patterns"
+      ],
+      "avoid": [
+        "golang-patterns",
+        "perl-patterns"
+      ]
+    },
+    {
+      "project": "kotlin_service",
+      "task": "harden endpoints against cross site scripting and csrf",
+      "expect": [
+        "security-review",
+        "owasp-top-10-testing",
+        "springboot-security"
+      ],
+      "avoid": [
+        "django-security"
+      ]
+    },
+    {
+      "project": "react_native",
+      "task": "improve list scrolling frame rate and eliminate re-renders",
+      "expect": [
+        "react-native-patterns",
+        "react-performance"
+      ],
+      "avoid": [
+        "django-patterns"
+      ]
+    },
+    {
+      "project": "react_native",
+      "task": "write end to end tests for rider map view navigation",
+      "expect": [
+        "e2e-testing",
+        "browser-qa"
+      ],
+      "avoid": [
+        "rust-testing"
+      ]
+    },
+    {
+      "project": "react_native",
+      "task": "add fluid screen entry gestures and animations",
+      "expect": [
+        "interaction-design",
+        "improve-animations",
+        "mobile-native"
+      ],
+      "avoid": [
+        "kubernetes-patterns"
+      ]
+    },
+    {
+      "project": "elixir_phoenix",
+      "task": "write integration tests for liveview chat channels",
+      "expect": [
+        "e2e-testing",
+        "tdd-workflow"
+      ],
+      "avoid": [
+        "django-tdd",
+        "react-testing"
+      ]
+    },
+    {
+      "project": "elixir_phoenix",
+      "task": "optimize database queries to eliminate n plus one selects",
+      "expect": [
+        "postgres-patterns",
+        "database-migrations"
+      ],
+      "avoid": [
+        "prisma-patterns",
+        "jpa-patterns"
+      ]
+    },
+    {
+      "project": "elixir_phoenix",
+      "task": "rate limit public api endpoints to prevent denial of service",
+      "expect": [
+        "api-security-testing",
+        "security-review"
+      ],
+      "avoid": [
+        "django-security"
+      ]
+    },
+    {
+      "project": "terraform_k8s",
+      "task": "configure zero downtime rolling updates with readiness probes",
+      "expect": [
+        "kubernetes-patterns",
+        "canary-watch",
+        "deployment-patterns"
+      ],
+      "avoid": [
+        "react-patterns"
+      ]
+    },
+    {
+      "project": "terraform_k8s",
+      "task": "audit infrastructure code for open security group vulnerabilities",
+      "expect": [
+        "security-review",
+        "find-security-vulnerabilities-in-code",
+        "ci-security-scanning-with-strix"
+      ],
+      "avoid": [
+        "frontend-a11y"
+      ]
+    },
+    {
+      "project": "terraform_k8s",
+      "task": "set up automated container vulnerability scanning in ci",
+      "expect": [
+        "ci-security-scanning-with-strix",
+        "security-review",
+        "github-ops"
+      ],
+      "avoid": [
+        "swiftui-patterns"
+      ]
+    },
+    {
+      "project": "fastapi_ml",
+      "task": "stream model generation tokens asynchronously to the client",
+      "expect": [
+        "fastapi-patterns",
+        "api-design"
+      ],
+      "avoid": [
+        "django-patterns",
+        "rails-patterns"
+      ]
+    },
+    {
+      "project": "fastapi_ml",
+      "task": "quantize model weights to decrease vram usage and inference latency",
+      "expect": [
+        "pytorch-patterns",
+        "mle-workflow",
+        "latency-critical-systems"
+      ],
+      "avoid": [
+        "react-performance"
+      ]
+    },
+    {
+      "project": "fastapi_ml",
+      "task": "write regression tests for model embedding consistency",
+      "expect": [
+        "python-testing",
+        "mle-workflow",
+        "ai-regression-testing"
+      ],
+      "avoid": [
+        "react-testing",
+        "rust-testing"
+      ]
+    }
+  ]
+}

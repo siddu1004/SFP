@@ -1,0 +1,625 @@
+[
+  {
+    "task": "my website looks completely broken on an iphone screen",
+    "expect": [
+      "frontend-a11y",
+      "frontend-patterns",
+      "impeccable"
+    ],
+    "avoid": [
+      "django-patterns",
+      "csharp-testing"
+    ]
+  },
+  {
+    "task": "how do i make the dark mode switch keep my choice when i refresh",
+    "expect": [
+      "frontend-patterns",
+      "react-patterns"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "the page fonts look generic and unpolished, help me fix the typography",
+    "expect": [
+      "impeccable",
+      "frontend-design",
+      "design-systems"
+    ],
+    "avoid": [
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "make the dropdown menu close when clicking anywhere outside of it",
+    "expect": [
+      "frontend-patterns",
+      "react-patterns"
+    ],
+    "avoid": [
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "my react component keeps re-rendering in an endless loop",
+    "expect": [
+      "react-performance",
+      "react-patterns"
+    ],
+    "avoid": [
+      "django-patterns"
+    ]
+  },
+  {
+    "task": "how to add smooth page transitions between routes",
+    "expect": [
+      "animate",
+      "improve-animations",
+      "frontend-patterns"
+    ],
+    "avoid": [
+      "database-migrations"
+    ]
+  },
+  {
+    "task": "buttons on my app are too small to tap easily on mobile",
+    "expect": [
+      "frontend-a11y",
+      "accessibility-audit",
+      "impeccable"
+    ],
+    "avoid": [
+      "rust-testing"
+    ]
+  },
+  {
+    "task": "i need a sleek bento grid layout for our features section",
+    "expect": [
+      "bento",
+      "minimalist-ui",
+      "impeccable"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "clean up messy css styles and standardize spacing units",
+    "expect": [
+      "design-system",
+      "design-systems",
+      "impeccable"
+    ],
+    "avoid": [
+      "mysql-patterns"
+    ]
+  },
+  {
+    "task": "translate the entire user interface into german and japanese",
+    "expect": [
+      "i18n-sync"
+    ],
+    "avoid": [
+      "bengali-nlp"
+    ]
+  },
+  {
+    "task": "how do i design a rest api so other developers can integrate easily",
+    "expect": [
+      "api-design",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "frontend-slides"
+    ]
+  },
+  {
+    "task": "my database query takes forever when the table has lots of rows",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "clickhouse-io"
+    ],
+    "avoid": [
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "add background workers for slow tasks so the web request doesn't freeze",
+    "expect": [
+      "django-celery",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "how do i safely alter a table with millions of records without crashing",
+    "expect": [
+      "database-migrations",
+      "postgres-patterns"
+    ],
+    "avoid": [
+      "prisma-patterns"
+    ]
+  },
+  {
+    "task": "our server runs out of file descriptors under heavy concurrent load",
+    "expect": [
+      "backend-patterns",
+      "latency-critical-systems"
+    ],
+    "avoid": [
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "cache user profiles in memory so we stop hitting the database every time",
+    "expect": [
+      "redis-patterns",
+      "content-hash-cache-pattern"
+    ],
+    "avoid": [
+      "vue-patterns"
+    ]
+  },
+  {
+    "task": "split our big messy monolithic file into clean separate modules",
+    "expect": [
+      "hexagonal-architecture",
+      "safe-refactor",
+      "orch-refine-code"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "how do i handle network timeouts and retries with exponential backoff",
+    "expect": [
+      "error-handling",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "prevent two customers from booking the exact same seat at the same second",
+    "expect": [
+      "postgres-patterns",
+      "backend-patterns",
+      "mysql-patterns"
+    ],
+    "avoid": [
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "turn these raw messy json responses from an external service into clean objects",
+    "expect": [
+      "api-connector-builder",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "write tests to make sure our checkout form rejects expired credit cards",
+    "expect": [
+      "tdd-workflow",
+      "e2e-testing",
+      "browser-qa"
+    ],
+    "avoid": [
+      "rust-patterns"
+    ]
+  },
+  {
+    "task": "our test suite is flaky and randomly fails on github actions",
+    "expect": [
+      "e2e-testing",
+      "browser-qa"
+    ],
+    "avoid": [
+      "seo"
+    ]
+  },
+  {
+    "task": "automatically test clicking through our user onboarding flow in a real browser",
+    "expect": [
+      "playwright-cli",
+      "e2e-testing",
+      "browser-qa"
+    ],
+    "avoid": [
+      "csharp-testing"
+    ]
+  },
+  {
+    "task": "review this git diff for sneaky logic bugs before i open a pull request",
+    "expect": [
+      "gsd-code-review",
+      "code-tour",
+      "conventional-commit-review"
+    ],
+    "avoid": [
+      "career-ops"
+    ]
+  },
+  {
+    "task": "draft a proper semantic commit message following conventional commits format",
+    "expect": [
+      "conventional-commit-review",
+      "caveman-commit"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "verify that our api response status codes match the openapi contract",
+    "expect": [
+      "contract-first",
+      "api-design",
+      "api-security-testing"
+    ],
+    "avoid": [
+      "frontend-slides"
+    ]
+  },
+  {
+    "task": "measure code coverage to find which critical branches have no tests",
+    "expect": [
+      "tdd-workflow",
+      "python-testing"
+    ],
+    "avoid": [
+      "seo"
+    ]
+  },
+  {
+    "task": "write fuzz tests to find edge case inputs that make our parser panic",
+    "expect": [
+      "rust-testing",
+      "golang-testing"
+    ],
+    "avoid": [
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "someone told me our login page is vulnerable to brute force password guessing",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing",
+      "api-security-testing"
+    ],
+    "avoid": [
+      "frontend-slides"
+    ]
+  },
+  {
+    "task": "check whether our website headers protect against clickjacking",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": [
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "prevent malicious users from uploading executable php or script files",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "find security vulnerabilities in our dependencies before launching to production",
+    "expect": [
+      "find-security-vulnerabilities-in-code",
+      "security-review",
+      "ci-security-scanning-with-strix"
+    ],
+    "avoid": [
+      "career-ops"
+    ]
+  },
+  {
+    "task": "audit our application for medical patient data and privacy compliance",
+    "expect": [
+      "hipaa-compliance",
+      "healthcare-phi-compliance"
+    ],
+    "avoid": [
+      "marketing-campaign"
+    ]
+  },
+  {
+    "task": "our api keys accidentally got committed into git history, how do we rotate them",
+    "expect": [
+      "security-review",
+      "cli-keys",
+      "omni-api-keys"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "protect our public contact form against spam bots without annoying real humans",
+    "expect": [
+      "security-review",
+      "api-security-testing"
+    ],
+    "avoid": [
+      "rust-testing"
+    ]
+  },
+  {
+    "task": "package our application into a small lightweight container for production",
+    "expect": [
+      "docker-patterns",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "swiftui-patterns"
+    ]
+  },
+  {
+    "task": "how do i set up zero downtime rolling deployments on kubernetes",
+    "expect": [
+      "kubernetes-patterns",
+      "canary-watch",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "write a github actions workflow to run our test suite on every pull request",
+    "expect": [
+      "github-ops",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "design-systems"
+    ]
+  },
+  {
+    "task": "monitor server error rates and trigger an alert if 500 errors spike",
+    "expect": [
+      "dashboard-builder",
+      "canary-watch"
+    ],
+    "avoid": [
+      "career-ops"
+    ]
+  },
+  {
+    "task": "set up a private vpn so our team can access internal staging servers",
+    "expect": [
+      "homelab-wireguard-vpn",
+      "homelab-network-setup"
+    ],
+    "avoid": [
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "reduce our docker build times by leveraging layer caching properly",
+    "expect": [
+      "docker-patterns"
+    ],
+    "avoid": [
+      "seo"
+    ]
+  },
+  {
+    "task": "our llm prompts are way too long and costing a fortune in api bills",
+    "expect": [
+      "cost-aware-llm-pipeline",
+      "prompt-caching-strategy",
+      "token-budget-advisor"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "evaluate whether our rag search is retrieving relevant context chunks",
+    "expect": [
+      "agent-eval",
+      "eval-harness",
+      "mle-workflow"
+    ],
+    "avoid": [
+      "cisco-ios-patterns"
+    ]
+  },
+  {
+    "task": "set up a reproducible training pipeline with data versioning for our model",
+    "expect": [
+      "mle-workflow",
+      "pytorch-patterns"
+    ],
+    "avoid": [
+      "frontend-slides"
+    ]
+  },
+  {
+    "task": "build an mcp tool so claude can query our internal postgres database",
+    "expect": [
+      "build-mcp-server",
+      "mcp-builder",
+      "mcp-server-patterns"
+    ],
+    "avoid": [
+      "swiftui-patterns"
+    ]
+  },
+  {
+    "task": "test our ai agent against tricky prompts to make sure it doesn't leak secrets",
+    "expect": [
+      "agent-eval",
+      "security-review",
+      "agent-security-hardening"
+    ],
+    "avoid": [
+      "career-ops"
+    ]
+  },
+  {
+    "task": "the list view in our mobile app stutters while scrolling fast",
+    "expect": [
+      "react-native-patterns",
+      "mobile-native",
+      "flutter-dart-code-review"
+    ],
+    "avoid": [
+      "django-patterns"
+    ]
+  },
+  {
+    "task": "build an ios settings screen using native navigation bars and toggles",
+    "expect": [
+      "swiftui-patterns",
+      "apple-design"
+    ],
+    "avoid": [
+      "android-clean-architecture"
+    ]
+  },
+  {
+    "task": "structure our android app with repository pattern and viewmodels",
+    "expect": [
+      "android-clean-architecture",
+      "kotlin-patterns"
+    ],
+    "avoid": [
+      "swiftui-patterns"
+    ]
+  },
+  {
+    "task": "keep mobile app state synchronized when device goes offline and comes back",
+    "expect": [
+      "dart-flutter-patterns",
+      "mobile-native",
+      "react-native-patterns"
+    ],
+    "avoid": [
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "teach me step by step how database b-tree indexes actually work",
+    "expect": [
+      "teach-me"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "write a clear technical blog post explaining our new search feature to users",
+    "expect": [
+      "article-writing",
+      "content-engine"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "prepare an update deck for our seed investors with traction and burn rate",
+    "expect": [
+      "investor-materials",
+      "presentation-design"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "audit our saas pricing page to make our tier options clearer and reduce dropoff",
+    "expect": [
+      "price-framing",
+      "persuasion-audit",
+      "marketing-campaign"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "create a short animated video demonstrating how our cli tool operates",
+    "expect": [
+      "remotion-video-creation",
+      "manim-video",
+      "ui-demo"
+    ],
+    "avoid": [
+      "database-migrations"
+    ]
+  },
+  {
+    "task": "write customer case study documentation showing before and after results",
+    "expect": [
+      "article-writing",
+      "content-engine",
+      "market-research"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "draw a customer journey map showing where users get confused in checkout",
+    "expect": [
+      "journey-mapping",
+      "ux-research"
+    ],
+    "avoid": [
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "help me update my engineering resume to highlight distributed systems work",
+    "expect": [
+      "career-ops"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "clean up and structure our project readme so open source contributors can get started",
+    "expect": [
+      "codebase-onboarding",
+      "docs-governance"
+    ],
+    "avoid": [
+      "penetration-testing-with-strix"
+    ]
+  },
+  {
+    "task": "automate customer support email triage and tag incoming billing questions",
+    "expect": [
+      "email-ops",
+      "messages-ops"
+    ],
+    "avoid": [
+      "rust-testing"
+    ]
+  }
+]

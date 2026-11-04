@@ -1,0 +1,337 @@
+[
+  {
+    "task": "wrangle messy json payloads from multiple third-party suppliers into a canonical format",
+    "expect": [
+      "api-connector-builder",
+      "backend-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "pen test our graphql endpoint for auth bypass and idor flaws",
+    "expect": [
+      "api-security-testing",
+      "penetration-testing-with-strix",
+      "owasp-top-10-testing"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "whip up a slick interactive pitch deck for angel investors",
+    "expect": [
+      "investor-materials",
+      "frontend-slides",
+      "presentation-design"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "track down why our redis cache hit ratio plunged after the latest release",
+    "expect": [
+      "redis-patterns",
+      "investigate-first",
+      "content-hash-cache-pattern"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "turn our monolith's raw git log into a clean semantic changelog with contributors",
+    "expect": [
+      "rea-changelog-update",
+      "conventional-commit-review"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "diagnose why database replicas are lagging behind the write primary",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "investigate-first"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "set up canary deployments with automated rollback on error spikes",
+    "expect": [
+      "canary-watch",
+      "deployment-patterns",
+      "kubernetes-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "audit our react tree for unnecessary re-renders using profiling tools",
+    "expect": [
+      "react-performance",
+      "react-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "enforce strict architectural boundaries between domain layers and external adapters",
+    "expect": [
+      "hexagonal-architecture",
+      "coding-standards"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "measure end-to-end user journeys for checkout friction and dropoff",
+    "expect": [
+      "journey-mapping",
+      "ux-research",
+      "click-path-audit"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "harden container images against root execution and remove unnecessary binaries",
+    "expect": [
+      "docker-patterns",
+      "security-review"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "wire up playwright smoke tests in continuous integration with trace artifacts",
+    "expect": [
+      "e2e-testing",
+      "browser-qa",
+      "playwright-cli"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "construct an evaluation harness to benchmark prompt accuracy across model versions",
+    "expect": [
+      "eval-harness",
+      "agent-eval"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "distill key findings from 50 user interview transcripts into actionable personas",
+    "expect": [
+      "ux-research",
+      "research-ops"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "profile go goroutine leaks and race conditions under sustained traffic",
+    "expect": [
+      "golang-testing",
+      "golang-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "implement property based fuzz testing for our binary encoding logic",
+    "expect": [
+      "rust-testing",
+      "fsharp-testing"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "build an mcp tool that lets external agents query our internal issue tracker",
+    "expect": [
+      "build-mcp-server",
+      "mcp-builder",
+      "mcp-server-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "scaffold a responsive bento grid showcase with dark mode theme support",
+    "expect": [
+      "bento",
+      "minimalist-ui",
+      "impeccable"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "coordinate a complex database migration across partitioned tables without lockups",
+    "expect": [
+      "database-migrations",
+      "postgres-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "vet our cloud storage permissions for public bucket leakage risks",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "write clean xUnit specifications with fluent assertions for billing calculations",
+    "expect": [
+      "csharp-testing",
+      "dotnet-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "craft an engaging technical walkthrough video with code animations",
+    "expect": [
+      "manim-video",
+      "remotion-video-creation",
+      "ui-demo"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "streamline our pr review cycle with automated formatting and lint checks on save",
+    "expect": [
+      "plankton-code-quality",
+      "coding-standards"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "generate high resolution vector diagrams explaining distributed consensus",
+    "expect": [
+      "journey-mapping",
+      "architecture-decision-records"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "triage high severity cve alerts reported in our npm dependency lockfile",
+    "expect": [
+      "find-security-vulnerabilities-in-code",
+      "ci-security-scanning-with-strix",
+      "security-review"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "implement token bucket rate limiting middleware for public api quotas",
+    "expect": [
+      "api-design",
+      "backend-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "tune postgres indexing strategies for multi-tenant queries on jsonb columns",
+    "expect": [
+      "postgres-patterns",
+      "database-migrations"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "audit web accessibility for screen readers and keyboard tab navigation",
+    "expect": [
+      "accessibility-audit",
+      "frontend-a11y",
+      "impeccable"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "design an offline-first state synchronization engine for our mobile client",
+    "expect": [
+      "mobile-native",
+      "dart-flutter-patterns",
+      "react-native-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "build a grafana dashboard tracking service p99 latency and circuit breaker trips",
+    "expect": [
+      "dashboard-builder",
+      "canary-watch"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "orchestrate a safe refactoring of our payment gateway without altering behavior",
+    "expect": [
+      "safe-refactor",
+      "orch-refine-code"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "harden spring boot rest endpoints against insecure deserialization",
+    "expect": [
+      "springboot-security",
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "automate mailbox sorting and response drafting for incoming billing inquiries",
+    "expect": [
+      "email-ops",
+      "messages-ops"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "write contract tests verifying consumer driven contracts against our backend provider",
+    "expect": [
+      "contract-first",
+      "api-design",
+      "tdd-workflow"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "craft persuasive copywriting for our developer tool landing page hero",
+    "expect": [
+      "marketing-campaign",
+      "persuasion-audit",
+      "article-writing"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "inspect our swift app for main thread blocking and memory retention cycles",
+    "expect": [
+      "swift-concurrency-6-2",
+      "apple-design"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "clean up orphaned docker volumes and reclaim unused disk space",
+    "expect": [
+      "docker-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "simulate sudden database failover and test client reconnect behavior",
+    "expect": [
+      "investigate-first",
+      "backend-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "scaffold a robust cli tool with subcommands and flags in python",
+    "expect": [
+      "python-patterns",
+      "backend-patterns"
+    ],
+    "avoid": []
+  },
+  {
+    "task": "conduct a blind code review of changed pull request files before deployment",
+    "expect": [
+      "gsd-code-review",
+      "conventional-commit-review"
+    ],
+    "avoid": []
+  }
+]
