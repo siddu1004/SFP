@@ -952,6 +952,10 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         real = [n for n in quality if n not in exclude and ((votes[n].get('meaning') or 0) >= 0.5 or
                 len(set(sit['words']) & v1.SKILL_TOKENS.get(n, set())) >= 2)]
         allowed_cands = set(sorted(real, key=lambda n: -quality[n])[:3])
+    import sfp_retrieve
+    task_tokens = set(core.tokens(task or ''))
+    field_out = {n for n in quality if n not in include and not sfp_retrieve.in_domain(n, task_tokens) and votes[n].get('relation') != 'fit'}
+    allowed_cands -= field_out
     judged = None
     if sit.get('semantic') and rerank_wanted(sit, votes) and not no_real_job(task, sit, missing):
         judged = judge_stage(task, sit, votes, exclude, after, named_form, taste)
