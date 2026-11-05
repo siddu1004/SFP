@@ -54,23 +54,22 @@ def clean(name, requests):
     return out[:PER_SKILL]
 
 
-def main():
-    out = {}
-    if os.path.exists(OUT):
-        with open(OUT, encoding='utf-8') as f:
-            out = json.load(f)
-    todo = [s for s in core.CATALOG['skills'] if len(out.get(s['name'], [])) < 3][:LIMIT]
-    t0 = time.time()
-    for i in range(0, len(todo), BATCH):
-        chunk = todo[i:i + BATCH]
-        listing = '\n'.join('- %s: %s' % (s['name'], ' '.join((s['description'] or '').split())[:300]) for s in chunk)
-        data = {}
-        for _ in range(2):
-            try:
-                data = ask(PROMPT % (PER_SKILL, listing))
-                break
-            except (OSError, ValueError, KeyError, IndexError):
-                time.sleep(3)
+import concurrent.futures
+import threading
+
+LOCK = threading.Lock()
+
+
+def process_chunk(chunk, out, i, total, t0):
+    listing = '\n'.join('- %s: %s' % (s['name'], ' '.join((s['description'] or '').split())[:300]) for s in chunk)
+    data = {}
+    for _ in range(3):
+        try:
+            data = ask(PROMPT % (PER_SKILL, listing))
+            break
+        except (OSError, ValueError, KeyError, IndexError):
+            time.sleep(2)
+    with LOCK:
         for s in chunk:
             got = clean(s['name'], data.get(s['name'], []))
             if got:
@@ -79,7 +78,21 @@ def main():
         with open(tmp, 'w', encoding='utf-8') as f:
             json.dump(out, f, indent=2, sort_keys=True)
         os.replace(tmp, OUT)
-        print('%d/%d  %.0fs' % (i + len(chunk), len(todo), time.time() - t0), flush=True)
+        print('%d/%d done  %.0fs' % (len(out), total, time.time() - t0), flush=True)
+
+
+def main():
+    out = {}
+    if os.path.exists(OUT):
+        with open(OUT, encoding='utf-8') as f:
+            out = json.load(f)
+    todo = [s for s in core.CATALOG['skills'] if len(out.get(s['name'], [])) < 3][:LIMIT]
+    total_skills = len(core.CATALOG['skills'])
+    t0 = time.time()
+    chunks = [todo[i:i + BATCH] for i in range(0, len(todo), BATCH)]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+        futures = [ex.submit(process_chunk, c, out, idx, total_skills, t0) for idx, c in enumerate(chunks)]
+        concurrent.futures.wait(futures)
 
 
 if __name__ == '__main__':
