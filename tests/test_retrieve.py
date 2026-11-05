@@ -40,6 +40,25 @@ class FusionTest(unittest.TestCase):
         rt._rank_meaning = lambda text: []
         self.assertEqual(rt.candidates('write tests', allow=lambda n: n != 'rust-testing'), ['react-testing'])
 
+    def test_project_tech_filters_skills_with_conflicting_needs(self):
+        self.addCleanup(setattr, rt, '_rank_words', rt._rank_words)
+        self.addCleanup(setattr, rt, '_rank_meaning', rt._rank_meaning)
+        self.addCleanup(setattr, rt, 'cards', rt.cards)
+        rt._rank_words = lambda text: ['python-testing', 'rust-testing']
+        rt._rank_meaning = lambda text: []
+        rt.cards = lambda: {'python-testing': {'needs': ['pytest']}, 'rust-testing': {'needs': []}}
+        # When project_tech is rust and task does not name pytest, python-testing is filtered out
+        self.assertEqual(rt.candidates('write unit tests', project_tech=('rust',)), ['rust-testing'])
+
+    def test_candidates_combines_first_clause_ranking(self):
+        calls = []
+        self.addCleanup(setattr, rt, '_rank_words', rt._rank_words)
+        self.addCleanup(setattr, rt, '_rank_meaning', rt._rank_meaning)
+        rt._rank_words = lambda text, limit=60: calls.append(text) or ['rust-testing']
+        rt._rank_meaning = lambda text, limit=60: []
+        rt.candidates('build signup page, then write tests')
+        self.assertIn('build signup page', calls)
+
 
 class JudgeTest(unittest.TestCase):
     NAMES = ['security-review', 'react-testing', 'rust-testing']

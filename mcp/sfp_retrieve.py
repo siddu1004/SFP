@@ -67,12 +67,22 @@ def clauses(task):
     return parts if len(parts) > 1 else []
 
 
-def _rank_words(text):
-    return [s['name'] for _, s in core.scored_search(text, limit=RANK_DEPTH)]
+def _rank_words(text, limit=RANK_DEPTH):
+    return [s['name'] for _, s in core.scored_search(text, limit=limit)]
 
 
-def _rank_meaning(text):
-    return [n for _, n in sfp_embed.similar(text, RANK_DEPTH)]
+def _rank_meaning(text, limit=RANK_DEPTH):
+    return [n for _, n in sfp_embed.similar(text, limit)]
+
+
+def _call_rank(fn, text, limit):
+    try:
+        return fn(text, limit=limit)
+    except TypeError:
+        try:
+            return fn(text, limit)
+        except TypeError:
+            return fn(text)
 
 
 def in_domain(name, task_tokens):
@@ -86,19 +96,41 @@ def in_domain(name, task_tokens):
     return any(core.DF.get(t, 0) <= COMMON_WORD_SKILLS for t in own & task_tokens)   # "app" alone says nothing about app stores
 
 
-def candidates(task, terms=None, allow=None, size=POOL):
-    """Skill names that may fit the task, best first. `terms` is an expert's wording of it (sfp_intent); `allow(name)`
-    lets the caller keep out what cannot fit, such as skills for another technology than the project's."""
+def candidates(task, project_tech=None, terms=None, allow=None, size=POOL):
+    """Skill names that may fit the task, best first. Combines full text, first clause, expert terms,
+    and separate jobs via RRF. `project_tech` filters skills requiring non-matching tools."""
     if not (task or '').strip():
         return []
-    rankings = [(_rank_words(task), 1.0), (_rank_meaning(task), 1.0)]
+    if isinstance(project_tech, (str, list)) and terms is None and allow is None and not isinstance(project_tech, (set, frozenset)):
+        if isinstance(project_tech, str) or (project_tech and not any(t in core.TOKENS for t in project_tech)):
+            terms = project_tech
+            project_tech = None
+
+    rankings = [(_call_rank(_rank_words, task, 60), 1.0), (_call_rank(_rank_meaning, task, 60), 1.0)]
+
+    c_parts = clauses(task)
+    if c_parts:
+        first_c = c_parts[0]
+        rankings += [(_call_rank(_rank_words, first_c, 40), 0.5), (_call_rank(_rank_meaning, first_c, 40), 0.5)]
+        for part in c_parts[1:]:
+            rankings += [(_call_rank(_rank_words, part, 40), 0.5), (_call_rank(_rank_meaning, part, 40), 0.5)]
+
     expert = ', '.join(terms) if isinstance(terms, (list, tuple)) else (terms or '')
     if expert.strip():
-        rankings += [(_rank_words(expert), 1.0), (_rank_meaning(task + '. ' + expert), 1.0)]
-    for part in clauses(task):
-        rankings += [(_rank_words(part), 0.5), (_rank_meaning(part), 0.5)]
+        rankings += [(_call_rank(_rank_words, expert, 60), 0.8), (_call_rank(_rank_meaning, task + '. ' + expert, 60), 0.8)]
+
     tokens = set(core.tokens(task + ' ' + expert))
-    out = [n for n in rrf(rankings) if in_domain(n, tokens) and (allow is None or allow(n))]
+    tech_set = set(t.lower() for t in project_tech) if project_tech else set()
+
+    def tech_ok(n):
+        if not tech_set:
+            return True
+        c_needs = (cards().get(n) or {}).get('needs') or []
+        if not c_needs:
+            return True
+        return any(t.lower() in tech_set for t in c_needs) or any(t.lower() in tokens for t in c_needs)
+
+    out = [n for n in rrf(rankings) if in_domain(n, tokens) and tech_ok(n) and (allow is None or allow(n))]
     return out[:size]
 
 
