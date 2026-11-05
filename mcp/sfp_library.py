@@ -326,6 +326,7 @@ def skill_detail(ident):
 
 WORDS_CAP = 1.2      # the weight of query words that counts as a full match: a task needs two or three strong words, not all of them
 MATCH_MIN = 0.45     # a bundle is suggested from this score
+BUNDLE_COMMON_WORD = 60   # a word in more skills than this cannot alone tie a task to a bundle
 PUSH_MIN = 0.6       # a bundle is attached whole from this score
 DF_SCALE = 893       # the library size the weights above were tuned at: a word's count is read relative to it, so the
                      # library growing does not drift every bundle's score down
@@ -417,7 +418,8 @@ def match_bundles(task, chosen=(), limit=None, exclude=(), tech=None, use_bundle
             score = 0.65 * words + 0.35 * have if hit or have else 0.0
             
             # Penalize if only 1 hit, UNLESS hit is directly in bundle ID or skill names
-            id_match = bool(set(hit) & b_id_parts)
+            # A common word such as "test" in a skill's name does not show the bundle fits this job.
+            id_match = any(core.DF.get(t, 0) <= BUNDLE_COMMON_WORD for t in set(hit) & b_id_parts)
             if len(hit) < 2 and have < 0.5 and not id_match:
                 score *= 0.6
 
