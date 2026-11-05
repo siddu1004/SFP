@@ -11,6 +11,7 @@ import sys
 import unittest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, 'mcp'))
 SERVER = os.path.join(ROOT, 'mcp', 'sfp_mcp.py')
 
 
@@ -107,6 +108,13 @@ class McpServerTest(unittest.TestCase):
         self.assertTrue({'postgres-patterns', 'database-migrations'} & set(names), names)
         err, text = self.c.call('search_skills', query='penetration testing', category='security')
         self.assertTrue(all(s['category'] == 'security' for s in json.loads(text)['skills']))
+
+    def test_select_skills_with_use_bundles(self):
+        err, text = self.c.call('select_skills', task='make form accessible', use_bundles='accessible-form')
+        self.assertFalse(err)
+        data = json.loads(text)
+        self.assertIn('bundles_applied', data)
+        self.assertTrue(any(b['id'] == 'accessible-form' for b in data['bundles_applied']))
 
     def test_search_rejects_empty_and_bad_category(self):
         self.assertTrue(self.c.call('search_skills')[0])

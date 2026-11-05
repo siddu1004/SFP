@@ -436,7 +436,8 @@ def tool_select_skills(a):
     hive()
     import sfp_needs
     res = sfp_needs.decide(task, project and os.path.expanduser(project), a.get('goal'), after,
-                           int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)))
+                           int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)),
+                           use_bundles=a.get('use_bundles', ()))
     res['next_step'] = ('Call get_skill for each skill in the stack, in order: base layers do the work, '
                         'check layers verify it, finish layers ship it.')
     if res.get('gap'):
@@ -538,7 +539,8 @@ TOOLS = [
          'goal': {'type': 'string', 'description': 'The end goal, if broader than the task, e.g. "ship to production".'},
          'after': {'type': 'string', 'description': 'Comma-separated skills already used, most recent last. Defaults to the skills fetched in this session.'},
          'budget': {'type': 'integer', 'description': 'Token budget for the instructions loaded (default 12000).'},
-         'max_skills': {'type': 'integer', 'description': 'Most skills in the stack (default 4, max 8).'}}, 'required': ['task']},
+         'max_skills': {'type': 'integer', 'description': 'Most skills in the stack (default 4, max 8).'},
+         'use_bundles': {'type': 'string', 'description': 'Comma-separated bundle IDs or names to always attach whole and in order.'}}, 'required': ['task']},
      'fn': tool_select_skills},
     {'name': 'give_feedback',
      'description': 'Tell the hive how a decision turned out, so it learns from its mistakes. After finishing a task, report which chosen skills helped, which did not, which were chosen but never used (ignored), and which should have been chosen (missing). Stores the verdicts, and the decision\'s word stems, in ~/.sfp on this machine; nothing is sent anywhere. Returns how the model\'s view of each skill moved.',

@@ -118,7 +118,7 @@ def _action(item):
     return 'ready'
 
 
-def plan_bundles(task, project=None, exclude=(), include=(), terms=None, preview=None):
+def plan_bundles(task, project=None, exclude=(), include=(), terms=None, preview=None, use_bundles=()):
     """The bundles that fit the task, judged on its words and on what the hive would choose by itself.
     A bundle fit well enough (score >= PUSH_MIN) is `push`: its skills all join the stack."""
     import sfp_hive as sel
@@ -133,28 +133,43 @@ def plan_bundles(task, project=None, exclude=(), include=(), terms=None, preview
     fired = {n['id'] for n in needs(task, terms or ())}
     quiet = [b['id'] for b in sfp_library.bundles() for c in capabilities()
              if c['id'] not in fired and b['skills'] and set(b['skills']) <= set(c['skills'])]
-    return sfp_library.match_bundles(task, chosen=list(preview) + list(include), limit=2,
-                                     exclude=quiet, tech=tech)
+    return sfp_library.match_bundles(task, chosen=list(preview) + list(include), limit=None,
+                                     exclude=quiet, tech=tech, use_bundles=use_bundles)
 
 
 def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, include=(), exclude=(), explain=False,
-           check=False, learn=True, bundles='push', explore=None):
+           check=False, learn=True, bundles='push', explore=None, use_bundles=()):
     """sfp_learn.decide plus needs and bundles. Provider skills of every need join the stack, the rest are preloaded.
     `bundles`: 'push' attaches a bundle that fits the task well, whole and in order; 'suggest' only lists and preloads
     it; 'off' does neither."""
     import sfp_hive as sel
     import sfp_learn
+    import sfp_stack as v1
     terms = list(sel.scan(project).get('terms', {})) if project else []
     found = needs(task, terms, check=check, exclude=exclude)
     attach = [n['attach'] for n in found if n['attach'] not in include]
     inc = list(dict.fromkeys(list(include) + attach))
     matches = []
-    if bundles != 'off':
-        matches = plan_bundles(task, project, exclude, inc)
-        if bundles == 'push' and max_skills >= 3:
+    bundles_applied = []
+    if bundles != 'off' or use_bundles:
+        matches = plan_bundles(task, project, exclude, inc, use_bundles=use_bundles)
+        if (bundles == 'push' and max_skills >= 3) or use_bundles:
             for m in matches:
-                if m.get('push'):
-                    inc = list(dict.fromkeys(inc + [n for n in m['skills'] if n not in set(exclude)]))
+                if (bundles == 'push' and m.get('push')) or m.get('named'):
+                    added = []
+                    for n in m['skills']:
+                        if n not in set(exclude):
+                            if n not in inc:
+                                inc.append(n)
+                                added.append(n)
+                            elif n in m['skills']:
+                                added.append(n)
+                    bundles_applied.append({
+                        'id': m['id'],
+                        'name': m['name'],
+                        'skills': m['skills'],
+                        'added_skills': added
+                    })
     res = sfp_learn.decide(task, project, goal, after, budget, max(max_skills, len(inc)), learn=learn, include=inc,
                            exclude=exclude, explain=explain, explore=explore)
     chosen = {c['name'] for c in res['stack']}
@@ -168,6 +183,21 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             res['preload'] += [{'name': n, 'why': 'rest of the "%s" bundle' % m['name']} for n in m['missing']
                                if n not in {p['name'] for p in res['preload']}]
     res['bundles'] = matches
+    res['bundles_applied'] = bundles_applied
+    res['tokens_used'] = res.get('spent', sum(c.get('tokens', v1.body_tokens(c['name'])) for c in res['stack']))
+    
+    budget_omitted = []
+    why_map = res.get('why') or {}
+    for n, reason in why_map.items():
+        if reason == 'over the token budget':
+            cost = v1.body_tokens(n)
+            budget_omitted.append({
+                'name': n,
+                'tokens': cost,
+                'how_to_include': f'increase --budget to {res["tokens_used"] + cost} or pin --include {n}'
+            })
+    res['budget_omitted'] = budget_omitted
+
     # Skills a need or a bundle brought in are not the user's pins: say where they came from.
     origin = {}
     for m in matches:

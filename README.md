@@ -276,7 +276,7 @@ Words only, recomputed from this repository each time this page is built, so it 
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **91%** | 64% | 9% |
 | 24 tasks in 10 sample projects | 79% | 79% | 25% |
-| 91 tasks with no project | 88% | 87% | 84% |
+| 91 tasks with no project | 87% | 87% | 84% |
 | Stacks with a skill for the wrong technology, all sets | 0 | 0 | 0 |
 
 **Does it make the work better?** In blind design reviews, agents with SFP produced a page a reviewer would accept in **2.8 rounds**, against **3.7** with no skills. Given a tool they had never seen, agents with no skills passed 0 of 7 checks, and with SFP passed all 7 ([docs/EFFECT.md](docs/EFFECT.md)).
@@ -309,7 +309,7 @@ Words only, recomputed from this repository each time this page is built, so it 
 
 **How fast is it?**
 
-Words only, a choice takes about 6 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
+Words only, a choice takes about 7 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 ### Where It Still Fails
 

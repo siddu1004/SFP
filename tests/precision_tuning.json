@@ -2,201 +2,420 @@
   {
     "task": "rename this variable",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations", "safe-refactor", "sepia-recreate"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations",
+      "safe-refactor",
+      "sepia-recreate"
+    ]
   },
   {
     "task": "make the login not get hacked",
-    "expect": ["security-review", "agent-security-hardening", "django-security", "safety-guard", "web-app-penetration-testing"],
-    "avoid": ["blend-genre-action-combat", "cost-accounting", "dithered", "founder-marketing"]
+    "expect": [
+      "security-review",
+      "agent-security-hardening",
+      "django-security",
+      "safety-guard",
+      "web-app-penetration-testing",
+      "penetration-testing-with-strix"
+    ],
+    "avoid": [
+      "blend-genre-action-combat",
+      "cost-accounting",
+      "dithered",
+      "founder-marketing"
+    ]
   },
   {
     "task": "quantum",
     "expect": [],
-    "avoid": ["founder-marketing", "dithered", "deep-research", "windows-desktop-e2e", "latency-critical-systems"]
+    "avoid": [
+      "founder-marketing",
+      "dithered",
+      "deep-research",
+      "windows-desktop-e2e",
+      "latency-critical-systems"
+    ]
   },
   {
     "task": "quantum computing circuit simulation in python",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations", "blend-genre-action-combat"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations",
+      "blend-genre-action-combat"
+    ]
   },
   {
     "task": "fix a typo in line 14 of utils.py",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "rename variable total_count to items_count",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "change port number from 8080 to 3000",
     "expect": [],
-    "avoid": ["database-migrations", "cost-accounting"]
+    "avoid": [
+      "database-migrations",
+      "cost-accounting"
+    ]
   },
   {
     "task": "delete unused variable from loop",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "add a print statement to inspect variable x",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "indent this function by 4 spaces",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "change background color from red to blue in styles.css",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "bake a sourdough loaf with 70 percent hydration",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations", "founder-marketing"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations",
+      "founder-marketing"
+    ]
   },
   {
     "task": "learn conversational Japanese for vacation",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "repair a leaky kitchen faucet cartridge",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "compose an orchestral string quartet piece",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "forecast the weather in Tokyo next week",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "how to train a hunting falcon",
     "expect": [],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "calculate federal estate taxes in California",
     "expect": [],
-    "avoid": ["database-migrations"]
+    "avoid": [
+      "database-migrations"
+    ]
   },
   {
     "task": "play opening chess moves against Stockfish",
     "expect": [],
-    "avoid": ["database-migrations", "cost-accounting"]
+    "avoid": [
+      "database-migrations",
+      "cost-accounting"
+    ]
   },
   {
     "task": "plant organic tomatoes in a raised garden bed",
     "expect": [],
-    "avoid": ["database-migrations", "cost-accounting"]
+    "avoid": [
+      "database-migrations",
+      "cost-accounting"
+    ]
   },
   {
     "task": "add a postgres migration without downtime",
-    "expect": ["database-migrations", "postgres-patterns"],
-    "avoid": ["cost-accounting", "sepia-recreate", "blend-genre-action-combat"]
+    "expect": [
+      "database-migrations",
+      "postgres-patterns",
+      "migration"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "sepia-recreate",
+      "blend-genre-action-combat"
+    ]
   },
   {
     "task": "prevent sql injection and xss in our authentication routes",
-    "expect": ["security-review", "agent-security-hardening", "web-app-penetration-testing"],
-    "avoid": ["blend-genre-action-combat", "cost-accounting", "dithered"]
+    "expect": [
+      "security-review",
+      "agent-security-hardening",
+      "web-app-penetration-testing",
+      "penetration-testing-with-strix",
+      "find-security-vulnerabilities-in-code"
+    ],
+    "avoid": [
+      "blend-genre-action-combat",
+      "cost-accounting",
+      "dithered"
+    ]
   },
   {
     "task": "audit smart contract for reentrancy vulnerabilities",
-    "expect": ["security-review", "defi-amm-security"],
-    "avoid": ["cost-accounting", "dithered"]
+    "expect": [
+      "security-review",
+      "defi-amm-security",
+      "find-security-vulnerabilities-in-code"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "dithered"
+    ]
   },
   {
     "task": "profile and reduce memory usage in python backend",
-    "expect": ["python-testing", "latency-critical-systems", "data-throughput-accelerator"],
-    "avoid": ["blend-genre-action-combat", "dithered"]
+    "expect": [
+      "python-testing",
+      "latency-critical-systems",
+      "data-throughput-accelerator",
+      "python-patterns"
+    ],
+    "avoid": [
+      "blend-genre-action-combat",
+      "dithered"
+    ]
   },
   {
     "task": "write playwright e2e tests for signup flow",
-    "expect": ["e2e-testing", "playwright-cli"],
-    "avoid": ["cost-accounting", "dithered"]
+    "expect": [
+      "e2e-testing",
+      "playwright-cli"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "dithered"
+    ]
   },
   {
     "task": "build an accessible design system with dark mode",
-    "expect": ["frontend-patterns", "frontend-a11y", "design-system", "design-systems"],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "expect": [
+      "frontend-patterns",
+      "frontend-a11y",
+      "design-system",
+      "design-systems"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "refactor legacy codebase with test-driven development",
-    "expect": ["tdd-workflow", "safe-refactor", "investigate-first"],
-    "avoid": ["cost-accounting", "dithered"]
+    "expect": [
+      "tdd-workflow",
+      "safe-refactor",
+      "investigate-first",
+      "test-driven-development"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "dithered"
+    ]
   },
   {
     "task": "write unit tests for rust async tokio channel",
-    "expect": ["rust-testing", "rust-patterns"],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "expect": [
+      "rust-testing",
+      "rust-patterns"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "containerize django application with gunicorn and nginx",
-    "expect": ["docker-patterns", "django-patterns"],
-    "avoid": ["blend-genre-action-combat", "dithered"]
+    "expect": [
+      "docker-patterns",
+      "django-patterns",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "blend-genre-action-combat",
+      "dithered"
+    ]
   },
   {
     "task": "configure prometheus metrics and grafana dashboard for microservices",
-    "expect": ["dashboard-builder", "latency-critical-systems"],
-    "avoid": ["cost-accounting", "dithered"]
+    "expect": [
+      "dashboard-builder",
+      "latency-critical-systems"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "dithered"
+    ]
   },
   {
     "task": "automate github actions ci cd pipeline for release packages",
-    "expect": ["github-ops", "deployment-patterns", "opensource-pipeline"],
-    "avoid": ["cost-accounting", "blend-genre-action-combat"]
+    "expect": [
+      "github-ops",
+      "deployment-patterns",
+      "opensource-pipeline"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "blend-genre-action-combat"
+    ]
   },
   {
     "task": "tune postgres vacuum and indexing for slow queries",
-    "expect": ["postgres-patterns", "database-migrations"],
-    "avoid": ["cost-accounting", "dithered"]
+    "expect": [
+      "postgres-patterns",
+      "database-migrations"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "dithered"
+    ]
   },
   {
     "task": "implement oauth2 pkce login flow for mobile app",
-    "expect": ["security-review", "api-design", "react-native-patterns"],
-    "avoid": ["blend-genre-action-combat", "dithered"]
+    "expect": [
+      "security-review",
+      "api-design",
+      "react-native-patterns",
+      "mobile-native"
+    ],
+    "avoid": [
+      "blend-genre-action-combat",
+      "dithered"
+    ]
   },
   {
     "task": "design clean rest api schema with json error specifications",
-    "expect": ["api-design", "contract-first", "error-handling"],
-    "avoid": ["blend-genre-action-combat", "dithered"]
+    "expect": [
+      "api-design",
+      "contract-first",
+      "error-handling"
+    ],
+    "avoid": [
+      "blend-genre-action-combat",
+      "dithered"
+    ]
   },
   {
     "task": "setup redis cache invalidation strategy for high traffic api",
-    "expect": ["redis-patterns", "backend-patterns"],
-    "avoid": ["cost-accounting", "blend-genre-action-combat"]
+    "expect": [
+      "redis-patterns",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "blend-genre-action-combat"
+    ]
   },
   {
     "task": "build responsive layout with tailwind and shadcn ui components",
-    "expect": ["shadcn", "frontend-patterns", "frontend-design"],
-    "avoid": ["cost-accounting", "database-migrations"]
+    "expect": [
+      "shadcn",
+      "frontend-patterns",
+      "frontend-design",
+      "uimax-ui-styling"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "database-migrations"
+    ]
   },
   {
     "task": "investigate race condition causing intermittent thread deadlocks",
-    "expect": ["investigate-first", "behavior-diagnosis", "error-handling"],
-    "avoid": ["cost-accounting", "dithered"]
+    "expect": [
+      "investigate-first",
+      "behavior-diagnosis",
+      "error-handling"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "dithered"
+    ]
   },
   {
     "task": "generate openapi documentation and mock server",
-    "expect": ["api-design", "contract-first", "documentation-lookup"],
-    "avoid": ["blend-genre-action-combat", "cost-accounting"]
+    "expect": [
+      "api-design",
+      "contract-first",
+      "documentation-lookup"
+    ],
+    "avoid": [
+      "blend-genre-action-combat",
+      "cost-accounting"
+    ]
   },
   {
     "task": "write integration tests with testcontainers in java spring boot",
-    "expect": ["springboot-tdd", "springboot-patterns"],
-    "avoid": ["cost-accounting", "dithered"]
+    "expect": [
+      "springboot-tdd",
+      "springboot-patterns",
+      "springboot-verification"
+    ],
+    "avoid": [
+      "cost-accounting",
+      "dithered"
+    ]
   },
   {
     "task": "secure s3 bucket policy against public read exposure",
-    "expect": ["security-review", "agent-security-hardening"],
-    "avoid": ["blend-genre-action-combat", "cost-accounting"]
+    "expect": [
+      "security-review",
+      "agent-security-hardening",
+      "auditing-aws-s3-bucket-permissions"
+    ],
+    "avoid": [
+      "blend-genre-action-combat",
+      "cost-accounting"
+    ]
   }
 ]
