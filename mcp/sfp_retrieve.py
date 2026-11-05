@@ -28,7 +28,7 @@ POOL = 40                # candidates the judge reads
 JUDGE_PICKS = 3
 JUDGE_TIMEOUT = 30.0
 DESC_CHARS = 170
-COMMON_WORD_SKILLS = 60   # a word in more skills than this is too common to show a task is about a specialist field
+COMMON_WORD_SKILLS = 25   # a word in more skills than this is too common to show a task is about a specialist field
 # Whole fields that join only when the task is about them: they share everyday words with software tasks.
 SPECIALIST_CATEGORIES = frozenset(('business-ops', 'industry', 'career', 'web3', 'science-hardware', 'networking'))
 CLAUSE = re.compile(r'[,;]|\band\b|\bthen\b|\balso\b|\bwith\b', re.I)
