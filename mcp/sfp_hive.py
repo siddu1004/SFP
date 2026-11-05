@@ -948,7 +948,10 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
 
     # Nothing cleared the word bar, but this is a real job: the signals' best stay in, rather than an empty answer.
     if not allowed_cands and quality and not no_real_job(task, sit, missing):
-        allowed_cands = set(sorted((n for n in quality if n not in exclude), key=lambda n: -quality[n])[:3])
+        # A real signal: close in meaning, or more than one of the task's words. One shared word ("week") is a coincidence.
+        real = [n for n in quality if n not in exclude and ((votes[n].get('meaning') or 0) >= 0.5 or
+                len(set(sit['words']) & v1.SKILL_TOKENS.get(n, set())) >= 2)]
+        allowed_cands = set(sorted(real, key=lambda n: -quality[n])[:3])
     judged = None
     if sit.get('semantic') and rerank_wanted(sit, votes) and not no_real_job(task, sit, missing):
         judged = judge_stage(task, sit, votes, exclude, after, named_form, taste)
