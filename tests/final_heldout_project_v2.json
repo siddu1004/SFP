@@ -1,0 +1,238 @@
+{
+  "projects": {
+    "nextjs_r3f": {
+      "package.json": "{\"name\": \"product-3d\", \"dependencies\": {\"next\": \"^15.0.0\", \"react\": \"^19.0.0\", \"react-dom\": \"^19.0.0\", \"three\": \"^0.170.0\", \"@react-three/fiber\": \"^9.0.0\"}}",
+      "app/page.tsx": "\"use client\";\nimport { Canvas } from '@react-three/fiber';\nexport default function Page() { return <Canvas />; }",
+      "next.config.js": "module.exports = { transpilePackages: ['three'] };"
+    },
+    "django_drf": {
+      "pyproject.toml": "[project]\nname = \"clinic-backend\"\ndependencies = [\"django>=5.0\", \"djangorestframework>=3.15\", \"celery>=5.4\", \"pytest-django>=4.8\"]",
+      "manage.py": "import os, sys\nif __name__ == '__main__': pass",
+      "clinic/settings.py": "INSTALLED_APPS = ['rest_framework', 'clinic']",
+      "clinic/models.py": "from django.db import models\nclass Patient(models.Model): pass"
+    },
+    "springboot_jpa": {
+      "pom.xml": "<project><dependencies><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-data-jpa</artifactId></dependency><dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-security</artifactId></dependency></dependencies></project>",
+      "src/main/java/com/bank/App.java": "package com.bank;\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\n@SpringBootApplication\npublic class App {}",
+      "src/main/java/com/bank/AccountRepository.java": "package com.bank;\npublic interface AccountRepository {}"
+    },
+    "rust_axum": {
+      "Cargo.toml": "[package]\nname = \"order-engine\"\nversion = \"0.1.0\"\nedition = \"2021\"\n[dependencies]\naxum = \"0.7\"\ntokio = { version = \"1.37\", features = [\"full\"] }\nserde = \"1.0\"",
+      "src/main.rs": "fn main() {}",
+      "src/lib.rs": "pub fn match_order() -> bool { true }"
+    },
+    "laravel_api": {
+      "composer.json": "{\"name\": \"shop/api\", \"require\": {\"php\": \"^8.3\", \"laravel/framework\": \"^11.0\", \"laravel/sanctum\": \"^4.0\"}, \"require-dev\": {\"pestphp/pest\": \"^2.34\"}}",
+      "artisan": "#!/usr/bin/env php",
+      "app/Models/Product.php": "<?php namespace App\\Models; use Illuminate\\Database\\Eloquent\\Model; class Product extends Model {}",
+      "routes/api.php": "<?php use Illuminate\\Support\\Facades\\Route;"
+    },
+    "vue3_vite": {
+      "package.json": "{\"name\": \"analytics-ui\", \"dependencies\": {\"vue\": \"^3.4.0\", \"pinia\": \"^2.1.7\", \"vue-router\": \"^4.3.0\"}, \"devDependencies\": {\"vite\": \"^5.2.0\", \"@playwright/test\": \"^1.44.0\"}}",
+      "vite.config.ts": "import { defineConfig } from 'vite';\nexport default defineConfig({});",
+      "src/App.vue": "<template><div>Dashboard</div></template><script setup lang=\"ts\"></script>"
+    },
+    "swift_ios": {
+      "Package.swift": "// swift-tools-version: 6.0\nimport PackageDescription\nlet package = Package(name: \"HabitTracker\")",
+      "Sources/AppView.swift": "import SwiftUI\nstruct AppView: View { var body: some View { Text(\"Habits\") } }",
+      "Sources/HabitStore.swift": "import Foundation\nactor HabitStore {}"
+    },
+    "go_microservice": {
+      "go.mod": "module github.com/acme/ledger\n\ngo 1.22\n\nrequire (\n\tgoogle.golang.org/grpc v1.64.0\n\tgithub.com/redis/go-redis/v9 v9.5.1\n)",
+      "main.go": "package main\nfunc main() {}",
+      "ledger/service.go": "package ledger"
+    },
+    "nestjs_prisma": {
+      "package.json": "{\"name\": \"auth-gateway\", \"dependencies\": {\"@nestjs/core\": \"^10.3.0\", \"@nestjs/common\": \"^10.3.0\", \"@prisma/client\": \"^5.14.0\"}, \"devDependencies\": {\"prisma\": \"^5.14.0\", \"typescript\": \"^5.4.0\"}}",
+      "prisma/schema.prisma": "datasource db { provider = \"postgresql\" url = env(\"DATABASE_URL\") }",
+      "src/app.module.ts": "import { Module } from '@nestjs/common';\n@Module({})\nexport class AppModule {}"
+    },
+    "flutter_mobile": {
+      "pubspec.yaml": "name: courier_app\nenvironment:\n  sdk: '>=3.3.0 <4.0.0'\ndependencies:\n  flutter:\n    sdk: flutter\n  flutter_riverpod: ^2.5.1\n  go_router: ^14.0.0",
+      "lib/main.dart": "import 'package:flutter/material.dart';\nvoid main() {}",
+      "lib/screens/home_screen.dart": "import 'package:flutter/material.dart';"
+    }
+  },
+  "cases": [
+    {
+      "project": "nextjs_r3f",
+      "task": "add orbit camera controls and gltf model loading with useLoader in our 3d canvas",
+      "expect": ["react-three-fiber", "react-patterns", "frontend-patterns"],
+      "avoid": ["django-patterns", "springboot-patterns"]
+    },
+    {
+      "project": "nextjs_r3f",
+      "task": "fix frame rate drops caused by calling setState inside useFrame and enable on-demand rendering",
+      "expect": ["react-three-fiber", "react-performance", "animation-performance"],
+      "avoid": ["laravel-patterns", "rust-testing"]
+    },
+    {
+      "project": "nextjs_r3f",
+      "task": "audit keyboard navigation, aria labels, and focus rings on the overlay UI controls",
+      "expect": ["frontend-a11y", "accessibility", "accessibility-audit", "web-interface-guidelines"],
+      "avoid": ["mysql-patterns", "golang-testing"]
+    },
+    {
+      "project": "django_drf",
+      "task": "add a scheduled celery beat task with exponential backoff retries for failed webhook deliveries",
+      "expect": ["django-celery", "django-patterns"],
+      "avoid": ["vue-patterns", "swiftui-patterns"]
+    },
+    {
+      "project": "django_drf",
+      "task": "write pytest-django API tests using factory_boy fixtures for the patient endpoints",
+      "expect": ["django-tdd", "python-testing", "django-patterns"],
+      "avoid": ["react-testing", "csharp-testing"]
+    },
+    {
+      "project": "django_drf",
+      "task": "review our authentication views and queryset filters for csrf, xss, and sql injection risks",
+      "expect": ["django-security", "security-review", "find-security-vulnerabilities-in-code"],
+      "avoid": ["flutter-dart-code-review", "bento"]
+    },
+    {
+      "project": "springboot_jpa",
+      "task": "optimize slow hibernate entity relationships, N+1 selects, and connection pooling",
+      "expect": ["jpa-patterns", "springboot-patterns", "postgres-patterns"],
+      "avoid": ["nuxt4-patterns", "perl-patterns"]
+    },
+    {
+      "project": "springboot_jpa",
+      "task": "write integration tests with junit 5, mockmvc, and testcontainers for account transfers",
+      "expect": ["springboot-tdd", "springboot-verification", "springboot-patterns"],
+      "avoid": ["django-tdd", "rust-testing"]
+    },
+    {
+      "project": "springboot_jpa",
+      "task": "harden spring security jwt filters, method authorization, and csrf configuration",
+      "expect": ["springboot-security", "security-review", "springboot-patterns"],
+      "avoid": ["react-three-fiber", "ios-icon-gen"]
+    },
+    {
+      "project": "rust_axum",
+      "task": "write unit and proptest property-based tests for the order matching logic",
+      "expect": ["rust-testing", "rust-patterns", "tdd-workflow"],
+      "avoid": ["django-tdd", "laravel-tdd"]
+    },
+    {
+      "project": "rust_axum",
+      "task": "refactor error handling to use idiomatic Result types and avoid unwrap panics across async tasks",
+      "expect": ["rust-patterns", "error-handling", "safe-refactor"],
+      "avoid": ["vue-patterns", "swiftui-patterns"]
+    },
+    {
+      "project": "rust_axum",
+      "task": "build a multi-stage dockerfile with a minimal distroless runtime image for production",
+      "expect": ["docker-patterns", "hardening-docker-containers-for-production", "deployment-patterns"],
+      "avoid": ["angular-developer", "ios-icon-gen"]
+    },
+    {
+      "project": "laravel_api",
+      "task": "write pest http feature tests with model factories and sanctum auth for the product api",
+      "expect": ["laravel-tdd", "laravel-verification", "laravel-patterns"],
+      "avoid": ["springboot-tdd", "rust-testing"]
+    },
+    {
+      "project": "laravel_api",
+      "task": "refactor fat controllers into clean service classes, form requests, and eloquent api resources",
+      "expect": ["laravel-patterns", "safe-refactor", "api-design"],
+      "avoid": ["django-patterns", "kotlin-patterns"]
+    },
+    {
+      "project": "laravel_api",
+      "task": "audit mass assignment protection, sanctum token scopes, and sql query safety",
+      "expect": ["laravel-security", "security-review", "laravel-verification"],
+      "avoid": ["react-three-fiber", "blend-animation"]
+    },
+    {
+      "project": "vue3_vite",
+      "task": "structure shared state in pinia stores and fix reactivity loss when destructuring refs",
+      "expect": ["vue-patterns", "frontend-patterns"],
+      "avoid": ["django-patterns", "springboot-patterns"]
+    },
+    {
+      "project": "vue3_vite",
+      "task": "configure vite code splitting, dependency pre-bundling, and dev server api proxy",
+      "expect": ["vite-patterns", "vue-patterns"],
+      "avoid": ["mybatis-patterns", "csharp-testing"]
+    },
+    {
+      "project": "vue3_vite",
+      "task": "write playwright end-to-end tests with page objects for the analytics filter flow",
+      "expect": ["e2e-testing", "playwright-cli", "browser-qa"],
+      "avoid": ["rust-testing", "kotlin-testing"]
+    },
+    {
+      "project": "swift_ios",
+      "task": "migrate view state to @Observable and fix navigation stack performance in swiftui",
+      "expect": ["swiftui-patterns", "write-swift"],
+      "avoid": ["django-patterns", "laravel-patterns"]
+    },
+    {
+      "project": "swift_ios",
+      "task": "adopt swift 6.2 approachable concurrency and eliminate data races in the habit actor store",
+      "expect": ["swift-concurrency-6-2", "swift-actor-persistence", "write-swift"],
+      "avoid": ["vue-patterns", "postgres-patterns"]
+    },
+    {
+      "project": "swift_ios",
+      "task": "add protocol-based dependency injection to mock network and file storage in swift testing",
+      "expect": ["swift-protocol-di-testing", "write-swift"],
+      "avoid": ["django-tdd", "perl-testing"]
+    },
+    {
+      "project": "go_microservice",
+      "task": "write table-driven unit tests, subtests, and benchmarks for the ledger grpc handlers",
+      "expect": ["golang-testing", "golang-patterns", "benchmark"],
+      "avoid": ["django-tdd", "react-testing"]
+    },
+    {
+      "project": "go_microservice",
+      "task": "implement distributed locking and rate limiting using redis in our go service",
+      "expect": ["redis-patterns", "golang-patterns", "backend-patterns"],
+      "avoid": ["swiftui-patterns", "ui-to-vue"]
+    },
+    {
+      "project": "go_microservice",
+      "task": "optimize p99 latency and context cancellation handling across concurrent goroutines",
+      "expect": ["golang-patterns", "latency-critical-systems", "error-handling"],
+      "avoid": ["laravel-patterns", "bento"]
+    },
+    {
+      "project": "nestjs_prisma",
+      "task": "structure nestjs modules, dto validation pipes, and auth guards for the gateway",
+      "expect": ["nestjs-patterns", "backend-patterns", "security-review"],
+      "avoid": ["django-patterns", "rust-patterns"]
+    },
+    {
+      "project": "nestjs_prisma",
+      "task": "fix prisma transaction timeouts and add a zero-downtime expand-contract postgres migration",
+      "expect": ["prisma-patterns", "database-migrations", "postgres-patterns"],
+      "avoid": ["swiftui-patterns", "animate-expo"]
+    },
+    {
+      "project": "nestjs_prisma",
+      "task": "add row-level security policies and composite b-tree indexes to our postgresql schema",
+      "expect": ["postgres-patterns", "prisma-patterns", "database-migrations"],
+      "avoid": ["flutter-dart-code-review", "ios-icon-gen"]
+    },
+    {
+      "project": "flutter_mobile",
+      "task": "architect immutable state with riverpod providers and configure gorouter deep links",
+      "expect": ["dart-flutter-patterns", "flutter-dart-code-review"],
+      "avoid": ["django-patterns", "springboot-patterns"]
+    },
+    {
+      "project": "flutter_mobile",
+      "task": "review our flutter widget tree for unnecessary rebuilds, missing const constructors, and accessibility",
+      "expect": ["flutter-dart-code-review", "dart-flutter-patterns", "accessibility"],
+      "avoid": ["postgres-patterns", "rust-testing"]
+    },
+    {
+      "project": "flutter_mobile",
+      "task": "design smooth gesture-driven sheet transitions and spring physics in the mobile UI",
+      "expect": ["apple-design", "interaction-design", "dart-flutter-patterns"],
+      "avoid": ["clickhouse-io", "perl-security"]
+    }
+  ]
+}

@@ -1,0 +1,302 @@
+[
+  {
+    "task": "i want to add a rotating 3d model of our sneaker on the react product page",
+    "expect": ["react-three-fiber", "blender-threejs-export"],
+    "avoid": ["django-patterns", "postgres-patterns"]
+  },
+  {
+    "task": "help me pick a color palette with a color picker widget in our react settings screen",
+    "expect": ["react-colorful", "frontend-patterns", "react-patterns"],
+    "avoid": ["rust-testing", "mysql-patterns"]
+  },
+  {
+    "task": "make the background of our hero section a moving 3d shader gradient in nextjs",
+    "expect": ["shadergradient", "frontend-design", "impeccable"],
+    "avoid": ["csharp-testing", "database-migrations"]
+  },
+  {
+    "task": "turn our company logo image into a shiny animated liquid chrome effect on the web",
+    "expect": ["liquid-logo", "liquid-glass-js"],
+    "avoid": ["laravel-patterns", "perl-testing"]
+  },
+  {
+    "task": "show a nice toast notification at the bottom right when a user saves their profile in react",
+    "expect": ["ask-sonner", "react-patterns", "frontend-patterns"],
+    "avoid": ["kubernetes-patterns", "cpp-testing"]
+  },
+  {
+    "task": "test our form UI by throwing huge numbers, emoji, and super long names at it to see if it breaks",
+    "expect": ["break-ui", "frontend-a11y", "e2e-testing"],
+    "avoid": ["postgres-patterns", "golang-patterns"]
+  },
+  {
+    "task": "add smooth inertia scrolling and parallax sections to our portfolio website",
+    "expect": ["locomotive-scroll", "gsap", "animate"],
+    "avoid": ["django-celery", "mybatis-patterns"]
+  },
+  {
+    "task": "convert these 10 mobile app UI screenshots into vue 3 components using element plus",
+    "expect": ["ui-to-vue", "vue-patterns"],
+    "avoid": ["springboot-patterns", "rust-patterns"]
+  },
+  {
+    "task": "our nuxt 4 app has hydration mismatch warnings when fetching data on the server",
+    "expect": ["nuxt4-patterns", "vue-patterns"],
+    "avoid": ["dotnet-patterns", "fsharp-testing"]
+  },
+  {
+    "task": "speed up our nextjs 16 local dev server startup using turbopack and fix the middleware rename",
+    "expect": ["nextjs-turbopack", "react-performance", "frontend-patterns"],
+    "avoid": ["perl-patterns", "rails-patterns"]
+  },
+  {
+    "task": "build an angular component using signals and linkedSignal for reactive form state",
+    "expect": ["angular-developer", "frontend-patterns"],
+    "avoid": ["django-patterns", "swiftui-patterns"]
+  },
+  {
+    "task": "make our web app feel like a real installed phone app with no tap flash or rubber band scroll",
+    "expect": ["mobile-native", "frontend-patterns", "impeccable"],
+    "avoid": ["clickhouse-io", "quarkus-patterns"]
+  },
+  {
+    "task": "sync our missing french and japanese translation keys across the json locale files",
+    "expect": ["i18n-sync"],
+    "avoid": ["docker-patterns", "rust-testing"]
+  },
+  {
+    "task": "create a single-file interactive html playground where users can tweak sliders and copy the prompt",
+    "expect": ["playground", "web-artifacts-builder"],
+    "avoid": ["mysql-patterns", "jpa-patterns"]
+  },
+  {
+    "task": "build a grafana dashboard that shows real p99 latency and error rates for on-call engineers",
+    "expect": ["dashboard-builder", "observability-and-reliability", "latency-critical-systems"],
+    "avoid": ["blend-character-artist", "ios-icon-gen"]
+  },
+  {
+    "task": "extract color and spacing tokens from our messy css into a clean design-tokens.json file",
+    "expect": ["design-system", "design-systems", "uimax-design-system"],
+    "avoid": ["penetration-testing-with-strix", "golang-testing"]
+  },
+  {
+    "task": "style our dashboard with frosted translucent glass panels and subtle glowing borders",
+    "expect": ["glassmorphism", "liquid-glass-design", "liquid-glass-js"],
+    "avoid": ["database-migrations", "csharp-testing"]
+  },
+  {
+    "task": "give our landing page a bold neo-brutalist look with thick black borders and warm cream backgrounds",
+    "expect": ["neobrutalism", "brutalism", "fiction"],
+    "avoid": ["kubernetes-patterns", "kotlin-exposed-patterns"]
+  },
+  {
+    "task": "set up background tasks in django with celery beat to send daily digest emails and retry on failure",
+    "expect": ["django-celery", "django-patterns"],
+    "avoid": ["react-three-fiber", "swiftui-patterns"]
+  },
+  {
+    "task": "our prisma updateMany query in typescript is timing out inside an interactive transaction",
+    "expect": ["prisma-patterns", "postgres-patterns", "backend-patterns"],
+    "avoid": ["flutter-dart-code-review", "blend-animation"]
+  },
+  {
+    "task": "write a fast analytical query in clickhouse without slowing down columnar merges",
+    "expect": ["clickhouse-io", "data-throughput-accelerator"],
+    "avoid": ["animate-expo", "ios-icon-gen"]
+  },
+  {
+    "task": "build a ktor backend server in kotlin with koin dependency injection and websocket routes",
+    "expect": ["kotlin-ktor-patterns", "kotlin-patterns", "kotlin-coroutines-flows"],
+    "avoid": ["django-tdd", "laravel-patterns"]
+  },
+  {
+    "task": "fix n+1 queries and slow entity relationships in our spring boot hibernate jpa repositories",
+    "expect": ["jpa-patterns", "springboot-patterns"],
+    "avoid": ["vue-patterns", "react-native-patterns"]
+  },
+  {
+    "task": "switch our node project to bun for faster package installs, test runs, and bundling",
+    "expect": ["bun-runtime", "backend-patterns"],
+    "avoid": ["quarkus-tdd", "springboot-security"]
+  },
+  {
+    "task": "design a rest api with cursor pagination, rate limiting headers, and clean error status codes",
+    "expect": ["api-design", "headcount-api-design", "backend-patterns"],
+    "avoid": ["blend-cloth-sim", "sega"]
+  },
+  {
+    "task": "generate all the png app icon sizes for xcode asset catalogs from sf symbols",
+    "expect": ["ios-icon-gen"],
+    "avoid": ["postgres-patterns", "django-celery"]
+  },
+  {
+    "task": "prevent data races in our swift cache by using an actor with file-backed persistence",
+    "expect": ["swift-actor-persistence", "swift-concurrency-6-2", "write-swift"],
+    "avoid": ["laravel-tdd", "mysql-patterns"]
+  },
+  {
+    "task": "add on-device text generation in our ios 26 app using apple foundation models and @Generable",
+    "expect": ["foundation-models-on-device", "swiftui-patterns", "write-swift"],
+    "avoid": ["clickhouse-io", "perl-security"]
+  },
+  {
+    "task": "structure our android and kotlin multiplatform app with clean architecture use cases and repositories",
+    "expect": ["android-clean-architecture", "compose-multiplatform-patterns", "kotlin-patterns"],
+    "avoid": ["rails-patterns", "django-patterns"]
+  },
+  {
+    "task": "package our python desktop app on windows into a tiny fast exe installer using nuitka and inno setup",
+    "expect": ["generating-python-installer", "python-patterns"],
+    "avoid": ["react-three-fiber", "swiftui-patterns"]
+  },
+  {
+    "task": "write automated e2e UI tests for our windows wpf desktop app using pywinauto",
+    "expect": ["windows-desktop-e2e", "python-testing"],
+    "avoid": ["nuxt4-patterns", "laravel-patterns"]
+  },
+  {
+    "task": "write fsharp property-based unit tests using fscheck and unquote assertions",
+    "expect": ["fsharp-testing", "dotnet-patterns"],
+    "avoid": ["django-tdd", "vue-patterns"]
+  },
+  {
+    "task": "set up pre-save auto-formatting and linting hooks on every file edit using plankton",
+    "expect": ["plankton-code-quality", "hook-development"],
+    "avoid": ["defi-amm-security", "pubchem-database"]
+  },
+  {
+    "task": "block the agent from running destructive rm -rf or drop table commands without confirmation",
+    "expect": ["safety-guard", "agent-security-hardening"],
+    "avoid": ["bento", "shadergradient"]
+  },
+  {
+    "task": "create a reproducible cross-platform dev environment for mac and linux using flox",
+    "expect": ["flox-environments", "deployment-patterns"],
+    "avoid": ["csharp-testing", "android-clean-architecture"]
+  },
+  {
+    "task": "deploy our docker services to an uncloud cluster with caddy https ingress using the uc cli",
+    "expect": ["uncloud", "docker-patterns", "deployment-patterns"],
+    "avoid": ["perl-testing", "ios-icon-gen"]
+  },
+  {
+    "task": "check our solidity amm liquidity pool smart contract for reentrancy and flash loan oracle manipulation",
+    "expect": ["defi-amm-security", "find-security-vulnerabilities-in-code", "security-review"],
+    "avoid": ["ui-to-vue", "ask-sonner"]
+  },
+  {
+    "task": "scan our .claude directory, mcp servers, and hooks for prompt injection and security misconfigurations",
+    "expect": ["security-scan", "agent-security-hardening", "mcp-dependency-review"],
+    "avoid": ["mybatis-patterns", "animate-expo"]
+  },
+  {
+    "task": "audit our aws s3 buckets to make sure none of them allow public read or write access",
+    "expect": ["auditing-aws-s3-bucket-permissions", "analyzing-cloud-storage-access-patterns", "auditing-cloud-with-cis-benchmarks"],
+    "avoid": ["react-colorful", "doodle"]
+  },
+  {
+    "task": "set up a four-voice council to debate the pros and cons of our database choice before we decide",
+    "expect": ["council", "ecc-council", "council-multi-model"],
+    "avoid": ["perl-patterns", "slack-gif-creator"]
+  },
+  {
+    "task": "prepare our private repo to be open-sourced by scrubbing secrets and packaging it cleanly",
+    "expect": ["opensource-pipeline", "security-review", "github-ops"],
+    "avoid": ["blend-hair-groom", "kotlin-exposed-patterns"]
+  },
+  {
+    "task": "generate an interactive html report of my claude code token usage, cache hits, and expensive prompts",
+    "expect": ["session-report", "cost-tracking", "receipts"],
+    "avoid": ["quarkus-tdd", "mysql-patterns"]
+  },
+  {
+    "task": "check if a downloaded third-party agent skill folder is safe or contains malicious prompt injection",
+    "expect": ["skill-inspector", "agent-security-hardening", "security-scan"],
+    "avoid": ["django-celery", "locomotive-scroll"]
+  },
+  {
+    "task": "format structured tabular data in TOON notation instead of json to save 40% on llm token costs",
+    "expect": ["toon", "cost-aware-llm-pipeline"],
+    "avoid": ["springboot-patterns", "csharp-testing"]
+  },
+  {
+    "task": "normalize unicode text and handle conjunct characters properly for our bengali language nlp app",
+    "expect": ["bengali-nlp"],
+    "avoid": ["kubernetes-patterns", "docker-patterns"]
+  },
+  {
+    "task": "design a feed ranking and recommendation system with source, hydrator, filter, and scorer stages",
+    "expect": ["recsys-pipeline-architect", "mle-workflow"],
+    "avoid": ["ios-icon-gen", "perl-testing"]
+  },
+  {
+    "task": "find a free public api for currency exchange rates and weather without needing a credit card",
+    "expect": ["public-apis", "freellmapi"],
+    "avoid": ["rust-testing", "cpp-coding-standards"]
+  },
+  {
+    "task": "post a multi-tweet thread and read timeline analytics programmatically using the x twitter api",
+    "expect": ["x-api", "social-publisher", "content-engine"],
+    "avoid": ["postgres-patterns", "jpa-patterns"]
+  },
+  {
+    "task": "create an animated math explainer video with manim showing how gradient descent converges",
+    "expect": ["manim-video", "remotion-video-creation"],
+    "avoid": ["django-security", "laravel-tdd"]
+  },
+  {
+    "task": "record a smooth webm demo video of our web app with a visible cursor using playwright",
+    "expect": ["ui-demo", "playwright-cli", "e2e-testing"],
+    "avoid": ["mysql-patterns", "fsharp-testing"]
+  },
+  {
+    "task": "check our checkout flow for illegal dark patterns like fake countdown timers or pre-ticked boxes",
+    "expect": ["dark-pattern-check", "persuasion-audit", "ux-writing"],
+    "avoid": ["golang-patterns", "clickhouse-io"]
+  },
+  {
+    "task": "rewrite this stiff ai-generated blog post so it sounds like a real human wrote it without ai cliches",
+    "expect": ["humanizer", "sepia", "article-writing"],
+    "avoid": ["kubernetes-patterns", "prisma-patterns"]
+  },
+  {
+    "task": "translate these scanned chinese bank deposit and employment certificate photos into a bilingual english pdf for a visa",
+    "expect": ["visa-doc-translate", "nutrient-document-processing"],
+    "avoid": ["react-three-fiber", "rust-patterns"]
+  },
+  {
+    "task": "send transactional welcome emails in our app using mailtrap and verify domain authentication",
+    "expect": ["mailtrap-email-integration", "lifecycle-messaging", "email-ops"],
+    "avoid": ["blend-physics-sim", "cpp-testing"]
+  },
+  {
+    "task": "make sure our healthcare app database encrypts phi and follows hipaa audit trail rules",
+    "expect": ["hipaa-compliance", "healthcare-phi-compliance", "security-review"],
+    "avoid": ["pacman", "sega"]
+  },
+  {
+    "task": "set up pihole local dns ad blocking and troubleshoot broken dns resolution on my home network",
+    "expect": ["homelab-pihole-dns", "homelab-network-setup", "homelab-network-readiness"],
+    "avoid": ["springboot-tdd", "vue-patterns"]
+  },
+  {
+    "task": "configure a wireguard vpn server so i can safely access my home nas from my phone and laptop",
+    "expect": ["homelab-wireguard-vpn", "homelab-network-readiness", "homelab-network-setup"],
+    "avoid": ["angular-developer", "mybatis-patterns"]
+  },
+  {
+    "task": "teach me how our codebase works by asking me socratic questions so i re-derive the design myself",
+    "expect": ["rederive", "teach-me", "codebase-onboarding"],
+    "avoid": ["docker-patterns", "laravel-security"]
+  },
+  {
+    "task": "prevent ethereum hashing bugs in node by using real keccak256 instead of nist sha3-256",
+    "expect": ["nodejs-keccak256", "evm-token-decimals"],
+    "avoid": ["django-patterns", "swiftui-patterns"]
+  },
+  {
+    "task": "draw an interactive node-graph floorplan map of all the modules and http routes in our repository",
+    "expect": ["floorplan", "understand", "graphify"],
+    "avoid": ["perl-security", "csharp-testing"]
+  }
+]
