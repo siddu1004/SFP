@@ -87,7 +87,7 @@ OUTPUT_PATTERNS = [
 
 JOB_PATTERNS = [
     (r'\b(?:explain|learn|understand|teach|how\s+(?:does|to)|what\s+is)\b', 'explain'),
-    (r'\b(?:test|unit\s*test|e2e|coverage|assert|benchmark)\b', 'test'),
+    (r'\b(?:tests?|unit\s*tests?|e2e|coverage|assert(?:ion)?s?|benchmarks?)\b', 'test'),
     (r'\b(?:fix|debug|troubleshoot|bug|repair|patch|defect)\b', 'fix'),
     (r'\b(?:review|audit|inspect|lint|check\s+code)\b', 'review'),
     (r'\b(?:design|style|theme|ui|ux|css|palette|layout)\b', 'design'),

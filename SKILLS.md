@@ -28,7 +28,7 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `design-taste-frontend` | Senior UI/UX Engineer. Architect digital interfaces overriding default LLM biases. Enforces metric-based rules, strict component architecture, CSS hardware acceleration, and balanced design engineerin… |
 | `animate` | Build an animation from scratch, making the decisions in the order that determines whether it feels right — should it animate at all, what purpose, which tool, which properties, which curve and durati… |
 | `animate-expo` | Build animations in React Native and Expo, making the decisions in the order that determines whether they feel right — should it animate, which thread it runs on, which properties, spring or timing, h… |
-| `animation-performance` | Keep web animations inside the frame budget — animate composite-only properties, keep motion off the main thread when the page is busy, and find the cause when an animation drops frames. Covers the la… |
+| `animation-performance` | Keep web animations and visual effects smooth and fast inside the frame budget -- accelerate slow-moving visual effects, animate composite-only properties, offload work from main thread, and diagnose … |
 | `animation-vocabulary` | Reverse-lookup glossary that turns a vague description of a web animation or motion effect into its exact term ("the bouncy thing when a popover opens" → Pop in; "the iOS rubber-band scroll" → Rubber-… |
 | `apple-design` | Apple's approach to interface design and fluid, physical motion, translated for the web. Use when building or reviewing gesture-driven UI, spring animations, drag/swipe/sheet interactions, momentum an… |
 | `ask-sonner` | Guide to Sonner, the React toast library — install and wire up the Toaster, pick the right toast() call, promise and loading toasts, updating, dismissing and persisting toasts, styling, theming and ic… |
@@ -71,7 +71,7 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `liquid-glass-js` | Add Apple Liquid Glass-style buttons and containers to a web page with liquid-glass-js, a plain JavaScript and WebGL library with real-time refraction, blur and nested glass. Use when the user wants a… |
 | `shadergradient` | Add an animated 3D shader gradient background to a React, Next.js, Vue or Nuxt site with ShaderGradient (@shadergradient/react, @shadergradient/vue). Use when the user wants a moving gradient, an anim… |
 | `liquid-logo` | Turn a logo or image into an animated liquid-metal effect with Liquid Logo, a WebGL fragment-shader tool, or reuse its shader in your own page. Use when the user wants an animated chrome or liquid met… |
-| `accessibility-audit` | Conduct accessibility audits against WCAG 2.2 guidelines. Evaluate pages, components, and flows for conformance at A, AA, and AAA levels. Identify issues, assess severity, provide code fixes, and gene… |
+| `accessibility-audit` | Conduct accessibility and UI usability audits against WCAG 2.2 guidelines. Check UI usability, evaluate pages, components, and user flows for conformance at A, AA, and AAA levels, testing keyboard nav… |
 | `design-critique` | Evaluate UI designs against usability heuristics, UX laws, interaction patterns, interaction design principles, information architecture, and content quality. Conduct heuristic evaluations, structured… |
 | `design-elevation` | Comprehensive design elevation system that automatically transforms functional visual outputs into polished, professional designs. Use when creating ANY visual output including presentations (pptx), s… |
 | `design-ops` | Run design sprints, manage handoff, establish team rituals, documentation standards, and design QA processes. Covers the operational side of design — how teams organize work, collaborate with engineer… |
@@ -141,7 +141,7 @@ UI design and components, motion, accessibility, UX research and critique, React
 | `friendly` | Approachable, intuitive design with rounded elements, ample whitespace, and soft pastel color palettes. |
 | `futuristic` | Forward-looking design with tech-inspired typography, modern layouts, and a sleek, innovation-driven aesthetic. |
 | `geometric` | Geometric, structured design with clean typography, neutral colors, precise shapes, and intuitive layouts that stay out of the way. |
-| `glassmorphism` | Frosted glass effect with translucent layers, subtle blur, and luminous borders for depth and modern elegance. |
+| `glassmorphism` | Frosted glass effect and translucent UI elements with blurred translucent layers, subtle borders, and depth for modern UI elegance. Use when designing translucent UI elements, frosted glass components… |
 | `gradient` | Smooth color transitions and gradient-rich surfaces for modern, playful interfaces with visual depth. |
 | `immersive` | An immersive, interactive, exhibit-style interface that blends storytelling, animation, and gamified elements to create a playful, experience-driven journey. The entire app sits on a single continuous… |
 | `style-impeccable` | A modern, graphic, editorial-poster aesthetic — warm and confident — built on alternating cream and burnt orange sections, an amber brand color. |
@@ -187,7 +187,7 @@ Backend frameworks, APIs and databases (Django, FastAPI, Spring Boot, Laravel, N
 | Skill | What it does |
 |---|---|
 | `api-connector-builder` | Build a new API connector or provider by matching the target repo's existing integration pattern exactly. Use when adding one more integration without inventing a second architecture. |
-| `api-design` | REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs. Use when designing or reviewing REST endpoi… |
+| `api-design` | REST API design patterns and web service interface design for data exchange -- resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs.… |
 | `backend-patterns` | Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.js API routes. Use when building or reviewing Node.js, Express, or Next.… |
 | `bun-runtime` | Bun as runtime, package manager, bundler, and test runner. When to choose Bun vs Node, migration notes, and Vercel support. |
 | `clickhouse-io` | ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical workloads. Use when writing ClickHouse schemas or queries, or when an a… |
@@ -222,7 +222,7 @@ Android, iOS, Flutter, React Native, Kotlin Multiplatform and Swift.
 |---|---|
 | `write-swift` | How to write modern Swift well — modeling with value types, Swift 6 data-race safety and approachable concurrency (@concurrent, main-actor-by-default, actors, task groups), protocols and generics (som… |
 | `android-clean-architecture` | Clean Architecture patterns for Android and Kotlin Multiplatform projects — module structure, dependency rules, UseCases, Repositories, and data layer patterns. Use when structuring modules, layers, o… |
-| `compose-multiplatform-patterns` | Compose Multiplatform and Jetpack Compose patterns for KMP projects — state management, navigation, theming, performance, and platform-specific UI. Use when building Compose or Jetpack Compose UI, sta… |
+| `compose-multiplatform-patterns` | Compose Multiplatform and Jetpack Compose patterns for KMP projects -- cross-platform UI that works on multiple platforms (Android, iOS, desktop, web), state management, navigation, theming, and perfo… |
 | `dart-flutter-patterns` | Production-ready Dart and Flutter patterns covering null safety, immutable state with Freezed, async composition, widget architecture, state management (BLoC, Riverpod, Provider), GoRouter navigation … |
 | `flutter-dart-code-review` | Library-agnostic Flutter/Dart code review checklist covering widget best practices, state management patterns (BLoC, Riverpod, Provider, GetX, MobX, Signals), Dart idioms, performance, accessibility, … |
 | `foundation-models-on-device` | Apple FoundationModels framework for on-device LLM — text generation, guided generation with @Generable, tool calling, and snapshot streaming in iOS 26+. Use when adding on-device LLM features with Ap… |
@@ -377,7 +377,7 @@ Agent-driven work: autonomous loops, orchestration, councils, dev teams, plannin
 | `opensource-pipeline` | Open-source pipeline: fork, sanitize, and package private projects for safe public release. Chains 3 agents (forker, sanitizer, packager). Triggers: '/opensource', 'open source this', 'make this publi… |
 | `operator-approval-loop` | Operator approval contract with internal filing notices for agent-drafted outbound messages, hashed drafts, epoch-keyed decisions, durable delivery claims and receipts, and a pre-draft baseline gate. … |
 | `orch-add-feature` | Orchestrate building a brand-new feature end to end — research, plan, TDD implementation, review, and gated commit — by delegating each phase to the matching ECC agent. Use when adding a capability th… |
-| `orch-build-mvp` | Orchestrate bootstrapping a working MVP from a design or spec document — ingest the SDD/PRD, plan thin vertical slices, scaffold the first end-to-end slice, then drive a generator-evaluator build loop… |
+| `orch-build-mvp` | Orchestrate bootstrapping a working prototype or MVP from a design or specification document -- ingest the SDD/PRD/spec, plan thin vertical slices, scaffold the initial prototype for testing, and driv… |
 | `orch-change-feature` | Orchestrate altering an existing, working feature to new desired behavior — update its tests to the new spec, change the implementation to match, review, and gated commit. Use when behavior is not bro… |
 | `orch-fix-defect` | Orchestrate fixing a bug — reproduce it as a failing regression test, fix to green, review, and gated commit — by delegating each phase to the matching ECC agent. Use when existing behavior is broken … |
 | `orch-pipeline` | Shared orchestration engine behind the orch-* skill family — the gated Research-Plan-TDD-Review-Commit pipeline, size classifier, agent and command map, and two human gates (plan approval, commit conf… |
@@ -654,7 +654,7 @@ About 2,100 free APIs you can search, FreeLLMAPI, internet reach across 16 platf
 | Skill | What it does |
 |---|---|
 | `agent-reach` | 只读读取各平台内容：搜索、读帖、看评论、取字幕、查行情和职位。 Use when 用户提到或贴出链接：小红书/xiaohongshu、B站/bilibili、Twitter/X、Reddit、 YouTube（字幕、转录）、GitHub、V2EX、雪球/股票行情、LinkedIn/Boss直聘 职位、 Instagram、Facebook、小宇宙播客；或说"帮我搜/看看/读一下这个链接"而自带网页… |
-| `public-apis` | Find a free public API for any need from a bundled list of about 2,100 APIs in 51 categories (animals, books, finance, geocoding, government, health, machine learning, music, news, open data, science,… |
+| `public-apis` | Find a free public API for any need from a bundled list of about 2,100 APIs in 51 categories (animals, books, finance, currency and money conversion, geocoding, government, health, machine learning, m… |
 | `data-scraper-agent` | Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anything. Runs on a schedule, enriches data with a free LLM (Gemini Flash), s… |
 | `exa-search` | Neural search via Exa MCP for web, code, and company research. Use when the user needs web search, code examples, company intel, people lookup, or AI-powered deep research with Exa's neural search eng… |
 | `osint-investigation` | Sparse-clue OSINT investigation methodology for extracting overlooked leads, connecting fragmented evidence, and testing explanations across sources. Use for multi-step CTF challenges, image/video geo… |
@@ -687,7 +687,7 @@ Writing, marketing and persuasion audits, SEO, video, slides, social posting, br
 | `dark-pattern-check` | Checks a flow or element against a dated register of US, EU and UK consumer-protection rules. Covers countdowns, stock and activity messages, reviews, "was/now" prices, fees, pre-ticked extras, free t… |
 | `evidence-check` | Grades psychology claims used in marketing against the original studies, replications, meta-analyses and field results in a cited evidence ledger. Takes a named effect, bias, statistic or rule of thum… |
 | `persuasion-audit` | Audits an existing page, email, paywall, ad text or onboarding screen for the influence levers it uses. Each lever is quoted, given an evidence grade from a cited ledger, paired with the fact that mus… |
-| `price-framing` | Reads how prices are presented, with the arithmetic shown. Takes price points, tier tables, plan features, monthly and annual prices, discounts, "was" prices or trial terms and returns a normalised ta… |
+| `price-framing` | Reads how prices and pricing tiers are presented, considering behavioral economics and human behavior. Analyzes cloud service pricing, subscription tiers, plan features, anchor pricing, decoy dominanc… |
 | `algorithmic-art` | Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request creating art using code, generative art, algorithmic art, flow fields, or… |
 | `brand-guidelines` | Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-and-feel. Use it when brand colors or style guidelines, visual formatting… |
 | `canvas-design` | Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to create a poster, piece of art, design, or other static piece. Create ori… |
@@ -930,7 +930,7 @@ Domain playbooks: healthcare (HIPAA, EMR, CDSS), logistics, customs, inventory, 
 | Skill | What it does |
 |---|---|
 | `carrier-relationship-management` | Manage truckload, LTL, and intermodal carrier portfolios: sourcing and FMCSA vetting, freight rate and fuel-surcharge negotiation, RFPs and routing guides, carrier scorecards, allocation, and renewals… |
-| `customs-trade-compliance` | Codified customs and trade compliance expertise — HS/HTS tariff classification with GRI rules, commercial invoices and entry documentation, Incoterms 2020, FTA qualification and duty optimization (USM… |
+| `customs-trade-compliance` | Customs and international trade compliance -- importing goods and border forms, tariff classification (HS/HTS codes), valuation, rules of origin, import/export declarations, sanctions screening, and d… |
 | `energy-procurement` | Procure electricity and natural gas for commercial and industrial facilities: tariff and rate-schedule optimization, demand-charge mitigation, supplier RFPs, fixed/index/block-and-index hedging, renew… |
 | `healthcare-cdss-patterns` | Clinical Decision Support System (CDSS) development patterns. Drug interaction checking, dose validation, clinical scoring (NEWS2, qSOFA), alert severity classification, and integration into EMR workf… |
 | `healthcare-emr-patterns` | EMR/EHR development patterns for healthcare applications. Clinical safety, encounter workflows, prescription generation, clinical decision support integration, and accessibility-first UI for medical d… |
@@ -1192,7 +1192,7 @@ AI job search: evaluate offers, tailor CVs, scan portals, track applications.
 
 | Skill | What it does |
 |---|---|
-| `career-ops` | Open-source AI job search agent -- evaluate offers, generate CVs, scan portals, track applications. Use when the user pastes a job URL or JD, asks to scan portals, generate a CV/PDF, track application… |
+| `career-ops` | Open-source AI job search and career agent -- revise resume, evaluate offers, generate CVs and resumes tailored to company needs, scan portals, track applications. Use when revising a resume, updating… |
 | `scrape` | Finds new job postings matching your profile via installed portal-search CLIs (LinkedIn, local job boards, and any skills added with /add-portal). Deduplicates across runs. Triggers on: job scrape, fi… |
 | `upskill` | Compares tracked job postings against the candidate profile to identify skill gaps and generate a prioritized learning plan with study resources. Triggers on: /upskill, upskill, skill gaps, what shoul… |
 

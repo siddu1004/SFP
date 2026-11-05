@@ -89,8 +89,10 @@ def wilson(p, n, z=1.96):
 def pooled(results, engine, key='hit'):
     """An engine's share over all the held-out tasks together, with the task count."""
     suites = results[engine]['suites']
-    n = sum(suites[s]['n'] for s in HELD_OUT)
-    return sum(suites[s][key] * suites[s]['n'] for s in HELD_OUT) / n, n
+    target_suites = ('final_heldout_plain', 'final_heldout_project', 'final_heldout_reworded') if 'final_heldout_plain' in suites else HELD_OUT
+    valid_suites = [s for s in target_suites if s in suites]
+    n = sum(suites[s]['n'] for s in valid_suites)
+    return sum(suites[s][key] * suites[s]['n'] for s in valid_suites) / n, n
 
 
 def headline(results, t):
@@ -108,7 +110,7 @@ def headline(results, t):
 
 
 def plain_words(results, t):
-    s = 'plain_words_holdout2'
+    s = 'final_heldout_plain' if 'final_heldout_plain' in results['keyword']['suites'] else 'plain_words_holdout2'
     rows = [('Keyword search', results['keyword']['suites'][s]['hit'] * 100, False, None),
             ('SFP, words only', results['hive_words']['suites'][s]['hit'] * 100, False, None),
             ('+ understands meaning', results['hive_meaning']['suites'][s]['hit'] * 100, False, None),

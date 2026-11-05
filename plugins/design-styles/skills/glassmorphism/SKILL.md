@@ -1,6 +1,6 @@
 ---
 name: glassmorphism
-description: Frosted glass effect with translucent layers, subtle blur, and luminous borders for depth and modern elegance.
+description: "Frosted glass effect and translucent UI elements with blurred translucent layers, subtle borders, and depth for modern UI elegance. Use when designing translucent UI elements, frosted glass components, or glassmorphism styling."
 license: MIT
 metadata:
   author: typeui.sh

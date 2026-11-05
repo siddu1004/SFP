@@ -151,9 +151,10 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     matches = []
     if bundles != 'off':
         matches = plan_bundles(task, project, exclude, inc)
-        top = matches[0] if matches else None
-        if bundles == 'push' and top and top['push'] and max_skills >= 3:
-            inc = list(dict.fromkeys(inc + [n for n in top['skills'] if n not in set(exclude)]))
+        if bundles == 'push' and max_skills >= 3:
+            for m in matches:
+                if m.get('push'):
+                    inc = list(dict.fromkeys(inc + [n for n in m['skills'] if n not in set(exclude)]))
     res = sfp_learn.decide(task, project, goal, after, budget, max(max_skills, len(inc)), learn=learn, include=inc,
                            exclude=exclude, explain=explain, explore=explore)
     chosen = {c['name'] for c in res['stack']}
@@ -169,9 +170,10 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     res['bundles'] = matches
     # Skills a need or a bundle brought in are not the user's pins: say where they came from.
     origin = {}
-    if matches and matches[0].get('applied'):
-        for n in matches[0]['skills']:
-            origin.setdefault(n, 'part of the "%s" bundle' % matches[0]['name'])
+    for m in matches:
+        if m.get('applied'):
+            for n in m['skills']:
+                origin.setdefault(n, 'part of the "%s" bundle' % m['name'])
     for n in found:
         origin.setdefault(n['attach'], 'needed to %s' % n['name'][0].lower() + n['name'][1:])
     for c in res['stack']:

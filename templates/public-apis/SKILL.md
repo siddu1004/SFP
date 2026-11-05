@@ -1,6 +1,6 @@
 ---
 name: public-apis
-description: Find a free public API for any need from a bundled list of about 2,100 APIs in 51 categories (animals, books, finance, geocoding, government, health, machine learning, music, news, open data, science, sports, transportation, weather and more), with auth type, HTTPS and CORS for each, via a search script. Use when the user needs an API or data source, asks "is there an API for...", wants free or no-key APIs, or is choosing an API for a prototype, hackathon, app or demo.
+description: Find a free public API for any need from a bundled list of about 2,100 APIs in 51 categories (animals, books, finance, currency and money conversion, geocoding, government, health, machine learning, music, news, open data, science, sports, transportation, weather and more), with auth type, HTTPS and CORS for each, via a search script. Use when the user needs an API or data source, currency or money conversion data, asks "is there an API for...", wants free or no-key APIs, or is choosing an API for a prototype, hackathon, app or demo.
 ---
 
 # Public APIs

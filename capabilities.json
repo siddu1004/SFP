@@ -116,15 +116,15 @@
       "why": "A model does not know every API and invents endpoints. A searchable list of real, free APIs gives it ones that exist.",
       "triggers": [
         [
-          "\\b(free|public|open)\\b.{0,12}\\bapis?\\b",
+          "\\b(free|public|open)\\b.{0,12}\\b(apis?|services?)\\b",
           0.7
         ],
         [
-          "\\b(is there|find|looking for|need|which) (an? )?(api|data source|dataset)\\b",
+          "\\b(is there|find|looking for|need|which) (an? )?(api|data source|dataset|service|data endpoint)\\b",
           0.6
         ],
         [
-          "\\b(weather|currency|exchange rate|geocod\\w*|ip lookup|news|stock price|crypto price|translation)\\b.{0,20}\\bapi\\b",
+          "\\b(weather|currency|money conversion|exchange rate|geocod\\w*|ip lookup|news|stock price|crypto price|translation)\\b.{0,25}\\b(api|service|data)\\b",
           0.7
         ]
       ],

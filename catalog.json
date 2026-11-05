@@ -250,7 +250,7 @@
   {
    "name": "animation-performance",
    "category": "frontend",
-   "description": "Keep web animations inside the frame budget \u2014 animate composite-only properties, keep motion off the main thread when the page is busy, and find the cause when an animation drops frames. Covers the layout/paint/composite pipeline, cheaper property swaps, CSS vs WAAPI vs requestAnimationFrame, Framer Motion's hardware-accelerated path, React re-rendering per frame, inherited CSS variable recalculation, blur cost, and when `will-change` actually helps. Use when an animation is janky, choppy, stutters, or drops frames; when choosing which property to animate; when deciding between CSS and JS animation on performance grounds; or when reaching for `will-change` or GPU layers. For choosing easing, duration, or whether to animate at all use animate; for reviewing motion as a whole use review-animations.",
+   "description": "Keep web animations and visual effects smooth and fast inside the frame budget -- accelerate slow-moving visual effects, animate composite-only properties, offload work from main thread, and diagnose dropped frames. Use when an animation or visual effect is slow-moving, janky, or needs performance tuning.",
    "source": "emilkowalski/skills",
    "license": "MIT",
    "path": "plugins/frontend/skills/animation-performance",
@@ -628,7 +628,7 @@
   {
    "name": "glassmorphism",
    "category": "design-styles",
-   "description": "Frosted glass effect with translucent layers, subtle blur, and luminous borders for depth and modern elegance.",
+   "description": "Frosted glass effect and translucent UI elements with blurred translucent layers, subtle borders, and depth for modern UI elegance. Use when designing translucent UI elements, frosted glass components, or glassmorphism styling.",
    "source": "bergside/awesome-design-skills",
    "license": "MIT",
    "path": "plugins/design-styles/skills/glassmorphism",
@@ -1304,7 +1304,7 @@
   {
    "name": "public-apis",
    "category": "data-apis",
-   "description": "Find a free public API for any need from a bundled list of about 2,100 APIs in 51 categories (animals, books, finance, geocoding, government, health, machine learning, music, news, open data, science, sports, transportation, weather and more), with auth type, HTTPS and CORS for each, via a search script. Use when the user needs an API or data source, asks \"is there an API for...\", wants free or no-key APIs, or is choosing an API for a prototype, hackathon, app or demo.",
+   "description": "Find a free public API for any need from a bundled list of about 2,100 APIs in 51 categories (animals, books, finance, currency and money conversion, geocoding, government, health, machine learning, music, news, open data, science, sports, transportation, weather and more), with auth type, HTTPS and CORS for each, via a search script. Use when the user needs an API or data source, currency or money conversion data, asks \"is there an API for...\", wants free or no-key APIs, or is choosing an API for a prototype, hackathon, app or demo.",
    "source": "public-apis/public-apis",
    "license": "MIT",
    "path": "plugins/data-apis/skills/public-apis",
@@ -1466,7 +1466,7 @@
   {
    "name": "api-design",
    "category": "backend",
-   "description": "REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs. Use when designing or reviewing REST endpoints, resource names, status codes, pagination, or versioning.",
+   "description": "REST API design patterns and web service interface design for data exchange -- resource naming, status codes, pagination, filtering, error responses, versioning, and rate limiting for production APIs. Use when designing web service interfaces, REST APIs, endpoints, or data exchange protocols.",
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/backend/skills/api-design",
@@ -1754,7 +1754,7 @@
   {
    "name": "compose-multiplatform-patterns",
    "category": "mobile",
-   "description": "Compose Multiplatform and Jetpack Compose patterns for KMP projects \u2014 state management, navigation, theming, performance, and platform-specific UI. Use when building Compose or Jetpack Compose UI, state, navigation, or theming in a KMP project.",
+   "description": "Compose Multiplatform and Jetpack Compose patterns for KMP projects -- cross-platform UI that works on multiple platforms (Android, iOS, desktop, web), state management, navigation, theming, and performance. Use when building multiplatform UI or Jetpack Compose interfaces.",
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/mobile/skills/compose-multiplatform-patterns",
@@ -1952,7 +1952,7 @@
   {
    "name": "customs-trade-compliance",
    "category": "industry",
-   "description": "Codified customs and trade compliance expertise \u2014 HS/HTS tariff classification with GRI rules, commercial invoices and entry documentation, Incoterms 2020, FTA qualification and duty optimization (USMCA, RCEP, FTZs, drawback), denied-party screening, and penalty mitigation across US, EU, UK, and APAC jurisdictions. Use when classifying goods, preparing import/export documentation, screening restricted parties, responding to customs audits or CF-28/penalty notices, or optimizing duties.",
+   "description": "Customs and international trade compliance -- importing goods and border forms, tariff classification (HS/HTS codes), valuation, rules of origin, import/export declarations, sanctions screening, and documentation. Use for customs declarations, border clearance, importing goods, and trade compliance.",
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/industry/skills/customs-trade-compliance",
@@ -3158,7 +3158,7 @@
   {
    "name": "orch-build-mvp",
    "category": "agents",
-   "description": "Orchestrate bootstrapping a working MVP from a design or spec document \u2014 ingest the SDD/PRD, plan thin vertical slices, scaffold the first end-to-end slice, then drive a generator-evaluator build loop with review and gated feat commits. Use when a design or spec document must become a running MVP through planned vertical slices.",
+   "description": "Orchestrate bootstrapping a working prototype or MVP from a design or specification document -- ingest the SDD/PRD/spec, plan thin vertical slices, scaffold the initial prototype for testing, and drive a build-eval loop with review and gated feat commits. Use when a specification or design must become a working prototype or MVP.",
    "source": "affaan-m/everything-claude-code",
    "license": "MIT",
    "path": "plugins/agents/skills/orch-build-mvp",
@@ -5080,7 +5080,7 @@
   {
    "name": "price-framing",
    "category": "content-media",
-   "description": "Reads how prices are presented, with the arithmetic shown. Takes price points, tier tables, plan features, monthly and annual prices, discounts, \"was\" prices or trial terms and returns a normalised table (per month, per seat, annual saving, months free, per day), the anchor order and pre-selected plan, a decoy dominance matrix that treats price as an attribute, a price-ending check, percent vs amount discount framing, and the rule cells for reference prices, fees, pre-ticked extras and trials. Use when the user asks to check the prices, tiers, anchoring, decoys or discount framing on a pricing page or paywall. Evidence grades come from a cited ledger. Evaluates the prices given; never proposes a new price unless the user asks, never writes the pricing page itself, and never predicts a lift.",
+   "description": "Reads how prices and pricing tiers are presented, considering behavioral economics and human behavior. Analyzes cloud service pricing, subscription tiers, plan features, anchor pricing, decoy dominance, and discount framing. Use when setting or auditing cloud service pricing, subscription tiers, or paywalls.",
    "source": "grayskripko/marketing-skills",
    "license": "MIT",
    "path": "plugins/content-media/skills/price-framing",
@@ -5107,7 +5107,7 @@
   {
    "name": "accessibility-audit",
    "category": "frontend",
-   "description": "Conduct accessibility audits against WCAG 2.2 guidelines. Evaluate pages, components, and flows for conformance at A, AA, and AAA levels. Identify issues, assess severity, provide code fixes, and generate audit reports. Covers automated testing, manual testing, keyboard navigation, screen reader compatibility, color contrast, and semantic HTML.",
+   "description": "Conduct accessibility and UI usability audits against WCAG 2.2 guidelines. Check UI usability, evaluate pages, components, and user flows for conformance at A, AA, and AAA levels, testing keyboard navigation and screen reader compatibility. Use when checking UI usability, accessibility compliance, or WCAG audits.",
    "source": "cuellarfr/design-skills",
    "license": "MIT",
    "path": "plugins/frontend/skills/accessibility-audit",
@@ -5296,7 +5296,7 @@
   {
    "name": "career-ops",
    "category": "career",
-   "description": "Open-source AI job search agent -- evaluate offers, generate CVs, scan portals, track applications. Use when the user pastes a job URL or JD, asks to scan portals, generate a CV/PDF, track applications, prepare for interviews, draft outreach/emails, or run any career-ops mode.",
+   "description": "Open-source AI job search and career agent -- revise resume, evaluate offers, generate CVs and resumes tailored to company needs, scan portals, track applications. Use when revising a resume, updating a CV, pasting a job description, preparing for interviews, or tracking job applications.",
    "source": "career-ops-hq/career-ops",
    "license": "MIT",
    "path": "plugins/career/skills/career-ops",

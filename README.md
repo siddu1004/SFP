@@ -42,21 +42,21 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 
 <table align="center">
   <tr>
-    <td align="center" valign="top" width="33%"><h3>62%</h3>right skill on tasks it never saw, against <b>25%</b> for keyword search</td>
+    <td align="center" valign="top" width="33%"><h3>65%</h3>right skill on tasks it never saw, against <b>26%</b> for keyword search</td>
     <td align="center" valign="top" width="33%"><h3>94%</h3>less for your AI to carry than having every skill always on</td>
     <td align="center" valign="top" width="33%"><h3>0</h3>words sent out by SFP when it picks: it runs on your machine</td>
   </tr>
 </table>
 
-<p align="center"><sub>62% uses optional local models; without them it is 47%. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
+<p align="center"><sub>65% uses optional local models (60% across 130 frozen held-out tasks); without them it is 47%. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
 
 ### Why Not Just Use Search, or Turn Everything On?
 
 | | Keyword search | Every skill always on | SFP |
 |---|---|---|---|
-| **What your AI carries** | Only what it finds | 81,931 tokens (41% of its memory) | About 5,000 tokens |
+| **What your AI carries** | Only what it finds | 81,691 tokens (41% of its memory) | About 5,000 tokens |
 | **Knows your project** | No | No | Yes: it reads your project files |
-| **Right skill on new tasks** | 25% | Left for your AI to work out | 62% with local models, 47% without |
+| **Right skill on new tasks** | 26% | Left for your AI to work out | 65% with local models, 47% without |
 | **Learns what you like** | No | No | Yes, from your feedback |
 | **Time to choose** | Instant | Nothing to choose | A few ms; up to about 1.7 s with local models |
 
@@ -252,20 +252,31 @@ Every number here can be reproduced. A task counts as right when the chosen skil
 
 With local models on (`python3 bench/run_all.py`; full method in [bench/RESULTS.md](bench/RESULTS.md)). Each cell shows **right skill chosen / right skill first**:
 
+### 3.20.0 Frozen Held-Out Suites (Pre-committed commit `230cc07`, n=130)
+
+| Engine | Beginner Wording (60) | Sample Projects (30) | Reworded (40) | All Frozen Held Out (130) | 95% range, chosen |
+|---|---:|---:|---:|---:|---:|
+| Keyword search | 50 / 35 | 40 / 30 | 60 / 50 | **51 / 38** | 42 to 59 |
+| SFP, words only | 43 / 32 | 67 / 60 | 62 / 50 | **55 / 44** | 46 to 63 |
+| + meaning (`bge-m3`) | 53 / 37 | 70 / 60 | 60 / 50 | **59 / 46** | 51 to 67 |
+| + model check (`lfm2-24b-a2b`) | 52 / 35 | 70 / 57 | 65 / 48 | **60 / 44** | 51 to 68 |
+
+### Previous Held-Out Tasks (n=97)
+
 | Engine | Fresh projects (22) | Reworded (35) | Plain words (40) | All held out (97) | 95% range, chosen |
 |---|---:|---:|---:|---:|---:|
-| Keyword search | 9 / 9 | 26 / 17 | 32 / 30 | **25 / 21** | 17 to 34 |
+| Keyword search | 9 / 9 | 26 / 17 | 35 / 30 | **26 / 20** | 18 to 36 |
 | SFP, words only | 91 / 68 | 34 / 23 | 35 / 28 | **47 / 35** | 38 to 57 |
-| + meaning (`bge-m3`) | 91 / 68 | 40 / 26 | 52 / 30 | **57 / 37** | 47 to 66 |
-| + model check (`lfm2-24b-a2b`) | 91 / 68 | 51 / 40 | 55 / 35 | **62 / 44** | 52 to 71 |
+| + meaning (`bge-m3`) | 86 / 55 | 43 / 34 | 53 / 40 | **57 / 41** | 47 to 66 |
+| + model check (`lfm2-24b-a2b`) | 86 / 55 | 57 / 43 | 58 / 40 | **65 / 44** | 55 to 74 |
 
 Words only, recomputed from this repository each time this page is built, so it is the same on every machine (`python3 mcp/sfp_hive.py evaluate`):
 
-| Task set | Hive 3.19.0 | Earlier engine | Plain search |
+| Task set | Hive 3.20.0 | Earlier engine | Plain search |
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **91%** | 64% | 9% |
 | 24 tasks in 10 sample projects | 79% | 79% | 25% |
-| 91 tasks with no project | 87% | 87% | 84% |
+| 91 tasks with no project | 88% | 87% | 84% |
 | Stacks with a skill for the wrong technology, all sets | 0 | 0 | 0 |
 
 **Does it make the work better?** In blind design reviews, agents with SFP produced a page a reviewer would accept in **2.8 rounds**, against **3.7** with no skills. Given a tool they had never seen, agents with no skills passed 0 of 7 checks, and with SFP passed all 7 ([docs/EFFECT.md](docs/EFFECT.md)).
@@ -289,20 +300,20 @@ Words only, recomputed from this repository each time this page is built, so it 
 | What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |
 |---|---:|---:|---:|
 | `sfp` and `sfp-hive` only (the rest on demand) | 2 + all 1063 through them | about 266 tokens | 0.1% |
-| `starter` preset | 174 | about 15,355 tokens | 7.7% |
-| `frontend-dev` preset | 225 | about 16,541 tokens | 8.3% |
-| `backend-dev` preset | 151 | about 13,382 tokens | 6.7% |
-| `mobile-dev` preset | 84 | about 6,886 tokens | 3.4% |
-| `agent-builder` preset | 309 | about 20,658 tokens | 10.3% |
-| `everything` | 1065 | about 81,931 tokens | 41.0% |
+| `starter` preset | 174 | about 15,372 tokens | 7.7% |
+| `frontend-dev` preset | 225 | about 16,454 tokens | 8.2% |
+| `backend-dev` preset | 151 | about 13,407 tokens | 6.7% |
+| `mobile-dev` preset | 84 | about 6,893 tokens | 3.4% |
+| `agent-builder` preset | 309 | about 20,675 tokens | 10.3% |
+| `everything` | 1065 | about 81,691 tokens | 40.8% |
 
 **How fast is it?**
 
-Words only, a choice takes about 13 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
+Words only, a choice takes about 6 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 ### Where It Still Fails
 
-We would rather you hear this from us. These are real results from version 3.19.0:
+We would rather you hear this from us. These are real results from version 3.20.0:
 
 - **Some picks are simply wrong.** *"my app is slow when lots of people use it"* leads with `app-store-optimization`. On plain-words tasks, the right skill is missing about 45% of the time.
 - **Extra skills can be unrelated.** *"make the login not get hacked"* leads with the right `security-review`, but the stack also holds `blend-genre-action-combat`. The main score only asks whether a right skill is present, so it does not catch this.

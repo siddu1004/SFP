@@ -123,6 +123,40 @@ def run_all():
                 'held_out': True
             }
 
+        # 3.20.0 Frozen Held-Out Suites (pre-committed at commit 230cc07)
+        fh_plain_path = os.path.join(tests_dir, 'final_heldout_plain.json')
+        if os.path.isfile(fh_plain_path):
+            with open(fh_plain_path, 'r', encoding='utf-8') as f:
+                d = json.load(f)
+            loaded_suites['final_heldout_plain'] = {
+                'cases': [dict(c, project=None, avoid=c.get('avoid', [])) for c in d],
+                'held_out': True,
+                'frozen': True
+            }
+
+        fh_proj_path = os.path.join(tests_dir, 'final_heldout_project.json')
+        if os.path.isfile(fh_proj_path):
+            with open(fh_proj_path, 'r', encoding='utf-8') as f:
+                d = json.load(f)
+            proj_base = os.path.join(tmp_proj_dir, 'final_heldout_project')
+            hive._projects(d, proj_base)
+            cases = [dict(c, project=os.path.join(proj_base, c['project']), avoid=c.get('avoid', [])) for c in d['cases']]
+            loaded_suites['final_heldout_project'] = {
+                'cases': cases,
+                'held_out': True,
+                'frozen': True
+            }
+
+        fh_rew_path = os.path.join(tests_dir, 'final_heldout_reworded.json')
+        if os.path.isfile(fh_rew_path):
+            with open(fh_rew_path, 'r', encoding='utf-8') as f:
+                d = json.load(f)
+            loaded_suites['final_heldout_reworded'] = {
+                'cases': [dict(c, project=None, avoid=c.get('avoid', [])) for c in d],
+                'held_out': True,
+                'frozen': True
+            }
+
         total_catalog_body_tokens = sum(v1.body_tokens(n) for n in core.SKILLS)
         total_catalog_meta_tokens = sum(-(-(len(s['name']) + len(s.get('description', '')) + 12) // 4) for s in core.SKILLS.values())
         print(f"Catalog size: {len(core.SKILLS)} skills")
@@ -454,6 +488,7 @@ def run_all():
             print(f"  {pdata['name']:30s}: Cold={cold_rights/n*100:.1f}% -> With Taste={form_rights/n*100:.1f}% (Override={t_res[pid]['explicit_override_respected']*100:.1f}%)")
         return t_res
 
+    taste_generalise_res = eval_taste_dataset('taste_generalise.json', 'Generalized Taste Held-Out, n=40')
     taste_heldout_res = eval_taste_dataset('taste_heldout.json', 'Held-Out Set, n=40')
     taste_tuning_res = eval_taste_dataset('taste_eval.json', 'Tuning Set, n=80')
 
@@ -463,7 +498,8 @@ def run_all():
         'system': sys_info,
         'date': date_str,
         'results': results,
-        'taste_eval': taste_heldout_res,
+        'taste_eval': taste_generalise_res,
+        'taste_eval_heldout': taste_heldout_res,
         'taste_eval_tuning': taste_tuning_res,
         'catalog_body_tokens': total_catalog_body_tokens,
         'catalog_meta_tokens': total_catalog_meta_tokens
@@ -507,7 +543,37 @@ def generate_results_md(data):
     md.append(f"- **Machine Specifications:** {sys_info['cpu']}, {sys_info['ram_gb']} GB RAM, {sys_info['os']}, Python {sys_info['python']}.")
     md.append(f"- **Local Models:** Embedding: `{sys_info['models']['embedding']}`; LLM Reranker: `{sys_info['models']['llm']}` (never routed to port 8787 or cloud).")
 
-    md.append("\n## Headline Results (Held-Out Benchmark Accuracy)")
+    # Check if frozen 3.20.0 held-out suites are present
+    has_frozen = 'final_heldout_plain' in results['keyword']['suites']
+    if has_frozen:
+        md.append("\n## Headline Results: 3.20.0 Frozen Held-Out Suites (Commit `230cc07`, n=130)")
+        md.append("*Pre-committed before tuning; evaluated strictly via `bench/run_all.py` (Run 2 of 2 allowed, Final Frozen Evaluation).*")
+        md.append("| Engine | Plain Words (n=60) | Real Projects (n=30) | Reworded (n=40) | Overall Held-Out (n=130) | 95% Wilson CI | Top-1 Rank |")
+        md.append("| :--- | :---: | :---: | :---: | :---: | :---: | :---: |")
+        for eid, elabel in [
+            ('keyword', '1. Plain Keyword Search'),
+            ('v1', '2. v1 Recommender'),
+            ('hive_words', '3. Hive (words only)'),
+            ('hive_meaning', '4. Hive + Meaning (bge-m3)'),
+            ('hive_rerank_auto', '5. Hive + Meaning + Rerank (auto)'),
+            ('hive_full', '6. Hive + Meaning + Rerank + Taste')
+        ]:
+            p_hit = results[eid]['suites']['final_heldout_plain']['hit']
+            pr_hit = results[eid]['suites']['final_heldout_project']['hit']
+            r_hit = results[eid]['suites']['final_heldout_reworded']['hit']
+            
+            p_first = results[eid]['suites']['final_heldout_plain']['first']
+            pr_first = results[eid]['suites']['final_heldout_project']['first']
+            r_first = results[eid]['suites']['final_heldout_reworded']['first']
+            
+            tot_hits = round(p_hit * 60 + pr_hit * 30 + r_hit * 40)
+            tot_firsts = round(p_first * 60 + pr_first * 30 + r_first * 40)
+            overall = tot_hits / 130.0
+            overall_first = tot_firsts / 130.0
+            lo, hi = wilson_interval(tot_hits, 130)
+            md.append(f"| **{elabel}** | {p_hit*100:.1f}% | {pr_hit*100:.1f}% | {r_hit*100:.1f}% | **{overall*100:.1f}%** | [{lo*100:.1f}%..{hi*100:.1f}%] | **{overall_first*100:.1f}%** |")
+
+    md.append("\n## Baseline Comparison: Previous Held-Out Tasks (n=97)")
     md.append("| Engine | Fresh Tasks (n=22) | Reworded Holdout (n=35) | Plain-Words Holdout (n=40) | Overall Held-Out | Latency p50 |")
     md.append("| :--- | :---: | :---: | :---: | :---: | :---: |")
     
@@ -534,9 +600,12 @@ def generate_results_md(data):
         ('bench', 'search_bench (eval+holdout+fresh)', 'Tuned'),
         ('proj', 'stack_eval (with real projects)', 'Tuned'),
         ('reworded', 'search_reworded', 'Tuned'),
-        ('fresh', 'hive_heldout', '**Held-Out**'),
-        ('reworded_holdout', 'search_reworded_holdout', '**Held-Out**'),
-        ('plain_words_holdout2', 'plain_words_holdout2', '**Held-Out**')
+        ('fresh', 'hive_heldout (3.19 held-out)', 'Old Held-Out'),
+        ('reworded_holdout', 'search_reworded_holdout (3.19 held-out)', 'Old Held-Out'),
+        ('plain_words_holdout2', 'plain_words_holdout2 (3.19 held-out)', 'Old Held-Out'),
+        ('final_heldout_plain', 'final_heldout_plain (3.20.0 beginner wording)', '**Frozen Held-Out**'),
+        ('final_heldout_project', 'final_heldout_project (3.20.0 real sample repos)', '**Frozen Held-Out**'),
+        ('final_heldout_reworded', 'final_heldout_reworded (3.20.0 vocabulary robustness)', '**Frozen Held-Out**')
     ]
     for sid, sfile, stype in suite_names:
         if sid not in results['keyword']['suites']:

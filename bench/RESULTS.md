@@ -1,5 +1,5 @@
-# SFP Benchmark Results (v3.19.0)
-**Date:** 2026-11-04 | **Commit:** `4a188a462b` | **Catalog Size:** 1,065 skills
+# SFP Benchmark Results (v3.20.0)
+**Date:** 2026-11-05 | **Commit:** `230cc077b5` | **Catalog Size:** 1,065 skills
 
 ## Honesty Disclosures & Evaluation Methodology
 - **Scoring Parity:** `bench/run_all.py` uses `sfp_hive.load_cases()` and scores identically to `sfp_hive.evaluate()`. Keyword search uses `k = max(1, round(hive stack size))` as in `evaluate()`.
@@ -11,42 +11,56 @@
 - **Machine Specifications:** Intel64 Family 6 Model 197 Stepping 2, GenuineIntel, 32.0 GB RAM, Windows-11-10.0.26300-SP0, Python 3.13.14.
 - **Local Models:** Embedding: `bge-m3:latest (Ollama, 1024-dim, F16)`; LLM Reranker: `lfm2-24b-a2b (LM Studio, 24B MoE, Q4_K_M)` (never routed to port 8787 or cloud).
 
-## Headline Results (Held-Out Benchmark Accuracy)
+## Headline Results: 3.20.0 Frozen Held-Out Suites (Commit `230cc07`, n=130)
+*Pre-committed before tuning; evaluated strictly via `bench/run_all.py` (Run 1 of 2 allowed).*
+| Engine | Plain Words (n=60) | Real Projects (n=30) | Reworded (n=40) | Overall Held-Out (n=130) | 95% Wilson CI | Top-1 Rank |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **1. Plain Keyword Search** | 50.0% | 40.0% | 60.0% | **50.8%** | [42.3%..59.2%] | **38.5%** |
+| **2. v1 Recommender** | 45.0% | 66.7% | 70.0% | **57.7%** | [49.1%..65.8%] | **42.3%** |
+| **3. Hive (words only)** | 43.3% | 66.7% | 62.5% | **54.6%** | [46.0%..62.9%] | **43.8%** |
+| **4. Hive + Meaning (bge-m3)** | 53.3% | 70.0% | 60.0% | **59.2%** | [50.6%..67.3%] | **46.2%** |
+| **5. Hive + Meaning + Rerank (auto)** | 51.7% | 70.0% | 65.0% | **60.0%** | [51.4%..68.0%] | **43.8%** |
+| **6. Hive + Meaning + Rerank + Taste** | 51.7% | 70.0% | 65.0% | **60.0%** | [51.4%..68.0%] | **43.8%** |
+
+## Baseline Comparison: Previous Held-Out Tasks (n=97)
 | Engine | Fresh Tasks (n=22) | Reworded Holdout (n=35) | Plain-Words Holdout (n=40) | Overall Held-Out | Latency p50 |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| **1. Plain Keyword Search** | 9.1% | 25.7% | 32.5% | **24.7%** | 0 ms |
+| **1. Plain Keyword Search** | 9.1% | 25.7% | 35.0% | **25.8%** | 0 ms |
 | **2. v1 Recommender** | 63.6% | 34.3% | 37.5% | **42.3%** | 1 ms |
 | **3. Hive (words only)** | 90.9% | 34.3% | 35.0% | **47.4%** | 2 ms |
-| **4. Hive + Meaning (bge-m3)** | 90.9% | 40.0% | 52.5% | **56.7%** | 186 ms |
-| **5. Hive + Meaning + Rerank (auto)** | 90.9% | 51.4% | 55.0% | **61.9%** | 116 ms |
-| **6. Hive + Meaning + Rerank + Taste** | 90.9% | 51.4% | 55.0% | **61.9%** | 116 ms |
+| **4. Hive + Meaning (bge-m3)** | 86.4% | 42.9% | 52.5% | **56.7%** | 231 ms |
+| **5. Hive + Meaning + Rerank (auto)** | 86.4% | 57.1% | 57.5% | **63.9%** | 243 ms |
+| **6. Hive + Meaning + Rerank + Taste** | 86.4% | 57.1% | 57.5% | **63.9%** | 243 ms |
 
 ## Detailed Accuracy by Task Suite
 | Suite | Tasks (n) | Type | Keyword | v1 | Hive (Words) | Hive + Meaning | Hive + Rerank | Hive + Taste |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| `search_bench (eval+holdout+fresh)` | 91 | Tuned | 83.5% | 86.8% | 86.8% | 93.4% | 93.4% | **93.4%** |
-| `stack_eval (with real projects)` | 24 | Tuned | 25.0% | 79.2% | 79.2% | 79.2% | 79.2% | **79.2%** |
-| `search_reworded` | 35 | Tuned | 34.3% | 28.6% | 28.6% | 40.0% | 54.3% | **54.3%** |
-| `hive_heldout` | 22 | **Held-Out** | 9.1% | 63.6% | 90.9% | 90.9% | 90.9% | **90.9%** |
-| `search_reworded_holdout` | 35 | **Held-Out** | 25.7% | 34.3% | 34.3% | 40.0% | 51.4% | **51.4%** |
-| `plain_words_holdout2` | 40 | **Held-Out** | 32.5% | 37.5% | 35.0% | 52.5% | 55.0% | **55.0%** |
+| `search_bench (eval+holdout+fresh)` | 91 | Tuned | 83.5% | 86.8% | 87.9% | 92.3% | 93.4% | **93.4%** |
+| `stack_eval (with real projects)` | 24 | Tuned | 25.0% | 79.2% | 79.2% | 75.0% | 75.0% | **75.0%** |
+| `search_reworded` | 35 | Tuned | 51.4% | 51.4% | 51.4% | 62.9% | 71.4% | **71.4%** |
+| `hive_heldout (3.19 held-out)` | 22 | Old Held-Out | 9.1% | 63.6% | 90.9% | 86.4% | 86.4% | **86.4%** |
+| `search_reworded_holdout (3.19 held-out)` | 35 | Old Held-Out | 25.7% | 34.3% | 34.3% | 42.9% | 57.1% | **57.1%** |
+| `plain_words_holdout2 (3.19 held-out)` | 40 | Old Held-Out | 35.0% | 37.5% | 35.0% | 52.5% | 57.5% | **57.5%** |
+| `final_heldout_plain (3.20.0 beginner wording)` | 60 | **Frozen Held-Out** | 50.0% | 45.0% | 43.3% | 53.3% | 51.7% | **51.7%** |
+| `final_heldout_project (3.20.0 real sample repos)` | 30 | **Frozen Held-Out** | 40.0% | 66.7% | 66.7% | 70.0% | 70.0% | **70.0%** |
+| `final_heldout_reworded (3.20.0 vocabulary robustness)` | 40 | **Frozen Held-Out** | 60.0% | 70.0% | 62.5% | 60.0% | 65.0% | **65.0%** |
 
 ## Taste & Format Accuracy (Held-Out Tasks, n=40)
 Tasks evaluated on 40 completely new held-out topics chosen by card (job + output), with no hard-coded skill names.
 | Persona | Preferred Format | Cold Start Format Match | With Learned Taste | Explicit Override Respected |
 | :--- | :--- | :---: | :---: | :---: |
-| **Visual Learner (Animation)** | `animation` | 20.0% | **90.0%** | **66.7%** |
-| **Deep Reader (Text / Prose)** | `text` | 40.0% | **100.0%** | **100.0%** |
-| **Hands-on Engineer (Code / Patterns)** | `code` | 80.0% | **90.0%** | **66.7%** |
+| **Visual Learner (Animation)** | `animation` | 40.0% | **80.0%** | **100.0%** |
+| **Deep Reader (Text / Prose)** | `text` | 60.0% | **70.0%** | **100.0%** |
+| **Hands-on Engineer (Code / Patterns)** | `code` | 90.0% | **90.0%** | **66.7%** |
 | **Video & Demo Producer (Video / Screencasts)** | `video` | 90.0% | **90.0%** | **66.7%** |
 
 ### Taste & Format Accuracy (Tuning Set, n=80)
 | Persona | Preferred Format | Cold Start Format Match | With Learned Taste | Explicit Override Respected |
 | :--- | :--- | :---: | :---: | :---: |
 | **Visual Learner (Animation)** | `animation` | 35.0% | **90.0%** | **75.0%** |
-| **Reader (Text / Reference)** | `text` | 65.0% | **100.0%** | **100.0%** |
+| **Reader (Text / Reference)** | `text` | 65.0% | **75.0%** | **100.0%** |
 | **Hands-On Learner (Code / Tests)** | `code` | 90.0% | **95.0%** | **87.5%** |
-| **Video Producer (Remotion / Video)** | `video` | 50.0% | **95.0%** | **100.0%** |
+| **Video Producer (Remotion / Video)** | `video` | 45.0% | **85.0%** | **87.5%** |
 
 ## Auto-Rerank Investigation & Resolution
 In earlier runs, `SFP_RERANK=auto` regressed on project tasks (`proj` fell 79.2% -> 70.8%, `fresh` fell 90.9% -> 86.4%).
@@ -73,10 +87,10 @@ Outcome across all benchmark suites: `proj` **79.2%**, `fresh` **90.9%**, `bench
    - *Hands-on Coder (after code history):* `python-patterns` (format: code)
 
 ## Context Efficiency
-- **Full Library Descriptions (carried by agents):** 81,931 tokens across 1,065 skills.
-- **Full Library Body Text:** 1,907,824 tokens.
-- **SFP Stack Load:** 4,513 tokens average context footprint.
-- **Context Saved (vs Descriptions):** **94.5% reduction** (headline figure).
+- **Full Library Descriptions (carried by agents):** 81,691 tokens across 1,065 skills.
+- **Full Library Body Text:** 1,907,869 tokens.
+- **SFP Stack Load:** 4,634 tokens average context footprint.
+- **Context Saved (vs Descriptions):** **94.3% reduction** (headline figure).
 - **Context Saved (vs Full Body):** **99.8% reduction**.
 
 ## Honesty: Tasks Where Plain Search Hit and Hive Words-Only Missed

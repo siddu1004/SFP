@@ -42,13 +42,13 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 
 <table align="center">
   <tr>
-    <td align="center" valign="top" width="33%"><h3>62%</h3>right skill on tasks it never saw, against <b>25%</b> for keyword search</td>
+    <td align="center" valign="top" width="33%"><h3>65%</h3>right skill on tasks it never saw, against <b>26%</b> for keyword search</td>
     <td align="center" valign="top" width="33%"><h3>94%</h3>less for your AI to carry than having every skill always on</td>
     <td align="center" valign="top" width="33%"><h3>0</h3>words sent out by SFP when it picks: it runs on your machine</td>
   </tr>
 </table>
 
-<p align="center"><sub>62% uses optional local models; without them it is 47%. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
+<p align="center"><sub>65% uses optional local models (60% across 130 frozen held-out tasks); without them it is 47%. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
 
 ### Why Not Just Use Search, or Turn Everything On?
 
@@ -56,7 +56,7 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 |---|---|---|---|
 | **What your AI carries** | Only what it finds | @@ALL_TOKENS@@ tokens (@@ALL_PERCENT@@% of its memory) | About 5,000 tokens |
 | **Knows your project** | No | No | Yes: it reads your project files |
-| **Right skill on new tasks** | 25% | Left for your AI to work out | 62% with local models, 47% without |
+| **Right skill on new tasks** | 26% | Left for your AI to work out | 65% with local models, 47% without |
 | **Learns what you like** | No | No | Yes, from your feedback |
 | **Time to choose** | Instant | Nothing to choose | A few ms; up to about 1.7 s with local models |
 
@@ -246,12 +246,23 @@ Every number here can be reproduced. A task counts as right when the chosen skil
 
 With local models on (`python3 bench/run_all.py`; full method in [bench/RESULTS.md](bench/RESULTS.md)). Each cell shows **right skill chosen / right skill first**:
 
+### 3.20.0 Frozen Held-Out Suites (Pre-committed commit `230cc07`, n=130)
+
+| Engine | Beginner Wording (60) | Sample Projects (30) | Reworded (40) | All Frozen Held Out (130) | 95% range, chosen |
+|---|---:|---:|---:|---:|---:|
+| Keyword search | 50 / 35 | 40 / 30 | 60 / 50 | **51 / 38** | 42 to 59 |
+| SFP, words only | 43 / 32 | 67 / 60 | 62 / 50 | **55 / 44** | 46 to 63 |
+| + meaning (`bge-m3`) | 53 / 37 | 70 / 60 | 60 / 50 | **59 / 46** | 51 to 67 |
+| + model check (`lfm2-24b-a2b`) | 52 / 35 | 70 / 57 | 65 / 48 | **60 / 44** | 51 to 68 |
+
+### Previous Held-Out Tasks (n=97)
+
 | Engine | Fresh projects (22) | Reworded (35) | Plain words (40) | All held out (97) | 95% range, chosen |
 |---|---:|---:|---:|---:|---:|
-| Keyword search | 9 / 9 | 26 / 17 | 32 / 30 | **25 / 21** | 17 to 34 |
+| Keyword search | 9 / 9 | 26 / 17 | 35 / 30 | **26 / 20** | 18 to 36 |
 | SFP, words only | 91 / 68 | 34 / 23 | 35 / 28 | **47 / 35** | 38 to 57 |
-| + meaning (`bge-m3`) | 91 / 68 | 40 / 26 | 52 / 30 | **57 / 37** | 47 to 66 |
-| + model check (`lfm2-24b-a2b`) | 91 / 68 | 51 / 40 | 55 / 35 | **62 / 44** | 52 to 71 |
+| + meaning (`bge-m3`) | 86 / 55 | 43 / 34 | 53 / 40 | **57 / 41** | 47 to 66 |
+| + model check (`lfm2-24b-a2b`) | 86 / 55 | 57 / 43 | 58 / 40 | **65 / 44** | 55 to 74 |
 
 Words only, recomputed from this repository each time this page is built, so it is the same on every machine (`python3 mcp/sfp_hive.py evaluate`):
 

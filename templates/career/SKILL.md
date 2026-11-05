@@ -1,6 +1,6 @@
 ---
 name: career-ops
-description: Open-source AI job search agent -- evaluate offers, generate CVs, scan portals, track applications. Use when the user pastes a job URL or JD, asks to scan portals, generate a CV/PDF, track applications, prepare for interviews, draft outreach/emails, or run any career-ops mode.
+description: Open-source AI job search and career agent -- revise resume, evaluate offers, generate CVs and resumes tailored to company needs, scan portals, track applications. Use when revising a resume, updating a CV, pasting a job description, preparing for interviews, or tracking job applications.
 ---
 
 # career-ops (SFP launcher)

@@ -56,7 +56,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.19.0'
+VERSION = '3.20.0'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 # Catalog skills whose description names every domain (public-apis lists 51 kinds of API): words always match them, so
 # they are candidates only when their capability in capabilities.json fires ("is there a free API for...").
@@ -126,7 +126,10 @@ def relation(tech, ctx_tech):
         return 'fit'
     if tech <= TOOLS:
         return 'near'   # a Docker skill suits a Python project as well as a Node one
-    # A framework skill in a project that only shows its language: plausible, not wrong.
+    if any((IMPLIES.get(t, set()) - LANGS) & ctx_tech for t in tech):
+        return 'fit'
+    if any(tech & (IMPLIES.get(c, set()) & LANGS) for c in ctx_tech):
+        return 'near'
     if not (ctx_tech - LANGS) and any(IMPLIES.get(t, set()) & ctx_tech for t in tech):
         return 'near'
     return 'mismatch'
@@ -187,6 +190,11 @@ def names_skill(name, tech, words):
     said = set(words)
     if tech & said:
         return True
+    tech_family = set()
+    for t in tech:
+        tech_family.update(IMPLIES.get(t, set()) - LANGS)
+    if tech_family & said:
+        return True
     rare = 0.05 * len(core.SKILLS)
     return any(len(core.POSTINGS.get(t, ())) <= rare for t in v1.NAME_TOKENS.get(name, set()) & said)
 
@@ -224,7 +232,8 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
         several_forms = bool(named_form or has_taste or task_job in ('explain', 'design', 'build', 'review', 'write', 'plan'))
         if task_job and (named_form or has_taste):
             cards = sfp_cards.load_cards()
-            best_skill = max(found, key=found.get) if found else None
+            best_job_skill = max((sk for sk in found if cards.get(sk, {}).get('job') == task_job), key=found.get, default=None)
+            best_skill = best_job_skill or (max(found, key=found.get) if found else None)
             best_sub = cards.get(best_skill, {}).get('substitutes_for') if best_skill else None
             pool = []
             for sk, c in cards.items():
@@ -232,28 +241,45 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
                     continue
                 c_job = c.get('job')
                 c_sub = c.get('substitutes_for')
-                if (best_sub and best_sub != 'software-engineering-patterns' and c_sub == best_sub) or (c_job == task_job):
+                if ctx_tech and relation(v1.SKILL_TECH.get(sk, set()), ctx_tech) == 'mismatch':
+                    continue
+                if (best_sub and best_sub != 'software-engineering-patterns' and c_sub == best_sub):
+                    pool.append(sk)
+                elif not ctx_tech and (c_job == task_job):
                     pool.append(sk)
             if pool:
                 sem_sim = dict((name, cos) for cos, name in (sit.get('semantic') or {}).get('similar', []))
                 def cand_rank_score(sk):
                     c = cards.get(sk, {})
+                    is_job = 1.0 if c.get('job') == task_job else 0.0
                     sim = sem_sim.get(sk, 0.0)
                     kw = found.get(sk, 0.0)
                     toks = len(set(words) & v1.SKILL_TOKENS.get(sk, set()))
-                    is_sub = 1.0 if (best_sub and c.get('substitutes_for') == best_sub) else 0.0
-                    return (sim, is_sub, toks, kw)
+                    is_sub = 0.5 if (best_sub and c.get('substitutes_for') == best_sub) else 0.0
+                    return (is_job, sim, toks, is_sub, kw)
                 pool.sort(key=cand_rank_score, reverse=True)
                 scouted = []
                 preferred_forms = []
                 if named_form:
                     preferred_forms.append(named_form)
+                    if named_form in ('text', 'document'):
+                        preferred_forms.extend(['text', 'document'])
                 if has_taste and taste.get('output'):
+                    evs = max(taste.get('events', 1), 1)
                     sorted_taste = sorted(taste['output'].items(), key=lambda kv: -kv[1])
-                    preferred_forms.extend([f for f, w in sorted_taste if w > 0.5 and f not in preferred_forms])
+                    for f, w in sorted_taste:
+                        if w / evs > 0.35:
+                            preferred_forms.append(f)
+                            if f in ('text', 'document'):
+                                preferred_forms.extend(['text', 'document'])
+                preferred_forms = list(dict.fromkeys(preferred_forms))
                 for pf in preferred_forms:
+                    forms_to_check = [pf]
+                    if pf in ('text', 'document'):
+                        forms_to_check = ['text', 'document']
                     for sk in pool:
-                        if sk not in scouted and pf in cards.get(sk, {}).get('output', []):
+                        sk_forms = cards.get(sk, {}).get('output', [])
+                        if sk not in scouted and any(f in forms_to_check for f in sk_forms):
                             scouted.append(sk)
                             break
                         if len(scouted) >= 8:
@@ -277,7 +303,7 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
                         scouted.append(sk)
                 full_top = max(found.values() or [1.0])
                 for sk in scouted:
-                    found[sk] = max(found.get(sk, 0), 0.85 * full_top)
+                    found[sk] = max(found.get(sk, 0), 0.88 * full_top)
     meaning = {}
     if sit.get('semantic'):
         top_kw = max(found.values() or [0.0])
@@ -343,7 +369,8 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
         if rel == 'mismatch' and found.get(name, 0) >= NAMED * top and names_skill(name, tech, words):
             rel = 'named'   # the project cannot veto what the task asks for by name (a 3D skill in a web project)
         if rel == 'fit':
-            project = max(ctx[t] for t in tech & ctx_tech) / top_ctx
+            matching = (tech & ctx_tech) or {t for t in ctx_tech if any(t in IMPLIES.get(k, ()) for k in tech)} or {t for t in tech if any(t in IMPLIES.get(k, ()) for k in ctx_tech)}
+            project = max(ctx.get(t, 2.4) for t in matching) / top_ctx if matching else 0.8
         elif rel == 'near':
             project = 0.4
         elif rel in ('mismatch', 'unasked'):
@@ -376,21 +403,30 @@ def base_quality(v):
     if v['relation'] == 'mismatch':
         q *= 0.4
     elif v['relation'] == 'unasked':
-        q *= 0.8
+        q *= 0.85
     q *= 1 + 0.3 * (v['history'] or 0)
     q *= 1 + ROLE_WEIGHT * (v.get('rolefit') or 0)
+    if v.get('meaning') and v['meaning'] >= 0.6:
+        q *= 1.0 + 0.35 * v['meaning']
     return q
 
 
 def backers(v):
     """The independent signals that back a candidate."""
-    return [k for k in SIGNALS if (v[k] or 0) >= BACKING]
+    return [k for k in SIGNALS if (v.get(k) or 0) >= BACKING]
 
 
 def has_agreement(v):
     if not v['words'] or v['relation'] == 'mismatch':
         return False  # the task must name what the skill is for, and it must suit the project
-    return v['words'] >= STRONG_WORDS or len(backers(v)) >= 2
+    m = v.get('meaning') or 0.0
+    if v['words'] >= STRONG_WORDS or m >= 0.70:
+        return True
+    if len(backers(v)) >= 2:
+        return True
+    if m >= BACKING and v['words'] >= BACKING:
+        return True
+    return False
 
 
 # ------------------------------------------------- overlap and role allocation
@@ -552,6 +588,8 @@ def rerank_wanted(sit, votes=None):
     if sit.get('ctx_tech'):
         if votes is None or any(v.get('relation') in ('fit', 'named') for v in votes.values()):
             return False
+    if votes and any(v.get('relation') == 'named' for v in votes.values()):
+        return False
     return True
 
 
@@ -687,15 +725,20 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         else:
             fit_mult = 1.0
 
-        matching_form = (named_form in forms) or (named_form == 'text' and any(f in forms for f in ('text', 'document')))
+        matching_form = (named_form in forms) or (named_form in ('text', 'document') and any(f in forms for f in ('text', 'document')))
         if named_form and matching_form:
-            taste_mult = 3.0
+            taste_mult = 3.5
         elif named_form and not matching_form:
             taste_mult = 0.2
         elif taste and taste.get('events', 0) > 0:
-            form_pref = max([taste.get('output', {}).get(f, 0.0) for f in forms] or [0.0])
-            style_pref = taste.get('style', {}).get(card.get('style'), 0.0)
-            taste_mult = 1.0 + 0.6 * form_pref + 0.2 * style_pref
+            evs = max(taste.get('events', 1), 1)
+            form_prefs = [taste.get('output', {}).get(f, 0.0) for f in forms]
+            if any(f in forms for f in ('text', 'document')):
+                form_prefs.append(taste.get('output', {}).get('document', 0.0))
+                form_prefs.append(taste.get('output', {}).get('text', 0.0))
+            form_pref = max(form_prefs or [0.0]) / evs
+            style_pref = taste.get('style', {}).get(card.get('style'), 0.0) / evs
+            taste_mult = 1.0 + 1.2 * form_pref + 0.3 * style_pref
         else:
             taste_mult = 1.0
 

@@ -98,6 +98,18 @@ class PushTest(Case):
         res = nd.decide('make the signup form accessible', exclude=['ux-writing'])
         self.assertNotIn('ux-writing', [c['name'] for c in res['stack']])
 
+    def test_unlimited_bundle_stacking(self):
+        # All fitting or pinned bundles stack whole without artificial single-bundle cap
+        b1 = next(b for b in lib.bundles() if b['id'] == 'accessible-form')
+        res = nd.decide('make the signup form accessible and audit accessibility', max_skills=8)
+        names = {c['name'] for c in res['stack']}
+        self.assertTrue(set(b1['skills']) <= names)
+        # Stacking additional bundle skills joins cleanly
+        b2 = next(b for b in lib.bundles() if b['id'] == 'ship-a-page')
+        res_stacked = nd.decide('make the signup form accessible', include=b2['skills'][:2], max_skills=8)
+        names_stacked = {c['name'] for c in res_stacked['stack']}
+        self.assertTrue(set(b2['skills'][:2]) <= names_stacked)
+
     def test_live_attaches_the_whole_bundle_in_order(self):
         want = next(b for b in lib.bundles() if b['id'] == 'accessible-form')['skills']
         r = lv.live('make the signup form accessible and keyboard friendly')

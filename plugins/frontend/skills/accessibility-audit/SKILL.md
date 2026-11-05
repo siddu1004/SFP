@@ -1,6 +1,6 @@
 ---
 name: accessibility-audit
-description: Conduct accessibility audits against WCAG 2.2 guidelines. Evaluate pages, components, and flows for conformance at A, AA, and AAA levels. Identify issues, assess severity, provide code fixes, and generate audit reports. Covers automated testing, manual testing, keyboard navigation, screen reader compatibility, color contrast, and semantic HTML.
+description: "Conduct accessibility and UI usability audits against WCAG 2.2 guidelines. Check UI usability, evaluate pages, components, and user flows for conformance at A, AA, and AAA levels, testing keyboard navigation and screen reader compatibility. Use when checking UI usability, accessibility compliance, or WCAG audits."
 ---
 
 # Accessibility Audit

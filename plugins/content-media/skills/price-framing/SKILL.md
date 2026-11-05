@@ -1,6 +1,6 @@
 ---
 name: price-framing
-description: Reads how prices are presented, with the arithmetic shown. Takes price points, tier tables, plan features, monthly and annual prices, discounts, "was" prices or trial terms and returns a normalised table (per month, per seat, annual saving, months free, per day), the anchor order and pre-selected plan, a decoy dominance matrix that treats price as an attribute, a price-ending check, percent vs amount discount framing, and the rule cells for reference prices, fees, pre-ticked extras and trials. Use when the user asks to check the prices, tiers, anchoring, decoys or discount framing on a pricing page or paywall. Evidence grades come from a cited ledger. Evaluates the prices given; never proposes a new price unless the user asks, never writes the pricing page itself, and never predicts a lift.
+description: "Reads how prices and pricing tiers are presented, considering behavioral economics and human behavior. Analyzes cloud service pricing, subscription tiers, plan features, anchor pricing, decoy dominance, and discount framing. Use when setting or auditing cloud service pricing, subscription tiers, or paywalls."
 ---
 
 # Price framing
