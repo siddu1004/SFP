@@ -556,7 +556,7 @@ def clears_confidence(name, sit, v):
         name_hit = True
     if len(name_toks) == 1 and len(name) <= 4 and not tech_hit:
         name_hit = False
-    if bool((name_toks & {'ito', 'headcount', 'instal', 'installer', 'mcp', 'gsd', 'cloudflare', 'awwwards', 'seo'}) - set(words)) and not v.get('pinned'):
+    if bool((name_toks & {'ito', 'headcount', 'instal', 'installer', 'mcp', 'gsd', 'cloudflare'}) - set(words)) and not v.get('pinned'):
         return False
     if name.startswith('cli-') and 'cli' not in words and not v.get('pinned'):
         return False

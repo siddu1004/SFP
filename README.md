@@ -57,7 +57,7 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 | **What your AI carries** | Only what it finds | 81,691 tokens (41% of its memory) | About 4,000 tokens |
 | **Knows your project** | No | No | Yes: it reads your project files |
 | **Drops unrelated junk picks** | No (62.5% junk on negative/edge tasks) | No | Yes: **0.0% junk** on `precision_heldout` (87.5% hit / 76.5% precision) |
-| **Learns what you like** | No | No | Yes, from your feedback (80%–100% format fit, 100% named-format override) |
+| **Learns what you like** | No | No | Yes, from your feedback (80% to 100% format fit, 100% named-format override) |
 | **Time to choose** | Instant | Nothing to choose | ~3 ms words-only; ~360 ms typical with local models |
 
 <details>
@@ -269,7 +269,7 @@ With local models on (`python3 bench/run_all.py`; full method in [bench/RESULTS.
 |---|---:|---:|---:|---:|---:|---:|
 | `precision_tuning` (micro-edits, out-of-domain, edge) | 40 | 35% (45% junk) | 53% (45% junk) | 100% | **100% / 100% first** | **86.9% / 0.0%** |
 | `precision_heldout` (frozen, 15 negative + 25 positive) | 40 | 23% (63% junk) | 23% (63% junk) | 88% | **87.5% / 80.0% first** | **76.5% / 0.0%** |
-| `taste_generalise` (4 personas, strict job AND format) | 40 | — | — | 95% | **97.5% fit / 100% override** | — |
+| `taste_generalise` (4 personas, strict job AND format) | 40 | - | - | 95% | **97.5% fit / 100% override** | - |
 | `hive_heldout` (3.19 fresh projects) | 22 | 9% | 64% | 91% | **90.9% / 63.6% first** | 46.6% / 0.0% |
 | `search_reworded_holdout` (3.19 reworded) | 35 | 23% | 34% | 31% | **40.0% / 34.3% first** | 22.4% / 0.0% |
 | `plain_words_holdout2` (3.19 plain words) | 40 | 30% | 38% | 35% | **40.0% / 30.0% first** | 23.3% / 0.0% |
@@ -283,7 +283,7 @@ Words only, recomputed from this repository each time this page is built, so it 
 |---|---:|---:|---:|
 | 22 held-out tasks in 8 new projects, written first and scored once | **91%** | 64% | 9% |
 | 24 tasks in 10 sample projects | 79% | 79% | 25% |
-| 91 tasks with no project | 86% | 87% | 84% |
+| 91 tasks with no project | 85% | 87% | 84% |
 | Stacks with a skill for the wrong technology, all sets | 0 | 0 | 0 |
 
 **Does it make the work better?** In blind design reviews, agents with SFP produced a page a reviewer would accept in **2.8 rounds**, against **3.7** with no skills. Given a tool they had never seen, agents with no skills passed 0 of 7 checks, and with SFP passed all 7 ([docs/EFFECT.md](docs/EFFECT.md)).
@@ -316,7 +316,7 @@ Words only, recomputed from this repository each time this page is built, so it 
 
 **How fast is it?**
 
-Words only, a choice takes about 17 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
+Words only, a choice takes about 15 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 ### Where It Still Fails
 

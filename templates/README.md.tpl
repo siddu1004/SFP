@@ -57,7 +57,7 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 | **What your AI carries** | Only what it finds | @@ALL_TOKENS@@ tokens (@@ALL_PERCENT@@% of its memory) | About 4,000 tokens |
 | **Knows your project** | No | No | Yes: it reads your project files |
 | **Drops unrelated junk picks** | No (62.5% junk on negative/edge tasks) | No | Yes: **0.0% junk** on `precision_heldout` (87.5% hit / 76.5% precision) |
-| **Learns what you like** | No | No | Yes, from your feedback (80%–100% format fit, 100% named-format override) |
+| **Learns what you like** | No | No | Yes, from your feedback (80% to 100% format fit, 100% named-format override) |
 | **Time to choose** | Instant | Nothing to choose | ~3 ms words-only; ~360 ms typical with local models |
 
 <details>
@@ -263,7 +263,7 @@ With local models on (`python3 bench/run_all.py`; full method in [bench/RESULTS.
 |---|---:|---:|---:|---:|---:|---:|
 | `precision_tuning` (micro-edits, out-of-domain, edge) | 40 | 35% (45% junk) | 53% (45% junk) | 100% | **100% / 100% first** | **86.9% / 0.0%** |
 | `precision_heldout` (frozen, 15 negative + 25 positive) | 40 | 23% (63% junk) | 23% (63% junk) | 88% | **87.5% / 80.0% first** | **76.5% / 0.0%** |
-| `taste_generalise` (4 personas, strict job AND format) | 40 | — | — | 95% | **97.5% fit / 100% override** | — |
+| `taste_generalise` (4 personas, strict job AND format) | 40 | - | - | 95% | **97.5% fit / 100% override** | - |
 | `hive_heldout` (3.19 fresh projects) | 22 | 9% | 64% | 91% | **90.9% / 63.6% first** | 46.6% / 0.0% |
 | `search_reworded_holdout` (3.19 reworded) | 35 | 23% | 34% | 31% | **40.0% / 34.3% first** | 22.4% / 0.0% |
 | `plain_words_holdout2` (3.19 plain words) | 40 | 30% | 38% | 35% | **40.0% / 30.0% first** | 23.3% / 0.0% |
