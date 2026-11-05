@@ -119,6 +119,23 @@ class JudgeTest(unittest.TestCase):
         self.assertIn('Project technologies: rust', self.calls[0])
         self.assertIn('1. security-review', self.calls[0])
 
+    def test_sfp_intent_judge_delegates_and_parses_order(self):
+        self.answer('3, 1')
+        res = sfp_intent.judge('write tests', self.NAMES)
+        self.assertEqual(res, ['rust-testing', 'security-review'])
+
+    def test_sfp_intent_judge_zero_means_empty_list(self):
+        self.answer('0')
+        res = sfp_intent.judge('make pasta', self.NAMES)
+        self.assertEqual(res, [])
+
+    def test_sfp_intent_judge_timeout_returns_none(self):
+        def fail(ep, prompt, tokens, timeout):
+            raise OSError('timeout')
+        sfp_intent.chat = fail
+        res = sfp_intent.judge('write tests', self.NAMES)
+        self.assertIsNone(res)
+
 
 if __name__ == '__main__':
     unittest.main()
