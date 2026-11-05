@@ -82,3 +82,17 @@ For the earlier held-out suites (`230cc07` and 3.19 held-out) that remain below 
 - **SFP Stack Load:** 3,985 tokens average context footprint.
 - **Context Saved (vs Descriptions):** **95.1% reduction** (headline figure).
 - **Context Saved (vs Full Body):** **99.8% reduction**.
+
+## Phase 0: Baseline Totals on Regression Sets (v3.19.0 Tag)
+*Measured directly by exporting git tag `v3.19.0` into a clean temporary directory and running identical scoring on all regression suites.*
+
+| Regression Set | Tasks (n) | v3.19.0 Words Hit | v3.19.0 Words First | v3.19.0 Models Hit | v3.19.0 Models First |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| `bench` (anchor) | 91 | 86.8% | 68.1% | 86.8% | 68.1% |
+| `proj` (`stack_eval.json`) | 24 | 79.2% | 45.8% | 79.2% | 45.8% |
+| `fresh` (`hive_heldout.json`) | 22 | 86.4% | 54.5% | 86.4% | 54.5% |
+| `reworded_holdout` | 35 | 34.3% | 20.0% | 34.3% | 20.0% |
+| `plain_words_holdout2` | 40 | 35.0% | 25.0% | 35.0% | 25.0% |
+| `final_heldout_plain` | 60 | 43.3% | 28.3% | 43.3% | 28.3% |
+| `final_heldout_project` | 30 | 66.7% | 40.0% | 66.7% | 40.0% |
+| `final_heldout_reworded` | 40 | 67.5% | 40.0% | 67.5% | 40.0% |

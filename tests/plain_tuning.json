@@ -1,0 +1,1571 @@
+[
+  {
+    "task": "the page flickers violently whenever elements re-render on scroll",
+    "expect": [
+      "react-performance",
+      "animation-performance",
+      "frontend-patterns"
+    ],
+    "avoid": [
+      "django-patterns",
+      "csharp-testing"
+    ]
+  },
+  {
+    "task": "users complain our modal dialog traps focus and cannot be closed with escape key",
+    "expect": [
+      "frontend-a11y",
+      "accessibility-audit",
+      "accessible-form"
+    ],
+    "avoid": [
+      "clickhouse-io",
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "our web typography looks amateurish and unpolished across headlines",
+    "expect": [
+      "frontend-design",
+      "impeccable",
+      "design-taste-frontend"
+    ],
+    "avoid": [
+      "golang-patterns",
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "state between unrelated sibling components keeps getting lost on tab switch",
+    "expect": [
+      "frontend-patterns",
+      "react-patterns"
+    ],
+    "avoid": [
+      "mysql-patterns"
+    ]
+  },
+  {
+    "task": "the whole user interface feels clunky and stiff with no smooth transitions",
+    "expect": [
+      "animate",
+      "motion-patterns",
+      "emil-design-eng"
+    ],
+    "avoid": [
+      "postgres-patterns",
+      "terraform-patterns"
+    ]
+  },
+  {
+    "task": "input field validation errors only show red borders without explaining what went wrong",
+    "expect": [
+      "accessible-form",
+      "ux-writing",
+      "frontend-patterns"
+    ],
+    "avoid": [
+      "deep-research"
+    ]
+  },
+  {
+    "task": "our web page takes six seconds before users can click anything on 4g connections",
+    "expect": [
+      "react-performance",
+      "frontend-patterns"
+    ],
+    "avoid": [
+      "csharp-testing"
+    ]
+  },
+  {
+    "task": "color contrast on our primary buttons fails legibility guidelines",
+    "expect": [
+      "frontend-a11y",
+      "accessibility-audit",
+      "impeccable"
+    ],
+    "avoid": [
+      "django-celery"
+    ]
+  },
+  {
+    "task": "our dashboard cards look cluttered with zero breathing room between metrics",
+    "expect": [
+      "bento",
+      "spacious",
+      "design-taste-frontend",
+      "clean"
+    ],
+    "avoid": [
+      "rust-testing"
+    ]
+  },
+  {
+    "task": "images shift the entire article layout down while loading in the browser",
+    "expect": [
+      "frontend-patterns",
+      "react-performance"
+    ],
+    "avoid": [
+      "mysql-patterns"
+    ]
+  },
+  {
+    "task": "hover tooltips get clipped by parent container overflow boundaries",
+    "expect": [
+      "frontend-patterns",
+      "react-patterns"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "dropdown menus stay open when clicking somewhere else on the screen",
+    "expect": [
+      "frontend-patterns",
+      "react-patterns"
+    ],
+    "avoid": [
+      "django-patterns"
+    ]
+  },
+  {
+    "task": "touch targets on smartphone screen buttons are too tiny for thumbs to tap reliably",
+    "expect": [
+      "frontend-a11y",
+      "mobile-native",
+      "frontend-patterns"
+    ],
+    "avoid": [
+      "clickhouse-io"
+    ]
+  },
+  {
+    "task": "simultaneous checkout clicks cause inventory counts to drop below zero",
+    "expect": [
+      "backend-patterns",
+      "postgres-patterns",
+      "mysql-patterns"
+    ],
+    "avoid": [
+      "animate",
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "our web service returns five hundred internal error when payload exceeds two megabytes",
+    "expect": [
+      "backend-patterns",
+      "api-design",
+      "fastapi-patterns"
+    ],
+    "avoid": [
+      "bento",
+      "motion-patterns"
+    ]
+  },
+  {
+    "task": "auth renewal fails intermittently leading to logged out sessions during active use",
+    "expect": [
+      "backend-patterns",
+      "security-review"
+    ],
+    "avoid": [
+      "sketch",
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "background worker processes keep silently crashing without sending error logs",
+    "expect": [
+      "django-celery",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "frontend-a11y"
+    ]
+  },
+  {
+    "task": "outgoing third party http calls hang forever when partner service is down",
+    "expect": [
+      "backend-patterns",
+      "api-connector-builder"
+    ],
+    "avoid": [
+      "animation-vocabulary"
+    ]
+  },
+  {
+    "task": "database connection pool runs dry during morning rush hour traffic spikes",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "emil-design-eng"
+    ]
+  },
+  {
+    "task": "our distributed services exchange inconsistently shaped error responses with different keys",
+    "expect": [
+      "api-design",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "webhook delivery notifications to customers arrive duplicated multiple times",
+    "expect": [
+      "backend-patterns",
+      "django-celery"
+    ],
+    "avoid": [
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "scheduled midnight cron jobs run three times concurrently on clustered servers",
+    "expect": [
+      "django-celery",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "our json serializer chokes on recursive foreign key object references",
+    "expect": [
+      "django-patterns",
+      "backend-patterns",
+      "fastapi-patterns"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "user passwords are being saved in unhashed raw text inside our storage tables",
+    "expect": [
+      "security-review",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "incoming batch requests starve interactive user lookups of cpu threads",
+    "expect": [
+      "backend-patterns",
+      "latency-critical-systems"
+    ],
+    "avoid": [
+      "design-taste-frontend"
+    ]
+  },
+  {
+    "task": "unhandled null pointers inside request headers bring down the application process",
+    "expect": [
+      "backend-patterns",
+      "error-handling"
+    ],
+    "avoid": [
+      "animation-performance"
+    ]
+  },
+  {
+    "task": "a single analytical aggregation query takes forty seconds and locks the row tables",
+    "expect": [
+      "clickhouse-io",
+      "postgres-patterns",
+      "mysql-patterns"
+    ],
+    "avoid": [
+      "animate",
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "storage schema structural transition fails midway through leaving half the tables altered",
+    "expect": [
+      "database-migrations",
+      "postgres-patterns"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "our warehouse is filling up with orphaned rows after parent records got deleted",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns"
+    ],
+    "avoid": [
+      "ux-writing"
+    ]
+  },
+  {
+    "task": "reports show conflicting total revenue numbers between dashboard and accounting ledger",
+    "expect": [
+      "data-engineering",
+      "finance-billing-ops",
+      "clickhouse-io"
+    ],
+    "avoid": [
+      "animation-patterns"
+    ]
+  },
+  {
+    "task": "unindexed sequential scans are occurring on five million customer queries",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns"
+    ],
+    "avoid": [
+      "mobile-native"
+    ]
+  },
+  {
+    "task": "redis cache memory usage keeps growing indefinitely without keys expiring",
+    "expect": [
+      "redis-patterns",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "streaming message consumer falls thousands of events behind producer queue",
+    "expect": [
+      "backend-patterns",
+      "data-throughput-accelerator"
+    ],
+    "avoid": [
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "daily csv data pipeline fails whenever an unexpected null appears in date columns",
+    "expect": [
+      "data-engineering",
+      "python-patterns"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "indexes are consuming more disk space than the actual table payload data",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns"
+    ],
+    "avoid": [
+      "frontend-patterns"
+    ]
+  },
+  {
+    "task": "decimal precision rounding errors cause fractional pennies to disappear in sums",
+    "expect": [
+      "evm-token-decimals",
+      "finance-billing-ops",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "motion-patterns"
+    ]
+  },
+  {
+    "task": "concurrent lock conflicts trigger dozens of transaction rollbacks during peak hours",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "read replica instances lag several minutes behind the primary storage node",
+    "expect": [
+      "mysql-patterns",
+      "postgres-patterns"
+    ],
+    "avoid": [
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "customer address text column needs fuzzy distance matching against standard street names",
+    "expect": [
+      "postgres-patterns",
+      "python-patterns"
+    ],
+    "avoid": [
+      "emil-design-eng"
+    ]
+  },
+  {
+    "task": "container images take ten minutes to build and download in automated pipelines",
+    "expect": [
+      "docker-patterns",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "ux-writing"
+    ]
+  },
+  {
+    "task": "pods get abruptly terminated with out of memory exit code one thirty seven",
+    "expect": [
+      "kubernetes-patterns",
+      "docker-patterns"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "production deploy completed but customers are still routed to old container versions",
+    "expect": [
+      "deployment-patterns",
+      "canary-watch"
+    ],
+    "avoid": [
+      "animation-vocabulary"
+    ]
+  },
+  {
+    "task": "our reverse proxy certificates expired over the weekend breaking customer connections",
+    "expect": [
+      "deployment-patterns",
+      "devops"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "staging environment has drifted completely from our production server configuration",
+    "expect": [
+      "deployment-patterns",
+      "docker-patterns"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "rolling deployments cause fifty percent drop in requests for twenty seconds during restart",
+    "expect": [
+      "deployment-patterns",
+      "canary-watch",
+      "kubernetes-patterns"
+    ],
+    "avoid": [
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "build step runs out of temporary disk space halfway through artifact packaging",
+    "expect": [
+      "docker-patterns",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "emil-design-eng"
+    ]
+  },
+  {
+    "task": "unhealthy containers keep getting traffic before their internal warmup finishes",
+    "expect": [
+      "kubernetes-patterns",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "article-writing"
+    ]
+  },
+  {
+    "task": "our server disk filled up with accumulated uncompressed container system logs",
+    "expect": [
+      "devops",
+      "docker-patterns"
+    ],
+    "avoid": [
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "firewall rules are blocking outgoing traffic to external email delivery relays",
+    "expect": [
+      "devops",
+      "network-interface-health"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "secrets and database passwords are baked directly into public container layers",
+    "expect": [
+      "security-review",
+      "docker-patterns"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "cluster ingress router drops websockets after sixty seconds of silence",
+    "expect": [
+      "kubernetes-patterns",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "ux-writing"
+    ]
+  },
+  {
+    "task": "multi stage container builds are rebuilding unchanged layer dependencies on every commit",
+    "expect": [
+      "docker-patterns",
+      "deployment-patterns"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "attackers could tamper with hidden form parameters to alter purchased goods prices",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "customer profile pictures upload endpoint allows execution of arbitrary scripts",
+    "expect": [
+      "security-review",
+      "application-security-testing"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "session cookie lacks essential protective attributes against interception attacks",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "our api endpoints reveal detailed stack traces with internal server paths on bad input",
+    "expect": [
+      "security-review",
+      "api-security-testing"
+    ],
+    "avoid": [
+      "motion-patterns"
+    ]
+  },
+  {
+    "task": "third party libraries in our manifest have known high severity vulnerabilities",
+    "expect": [
+      "security-review",
+      "dependency-audit"
+    ],
+    "avoid": [
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "users can view other accounts invoices by simply guessing sequential record numbers",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": [
+      "emil-design-eng"
+    ]
+  },
+  {
+    "task": "search box accepts raw user text directly without stripping dangerous tags",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": [
+      "article-writing"
+    ]
+  },
+  {
+    "task": "no rate limiting exists on our password reset submission form",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "sensitive health records could be exposed without proper access authorizations",
+    "expect": [
+      "hipaa-compliance",
+      "healthcare-phi-compliance",
+      "security-review"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "cors configuration currently sends wildcard access allow origin to every caller",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "our tokens remain valid indefinitely even after the user clicks sign out",
+    "expect": [
+      "security-review",
+      "omni-auth"
+    ],
+    "avoid": [
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "internal administrative routes are accessible over the public internet without vpn",
+    "expect": [
+      "security-review",
+      "application-security-testing"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "database queries are constructed by concatenating raw user strings together",
+    "expect": [
+      "security-review",
+      "owasp-top-10-testing"
+    ],
+    "avoid": [
+      "design-taste-frontend"
+    ]
+  },
+  {
+    "task": "test suite passes locally on developers laptops but fails unpredictably on continuous integration",
+    "expect": [
+      "verification-loop",
+      "tdd-workflow",
+      "e2e-testing"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "mocking third party payment gateway causes false positive passes when api contracts change",
+    "expect": [
+      "tdd-workflow",
+      "verification-loop"
+    ],
+    "avoid": [
+      "animation-patterns"
+    ]
+  },
+  {
+    "task": "we have zero automated assertions verifying that our shopping cart checkout works",
+    "expect": [
+      "e2e-testing",
+      "browser-qa",
+      "tdd-workflow"
+    ],
+    "avoid": [
+      "deep-research"
+    ]
+  },
+  {
+    "task": "adding a new feature repeatedly breaks unrelated existing user profile logic",
+    "expect": [
+      "ai-regression-testing",
+      "tdd-workflow",
+      "verification-loop"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "browser automation scripts randomly fail on timing delays before buttons appear",
+    "expect": [
+      "e2e-testing",
+      "playwright-cli",
+      "browser-qa"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "our unit test suite takes over forty minutes to finish running all files",
+    "expect": [
+      "benchmark",
+      "tdd-workflow"
+    ],
+    "avoid": [
+      "ux-writing"
+    ]
+  },
+  {
+    "task": "code coverage reports show critical business calculation branches are completely untouched",
+    "expect": [
+      "tdd-workflow",
+      "verification-loop"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "modifying database state in one test bleeds over into subsequent test assertions",
+    "expect": [
+      "tdd-workflow",
+      "verification-loop"
+    ],
+    "avoid": [
+      "article-writing"
+    ]
+  },
+  {
+    "task": "asynchronous promise rejections are escaping test runners without failing the build",
+    "expect": [
+      "tdd-workflow",
+      "verification-loop"
+    ],
+    "avoid": [
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "tests rely on hardcoded sleep pauses instead of awaiting actual dom mutations",
+    "expect": [
+      "e2e-testing",
+      "playwright-cli"
+    ],
+    "avoid": [
+      "emil-design-eng"
+    ]
+  },
+  {
+    "task": "we need to verify boundary edge cases with thousands of randomized input variations",
+    "expect": [
+      "rust-testing",
+      "fsharp-testing",
+      "tdd-workflow"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "mock data structures have drifted from the actual live rest api payload responses",
+    "expect": [
+      "contract-first",
+      "api-design",
+      "verification-loop"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "our regression suite is so flaky that developers ignore all build breakages",
+    "expect": [
+      "verification-loop",
+      "e2e-testing",
+      "ai-regression-testing"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "app interface freezes for half a second whenever loading images in list views",
+    "expect": [
+      "react-native-patterns",
+      "dart-flutter-patterns",
+      "android-clean-architecture"
+    ],
+    "avoid": [
+      "clickhouse-io"
+    ]
+  },
+  {
+    "task": "push notifications fail to open the correct nested screen when tapped from lockscreen",
+    "expect": [
+      "react-native-patterns",
+      "dart-flutter-patterns",
+      "mobile-native"
+    ],
+    "avoid": [
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "keyboard obscures the bottom text inputs making typing completely invisible to users",
+    "expect": [
+      "react-native-patterns",
+      "dart-flutter-patterns",
+      "mobile-native"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "background geolocation tracking drains the device battery within four hours",
+    "expect": [
+      "mobile-native",
+      "react-native-patterns"
+    ],
+    "avoid": [
+      "django-celery"
+    ]
+  },
+  {
+    "task": "app crashes on startup when user has no active internet connection",
+    "expect": [
+      "mobile-native",
+      "react-native-patterns",
+      "dart-flutter-patterns"
+    ],
+    "avoid": [
+      "deep-research"
+    ]
+  },
+  {
+    "task": "screen rotation resets all form inputs that the user had typed so far",
+    "expect": [
+      "android-clean-architecture",
+      "react-native-patterns",
+      "mobile-native"
+    ],
+    "avoid": [
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "release build was rejected by store reviewers for missing permission explanations",
+    "expect": [
+      "mobile-native",
+      "react-native-patterns"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "offline edits fail to synchronize once connectivity is restored",
+    "expect": [
+      "mobile-native",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "pinch to zoom gestures conflict with parent horizontal swipe navigation",
+    "expect": [
+      "mobile-native",
+      "react-native-patterns",
+      "dart-flutter-patterns"
+    ],
+    "avoid": [
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "app binary download bundle size exceeds one hundred megabytes limit",
+    "expect": [
+      "mobile-native",
+      "react-native-patterns"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "in-app purchase receipt verification fails intermittently on server validation",
+    "expect": [
+      "mobile-native",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "status bar and camera notch overlap headline navigation on newer phone models",
+    "expect": [
+      "mobile-native",
+      "react-native-patterns",
+      "dart-flutter-patterns"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "our automated coding assistant repeatedly hallucinates fake library import packages",
+    "expect": [
+      "karpathy-guidelines",
+      "agentic-engineering",
+      "full-output-enforcement"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "chat completions consume entire context windows causing excessive token billing",
+    "expect": [
+      "context-budget",
+      "token-budget-advisor",
+      "caveman",
+      "toon"
+    ],
+    "avoid": [
+      "frontend-design"
+    ]
+  },
+  {
+    "task": "model output contains repetitive rambling phrases instead of actionable instructions",
+    "expect": [
+      "caveman",
+      "prompt-optimizer",
+      "karpathy-guidelines"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "agent gets trapped in infinite retry loops without ever finishing the requested task",
+    "expect": [
+      "continuous-agent-loop",
+      "agent-harness-construction",
+      "autonomous-loops"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "tool calling parameters consistently fail json schema validation on complex objects",
+    "expect": [
+      "agent-harness-construction",
+      "toon",
+      "karpathy-guidelines"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "we need to evaluate whether our prompt updates degraded answer accuracy across test cases",
+    "expect": [
+      "agent-eval",
+      "eval-harness",
+      "benchmark-methodology"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "rate limits on proprietary provider endpoints cause frequent customer outage spikes",
+    "expect": [
+      "freellmapi",
+      "omni-combos-routing",
+      "omni-resilience"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "prompts contain sensitive company credentials that must be stripped before external sending",
+    "expect": [
+      "security-review",
+      "omni-mcp"
+    ],
+    "avoid": [
+      "ux-writing"
+    ]
+  },
+  {
+    "task": "the assistant loses track of user instructions given earlier in the conversation thread",
+    "expect": [
+      "unified-memory",
+      "continuous-learning-v2",
+      "context-budget"
+    ],
+    "avoid": [
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "agent attempts dangerous terminal actions without requiring human operator confirmation",
+    "expect": [
+      "safety-guard",
+      "operator-approval-loop",
+      "agent-security-hardening"
+    ],
+    "avoid": [
+      "emil-design-eng"
+    ]
+  },
+  {
+    "task": "retrieval answers quote irrelevant reference chunks due to naive similarity matching",
+    "expect": [
+      "iterative-retrieval",
+      "deep-research",
+      "mem-smart-explore"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "cost tracking reports show cloud spend doubled without an increase in real user traffic",
+    "expect": [
+      "cost-tracking",
+      "cli-cost-usage",
+      "caveman-stats"
+    ],
+    "avoid": [
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "team members have no written record of why we migrated from rest to grpc last year",
+    "expect": [
+      "architecture-decision-records",
+      "docs-governance"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "getting started guide commands fail on fresh machine setups due to unlisted prerequisites",
+    "expect": [
+      "codebase-onboarding",
+      "documentation-lookup",
+      "mem-learn-codebase"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "api documentation has drifted away from the actual endpoint request shapes",
+    "expect": [
+      "docs-governance",
+      "documentation-lookup",
+      "contract-first"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "new engineers spend three weeks reading code before making their first pull request",
+    "expect": [
+      "codebase-onboarding",
+      "code-tour",
+      "mem-learn-codebase"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "complex domain logic rules are scattered across controllers without a central model",
+    "expect": [
+      "hexagonal-architecture",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "our readme contains broken links to moved wiki pages and archived repositories",
+    "expect": [
+      "docs-governance",
+      "documentation-lookup"
+    ],
+    "avoid": [
+      "motion-patterns"
+    ]
+  },
+  {
+    "task": "code comments contradict the actual underlying business logic implementations",
+    "expect": [
+      "docs-governance",
+      "living-docs-governance"
+    ],
+    "avoid": [
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "nobody understands how data flows through our seventeen asynchronous queues",
+    "expect": [
+      "engineering-graphify",
+      "journey-mapping",
+      "code-tour"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "team lacks standard guidelines on when to throw errors versus returning error objects",
+    "expect": [
+      "coding-standards",
+      "error-handling",
+      "backend-patterns"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "customer facing release notes omit critical breaking schema deprecation notices",
+    "expect": [
+      "rea-changelog-update",
+      "docs-governance"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "our software architecture has become a tangled ball of mutual circular imports",
+    "expect": [
+      "hexagonal-architecture",
+      "safe-refactor",
+      "engineering-graphify"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "we need clear guidelines on how to structure our multi package monorepo workspace",
+    "expect": [
+      "workspace-surface-audit",
+      "coding-standards"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "conflicting commit histories between two divergent branches need clean reconciliation",
+    "expect": [
+      "git-workflow",
+      "difftastic"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "a sensitive private api secret was accidentally committed into git version history",
+    "expect": [
+      "security-review",
+      "git-workflow"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "pull requests sit without review for days because diffs are four thousand lines long",
+    "expect": [
+      "git-workflow",
+      "gsd-code-review",
+      "caveman-review"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "rebase conflicts wiped out teammate changes during force push to shared branch",
+    "expect": [
+      "git-workflow",
+      "difftastic"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "commit messages are useless one word descriptions like update and fix",
+    "expect": [
+      "conventional-commit-review",
+      "caveman-commit",
+      "git-workflow"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "release branches have cherry picked fixes that were never merged back to mainline",
+    "expect": [
+      "git-workflow",
+      "validate-release-green"
+    ],
+    "avoid": [
+      "animation-vocabulary"
+    ]
+  },
+  {
+    "task": "large binary media files are inflating git repository clone sizes to gigabytes",
+    "expect": [
+      "git-workflow",
+      "devops"
+    ],
+    "avoid": [
+      "accessible-form"
+    ]
+  },
+  {
+    "task": "untracked configuration files keep getting overwritten during branch checkouts",
+    "expect": [
+      "git-workflow"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "review comments turn into circular arguments without reaching a clear merge decision",
+    "expect": [
+      "mem-babysit",
+      "council",
+      "gsd-code-review"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "stale feature branches accumulate without being deleted after pull requests merge",
+    "expect": [
+      "git-workflow",
+      "green-prs"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "author names and email addresses are inconsistent across different workstation commits",
+    "expect": [
+      "git-workflow"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "a bad merge commit broke production and we need to bisect the faulty change",
+    "expect": [
+      "git-workflow",
+      "investigate-first"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "resume bullets list passive responsibilities instead of measurable engineering impact",
+    "expect": [
+      "career-ops"
+    ],
+    "avoid": [
+      "docker-patterns",
+      "bento"
+    ]
+  },
+  {
+    "task": "job application tracking across fifteen companies is scattered across notes and emails",
+    "expect": [
+      "career-ops",
+      "ai-job-search"
+    ],
+    "avoid": [
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "senior engineer promotion packet lacks clear evidence of cross team leadership",
+    "expect": [
+      "career-ops"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "technical interview responses ramble without structuring trade offs clearly",
+    "expect": [
+      "teach-me",
+      "career-ops"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "freelance consulting client has overdue invoices and disputed project milestones",
+    "expect": [
+      "customer-billing-ops",
+      "master-agreement-generator"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "team standup meetings take forty five minutes without identifying blockers",
+    "expect": [
+      "mem-standup",
+      "internal-comms"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "recruiter outreach emails look like generic spam and get zero response rates",
+    "expect": [
+      "investor-outreach",
+      "career-ops"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "stakeholders demand delivery deadlines without agreeing on product scope reductions",
+    "expect": [
+      "intent-driven-development",
+      "counterparty-channel-discipline"
+    ],
+    "avoid": [
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "contract agreement lacks intellectual property assignment and liability caps",
+    "expect": [
+      "master-agreement-generator",
+      "counterparty-channel-discipline"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "compensation negotiation pitch lacks market salary benchmarks and equity leverage data",
+    "expect": [
+      "career-ops",
+      "price-framing"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "remote team members miss important announcements hidden inside noisy chat channels",
+    "expect": [
+      "internal-comms",
+      "unified-notifications-ops"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "on-call rotation schedule causes alert fatigue with dozens of non-actionable pages",
+    "expect": [
+      "ops-check",
+      "dashboard-builder"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "blog post sounds like a generic corporate press release without a distinct voice",
+    "expect": [
+      "brand-voice",
+      "article-writing",
+      "content-engine"
+    ],
+    "avoid": [
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "landing page visitors bounce within five seconds without reading our value proposition",
+    "expect": [
+      "persuasion-audit",
+      "levels",
+      "ux-writing"
+    ],
+    "avoid": [
+      "kubernetes-patterns"
+    ]
+  },
+  {
+    "task": "our articles get zero organic discovery because headings lack relevant search phrases",
+    "expect": [
+      "seo",
+      "content-engine",
+      "article-writing"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "product launch announcement on social channels generated zero clickthroughs or shares",
+    "expect": [
+      "social-publisher",
+      "marketing-campaign",
+      "crosspost"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "technical whitepaper is forty pages of dry jargon that executives refuse to read",
+    "expect": [
+      "article-writing",
+      "mem-wowerpoint",
+      "storytelling"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "marketing emails get flagged as bulk promotions instead of landing in primary inbox",
+    "expect": [
+      "email-ops",
+      "mailtrap-email-integration"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  },
+  {
+    "task": "case studies read like technical specifications without showing customer transformation",
+    "expect": [
+      "storytelling",
+      "article-writing",
+      "persuasion-audit"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "pricing page tiers confuse prospective buyers about which plan fits their company size",
+    "expect": [
+      "price-framing",
+      "levels",
+      "persuasion-audit"
+    ],
+    "avoid": [
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "newsletter subscriber growth has plateaued for four consecutive months",
+    "expect": [
+      "content-engine",
+      "growth-log",
+      "marketing-campaign"
+    ],
+    "avoid": [
+      "slack-gif-creator"
+    ]
+  },
+  {
+    "task": "brand imagery across our slide decks uses mismatched fonts and clashing colors",
+    "expect": [
+      "brand-guidelines",
+      "frontend-slides",
+      "mem-wowerpoint"
+    ],
+    "avoid": [
+      "bento"
+    ]
+  },
+  {
+    "task": "product demonstration video is boring and fails to highlight our key features",
+    "expect": [
+      "ui-demo",
+      "videodb",
+      "remotion-video-creation"
+    ],
+    "avoid": [
+      "animate"
+    ]
+  },
+  {
+    "task": "customer testimonials sound fabricated and lack specific verifiable details",
+    "expect": [
+      "persuasion-audit",
+      "receipts",
+      "brand-voice"
+    ],
+    "avoid": [
+      "impeccable"
+    ]
+  }
+]
