@@ -118,6 +118,27 @@ def _action(item):
     return 'ready'
 
 
+BUNDLE_BUDGET = 15000     # tokens a task's automatic bundles may bring in; bundles the user names always attach
+
+
+def trim_bundles(matches, use_bundles=(), exclude=(), budget=BUNDLE_BUDGET):
+    """Keep the best-fitting automatic bundles within the budget. Returns (matches, left out): those over it stay listed but
+    are not attached, each with its cost and the command that adds it, so nothing vanishes silently."""
+    import sfp_stack as v1
+    named, seen, total, left_out, out = set(use_bundles), set(exclude), 0, [], []
+    for m in sorted(matches, key=lambda b: (b['id'] not in named, -b.get('score', 0))):
+        new = [n for n in m['skills'] if n not in seen]
+        cost = sum(v1.body_tokens(n) for n in new)
+        if m['id'] not in named and m.get('push') and total and total + cost > budget:
+            m = dict(m, push=False)
+            left_out.append({'id': m['id'], 'tokens': cost, 'how_to_include': '--use-bundles %s' % m['id']})
+        elif m['id'] in named or m.get('push'):
+            seen.update(new)
+            total += cost
+        out.append(m)
+    return out, left_out
+
+
 def plan_bundles(task, project=None, exclude=(), include=(), terms=None, preview=None, use_bundles=()):
     """The bundles that fit the task, judged on its words and on what the hive would choose by itself.
     A bundle fit well enough (score >= PUSH_MIN) is `push`: its skills all join the stack."""
@@ -151,8 +172,10 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     inc = list(dict.fromkeys(list(include) + attach))
     matches = []
     bundles_applied = []
+    bundles_left_out = []
     if bundles != 'off' or use_bundles:
         matches = plan_bundles(task, project, exclude, inc, use_bundles=use_bundles)
+        matches, bundles_left_out = trim_bundles(matches, use_bundles, exclude)
         if (bundles == 'push' and max_skills >= 3) or use_bundles:
             for m in matches:
                 if (bundles == 'push' and m.get('push')) or m.get('named'):
@@ -184,6 +207,7 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                                if n not in {p['name'] for p in res['preload']}]
     res['bundles'] = matches
     res['bundles_applied'] = bundles_applied
+    res['bundles_left_out'] = bundles_left_out
     res['tokens_used'] = res.get('spent', sum(c.get('tokens', v1.body_tokens(c['name'])) for c in res['stack']))
     
     budget_omitted = []
