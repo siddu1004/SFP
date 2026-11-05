@@ -793,6 +793,42 @@ def rerank(sit, votes, quality, exclude, allowed=None):
     return [n for n in sfp_intent.rerank(sit['text'], items) if n in pool]
 
 
+NO_REAL_JOB = re.compile(r"\b(rename|renaming|typo|spelling|comma|semicolon|whitespace|indent(ation)?)\b|\bchange (the |this )?\w* ?(text|label|wording|constant|value)\b|^\s*what is \d", re.I)
+
+
+def no_real_job(task, sit, missing):
+    """A micro-edit, or a request about a field the library does not hold: an empty stack is the right answer."""
+    if NO_REAL_JOB.search(task or '') or (missing and missing.get('unknown_words')):
+        return True
+    near = (sit.get('semantic') or {}).get('similar') or []
+    return bool(near) and near[0][0] < GAP_COSINE - 0.12
+
+
+def judge_stage(task, sit, votes, exclude, after, named_form, taste):
+    """The skills a local model chose from the fused candidates, best first. [] means it judged none fits; None means no
+    judgement, so the signals decide. A named format limits the candidates to that output when any has it."""
+    import sfp_cards
+    import sfp_intent
+    import sfp_retrieve
+    expand = os.environ.get('SFP_EXPAND', 'auto').lower() not in ('0', 'off', 'false', 'no')
+    terms = sfp_intent.rewrite(task) if expand else []
+    allow = lambda n: (n not in exclude and n not in after and n not in INTERNAL_SKILLS and
+                       relation(v1.SKILL_TECH.get(n, set()), sit['ctx_tech']) != 'mismatch')
+    pool = sfp_retrieve.candidates(task, terms=terms, allow=allow)
+    if named_form:
+        fitting = [n for n in pool if named_form in (sfp_cards.get_card(n).get('output') or [])]
+        pool = fitting or pool
+    tech = sorted(sit['ctx_tech'], key=lambda t: (-sit['ctx'][t], t))[:3]
+    picks = sfp_retrieve.judge(task, pool, tech=tech)
+    if picks is None:
+        return None
+    outputs = (taste or {}).get('output') or {}
+    if picks and outputs and not named_form:
+        top = max(outputs, key=outputs.get)
+        picks = sorted(picks, key=lambda n: top not in (sfp_cards.get_card(n).get('output') or []))
+    return picks
+
+
 def understand(text):
     """{'terms', 'similar'} from the local models, or None when neither answers (or SFP_SEMANTIC=0)."""
     if not (text or '').strip():
@@ -910,7 +946,19 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         if clears_confidence(n, sit, v_cand):
             allowed_cands.add(n)
 
-    picks = rerank(sit, votes, quality, exclude, allowed=allowed_cands) if allowed_cands else []
+    # Nothing cleared the word bar, but this is a real job: the signals' best stay in, rather than an empty answer.
+    if not allowed_cands and quality and not no_real_job(task, sit, missing):
+        allowed_cands = set(sorted((n for n in quality if n not in exclude), key=lambda n: -quality[n])[:3])
+    judged = None
+    if sit.get('semantic') and rerank_wanted(sit, votes) and not no_real_job(task, sit, missing):
+        judged = judge_stage(task, sit, votes, exclude, after, named_form, taste)
+    picks = list(judged or [])
+    if judged is None:
+        picks = rerank(sit, votes, quality, exclude, allowed=allowed_cands) if allowed_cands else []
+    for n in picks:
+        votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
+        allowed_cands.add(n)
+        quality.setdefault(n, 1.0)
     for i, n in enumerate(picks):
         quality[n] = RERANK_LEAD - 0.01 * i
 
@@ -1040,6 +1088,13 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         quality.setdefault(n, 0.0)
         votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
 
+    if judged is not None:
+        # The model read the candidates: its choice is the stack, in its order. A pinned skill always stays.
+        keep = [c for c in chosen if c[0] in pinned]
+        room = max(0, max_skills - len(keep))
+        chosen = keep + [(n, max(v1.PHASE_ORDER, key=lambda p: affinity(n)[p]), 1.0) for n in judged if n not in pinned][:room]
+        spent = sum(v1.body_tokens(c[0]) for c in chosen)
+
     stack = []
     for name, phase, resp in chosen:
         v = votes[name]
@@ -1116,6 +1171,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         'missing': missing,
         'understood': (sit['semantic'] or {}).get('terms') or [],
         'reranked': picks,
+        'lead': max(stack, key=lambda c: c['score'])['name'] if stack else None,
         'alternatives': alternatives,
         'task_intent': {'job': task_job, 'named_form': named_form},
         'role': role and {k: role[k] for k in ('role', 'confidence', 'evidence', 'stacks')},
