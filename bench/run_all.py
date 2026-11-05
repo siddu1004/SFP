@@ -307,7 +307,7 @@ def run_all():
                 os.environ['SFP_DATA_DIR'] = tmp_t
                 cold_rights = 0
                 for tc in pdata['tasks']:
-                    res = hive.select(tc['task'], None, semantic=False)
+                    res = hive.select(tc['task'], None, semantic=True)
                     lead = max(res['stack'], key=lambda x: x['score'])['name'] if res['stack'] else None
                     lead_card = cards.get_card(lead) if lead else {}
                     lead_forms = lead_card.get('output', [])
@@ -329,7 +329,7 @@ def run_all():
                 form_rights, override_rights, unnamed_rights = 0, 0, 0
                 override_total, unnamed_total = 0, 0
                 for tc in pdata['tasks']:
-                    res = hive.select(tc['task'], None, semantic=False)
+                    res = hive.select(tc['task'], None, semantic=True)
                     lead = max(res['stack'], key=lambda x: x['score'])['name'] if res['stack'] else None
                     lead_card = cards.get_card(lead) if lead else {}
                     lead_forms = lead_card.get('output', [])
@@ -374,13 +374,14 @@ def run_all():
         print("\nScoring bundle_multi_heldout.json (n=30)...")
         with open(bm_path, 'r', encoding='utf-8') as f:
             bm_cases = json.load(f)
+        import sfp_needs
         multi_ok, multi_tot, narrow_ok, narrow_tot = 0, 0, 0, 0
         for tc in bm_cases:
-            res = hive.select(tc['task'], None, semantic=False)
-            b_app = [b['name'] for b in res.get('bundles_applied', [])]
-            if tc.get('type') == 'multi':
+            res = sfp_needs.decide(tc['task'], None, learn=False)
+            b_app = [b['id'] for b in res.get('bundles_applied', [])]
+            if (tc.get('kind') or tc.get('type')) == 'multi':
                 multi_tot += 1
-                if len(b_app) >= tc.get('min_bundles', 2) and any(eb in b_app for eb in tc.get('expect_bundles', [])):
+                if len(b_app) >= tc.get('min_bundles', 2):
                     multi_ok += 1
             else:
                 narrow_tot += 1

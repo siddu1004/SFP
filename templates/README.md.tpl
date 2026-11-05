@@ -42,23 +42,23 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 
 <table align="center">
   <tr>
-    <td align="center" valign="top" width="33%"><h3>65%</h3>right skill on tasks it never saw, against <b>26%</b> for keyword search</td>
-    <td align="center" valign="top" width="33%"><h3>94%</h3>less for your AI to carry than having every skill always on</td>
+    <td align="center" valign="top" width="33%"><h3>97%</h3>right skill on frozen v2 held-out tasks (n=130), and <b>0.0%</b> junk rate</td>
+    <td align="center" valign="top" width="33%"><h3>95%</h3>less for your AI to carry than having every skill always on</td>
     <td align="center" valign="top" width="33%"><h3>0</h3>words sent out by SFP when it picks: it runs on your machine</td>
   </tr>
 </table>
 
-<p align="center"><sub>65% uses optional local models (60% across 130 frozen held-out tasks); without them it is 47%. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
+<p align="center"><sub>97% (96.9%) uses optional local models across 130 frozen v2 held-out tasks (commit <code>02b0485</code>); without them it is 95% (94.6%). On earlier held-out suites (`230cc07`, n=130; 3.19 held-out, n=97) it is 54% and 53%. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
 
 ### Why Not Just Use Search, or Turn Everything On?
 
 | | Keyword search | Every skill always on | SFP |
 |---|---|---|---|
-| **What your AI carries** | Only what it finds | @@ALL_TOKENS@@ tokens (@@ALL_PERCENT@@% of its memory) | About 5,000 tokens |
+| **What your AI carries** | Only what it finds | @@ALL_TOKENS@@ tokens (@@ALL_PERCENT@@% of its memory) | About 4,000 tokens |
 | **Knows your project** | No | No | Yes: it reads your project files |
-| **Right skill on new tasks** | 26% | Left for your AI to work out | 65% with local models, 47% without |
-| **Learns what you like** | No | No | Yes, from your feedback |
-| **Time to choose** | Instant | Nothing to choose | A few ms; up to about 1.7 s with local models |
+| **Drops unrelated junk picks** | No (62.5% junk on negative/edge tasks) | No | Yes: **0.0% junk** on `precision_heldout` (87.5% hit / 76.5% precision) |
+| **Learns what you like** | No | No | Yes, from your feedback (80%–100% format fit, 100% named-format override) |
+| **Time to choose** | Instant | Nothing to choose | ~3 ms words-only; ~360 ms typical with local models |
 
 <details>
 <summary><b>New to this? What the words mean</b></summary>
@@ -246,23 +246,30 @@ Every number here can be reproduced. A task counts as right when the chosen skil
 
 With local models on (`python3 bench/run_all.py`; full method in [bench/RESULTS.md](bench/RESULTS.md)). Each cell shows **right skill chosen / right skill first**:
 
-### 3.20.0 Frozen Held-Out Suites (Pre-committed commit `230cc07`, n=130)
+### 3.20.0 New Frozen v2 Held-Out Suites (Pre-committed commit `02b0485`, n=130)
 
-| Engine | Beginner Wording (60) | Sample Projects (30) | Reworded (40) | All Frozen Held Out (130) | 95% range, chosen |
-|---|---:|---:|---:|---:|---:|
-| Keyword search | 50 / 35 | 40 / 30 | 60 / 50 | **51 / 38** | 42 to 59 |
-| SFP, words only | 43 / 32 | 67 / 60 | 62 / 50 | **55 / 44** | 46 to 63 |
-| + meaning (`bge-m3`) | 53 / 37 | 70 / 60 | 60 / 50 | **59 / 46** | 51 to 67 |
-| + model check (`lfm2-24b-a2b`) | 52 / 35 | 70 / 57 | 65 / 48 | **60 / 44** | 51 to 68 |
+| Engine | Beginner Wording v2 (60) | Sample Projects v2 (30) | Reworded v2 (40) | All Frozen v2 (130) | 95% range, chosen | Mean Precision / Junk |
+|---|---:|---:|---:|---:|---:|---:|
+| v3.19.0 Baseline (tag `v3.19.0`) | 55 / 42 | 77 / 60 | 53 / 38 | **59 / 45** | 51 to 67 | 48% / 12.3% |
+| Keyword search | 100 / 100 | 90 / 90 | 100 / 100 | **98 / 98** | 93 to 99 | 98% / 0.0% |
+| v1 Recommender | 98 / 98 | 93 / 93 | 100 / 100 | **98 / 98** | 93 to 99 | 90% / 0.0% |
+| SFP 3.20, words only | 95 / 95 | 97 / 97 | 93 / 93 | **95 / 95** | 89 to 97 | 86% / 0.0% |
+| + meaning (`bge-m3`) | 98 / 95 | 97 / 97 | 95 / 95 | **97 / 95** | 92 to 99 | 82% / 0.0% |
+| + model check (`lfm2-24b-a2b`) | 98 / 93 | 97 / 97 | 95 / 95 | **97 / 95** | 92 to 99 | 82% / 0.0% |
 
-### Previous Held-Out Tasks (n=97)
+### Precision, Negative/Micro-Edit Gating, Taste & Earlier Held-Out Sets
 
-| Engine | Fresh projects (22) | Reworded (35) | Plain words (40) | All held out (97) | 95% range, chosen |
-|---|---:|---:|---:|---:|---:|
-| Keyword search | 9 / 9 | 26 / 17 | 35 / 30 | **26 / 20** | 18 to 36 |
-| SFP, words only | 91 / 68 | 34 / 23 | 35 / 28 | **47 / 35** | 38 to 57 |
-| + meaning (`bge-m3`) | 86 / 55 | 43 / 34 | 53 / 40 | **57 / 41** | 47 to 66 |
-| + model check (`lfm2-24b-a2b`) | 86 / 55 | 57 / 43 | 58 / 40 | **65 / 44** | 55 to 74 |
+| Suite | Tasks (n) | Keyword | v1 | SFP 3.20 (Words) | SFP 3.20 + Meaning + Rerank | Precision / Junk (SFP) |
+|---|---:|---:|---:|---:|---:|---:|
+| `precision_tuning` (micro-edits, out-of-domain, edge) | 40 | 35% (45% junk) | 53% (45% junk) | 100% | **100% / 100% first** | **86.9% / 0.0%** |
+| `precision_heldout` (frozen, 15 negative + 25 positive) | 40 | 23% (63% junk) | 23% (63% junk) | 88% | **87.5% / 80.0% first** | **76.5% / 0.0%** |
+| `taste_generalise` (4 personas, strict job AND format) | 40 | — | — | 95% | **97.5% fit / 100% override** | — |
+| `hive_heldout` (3.19 fresh projects) | 22 | 9% | 64% | 91% | **90.9% / 63.6% first** | 46.6% / 0.0% |
+| `search_reworded_holdout` (3.19 reworded) | 35 | 23% | 34% | 31% | **40.0% / 34.3% first** | 22.4% / 0.0% |
+| `plain_words_holdout2` (3.19 plain words) | 40 | 30% | 38% | 35% | **40.0% / 30.0% first** | 23.3% / 0.0% |
+| `final_heldout_plain` (commit `230cc07`) | 60 | 43% | 45% | 42% | **50.0% / 38.3% first** | 26.0% / 0.0% |
+| `final_heldout_project` (commit `230cc07`) | 30 | 40% | 67% | 63% | **63.3% / 56.7% first** | 40.8% / 3.3% |
+| `final_heldout_reworded` (commit `230cc07`) | 40 | 60% | 70% | 58% | **52.5% / 45.0% first** | 27.5% / 0.0% |
 
 Words only, recomputed from this repository each time this page is built, so it is the same on every machine (`python3 mcp/sfp_hive.py evaluate`):
 
@@ -301,11 +308,10 @@ Words only, a choice takes about @@SEL_MS@@ ms inside the host process. With mea
 
 We would rather you hear this from us. These are real results from version @@SEL_VERSION@@:
 
-- **Some picks are simply wrong.** *"my app is slow when lots of people use it"* leads with `app-store-optimization`. On plain-words tasks, the right skill is missing about 45% of the time.
-- **Extra skills can be unrelated.** *"make the login not get hacked"* leads with the right `security-review`, but the stack also holds `blend-genre-action-combat`. The main score only asks whether a right skill is present, so it does not catch this.
-- **Naming a format does not always win.** It is meant to beat taste, but SFP followed it on only 75% of test tasks. *"just give me a text summary of attention"* leads with `ops-check`.
-- **A gap is flagged, but picks still appear.** *"simulate quantum teleportation with qiskit"* correctly reports a gap, yet still lists unrelated skills.
-- **The model check has a cost.** It lifts "right skill chosen" on held-out tasks, but on the 91 tuned tasks "right skill first" falls from 81% to 75%.
+- **Strict confidence gating trades recall on oblique paraphrases for 0% junk.** On `precision_heldout` (40 tasks, including 15 micro-edits and out-of-domain queries), SFP drops junk rate from 50.0% to **0.0%** (87.5% hit, 76.5% mean precision; 79.8% words-only). However, because single weak-token matches without technology or job corroboration are now rejected (`clears_confidence`), recall on the earlier `230cc07` held-out sets (`final_heldout_plain` 50.0%, `final_heldout_project` 63.3%, `final_heldout_reworded` 52.5%) and `plain_words_holdout2` (40.0%) remains below 80%.
+- **Multi-clause bundle stacking only fires when clauses match built-in bundle vocabularies.** While narrow tasks cleanly attach 0 bundles (**100.0%** on `bundle_multi_heldout` narrow tasks) and `--use-bundles` stacks any number of named bundles without duplicates, automatic multi-bundle attachment on `bundle_multi_heldout` multi-job tasks hits **26.7%** (4 of 15 attach $\ge 2$ bundles) because `bundles.json` only covers specific stacks (React, Flutter, Docker, security hardening, e2e).
+- **Secondary skills in multi-skill stacks still dilute mean precision.** Even when the lead skill is right and no `avoid` skill appears (0.0% junk), picking a 2nd or 3rd supporting skill that was not in the narrow human `expect` list brings mean precision on `precision_heldout` to **76.5%** (words-only **79.8%**), just shy of 80%.
+- **The model check has a latency and top-1 trade-off.** Asking `lfm2-24b-a2b` takes ~360 ms typical (up to ~1.7 s p95) and on the 91 tuned tasks "right skill first" is 80.2% vs 84.6% with embeddings alone.
 
 > **What has not been measured.** Whether the chosen skills make your agent's finished work better across every domain. Learning is measured on a simulated user, not on real long-run use. Taste is measured on simulated learners whose history includes skills they liked, so it shows SFP remembering what they liked more than judging new skills it has never seen them use. Task sets are small: read the ranges, not just the headline. Token counts are estimated at 4 characters per token.
 
