@@ -1,0 +1,294 @@
+[
+  {
+    "task": "help me construct an autonomous workflow loop that uses tools and recovers from errors",
+    "expect": [
+      "autonomous-agent-harness",
+      "agent-harness-construction",
+      "agentic-engineering"
+    ]
+  },
+  {
+    "task": "inspect my website for security weaknesses and exposed api keys",
+    "expect": [
+      "web-app-penetration-testing",
+      "find-security-vulnerabilities-in-code",
+      "security-review"
+    ]
+  },
+  {
+    "task": "make my landing page look like an editorial magazine with serif typography and warm paper tones",
+    "expect": [
+      "editorial",
+      "paper",
+      "design-taste-frontend"
+    ]
+  },
+  {
+    "task": "speed up my database queries that take multiple seconds to finish",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "verify our web application meets accessibility contrast and keyboard navigation standards",
+    "expect": [
+      "accessibility-audit",
+      "frontend-a11y",
+      "accessibility"
+    ]
+  },
+  {
+    "task": "add automated tests for my go microservice",
+    "expect": [
+      "golang-testing"
+    ]
+  },
+  {
+    "task": "build an interactive 3d model viewer component",
+    "expect": [
+      "react-three-fiber"
+    ]
+  },
+  {
+    "task": "create a clean bento box style layout for our analytics dashboard",
+    "expect": [
+      "bento",
+      "design-taste-frontend",
+      "clean"
+    ]
+  },
+  {
+    "task": "protect our api endpoints against automated credential stuffing and brute force bots",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing"
+    ]
+  },
+  {
+    "task": "write end to end browser tests simulating user checkout",
+    "expect": [
+      "e2e-testing",
+      "browser-qa"
+    ]
+  },
+  {
+    "task": "help me prepare for technical system design interviews",
+    "expect": [
+      "career-ops",
+      "teach-me"
+    ]
+  },
+  {
+    "task": "review my git changes before pushing to main branch",
+    "expect": [
+      "gsd-code-review",
+      "code-review",
+      "conventional-commit-review"
+    ]
+  },
+  {
+    "task": "containerize this full stack application for deployment to production",
+    "expect": [
+      "docker-patterns",
+      "deployment-patterns"
+    ]
+  },
+  {
+    "task": "set up background task queues for asynchronous video processing",
+    "expect": [
+      "django-celery",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "design a dark mode cyberpunk theme with glowing neon accents",
+    "expect": [
+      "neon",
+      "cosmic",
+      "design-taste-frontend"
+    ]
+  },
+  {
+    "task": "simulate quantum circuit teleportation algorithms",
+    "expect": []
+  },
+  {
+    "task": "generate a pitch deck slide presentation summarizing our product metrics",
+    "expect": [
+      "presentation-design",
+      "frontend-slides"
+    ]
+  },
+  {
+    "task": "find out what competing tools offer in this market space",
+    "expect": [
+      "founder-competitors",
+      "market-research",
+      "competitive-platform-analysis"
+    ]
+  },
+  {
+    "task": "onboard a new software engineer into our legacy codebase",
+    "expect": [
+      "codebase-onboarding",
+      "code-tour",
+      "mem-learn-codebase",
+      "understand-onboard",
+      "teach-me"
+    ]
+  },
+  {
+    "task": "fix flaky automated tests that intermittently timeout in ci",
+    "expect": [
+      "e2e-testing",
+      "python-testing",
+      "rust-testing"
+    ]
+  },
+  {
+    "task": "implement idempotency keys for payment charge endpoints",
+    "expect": [
+      "backend-patterns",
+      "api-design"
+    ]
+  },
+  {
+    "task": "audit third party dependencies for known security vulnerabilities",
+    "expect": [
+      "find-security-vulnerabilities-in-code",
+      "security-review",
+      "mcp-dependency-review"
+    ]
+  },
+  {
+    "task": "create subtle micro-interactions and smooth page transitions",
+    "expect": [
+      "make-interfaces-feel-better",
+      "animate",
+      "motion-patterns",
+      "find-animation-opportunities"
+    ]
+  },
+  {
+    "task": "extract reusable component library from messy monolithic frontend",
+    "expect": [
+      "design-systems",
+      "frontend-patterns",
+      "safe-refactor"
+    ]
+  },
+  {
+    "task": "write unit tests for rust async web server handlers",
+    "expect": [
+      "rust-testing"
+    ]
+  },
+  {
+    "task": "profile react render bottlenecks causing frame drops on scroll",
+    "expect": [
+      "react-performance",
+      "animation-performance"
+    ]
+  },
+  {
+    "task": "implement zero trust service to service authentication with mutual tls",
+    "expect": [
+      "security-review",
+      "implementing-zero-trust-network-access"
+    ]
+  },
+  {
+    "task": "structure domain entities and repositories using hexagonal architecture",
+    "expect": [
+      "hexagonal-architecture",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "prevent race conditions when updating user wallet balance in parallel",
+    "expect": [
+      "backend-patterns",
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "create customer journey maps illustrating user activation friction",
+    "expect": [
+      "journey-mapping",
+      "ux-strategy"
+    ]
+  },
+  {
+    "task": "translate and localize application interface strings into multiple languages",
+    "expect": [
+      "i18n-sync"
+    ]
+  },
+  {
+    "task": "write technical documentation for public developer api",
+    "expect": [
+      "api-design",
+      "docs-governance",
+      "living-docs-governance"
+    ]
+  },
+  {
+    "task": "set up monitoring dashboard with prometheus and grafana metrics",
+    "expect": [
+      "dashboard-builder"
+    ]
+  },
+  {
+    "task": "implement drag and drop task board component with smooth physics",
+    "expect": [
+      "frontend-patterns",
+      "stitch",
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "enforce conventional commit messages and automated semantic release notes",
+    "expect": [
+      "conventional-commit-review",
+      "rea-changelog-update"
+    ]
+  },
+  {
+    "task": "detect and prevent container breakout attempts in kubernetes cluster",
+    "expect": [
+      "detecting-container-escape-attempts",
+      "security-review"
+    ]
+  },
+  {
+    "task": "optimize memory usage in high throughput data processing pipeline",
+    "expect": [
+      "data-throughput-accelerator",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "write property based tests verifying json parser edge cases",
+    "expect": [
+      "python-testing",
+      "rust-testing"
+    ]
+  },
+  {
+    "task": "redesign checkout flow to maximize conversion rate and reduce friction",
+    "expect": [
+      "levels",
+      "design-taste-frontend",
+      "landing-page-cro-expert"
+    ]
+  },
+  {
+    "task": "configure automated rollback for failed canary deployments",
+    "expect": [
+      "canary-watch",
+      "deployment-patterns"
+    ]
+  }
+]

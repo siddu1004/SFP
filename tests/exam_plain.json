@@ -1,0 +1,609 @@
+[
+  {
+    "task": "the main headline text wraps awkwardly on tablet screens",
+    "expect": [
+      "frontend-design",
+      "impeccable",
+      "design-taste-frontend",
+      "interface-review"
+    ]
+  },
+  {
+    "task": "dropdown select option list disappears immediately when mouse leaves border",
+    "expect": [
+      "frontend-patterns",
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "primary call to action button looks completely washed out on dark mode background",
+    "expect": [
+      "design-taste-frontend",
+      "impeccable",
+      "frontend-design",
+      "ui-ux-pro-max"
+    ]
+  },
+  {
+    "task": "page scroll stutters violently when large image gallery reaches viewport",
+    "expect": [
+      "react-performance",
+      "animation-performance",
+      "frontend-patterns"
+    ]
+  },
+  {
+    "task": "screen readers skip over custom checkbox components entirely",
+    "expect": [
+      "accessibility",
+      "accessibility-audit",
+      "frontend-a11y"
+    ]
+  },
+  {
+    "task": "sidebar menu animation hesitates for half a second before sliding out",
+    "expect": [
+      "animate",
+      "motion-patterns",
+      "emil-design-eng",
+      "make-interfaces-feel-better"
+    ]
+  },
+  {
+    "task": "dashboard metric cards are crammed together with zero visual breathing space",
+    "expect": [
+      "spacious",
+      "bento",
+      "design-taste-frontend",
+      "clean"
+    ]
+  },
+  {
+    "task": "users on touch devices trigger two form submissions with one finger tap",
+    "expect": [
+      "frontend-patterns",
+      "mobile-native",
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "modal backdrop overlay doesn't dim the full height of long pages",
+    "expect": [
+      "frontend-patterns",
+      "react-patterns"
+    ]
+  },
+  {
+    "task": "custom icon svg colors don't inherit the theme accent color",
+    "expect": [
+      "frontend-design",
+      "design-taste-frontend",
+      "impeccable",
+      "ui-ux-pro-max"
+    ]
+  },
+  {
+    "task": "incoming webhook payloads with unexpected fields cause the worker process to crash",
+    "expect": [
+      "backend-patterns",
+      "error-handling",
+      "fastapi-patterns"
+    ]
+  },
+  {
+    "task": "multiple users claiming the same discount code simultaneously over-allocate vouchers",
+    "expect": [
+      "backend-patterns",
+      "postgres-patterns",
+      "mysql-patterns"
+    ]
+  },
+  {
+    "task": "downstream payment processor timeouts hang worker threads indefinitely",
+    "expect": [
+      "backend-patterns",
+      "error-handling"
+    ]
+  },
+  {
+    "task": "database connection pool runs dry during morning traffic spikes",
+    "expect": [
+      "backend-patterns",
+      "postgres-patterns",
+      "mysql-patterns"
+    ]
+  },
+  {
+    "task": "json serialization fails on circular references in nested data structures",
+    "expect": [
+      "backend-patterns",
+      "python-patterns"
+    ]
+  },
+  {
+    "task": "api clients receive 502 bad gateway during rolling deployments",
+    "expect": [
+      "deployment-patterns",
+      "release-and-deployment"
+    ]
+  },
+  {
+    "task": "long running report exports block the main event loop for interactive users",
+    "expect": [
+      "backend-patterns",
+      "django-celery"
+    ]
+  },
+  {
+    "task": "stale authentication session tokens remain valid after user changes password",
+    "expect": [
+      "security-review",
+      "application-security-testing",
+      "web-app-penetration-testing"
+    ]
+  },
+  {
+    "task": "duplicate email confirmation messages sent when users refresh checkout confirmation",
+    "expect": [
+      "backend-patterns",
+      "django-patterns"
+    ]
+  },
+  {
+    "task": "file uploads over fifty megabytes fail silently without informing the uploader",
+    "expect": [
+      "backend-patterns",
+      "api-design",
+      "frontend-patterns"
+    ]
+  },
+  {
+    "task": "foreign key constraint violations occur during asynchronous batch deletions",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "user search query takes four seconds because name column lacks an index",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "database-migrations"
+    ]
+  },
+  {
+    "task": "table migration locked the orders table for twenty minutes in production",
+    "expect": [
+      "database-migrations",
+      "postgres-patterns",
+      "mysql-patterns"
+    ]
+  },
+  {
+    "task": "time zone offset conversion causes recurring billing events to fire twice",
+    "expect": [
+      "backend-patterns",
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "analytical aggregation queries cause production transactional database to spike to 100% cpu",
+    "expect": [
+      "clickhouse-io",
+      "postgres-patterns",
+      "data-throughput-accelerator"
+    ]
+  },
+  {
+    "task": "soft-deleted tenant records still surface in global analytics queries",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "schema migration rollbacks leave orphan tables and dangling foreign keys",
+    "expect": [
+      "database-migrations",
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "pagination using offset becomes exponentially slower on page five hundred",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "jsonb column querying lacks proper gin indexing causing sequential scans",
+    "expect": [
+      "postgres-patterns"
+    ]
+  },
+  {
+    "task": "database read replica falls fifteen minutes behind primary during data load",
+    "expect": [
+      "postgres-patterns",
+      "mysql-patterns"
+    ]
+  },
+  {
+    "task": "production docker image artifact is three gigabytes large and takes ten minutes to pull",
+    "expect": [
+      "docker-patterns",
+      "hardening-docker-containers-for-production"
+    ]
+  },
+  {
+    "task": "pull request automated test suite takes forty-five minutes to run on every commit",
+    "expect": [
+      "e2e-testing",
+      "ci-security-scanning-with-strix"
+    ]
+  },
+  {
+    "task": "ephemeral test environments fail to tear down leaving costly cloud instances running",
+    "expect": [
+      "deployment-patterns",
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "kubernetes pod crashes with out-of-memory kill during peak traffic surge",
+    "expect": [
+      "kubernetes-patterns",
+      "deployment-patterns"
+    ]
+  },
+  {
+    "task": "unpinned base image in build configuration broke production after upstream release",
+    "expect": [
+      "docker-patterns",
+      "hardening-docker-containers-for-production"
+    ]
+  },
+  {
+    "task": "secret environment tokens accidentally leaked into public docker build layers",
+    "expect": [
+      "security-review",
+      "agent-security-hardening",
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "deployment script fails midway leaving the application in a split-brain state",
+    "expect": [
+      "deployment-patterns",
+      "release-and-deployment"
+    ]
+  },
+  {
+    "task": "canary traffic rollout lacks automated rollback on error rate threshold breach",
+    "expect": [
+      "canary-watch",
+      "deployment-patterns"
+    ]
+  },
+  {
+    "task": "ci runner disk space fills up completely from leftover artifact cache directories",
+    "expect": [
+      "deployment-patterns",
+      "docker-patterns"
+    ]
+  },
+  {
+    "task": "load balancer health checks flood access logs with twenty thousand entries per minute",
+    "expect": [
+      "deployment-patterns",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "user input in search query string allows unauthorized database access",
+    "expect": [
+      "web-app-penetration-testing",
+      "security-review",
+      "find-security-vulnerabilities-in-code"
+    ]
+  },
+  {
+    "task": "cross-site scripting vulnerability found in user profile biography field",
+    "expect": [
+      "web-app-penetration-testing",
+      "security-review",
+      "find-security-vulnerabilities-in-code"
+    ]
+  },
+  {
+    "task": "session cookies are missing secure and samesite flags in production response",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing",
+      "application-security-testing"
+    ]
+  },
+  {
+    "task": "api endpoint allows arbitrary password reset attempts without rate throttling",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing",
+      "api-security-testing"
+    ]
+  },
+  {
+    "task": "unprotected internal metrics endpoint is publicly reachable over the internet",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing",
+      "api-security-testing"
+    ]
+  },
+  {
+    "task": "user jwt token signature is verified with none algorithm allowing forgery",
+    "expect": [
+      "security-review",
+      "application-security-testing"
+    ]
+  },
+  {
+    "task": "malicious svg upload contains embedded javascript executed in victim browser",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing",
+      "find-security-vulnerabilities-in-code"
+    ]
+  },
+  {
+    "task": "subdomain takeover risk due to dangling cname record pointing to abandoned bucket",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing"
+    ]
+  },
+  {
+    "task": "third-party npm dependency has critical remote code execution cve alert",
+    "expect": [
+      "security-review",
+      "find-security-vulnerabilities-in-code",
+      "mcp-dependency-review"
+    ]
+  },
+  {
+    "task": "idor vulnerability allows viewing other customers invoices by incrementing numeric id",
+    "expect": [
+      "security-review",
+      "web-app-penetration-testing",
+      "api-security-testing"
+    ]
+  },
+  {
+    "task": "test suite passes locally on macbook but fails intermittently on ubuntu ci machine",
+    "expect": [
+      "python-testing",
+      "rust-testing",
+      "e2e-testing"
+    ]
+  },
+  {
+    "task": "mocked external third-party api service returns outdated schema drifting from reality",
+    "expect": [
+      "python-testing",
+      "contract-first",
+      "api-design"
+    ]
+  },
+  {
+    "task": "playwright browser tests fail randomly due to race conditions waiting for spinner",
+    "expect": [
+      "e2e-testing",
+      "browser-qa"
+    ]
+  },
+  {
+    "task": "code change broke checkout calculations but no unit assertion caught the regression",
+    "expect": [
+      "ai-regression-testing",
+      "python-testing",
+      "rust-testing"
+    ]
+  },
+  {
+    "task": "database state from previous test contaminates subsequent test execution",
+    "expect": [
+      "django-tdd",
+      "python-testing",
+      "laravel-tdd",
+      "springboot-tdd"
+    ]
+  },
+  {
+    "task": "unit test suite takes fifteen seconds per test because fixtures make real network calls",
+    "expect": [
+      "python-testing",
+      "rust-testing",
+      "golang-testing"
+    ]
+  },
+  {
+    "task": "test coverage metric claims 95 percent but critical business edge cases are untested",
+    "expect": [
+      "python-testing",
+      "rust-testing",
+      "quality-scan"
+    ]
+  },
+  {
+    "task": "property based fuzz testing needed for binary packet parsing state machine",
+    "expect": [
+      "rust-testing",
+      "python-testing"
+    ]
+  },
+  {
+    "task": "visual regression snapshot tests break on minor font rendering differences",
+    "expect": [
+      "e2e-testing",
+      "browser-qa"
+    ]
+  },
+  {
+    "task": "concurrent async integration tests deadlock trying to access the shared sqlite file",
+    "expect": [
+      "python-testing",
+      "django-tdd",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "virtual keyboard on ios slides up and completely covers form submit button",
+    "expect": [
+      "mobile-native",
+      "frontend-patterns",
+      "react-native-patterns"
+    ]
+  },
+  {
+    "task": "app memory usage steadily grows until mobile operating system terminates it",
+    "expect": [
+      "mobile-native",
+      "react-native-patterns"
+    ]
+  },
+  {
+    "task": "push notifications fail to deliver when smartphone enters battery saver mode",
+    "expect": [
+      "mobile-native",
+      "unified-notifications-ops"
+    ]
+  },
+  {
+    "task": "offline changes made on airplane flight overwrite newer server edits on reconnection",
+    "expect": [
+      "mobile-native",
+      "backend-patterns"
+    ]
+  },
+  {
+    "task": "bottom navigation bar overlaps system gesture bar on modern android devices",
+    "expect": [
+      "mobile-native",
+      "android-clean-architecture"
+    ]
+  },
+  {
+    "task": "bluetooth accessory connection drops whenever smartphone screen locks",
+    "expect": [
+      "mobile-native"
+    ]
+  },
+  {
+    "task": "camera viewfinder preview displays distorted aspect ratio on certain tablet models",
+    "expect": [
+      "mobile-native",
+      "android-clean-architecture"
+    ]
+  },
+  {
+    "task": "deep link navigation opens blank white screen when app is opened cold",
+    "expect": [
+      "mobile-native",
+      "react-native-patterns"
+    ]
+  },
+  {
+    "task": "biometric fingerprint prompt crashes if user cancels authentication dialog",
+    "expect": [
+      "mobile-native",
+      "security-review"
+    ]
+  },
+  {
+    "task": "smooth sixty frames per second list scrolling drops frames when rendering complex cards",
+    "expect": [
+      "mobile-native",
+      "animation-performance",
+      "react-performance"
+    ]
+  },
+  {
+    "task": "new teammate cannot run the project locally due to missing environment setup instructions",
+    "expect": [
+      "codebase-onboarding",
+      "code-tour",
+      "mem-learn-codebase",
+      "understand-onboard",
+      "teach-me"
+    ]
+  },
+  {
+    "task": "pull request changes three thousand lines across forty files making review impossible",
+    "expect": [
+      "gsd-code-review",
+      "code-review",
+      "safe-refactor"
+    ]
+  },
+  {
+    "task": "two microservices have duplicate definitions of customer domain data structures",
+    "expect": [
+      "hexagonal-architecture",
+      "safe-refactor",
+      "api-design"
+    ]
+  },
+  {
+    "task": "git merge conflict destroyed critical feature commit from parallel release branch",
+    "expect": [
+      "git-workflow",
+      "safe-refactor"
+    ]
+  },
+  {
+    "task": "team lacks recorded architectural justification for migrating from rest to grpc",
+    "expect": [
+      "architecture-decision-records",
+      "docs-governance"
+    ]
+  },
+  {
+    "task": "release changelog misses twenty customer bug fixes merged over the past sprint",
+    "expect": [
+      "rea-changelog-update",
+      "article-writing"
+    ]
+  },
+  {
+    "task": "monorepo build rebuilds all forty packages even when only one leaf module changed",
+    "expect": [
+      "deployment-patterns",
+      "engineering-graphify"
+    ]
+  },
+  {
+    "task": "on-call engineer cannot find runbook documentation during midnight service outage",
+    "expect": [
+      "docs-governance",
+      "dashboard-builder"
+    ]
+  },
+  {
+    "task": "untracked dependencies installed via global pip cause deployment discrepancies",
+    "expect": [
+      "generating-python-installer",
+      "flox-environments"
+    ]
+  },
+  {
+    "task": "api documentation is three months out of date and lists endpoints deleted in v2",
+    "expect": [
+      "living-docs-governance",
+      "docs-governance",
+      "api-design"
+    ]
+  }
+]

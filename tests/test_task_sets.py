@@ -1,4 +1,4 @@
-﻿"""Verify that plain/beginner task sets do not trivially leak skill name tokens into task prompts."""
+"""Verify that plain/beginner task sets do not trivially leak skill name tokens into task prompts."""
 import json
 import os
 import re
@@ -44,6 +44,9 @@ class TaskSetsTest(unittest.TestCase):
 
     def test_plain_tuning_leakage(self):
         self.check_leakage(os.path.join(ROOT, 'tests', 'plain_tuning.json'), max_allowed_ratio=0.25)
+
+    def test_exam_plain_leakage(self):
+        self.check_leakage(os.path.join(ROOT, 'tests', 'exam_plain.json'), max_allowed_ratio=0.25)
 
 
 if __name__ == '__main__':
