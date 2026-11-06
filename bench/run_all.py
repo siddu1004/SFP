@@ -138,6 +138,9 @@ def run_all():
             ('final_heldout_plain_v2', 'final_heldout_plain_v2.json', True, True),
             ('final_heldout_project_v2', 'final_heldout_project_v2.json', True, True),
             ('final_heldout_reworded_v2', 'final_heldout_reworded_v2.json', True, True),
+            ('exam_plain', 'exam_plain.json', True, True),
+            ('exam_project', 'exam_project.json', True, True),
+            ('exam_reworded', 'exam_reworded.json', True, True),
         ]
         for key, fname, is_ho, is_froz in extra_suites:
             cases = _load_json_suite(tests_dir, fname, tmp_proj_dir, key)
