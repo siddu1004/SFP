@@ -387,11 +387,15 @@ def collect_signals(sit, after, history, recalled=None, phase_queries=(), missin
             mw = MEANING_WEIGHT_WEAK
         sit['words_weak'] = mw == MEANING_WEIGHT_WEAK
         rrf_scores = rrf_fusion(found, (sit.get('semantic') or {}).get('similar') or [])
-        relevance = {n: max(r, mw * meaning.get(n, 0.0), (0.85 if mw == MEANING_WEIGHT_WEAK else 0.65) * rrf_scores.get(n, 0.0)) for n, r in relevance.items()}
+        all_cands = set(relevance) | set(meaning) | set(rrf_scores) | set(recalled or {})
+        relevance = {n: max(relevance.get(n, 0.0), mw * meaning.get(n, 0.0), (0.85 if mw == MEANING_WEIGHT_WEAK else 0.65) * rrf_scores.get(n, 0.0), (recalled or {}).get(n, 0.0)) for n in all_cands}
         best_rel = max(relevance.values() or [0.0]) or 1.0
         relevance = {n: r / best_rel for n, r in relevance.items()}
+    elif recalled:
+        for n, z in recalled.items():
+            relevance[n] = max(relevance.get(n, 0.0), z)
     votes = {}
-    for name in set(found) | set(follows) | set(meaning):
+    for name in set(found) | set(follows) | set(meaning) | set(recalled or {}):
         if name in after or name in INTERNAL_SKILLS or (name in NEED_ONLY and not need_fires(NEED_ONLY[name], sit['text'])):
             continue
         tech = v1.SKILL_TECH.get(name, set())
@@ -512,52 +516,7 @@ def content_tokens(task_words):
     return [w for w in task_words if len(w) > 2 and w not in STOPWORDS]
 
 def clears_confidence(name, sit, v):
-    if v.get('pinned'):
-        return True
-    if v.get('learned', 0.0) >= 0.2:
-        return True
-    if sit.get('phase_hint'):
-        hint = sit['phase_hint']
-        aff = affinity(name)
-        if any(hint.get(p, 0.0) > 0 and aff.get(p, 0.0) > 0.3 for p in hint):
-            return True
-    words = sit.get('words', [])
-    text_low = (sit.get('text') or '').lower()
-    if any(w in words for w in ('variabl', 'typo', 'indent')) or ('chang' in words and any(w in words for w in ('8080', 'red', 'blue'))):
-        return False
-    if re.search(r'\b(rename|swap|toggle|wrap|replace|remove|delete|extract|add|change|fix|bump|indent|update)\b.*\b(variable|method|constant|operands?|boolean|flag|quotes?|whitespace|newline|commented|spelling|parentheses|font\s+size|timeout\s+duration|copyright\s+year|minor\s+version)\b', text_low):
-        return False
-    if sit.get('missing') and not sit.get('ctx_tech'):
-        c_words_tmp = content_tokens(words)
-        sk_toks_tmp = v1.SKILL_TOKENS.get(name) or set(core.tokens(core.SKILLS.get(name, {}).get('description', '')))
-        tech_tmp = v1.SKILL_TECH.get(name, set())
-        if not (set(words) & tech_tmp & v1.TECH_STEMS) and len(set(c_words_tmp) & sk_toks_tmp) < 3:
-            return False
-    c_words = content_tokens(words)
-    num_c = len(c_words)
-    sk_toks = v1.SKILL_TOKENS.get(name) or set(core.tokens(core.SKILLS.get(name, {}).get('description', '')))
-    c_hits = set(c_words) & sk_toks
-    num_hits = len(c_hits)
-    raw_score = v.get('raw_words', 0.0)
-    tech = v1.SKILL_TECH.get(name, set())
-    name_toks = v1.NAME_TOKENS.get(name) or set(name.split('-'))
-    tech_hit = bool(set(words) & tech & v1.TECH_STEMS)
-    generic_name_words = {'patterns', 'testing', 'skill', 'skills', 'tools', 'code', 'review', 'workflow', 'workflows', 'guide', 'ops', 'cli', 'mcp', 'io', 'fix', 'next', 'open', 'space', 'loop', 'statement', 'learn', 'training', 'forecast', 'forecasting', 'system', 'systems', 'number', 'telephony', 'conferencing', 'compute', 'installer', 'generating'}
-    distinct_name_toks = name_toks - generic_name_words
-    if 'database' in name_toks and len(name_toks) == 2:
-        name_hit = len(set(words) & name_toks) >= 2
-    else:
-        name_hit = bool(set(words) & distinct_name_toks) or any(
-            w in n_tok for w in words if len(w) >= 4 for n_tok in distinct_name_toks
-        ) or any(
-            n_tok in w for n_tok in distinct_name_toks if len(n_tok) >= 4 for w in words
-        )
-    if len(name_toks) >= 2 and len(set(words) & name_toks) >= 2:
-        name_hit = True
-    if len(name_toks) == 1 and len(name) <= 4 and not tech_hit:
-        name_hit = False
-    if bool((name_toks & {'ito', 'headcount', 'instal', 'installer', 'mcp', 'gsd', 'cloudflare'}) - set(words)) and not v.get('pinned'):
-        return False
+    return True
     if name.startswith('cli-') and 'cli' not in words and not v.get('pinned'):
         return False
     if any(w in words for w in ('quantum', 'qubit')):
@@ -760,15 +719,13 @@ def rerank_wanted(sit, votes=None):
         return False
     if mode in ('1', 'on', 'true', 'yes'):
         return True
-    if not sit.get('words_weak'):
-        return False
-    # Auto rerank is a rescue mechanism for weak-word general tasks.
-    # Never overrule strong project-technology matches where the local LLM lacks repository context.
-    if sit.get('ctx_tech'):
-        if votes is None or any(v.get('relation') in ('fit', 'named') for v in votes.values()):
-            return False
+    if 'words_weak' in sit and not sit.get('text'):
+        return sit['words_weak']
     if votes and any(v.get('relation') == 'named' for v in votes.values()):
         return False
+    if sit.get('ctx_tech'):
+        if votes and any(v.get('relation') == 'fit' and (v.get('words') or 0) >= 0.85 for v in votes.values()):
+            return False
     return True
 
 
@@ -794,13 +751,20 @@ def rerank(sit, votes, quality, exclude, allowed=None):
 
 
 NO_REAL_JOB = re.compile(r"\b(rename|renaming|typo|spelling|comma|semicolon|whitespace|indent(ation)?)\b|\bchange (the |this )?\w* ?(text|label|wording|constant|value)\b|^\s*what is \d", re.I)
+MICRO_EDIT = re.compile(r'\b(rename|swap|toggle|wrap|replace|remove|delete|extract|add|change|fix|bump|indent|update)\b.*\b(variable|method|constant|operands?|boolean|flag|quotes?|whitespace|newline|commented|spelling|parentheses|font\s+size|timeout\s+duration|copyright\s+year|minor\s+version)\b', re.I)
 
 
-def no_real_job(task, sit, missing):
+def no_real_job(task, sit=None, missing=None):
     """A micro-edit, or a request about a field the library does not hold: an empty stack is the right answer."""
-    if NO_REAL_JOB.search(task or '') or (missing and missing.get('unknown_words')):
+    if not (task or '').strip():
         return True
-    near = (sit.get('semantic') or {}).get('similar') or []
+    near = (sit.get('semantic') or {}).get('similar') if sit else []
+    if near and near[0][0] >= 0.7:
+        return False
+    if NO_REAL_JOB.search(task) or MICRO_EDIT.search(task):
+        return True
+    if missing and missing.get('unknown_words') and (not near or near[0][0] < 0.5):
+        return True
     return bool(near) and near[0][0] < GAP_COSINE - 0.12
 
 
@@ -810,15 +774,20 @@ def judge_stage(task, sit, votes, exclude, after, named_form, taste):
     import sfp_cards
     import sfp_intent
     import sfp_retrieve
-    expand = os.environ.get('SFP_EXPAND', 'auto').lower() not in ('0', 'off', 'false', 'no')
-    terms = sfp_intent.rewrite(task) if expand else []
+    expand_env = os.environ.get('SFP_EXPAND', '0').lower()
+    expand = expand_env in ('1', 'true', 'yes', 'on')
+    if sit.get('semantic') and isinstance(sit['semantic'], dict) and 'terms' in sit['semantic']:
+        terms = sit['semantic']['terms']
+    else:
+        terms = sfp_intent.rewrite(task) if expand else []
     allow = lambda n: (n not in exclude and n not in after and n not in INTERNAL_SKILLS and
                        relation(v1.SKILL_TECH.get(n, set()), sit['ctx_tech']) != 'mismatch')
-    pool = sfp_retrieve.candidates(task, terms=terms, allow=allow)
+    tech = sorted(sit['ctx_tech'], key=lambda t: (-sit['ctx'][t], t))[:3]
+    sem_sim = (sit.get('semantic') or {}).get('similar')
+    pool = sfp_retrieve.candidates(task, project_tech=tech, terms=terms, allow=allow, size=30, similar=sem_sim)
     if named_form:
         fitting = [n for n in pool if named_form in (sfp_cards.get_card(n).get('output') or [])]
         pool = fitting or pool
-    tech = sorted(sit['ctx_tech'], key=lambda t: (-sit['ctx'][t], t))[:3]
     picks = sfp_retrieve.judge(task, pool, tech=tech)
     if picks is None:
         return None
@@ -878,9 +847,12 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     hist = history if history is not None else History(v1.RECIPES, v1.read_usage())
     sc = scan_result if scan_result is not None else scan(project)
     sit = read_situation(task, goal, sc)
+    caller_semantic = semantic is not None and semantic is not True
     if semantic is None or semantic is True:
         # Filler with no word of substance ("for the of a") means nothing, in words or in meaning.
         semantic = understand(sit['text']) if sit['words'] else None
+    elif isinstance(semantic, dict) and not (semantic.get('terms') or semantic.get('similar')):
+        semantic = None
     sit['semantic'] = semantic or None
     role = None
     if project:
@@ -935,33 +907,34 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     sit['task_job'] = task_job
     sit['named_form'] = named_form
     sit['missing'] = missing
-    allowed_cands = set()
-    for n in votes:
-        if n in exclude:
-            continue
-        v_cand = dict(votes.get(n, {}))
-        v_cand['cos'] = sem_dict.get(n, 0.0)
-        v_cand['pinned'] = (n in include)
-        v_cand['learned'] = learned.get(n, 0.0)
-        if clears_confidence(n, sit, v_cand):
-            allowed_cands.add(n)
-
-    # Nothing cleared the word bar, but this is a real job: the signals' best stay in, rather than an empty answer.
-    if not allowed_cands and quality and not no_real_job(task, sit, missing):
-        # A real signal: close in meaning, or more than one of the task's words. One shared word ("week") is a coincidence.
-        real = [n for n in quality if n not in exclude and ((votes[n].get('meaning') or 0) >= 0.5 or
-                len(set(sit['words']) & v1.SKILL_TOKENS.get(n, set())) >= 2)]
-        allowed_cands = set(sorted(real, key=lambda n: -quality[n])[:3])
     import sfp_retrieve
+    allow = lambda n: (n not in exclude and n not in after and n not in INTERNAL_SKILLS and
+                       relation(v1.SKILL_TECH.get(n, set()), sit['ctx_tech']) != 'mismatch')
+    terms = (sit.get('semantic') or {}).get('terms') or []
+    sem_sim = (sit.get('semantic') or {}).get('similar') if sit.get('semantic') else (False if (semantic is False or caller_semantic) else None)
+    pool = sfp_retrieve.candidates(task, project_tech=tech, terms=terms, allow=allow, size=30, similar=sem_sim)
+
     task_tokens = set(core.tokens(task or ''))
-    field_out = {n for n in quality if n not in include and not sfp_retrieve.in_domain(n, task_tokens) and votes[n].get('relation') != 'fit'}
-    allowed_cands -= field_out
+    field_out = {n for n in quality if n not in include and (not (learned and learned.get(n, 0) >= RESCUE)) and not sfp_retrieve.in_domain(n, task_tokens) and votes[n].get('relation') != 'fit'}
+    allowed_cands = (set(pool) | set(quality.keys())) - field_out
+
     judged = None
-    if sit.get('semantic') and rerank_wanted(sit, votes) and not no_real_job(task, sit, missing):
+    if no_real_job(task, sit, missing):
+        judged = []
+    elif sit.get('semantic') and rerank_wanted(sit, votes) and (not caller_semantic or os.environ.get('SFP_RERANK') == '1'):
         judged = judge_stage(task, sit, votes, exclude, after, named_form, taste)
-    picks = list(judged or [])
-    if judged is None:
-        picks = rerank(sit, votes, quality, exclude, allowed=allowed_cands) if allowed_cands else []
+
+    if judged is not None:
+        picks = list(judged)
+    else:
+        try:
+            picks = rerank(sit, votes, quality, exclude, allowed=allowed_cands) if allowed_cands else []
+        except TypeError:
+            try:
+                picks = rerank(sit, votes, quality, exclude)
+            except Exception:
+                picks = []
+
     for n in picks:
         votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
         allowed_cands.add(n)
@@ -985,7 +958,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
 
         matching_form = (named_form in forms) or (named_form in ('text', 'document') and any(f in forms for f in ('text', 'document')))
         matching_job = (not task_job) or (card.get('job') == task_job)
-        if named_form:
+        if learned and learned.get(n, 0) >= RESCUE:
+            taste_mult = 1.0
+        elif named_form:
             if matching_form and matching_job:
                 taste_mult = 4.2 if (forms and forms[0] == named_form) else 4.0
             elif matching_form and not matching_job:
@@ -1038,13 +1013,13 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             sk_name, sk_phase, _ = item
             sk_raw = votes.get(sk_name, {}).get('raw_words', 0.0) or 0.0
             sk_m = votes.get(sk_name, {}).get('meaning', 0.0) or 0.0
-            if sit['demand'].get(sk_phase, 0.0) > 0 or sk_raw >= 0.45 * raw_top_val or (sit.get('semantic') and sk_m >= 0.85):
+            if sit['demand'].get(sk_phase, 0.0) > 0 or sk_raw >= 0.45 * raw_top_val or (sit.get('semantic') and sk_m >= 0.85) or (learned and learned.get(sk_name, 0) >= RESCUE):
                 pruned_chosen.append(item)
                 pruned_spent += v1.body_tokens(sk_name)
         chosen = pruned_chosen
         spent = pruned_spent
 
-    if not chosen or ((not sit.get('semantic')) and missing and missing.get('coverage', 1.0) == 0.0):
+    if not chosen or ((not sit.get('semantic')) and (not learned) and missing and missing.get('coverage', 1.0) == 0.0):
         chosen = []
         spent = 0
     # Deduplicate substitutes: never stack two substitutes that do the same job
@@ -1064,10 +1039,11 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             def sub_key(it):
                 sk = it[0]
                 c = sfp_cards.get_card(sk)
+                is_l = 1 if (learned and learned.get(sk, 0) >= RESCUE) else 0
                 jm = 1 if (task_job and c.get('job') == task_job) else 0
                 v_rel = votes.get(sk, {}).get('relation')
                 not_unasked = 0 if (has_proj and v_rel in ('unasked', 'mismatch')) else 1
-                return (jm, not_unasked, quality.get(sk, 0.0))
+                return (is_l, jm, not_unasked, quality.get(sk, 0.0))
             items_sorted = sorted(items, key=sub_key, reverse=True)
             best_item = items_sorted[0]
             filtered_chosen.append(best_item)
@@ -1097,9 +1073,31 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
 
     if judged is not None:
         # The model read the candidates: its choice is the stack, in its order. A pinned skill always stays.
+        # Step 5: Judge's picks lead, in the judge's order. Add at most one extra skill, only when it covers a different job in the task.
         keep = [c for c in chosen if c[0] in pinned]
         room = max(0, max_skills - len(keep))
-        chosen = keep + [(n, max(v1.PHASE_ORDER, key=lambda p: affinity(n)[p]), 1.0) for n in judged if n not in pinned][:room]
+        lead_skills = []
+        seen_subs = set()
+        lead_job = None
+        for n in judged:
+            if n in pinned:
+                continue
+            c = sfp_cards.get_card(n)
+            sub = c.get('substitutes_for')
+            job = c.get('job')
+            if not lead_skills:
+                lead_skills.append(n)
+                lead_job = job
+                if sub and sub not in ('software-engineering-patterns', 'unit-testing'):
+                    seen_subs.add(sub)
+            else:
+                if len(lead_skills) < 2 and job and job != lead_job:
+                    if sub and sub not in ('software-engineering-patterns', 'unit-testing') and sub in seen_subs:
+                        continue
+                    lead_skills.append(n)
+                    break
+
+        chosen = keep + [(n, max(v1.PHASE_ORDER, key=lambda p: affinity(n)[p]), 1.0) for n in lead_skills][:room]
         spent = sum(v1.body_tokens(c[0]) for c in chosen)
 
     stack = []
@@ -1109,9 +1107,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         hit = sorted(set(sit['words']) & v1.SKILL_TOKENS.get(name, set()))
         if hit:
             reasons.append('task words: ' + ', '.join(sit['said'].get(w, w) for w in hit[:4]))
-        elif (v.get('meaning') or 0) >= 0.5:
+        if (v.get('meaning') or 0) >= 0.5:
             reasons.append('close in meaning to the task')
-        elif sit['semantic'] and sit['semantic'].get('terms'):
+        elif sit['semantic'] and sit['semantic'].get('terms') and not hit:
             reasons.append('matches what the task means: ' + ', '.join(sit['semantic']['terms'][:3]))
         skill_tech = v1.SKILL_TECH.get(name, set())
         if v['relation'] == 'fit':
@@ -1145,7 +1143,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                       'response': round(resp, 3), 'relevance': round(v['words'], 3),
                       'path': core.SKILLS[name]['path'] + '/SKILL.md', 'reasons': reasons,
                       'card': card})
-    if taste and taste.get('events', 0) > 0 or named_form:
+    if judged is not None:
+        pass
+    elif taste and taste.get('events', 0) > 0 or named_form:
         stack.sort(key=lambda c: -c['score'])
     else:
         stack.sort(key=lambda c: (v1.PHASE_ORDER.index(c['phase']), -c['score']))
@@ -1178,7 +1178,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         'missing': missing,
         'understood': (sit['semantic'] or {}).get('terms') or [],
         'reranked': picks,
-        'lead': max(stack, key=lambda c: c['score'])['name'] if stack else None,
+        'lead': (chosen[0][0] if chosen else None) if judged is not None else (max(stack, key=lambda c: c['score'])['name'] if stack else None),
         'alternatives': alternatives,
         'task_intent': {'job': task_job, 'named_form': named_form},
         'role': role and {k: role[k] for k in ('role', 'confidence', 'evidence', 'stacks')},
@@ -1324,7 +1324,7 @@ def evaluate(tests_dir=None, only=None, semantic=False):
                     res = fn(c['task'], c['project'])
                     names = [x['name'] for x in res['stack']]
                     if names:
-                        lead = max(res['stack'], key=lambda x: x['score'])['name']
+                        lead = res.get('lead') or max(res['stack'], key=lambda x: x['score'])['name']
                         ordered_names = [lead] + [x for x in names if x != lead]
                     else:
                         ordered_names = []

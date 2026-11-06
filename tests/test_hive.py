@@ -244,6 +244,16 @@ class InterfaceTest(unittest.TestCase):
         self.assertEqual(done.returncode, 0, done.stderr)
         self.assertNotIn('engine', json.loads(done.stdout))
 
+    def test_real_software_problems_get_non_empty_stack(self):
+        real_tasks = [
+            'blind people cant use my website',
+            'how do I protect the database from injection',
+            'orders are not saving to postgres',
+        ]
+        for t in real_tasks:
+            res = sel.select(t, semantic=False)
+            self.assertTrue(len(res['stack']) >= 1, f"Expected non-empty stack for: {t}")
+
 
 if __name__ == '__main__':
     unittest.main()

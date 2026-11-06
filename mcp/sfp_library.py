@@ -423,6 +423,11 @@ def match_bundles(task, chosen=(), limit=None, exclude=(), tech=None, use_bundle
             if len(hit) < 2 and have < 0.5 and not id_match:
                 score *= 0.6
 
+            b_title_parts = (set(bid.split('-')) | set(core.tokens(b['name']))) - skip_id_words
+            name_hits = set(hit) & b_title_parts
+            if name_hits:
+                score = min(1.0, score + 0.12 * min(2, len(name_hits)))
+
             if score > best_score:
                 best_score = score
                 best_hit = hit

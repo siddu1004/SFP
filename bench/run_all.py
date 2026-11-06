@@ -216,7 +216,7 @@ def run_all():
         def _order_stack(res):
             names = [x['name'] for x in res['stack']]
             if names:
-                lead = max(res['stack'], key=lambda x: x['score'])['name']
+                lead = res.get('lead') or max(res['stack'], key=lambda x: x['score'])['name']
                 ordered = [lead] + [x for x in names if x != lead]
             else:
                 ordered = []

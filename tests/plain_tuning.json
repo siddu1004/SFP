@@ -14,9 +14,10 @@
   {
     "task": "users complain our modal dialog traps focus and cannot be closed with escape key",
     "expect": [
-      "frontend-a11y",
+      "accessibility",
       "accessibility-audit",
-      "accessible-form"
+      "accessible-form",
+      "frontend-a11y"
     ],
     "avoid": [
       "clickhouse-io",
@@ -26,9 +27,12 @@
   {
     "task": "our web typography looks amateurish and unpolished across headlines",
     "expect": [
+      "design-taste-frontend",
       "frontend-design",
       "impeccable",
-      "design-taste-frontend"
+      "interface-redesign",
+      "interface-review",
+      "ui-ux-pro-max"
     ],
     "avoid": [
       "golang-patterns",
@@ -49,8 +53,10 @@
     "task": "the whole user interface feels clunky and stiff with no smooth transitions",
     "expect": [
       "animate",
-      "motion-patterns",
-      "emil-design-eng"
+      "emil-design-eng",
+      "find-animation-opportunities",
+      "make-interfaces-feel-better",
+      "motion-patterns"
     ],
     "avoid": [
       "postgres-patterns",
@@ -60,9 +66,10 @@
   {
     "task": "input field validation errors only show red borders without explaining what went wrong",
     "expect": [
+      "accessibility",
       "accessible-form",
-      "ux-writing",
-      "frontend-patterns"
+      "frontend-patterns",
+      "ux-writing"
     ],
     "avoid": [
       "deep-research"
@@ -71,8 +78,9 @@
   {
     "task": "our web page takes six seconds before users can click anything on 4g connections",
     "expect": [
-      "react-performance",
-      "frontend-patterns"
+      "animation-performance",
+      "frontend-patterns",
+      "react-performance"
     ],
     "avoid": [
       "csharp-testing"
@@ -81,9 +89,13 @@
   {
     "task": "color contrast on our primary buttons fails legibility guidelines",
     "expect": [
-      "frontend-a11y",
+      "accessibility",
       "accessibility-audit",
-      "impeccable"
+      "frontend-a11y",
+      "impeccable",
+      "interface-redesign",
+      "interface-review",
+      "ui-ux-pro-max"
     ],
     "avoid": [
       "django-celery"
@@ -93,9 +105,12 @@
     "task": "our dashboard cards look cluttered with zero breathing room between metrics",
     "expect": [
       "bento",
-      "spacious",
+      "clean",
       "design-taste-frontend",
-      "clean"
+      "interface-redesign",
+      "interface-review",
+      "spacious",
+      "ui-ux-pro-max"
     ],
     "avoid": [
       "rust-testing"
@@ -104,6 +119,7 @@
   {
     "task": "images shift the entire article layout down while loading in the browser",
     "expect": [
+      "animation-performance",
       "frontend-patterns",
       "react-performance"
     ],
@@ -134,9 +150,10 @@
   {
     "task": "touch targets on smartphone screen buttons are too tiny for thumbs to tap reliably",
     "expect": [
+      "accessibility",
       "frontend-a11y",
-      "mobile-native",
-      "frontend-patterns"
+      "frontend-patterns",
+      "mobile-native"
     ],
     "avoid": [
       "clickhouse-io"
@@ -169,8 +186,11 @@
   {
     "task": "auth renewal fails intermittently leading to logged out sessions during active use",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
       "backend-patterns",
-      "security-review"
+      "security-review",
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "sketch",
@@ -252,8 +272,11 @@
   {
     "task": "user passwords are being saved in unhashed raw text inside our storage tables",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "backend-patterns",
       "security-review",
-      "backend-patterns"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "bento"
@@ -517,8 +540,11 @@
   {
     "task": "secrets and database passwords are baked directly into public container layers",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "docker-patterns",
       "security-review",
-      "docker-patterns"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "animate"
@@ -547,8 +573,11 @@
   {
     "task": "attackers could tamper with hidden form parameters to alter purchased goods prices",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "owasp-top-10-testing",
       "security-review",
-      "owasp-top-10-testing"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "slack-gif-creator"
@@ -557,8 +586,10 @@
   {
     "task": "customer profile pictures upload endpoint allows execution of arbitrary scripts",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
       "security-review",
-      "application-security-testing"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "bento"
@@ -567,6 +598,8 @@
   {
     "task": "session cookie lacks essential protective attributes against interception attacks",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
       "security-review",
       "web-app-penetration-testing"
     ],
@@ -577,8 +610,11 @@
   {
     "task": "our api endpoints reveal detailed stack traces with internal server paths on bad input",
     "expect": [
+      "agent-security-hardening",
+      "api-security-testing",
+      "application-security-testing",
       "security-review",
-      "api-security-testing"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "motion-patterns"
@@ -587,8 +623,11 @@
   {
     "task": "third party libraries in our manifest have known high severity vulnerabilities",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "dependency-audit",
       "security-review",
-      "dependency-audit"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "frontend-design"
@@ -597,8 +636,11 @@
   {
     "task": "users can view other accounts invoices by simply guessing sequential record numbers",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "owasp-top-10-testing",
       "security-review",
-      "owasp-top-10-testing"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "emil-design-eng"
@@ -607,8 +649,11 @@
   {
     "task": "search box accepts raw user text directly without stripping dangerous tags",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "owasp-top-10-testing",
       "security-review",
-      "owasp-top-10-testing"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "article-writing"
@@ -617,8 +662,11 @@
   {
     "task": "no rate limiting exists on our password reset submission form",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "owasp-top-10-testing",
       "security-review",
-      "owasp-top-10-testing"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "slack-gif-creator"
@@ -627,9 +675,12 @@
   {
     "task": "sensitive health records could be exposed without proper access authorizations",
     "expect": [
-      "hipaa-compliance",
+      "agent-security-hardening",
+      "application-security-testing",
       "healthcare-phi-compliance",
-      "security-review"
+      "hipaa-compliance",
+      "security-review",
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "bento"
@@ -638,6 +689,8 @@
   {
     "task": "cors configuration currently sends wildcard access allow origin to every caller",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
       "security-review",
       "web-app-penetration-testing"
     ],
@@ -648,8 +701,11 @@
   {
     "task": "our tokens remain valid indefinitely even after the user clicks sign out",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "omni-auth",
       "security-review",
-      "omni-auth"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "accessible-form"
@@ -658,8 +714,10 @@
   {
     "task": "internal administrative routes are accessible over the public internet without vpn",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
       "security-review",
-      "application-security-testing"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "impeccable"
@@ -668,8 +726,11 @@
   {
     "task": "database queries are constructed by concatenating raw user strings together",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "owasp-top-10-testing",
       "security-review",
-      "owasp-top-10-testing"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "design-taste-frontend"
@@ -1020,8 +1081,11 @@
   {
     "task": "prompts contain sensitive company credentials that must be stripped before external sending",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "omni-mcp",
       "security-review",
-      "omni-mcp"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "ux-writing"
@@ -1086,7 +1150,9 @@
     "expect": [
       "codebase-onboarding",
       "documentation-lookup",
-      "mem-learn-codebase"
+      "mem-learn-codebase",
+      "teach-me",
+      "understand-onboard"
     ],
     "avoid": [
       "animate"
@@ -1106,9 +1172,11 @@
   {
     "task": "new engineers spend three weeks reading code before making their first pull request",
     "expect": [
-      "codebase-onboarding",
       "code-tour",
-      "mem-learn-codebase"
+      "codebase-onboarding",
+      "mem-learn-codebase",
+      "teach-me",
+      "understand-onboard"
     ],
     "avoid": [
       "impeccable"
@@ -1147,9 +1215,11 @@
   {
     "task": "nobody understands how data flows through our seventeen asynchronous queues",
     "expect": [
+      "code-tour",
       "engineering-graphify",
       "journey-mapping",
-      "code-tour"
+      "teach-me",
+      "understand-onboard"
     ],
     "avoid": [
       "bento"
@@ -1210,8 +1280,11 @@
   {
     "task": "a sensitive private api secret was accidentally committed into git version history",
     "expect": [
+      "agent-security-hardening",
+      "application-security-testing",
+      "git-workflow",
       "security-review",
-      "git-workflow"
+      "web-app-penetration-testing"
     ],
     "avoid": [
       "slack-gif-creator"

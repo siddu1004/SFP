@@ -33,7 +33,7 @@ class BenchSuiteParityTest(unittest.TestCase):
                     names = [x['name'] for x in res['stack']]
                     hit += bool(want & set(names))
                     if names:
-                        lead = max(res['stack'], key=lambda x: x['score'])['name']
+                        lead = res.get('lead') or max(res['stack'], key=lambda x: x['score'])['name']
                         first += lead in want
                     wrong += bool(set(c.get('avoid', [])) & set(names))
                     size += len(names)

@@ -1,278 +1,284 @@
 [
- {
-  "task": "Create a new PostgreSQL schema change that can be applied during off-peak hours to avoid service disruptions.",
-  "expect": [
-   "database-migrations",
-   "postgres-patterns"
-  ],
-  "from": "add a postgres migration without downtime"
- },
- {
-  "task": "Check for vulnerabilities in my website",
-  "expect": [
-   "penetration-testing-with-strix",
-   "web-app-penetration-testing",
-   "application-security-testing"
-  ],
-  "from": "pentest my web app"
- },
- {
-  "task": "Create a web service interface for data exchange.",
-  "expect": [
-   "api-design"
-  ],
-  "from": "design a REST API"
- },
- {
-  "task": "Check my UI for usability",
-  "expect": [
-   "accessibility-audit",
-   "frontend-a11y",
-   "accessibility"
-  ],
-  "from": "review my UI for accessibility"
- },
- {
-  "task": "How to optimize Kubernetes for efficient app launches?",
-  "expect": [
-   "kubernetes-patterns",
-   "deployment-patterns"
-  ],
-  "from": "kubernetes deployment best practices"
- },
- {
-  "task": "Revise my resume to match the company's needs",
-  "expect": [
-   "career-ops"
-  ],
-  "from": "tailor my CV for a job posting"
- },
- {
-  "task": "Build a Django app using Celery for handling asynchronous jobs.",
-  "expect": [
-   "django-patterns",
-   "django-celery"
-  ],
-  "from": "Django REST API with Celery background tasks"
- },
- {
-  "task": "Make my homepage more unique",
-  "expect": [
-   "impeccable",
-   "design-taste-frontend",
-   "redesign-existing-projects",
-   "high-end-visual-design"
-  ],
-  "from": "make my landing page look less generic"
- },
- {
-  "task": "Make a brief clip on a subject.",
-  "expect": [
-   "moneyprinterturbo-video",
-   "remotion-video-creation",
-   "video-editing"
-  ],
-  "from": "generate a short video from a topic"
- },
- {
-  "task": "How to handle app data persistence and sharing in Flutter?",
-  "expect": [
-   "dart-flutter-patterns",
-   "flutter-dart-code-review"
-  ],
-  "from": "state management in Flutter"
- },
- {
-  "task": "Simulate high-traffic usage on my UI with lengthy text and no content present.",
-  "expect": [
-   "break-ui"
-  ],
-  "from": "stress test my UI with long names and empty states"
- },
- {
-  "task": "Document architectural choices made for the project.",
-  "expect": [
-   "architecture-decision-records"
-  ],
-  "from": "write an architecture decision record"
- },
- {
-  "task": "Create a summary for stakeholders.",
-  "expect": [
-   "investor-materials",
-   "investor-outreach"
-  ],
-  "from": "draft an investor update"
- },
- {
-  "task": "TypeScript Vue 3 best practices for structuring code",
-  "expect": [
-   "vue-patterns",
-   "ui-to-vue"
-  ],
-  "from": "TypeScript Vue 3 component patterns"
- },
- {
-  "task": "Check how well my AI performs.",
-  "expect": [
-   "agent-eval",
-   "eval-harness",
-   "agent-self-evaluation"
-  ],
-  "from": "evaluate how good my AI agent is"
- },
- {
-  "task": "Select hues and typography for a luxury online presence.",
-  "expect": [
-   "design-taste-frontend",
-   "high-end-visual-design",
-   "impeccable",
-   "brand-guidelines"
-  ],
-  "from": "pick colors and type for a premium brand site"
- },
- {
-  "task": "Create automated checks for a Spring application part.",
-  "expect": [
-   "springboot-tdd",
-   "springboot-verification"
-  ],
-  "from": "unit test a Spring Boot service"
- },
- {
-  "task": "Create a table structure in MySQL",
-  "expect": [
-   "mysql-patterns"
-  ],
-  "from": "design a database schema in MySQL"
- },
- {
-  "task": "Make a presentation from a list of points",
-  "expect": [
-   "frontend-slides"
-  ],
-  "from": "create a slide deck from an outline"
- },
- {
-  "task": "Create automated UI checks from start to finish",
-  "expect": [
-   "e2e-testing",
-   "browser-qa"
-  ],
-  "from": "set up end to end browser tests"
- },
- {
-  "task": "Determine the cost for my cloud-based services by considering human behavior.",
-  "expect": [
-   "price-framing"
-  ],
-  "from": "price my SaaS tiers using psychology"
- },
- {
-  "task": "Need help filling out forms to bring stuff into the country?",
-  "expect": [
-   "customs-trade-compliance"
-  ],
-  "from": "customs paperwork for importing goods"
- },
- {
-  "task": "Check out what other companies are offering similar stuff.",
-  "expect": [
-   "competitive-platform-analysis",
-   "market-research"
-  ],
-  "from": "analyze competitor products"
- },
- {
-  "task": "Make this slow-moving visual effect faster.",
-  "expect": [
-   "animation-performance"
-  ],
-  "from": "speed up a janky CSS animation"
- },
- {
-  "task": "Create a secure Perl program.",
-  "expect": [
-   "perl-patterns",
-   "perl-security"
-  ],
-  "from": "write a Perl script safely"
- },
- {
-  "task": "Choose a UI component for pop-up messages.",
-  "expect": [
-   "pick-ui-library",
-   "ask-sonner"
-  ],
-  "from": "pick a UI library for toast notifications"
- },
- {
-  "task": "Create a smart system that employs various utilities.",
-  "expect": [
-   "agentic-engineering",
-   "agent-harness-construction",
-   "autonomous-agent-harness"
-  ],
-  "from": "build an AI agent that uses tools"
- },
- {
-  "task": "Make your deck polished and pro.",
-  "expect": [
-   "theme-factory",
-   "frontend-slides",
-   "brand-guidelines"
-  ],
-  "from": "make a presentation look professional"
- },
- {
-  "task": "Help a fresh team member understand an old software system.",
-  "expect": [
-   "codebase-onboarding",
-   "code-tour",
-   "mem-learn-codebase"
-  ],
-  "from": "explain a legacy codebase to a new teammate"
- },
- {
-  "task": "Optimize ClickHouse for faster data processing.",
-  "expect": [
-   "clickhouse-io"
-  ],
-  "from": "speed up analytics queries in ClickHouse"
- },
- {
-  "task": "Organize a NestJS component",
-  "expect": [
-   "nestjs-patterns"
-  ],
-  "from": "structure a NestJS module"
- },
- {
-  "task": "Create a translucent UI element with frosted glass look",
-  "expect": [
-   "glassmorphism"
-  ],
-  "from": "glassmorphism card effect"
- },
- {
-  "task": "Create a simple prototype from the given specification for initial testing.",
-  "expect": [
-   "orch-build-mvp"
-  ],
-  "from": "turn a product spec into a working MVP"
- },
- {
-  "task": "Need a service to get money conversion data?",
-  "expect": [
-   "public-apis"
-  ],
-  "from": "find an API for currency exchange rates"
- },
- {
-  "task": "Create a UI that works on multiple platforms.",
-  "expect": [
-   "compose-multiplatform-patterns"
-  ],
-  "from": "Compose Multiplatform shared UI"
- }
+  {
+    "task": "Create a new PostgreSQL schema change that can be applied during off-peak hours to avoid service disruptions.",
+    "expect": [
+      "database-migrations",
+      "postgres-patterns"
+    ],
+    "from": "add a postgres migration without downtime"
+  },
+  {
+    "task": "Check for vulnerabilities in my website",
+    "expect": [
+      "penetration-testing-with-strix",
+      "web-app-penetration-testing",
+      "application-security-testing",
+      "find-security-vulnerabilities-in-code"
+    ],
+    "from": "pentest my web app"
+  },
+  {
+    "task": "Create a web service interface for data exchange.",
+    "expect": [
+      "api-design"
+    ],
+    "from": "design a REST API"
+  },
+  {
+    "task": "Check my UI for usability",
+    "expect": [
+      "accessibility-audit",
+      "frontend-a11y",
+      "accessibility"
+    ],
+    "from": "review my UI for accessibility"
+  },
+  {
+    "task": "How to optimize Kubernetes for efficient app launches?",
+    "expect": [
+      "kubernetes-patterns",
+      "deployment-patterns"
+    ],
+    "from": "kubernetes deployment best practices"
+  },
+  {
+    "task": "Revise my resume to match the company's needs",
+    "expect": [
+      "career-ops"
+    ],
+    "from": "tailor my CV for a job posting"
+  },
+  {
+    "task": "Build a Django app using Celery for handling asynchronous jobs.",
+    "expect": [
+      "django-patterns",
+      "django-celery"
+    ],
+    "from": "Django REST API with Celery background tasks"
+  },
+  {
+    "task": "Make my homepage more unique",
+    "expect": [
+      "impeccable",
+      "design-taste-frontend",
+      "redesign-existing-projects",
+      "high-end-visual-design"
+    ],
+    "from": "make my landing page look less generic"
+  },
+  {
+    "task": "Make a brief clip on a subject.",
+    "expect": [
+      "moneyprinterturbo-video",
+      "remotion-video-creation",
+      "video-editing"
+    ],
+    "from": "generate a short video from a topic"
+  },
+  {
+    "task": "How to handle app data persistence and sharing in Flutter?",
+    "expect": [
+      "dart-flutter-patterns",
+      "flutter-dart-code-review"
+    ],
+    "from": "state management in Flutter"
+  },
+  {
+    "task": "Simulate high-traffic usage on my UI with lengthy text and no content present.",
+    "expect": [
+      "break-ui"
+    ],
+    "from": "stress test my UI with long names and empty states"
+  },
+  {
+    "task": "Document architectural choices made for the project.",
+    "expect": [
+      "architecture-decision-records"
+    ],
+    "from": "write an architecture decision record"
+  },
+  {
+    "task": "Create a summary for stakeholders.",
+    "expect": [
+      "investor-materials",
+      "investor-outreach"
+    ],
+    "from": "draft an investor update"
+  },
+  {
+    "task": "TypeScript Vue 3 best practices for structuring code",
+    "expect": [
+      "vue-patterns",
+      "ui-to-vue"
+    ],
+    "from": "TypeScript Vue 3 component patterns"
+  },
+  {
+    "task": "Check how well my AI performs.",
+    "expect": [
+      "agent-eval",
+      "eval-harness",
+      "agent-self-evaluation"
+    ],
+    "from": "evaluate how good my AI agent is"
+  },
+  {
+    "task": "Select hues and typography for a luxury online presence.",
+    "expect": [
+      "design-taste-frontend",
+      "high-end-visual-design",
+      "impeccable",
+      "brand-guidelines",
+      "ui-ux-pro-max"
+    ],
+    "from": "pick colors and type for a premium brand site"
+  },
+  {
+    "task": "Create automated checks for a Spring application part.",
+    "expect": [
+      "springboot-tdd",
+      "springboot-verification"
+    ],
+    "from": "unit test a Spring Boot service"
+  },
+  {
+    "task": "Create a table structure in MySQL",
+    "expect": [
+      "mysql-patterns"
+    ],
+    "from": "design a database schema in MySQL"
+  },
+  {
+    "task": "Make a presentation from a list of points",
+    "expect": [
+      "frontend-slides",
+      "presentation-design"
+    ],
+    "from": "create a slide deck from an outline"
+  },
+  {
+    "task": "Create automated UI checks from start to finish",
+    "expect": [
+      "e2e-testing",
+      "browser-qa"
+    ],
+    "from": "set up end to end browser tests"
+  },
+  {
+    "task": "Determine the cost for my cloud-based services by considering human behavior.",
+    "expect": [
+      "price-framing"
+    ],
+    "from": "price my SaaS tiers using psychology"
+  },
+  {
+    "task": "Need help filling out forms to bring stuff into the country?",
+    "expect": [
+      "customs-trade-compliance"
+    ],
+    "from": "customs paperwork for importing goods"
+  },
+  {
+    "task": "Check out what other companies are offering similar stuff.",
+    "expect": [
+      "competitive-platform-analysis",
+      "market-research",
+      "founder-competitors"
+    ],
+    "from": "analyze competitor products"
+  },
+  {
+    "task": "Make this slow-moving visual effect faster.",
+    "expect": [
+      "animation-performance"
+    ],
+    "from": "speed up a janky CSS animation"
+  },
+  {
+    "task": "Create a secure Perl program.",
+    "expect": [
+      "perl-patterns",
+      "perl-security"
+    ],
+    "from": "write a Perl script safely"
+  },
+  {
+    "task": "Choose a UI component for pop-up messages.",
+    "expect": [
+      "pick-ui-library",
+      "ask-sonner"
+    ],
+    "from": "pick a UI library for toast notifications"
+  },
+  {
+    "task": "Create a smart system that employs various utilities.",
+    "expect": [
+      "agentic-engineering",
+      "agent-harness-construction",
+      "autonomous-agent-harness"
+    ],
+    "from": "build an AI agent that uses tools"
+  },
+  {
+    "task": "Make your deck polished and pro.",
+    "expect": [
+      "theme-factory",
+      "frontend-slides",
+      "brand-guidelines",
+      "presentation-design"
+    ],
+    "from": "make a presentation look professional"
+  },
+  {
+    "task": "Help a fresh team member understand an old software system.",
+    "expect": [
+      "codebase-onboarding",
+      "code-tour",
+      "mem-learn-codebase",
+      "teach-me"
+    ],
+    "from": "explain a legacy codebase to a new teammate"
+  },
+  {
+    "task": "Optimize ClickHouse for faster data processing.",
+    "expect": [
+      "clickhouse-io"
+    ],
+    "from": "speed up analytics queries in ClickHouse"
+  },
+  {
+    "task": "Organize a NestJS component",
+    "expect": [
+      "nestjs-patterns"
+    ],
+    "from": "structure a NestJS module"
+  },
+  {
+    "task": "Create a translucent UI element with frosted glass look",
+    "expect": [
+      "glassmorphism"
+    ],
+    "from": "glassmorphism card effect"
+  },
+  {
+    "task": "Create a simple prototype from the given specification for initial testing.",
+    "expect": [
+      "orch-build-mvp"
+    ],
+    "from": "turn a product spec into a working MVP"
+  },
+  {
+    "task": "Need a service to get money conversion data?",
+    "expect": [
+      "public-apis"
+    ],
+    "from": "find an API for currency exchange rates"
+  },
+  {
+    "task": "Create a UI that works on multiple platforms.",
+    "expect": [
+      "compose-multiplatform-patterns"
+    ],
+    "from": "Compose Multiplatform shared UI"
+  }
 ]

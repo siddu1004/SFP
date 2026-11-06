@@ -317,7 +317,19 @@ class LearningCurveTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.orig_data_dir = os.environ.get('SFP_DATA_DIR')
+        os.environ['SFP_DATA_DIR'] = cls.tmp.name
+        learn._CACHE.clear()
         cls.lc = learn.learning_curve(os.path.join(ROOT, 'tests'))
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.orig_data_dir is not None:
+            os.environ['SFP_DATA_DIR'] = cls.orig_data_dir
+        else:
+            os.environ.pop('SFP_DATA_DIR', None)
+        cls.tmp.cleanup()
 
     def test_reported_mistakes_are_mostly_fixed_when_the_same_task_is_asked_again(self):
         self.assertGreaterEqual(self.lc['training_mistakes_fixed_on_retry'], 0.80)
