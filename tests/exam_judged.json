@@ -1,0 +1,1081 @@
+{
+ "add asynchronous background job to process monthly customer billing reports": {
+  "customer-billing-ops": true,
+  "django-celery": true,
+  "finance-billing-ops": true,
+  "financial-reporting-and-close": true
+ },
+ "add automated tests for my go microservice": {
+  "ai-regression-testing": false,
+  "application-security-testing": true,
+  "golang-testing": true,
+  "gsd-add-tests": true,
+  "test-driven-development": true
+ },
+ "add end-to-end tests for customer checkout flow": {
+  "customer-research": false,
+  "customer-success-management": false,
+  "e2e-testing": true,
+  "gsd-add-tests": true,
+  "kotlin-coroutines-flows": true,
+  "test-collaboration": true,
+  "web-app-penetration-testing": true
+ },
+ "add fuzz testing harness for untrusted network packet parsing": {
+  "agent-security-hardening": true,
+  "deepseek-harness-setup": true,
+  "harness-engineering": true,
+  "healthcare-eval-harness": false,
+  "homelab-network-readiness": false
+ },
+ "add structured error handling and validation responses for pydantic models": {
+  "error-handling": true,
+  "fastapi-patterns": true,
+  "n8n-error-handling": true,
+  "n8n-validation-expert": true,
+  "ponytail": true,
+  "regex-vs-llm-structured-text": true
+ },
+ "analytical aggregation queries cause production transactional database to spike to 100% cpu": {
+  "analyzing-cloud-storage-access-patterns": true,
+  "clickhouse-io": true,
+  "database-migrations": true,
+  "gsd-spike": true,
+  "production-audit": true,
+  "production-scheduling": false
+ },
+ "api clients receive 502 bad gateway during rolling deployments": {
+  "agent-runtime-gateway-smoke-test": true,
+  "analyzing-api-gateway-access-logs": true,
+  "backend-patterns": true,
+  "omni-api-keys": true,
+  "release-and-deployment": true
+ },
+ "api documentation is three months out of date and lists endpoints deleted in v2": {
+  "api-design": true,
+  "api-security-testing": true,
+  "continuous-learning-v2": true,
+  "documentation-lookup": true,
+  "gsd-docs-update": true,
+  "omni-api-keys": true,
+  "public-apis": false
+ },
+ "api endpoint allows arbitrary password reset attempts without rate throttling": {
+  "api-connector-builder": true,
+  "api-design": true,
+  "api-security-testing": true,
+  "omni-api-keys": true,
+  "omni-budget": true,
+  "vibewise-reset": true
+ },
+ "app memory usage steadily grows until mobile operating system terminates it": {
+  "agentic-os": true,
+  "headcount-design-system": true,
+  "mobile-native": true,
+  "omni-usage-logs": true,
+  "operating-cadence": false,
+  "systems-administration": true
+ },
+ "audit third party dependencies for known security vulnerabilities": {
+  "api-security-testing": true,
+  "find-security-vulnerabilities-in-code": true,
+  "fix-security-vulnerabilities-with-strix": true
+ },
+ "benchmark memory allocations in binary protocol deserializer": {
+  "auditing-cloud-with-cis-benchmarks": false,
+  "benchmark-methodology": false,
+  "benchmark-optimization-loop": true,
+  "n8n-binary-and-data": true,
+  "swift-protocol-di-testing": false,
+  "unified-memory": true
+ },
+ "biometric fingerprint prompt crashes if user cancels authentication dialog": {
+  "click-path-audit": true,
+  "gpt-image-prompting": true,
+  "prompt-caching-strategy": true,
+  "prompt-master": true,
+  "prompt-optimizer": true
+ },
+ "bluetooth accessory connection drops whenever smartphone screen locks": {
+  "connections-optimizer": false,
+  "n8n-error-handling": true,
+  "omni-resilience": true,
+  "redis-patterns": true,
+  "safety-guard": true
+ },
+ "bottom navigation bar overlaps system gesture bar on modern android devices": {
+  "android-clean-architecture": true,
+  "animate-expo": true,
+  "foundation-models-on-device": false
+ },
+ "build an interactive 3d model viewer component": {
+  "blender-threejs-export": true,
+  "build-mcp-app": true,
+  "image-to-3d": true,
+  "react-three-fiber": true,
+  "taste-distillation": false
+ },
+ "camera viewfinder preview displays distorted aspect ratio on certain tablet models": {
+  "blend-camera-cinematography": false,
+  "cli-models": false,
+  "data-modeling": false,
+  "financial-modeling": false,
+  "interface-review": true,
+  "omni-models": false
+ },
+ "canary traffic rollout lacks automated rollback on error rate threshold breach": {
+  "canary-watch": true,
+  "deployment-patterns": true,
+  "error-handling": true,
+  "n8n-error-handling": true
+ },
+ "ci runner disk space fills up completely from leftover artifact cache directories": {
+  "ci-security-scanning-with-strix": true,
+  "content-hash-cache-pattern": true,
+  "omni-cache": true,
+  "opensource-pipeline": false,
+  "project-artifact": true,
+  "prompt-caching-strategy": true
+ },
+ "code change broke checkout calculations but no unit assertion caught the regression": {
+  "ai-regression-testing": true,
+  "change-impact": true,
+  "module-regression": true,
+  "n8n-code-tool": true,
+  "springboot-verification": true
+ },
+ "concurrent async integration tests deadlock trying to access the shared sqlite file": {
+  "analyzing-cloud-storage-access-patterns": false,
+  "csharp-testing": true,
+  "implementing-zero-trust-network-access": false,
+  "rust-testing": true,
+  "test-collaboration": true,
+  "web-app-penetration-testing": false
+ },
+ "configure automated rollback for failed canary deployments": {
+  "canary-watch": true,
+  "cli-resilience": false,
+  "deployment-patterns": true,
+  "release-and-deployment": true
+ },
+ "configure spring security with jwt bearer token authorization": {
+  "api-security-testing": false,
+  "discord-configure": false,
+  "omni-auth": false,
+  "quarkus-security": true,
+  "springboot-security": true,
+  "token-budget-advisor": true
+ },
+ "containerize this full stack application for deployment to production": {
+  "application-security-testing": false,
+  "deployment-patterns": true,
+  "production-scheduling": false,
+  "release-and-deployment": true
+ },
+ "create a clean bento box style layout for our analytics dashboard": {
+  "bento": true,
+  "dashboard-builder": true,
+  "marketing-analytics": true,
+  "uimax-ui-styling": true
+ },
+ "create customer journey maps illustrating user activation friction": {
+  "activation": true,
+  "behavior-diagnosis": true,
+  "customer-billing-ops": false,
+  "journey-mapping": true
+ },
+ "create subtle micro-interactions and smooth page transitions": {
+  "gradient": true,
+  "interaction-design": true,
+  "landing-page-cro-expert": true,
+  "react-bits": true
+ },
+ "create zero downtime schema migration to add foreign key to payments table": {
+  "agent-payment-x402": false,
+  "database-migrations": true,
+  "migration": true,
+  "prisma-patterns": true
+ },
+ "cross-site scripting vulnerability found in user profile biography field": {
+  "api-security-testing": true,
+  "blend-analog-found-footage-horror": false,
+  "esign-field-placement": false,
+  "events-and-field-marketing": false,
+  "gsd-profile-user": true,
+  "vulnerability-management": false
+ },
+ "custom icon svg colors don't inherit the theme accent color": {
+  "ask-sonner": true,
+  "customs-trade-compliance": false,
+  "design-system": true,
+  "hairline-adopt": false,
+  "inherit-legacy-style": true,
+  "ios-icon-gen": true,
+  "theme-factory": true
+ },
+ "dashboard metric cards are crammed together with zero visual breathing space": {
+  "bento": true,
+  "blend-genre-card-party-idle": true,
+  "dashboard-builder": true,
+  "high-end-visual-design": true,
+  "implementing-zero-trust-network-access": false,
+  "spacious": true
+ },
+ "database connection pool runs dry during morning traffic spikes": {
+  "connections-optimizer": false,
+  "database-migrations": true,
+  "gsd-spike": true,
+  "kotlin-exposed-patterns": true
+ },
+ "database read replica falls fifteen minutes behind primary during data load": {
+  "corporate-governance": false,
+  "data-modeling": true,
+  "data-protection-and-encryption": true,
+  "data-throughput-accelerator": false,
+  "database-migrations": true,
+  "mysql-patterns": true,
+  "scientific-db-uspto-database": false
+ },
+ "database state from previous test contaminates subsequent test execution": {
+  "ai-regression-testing": true,
+  "application-security-testing": true,
+  "database-migrations": true,
+  "parallel-execution-optimizer": true,
+  "scientific-db-uspto-database": true,
+  "tdd-workflow": true,
+  "test-collaboration": true
+ },
+ "deep link navigation opens blank white screen when app is opened cold": {
+  "accessibility": true,
+  "app-store-optimization": false,
+  "build-mcp-app": true,
+  "deep-research": false,
+  "react-native-patterns": true,
+  "web-app-penetration-testing": false
+ },
+ "deployment script fails midway leaving the application in a split-brain state": {
+  "agent-architecture-audit": true,
+  "agent-introspection-debugging": true,
+  "application-security-testing": false,
+  "benefits-and-leave": false,
+  "deployment-patterns": true,
+  "release-and-deployment": true
+ },
+ "design a dark mode cyberpunk theme with glowing neon accents": {
+  "blend-neon-retrofuturism": true,
+  "cosmic": true,
+  "neon": true,
+  "uimax-ui-styling": true
+ },
+ "detect and prevent container breakout attempts in kubernetes cluster": {
+  "detecting-container-escape-attempts": true,
+  "hardening-docker-containers-for-production": true,
+  "kubernetes-patterns": true
+ },
+ "diagnose race condition in channel synchronization logic": {
+  "behavior-diagnosis": true,
+  "counterparty-channel-discipline": true,
+  "data-throughput-accelerator": false,
+  "youtube-producer": false
+ },
+ "downstream payment processor timeouts hang worker threads indefinitely": {
+  "agent-payment-x402": true,
+  "gsd-thread": true,
+  "module-regression": true
+ },
+ "dropdown select option list disappears immediately when mouse leaves border": {
+  "benefits-and-leave": false,
+  "frontend-a11y": true,
+  "listing-distribution": false,
+  "merge-batch": false
+ },
+ "duplicate email confirmation messages sent when users refresh checkout confirmation": {
+  "email-ops": true,
+  "lifecycle-messaging": true,
+  "mailtrap-email-integration": true,
+  "messages-ops": false
+ },
+ "eliminate memory clone overhead using zero-copy deserialization": {
+  "codebase-memory-mcp": true,
+  "implementing-zero-trust-network-access": false,
+  "nanoclaw-repl": true,
+  "swift-actor-persistence": true,
+  "unified-memory": true
+ },
+ "enforce conventional commit messages and automated semantic release notes": {
+  "caveman-commit": true,
+  "conventional-commit-review": true,
+  "mem-build-and-release": true,
+  "mem-version-bump": true,
+  "rea-changelog-update": true
+ },
+ "ephemeral test environments fail to tear down leaving costly cloud instances running": {
+  "ai-regression-testing": false,
+  "auditing-cloud-with-cis-benchmarks": true,
+  "cloud-infrastructure": true,
+  "n8n-multi-instance": true,
+  "web-app-penetration-testing": false
+ },
+ "extract reusable component library from messy monolithic frontend": {
+  "design-system": true,
+  "frontend-design-direction": true,
+  "gsd-extract-learnings": true,
+  "pick-ui-library": true
+ },
+ "file uploads over fifty megabytes fail silently without informing the uploader": {
+  "caveman-explore": false,
+  "contract-first": true,
+  "error-handling": true,
+  "moneyprinterturbo-video": false,
+  "n8n-error-handling": true,
+  "operating-cadence": false
+ },
+ "find out what competing tools offer in this market space": {
+  "behavioral-marketing": false,
+  "founder-competitors": true,
+  "founder-offer": false,
+  "market-research": false,
+  "marketing-analytics": true,
+  "marketing-planning": false,
+  "partnership-marketing": false,
+  "prediction-market-oracle-research": true
+ },
+ "fix flaky automated tests that intermittently timeout in ci": {
+  "ai-regression-testing": true,
+  "cpp-testing": true,
+  "e2e-testing": true,
+  "gsd-audit-fix": true,
+  "orch-pipeline": true,
+  "rea-ci-tests-audit": true
+ },
+ "fix layout shift caused by dynamic advertisement banners": {
+  "dynamic-full-loop": false,
+  "dynamic-workflow-mode": true,
+  "fix-security-vulnerabilities-with-strix": false,
+  "gsd-audit-fix": true,
+  "interface-review": true,
+  "surgical-patch": true,
+  "uimax-banner-design": false
+ },
+ "foreign key constraint violations occur during asynchronous batch deletions": {
+  "agent-security-hardening": false,
+  "cli-batches": false,
+  "gsd-quick-batch": true,
+  "merge-batch": true,
+  "omni-api-keys": false,
+  "safety-guard": true
+ },
+ "generate a pitch deck slide presentation summarizing our product metrics": {
+  "frontend-slides": true,
+  "investor-materials": false,
+  "presentation-design": true,
+  "uimax-slides": true
+ },
+ "generate openapi documentation and client typescript types": {
+  "contract-first": true,
+  "documentation-lookup": true,
+  "error-handling": false,
+  "gsd-docs-update": true
+ },
+ "git merge conflict destroyed critical feature commit from parallel release branch": {
+  "branch-and-worktree-workflow": true,
+  "git-workflow": true,
+  "github-ops": true,
+  "gsd-pr-branch": true
+ },
+ "help me construct an autonomous workflow loop that uses tools and recovers from errors": {
+  "autonomous-agent-harness": true,
+  "autonomous-loops": true,
+  "continuous-agent-loop": true,
+  "n8n-error-handling": true
+ },
+ "help me prepare for technical system design interviews": {
+  "design-system": true,
+  "design-systems": true,
+  "diagram-design": true,
+  "headcount-design-system": true,
+  "hiring-and-interviewing": true,
+  "technical-debt-management": false
+ },
+ "idor vulnerability allows viewing other customers invoices by incrementing numeric id": {
+  "api-security-testing": true,
+  "chief-customer-officer": false,
+  "customer-onboarding-and-implementation": false,
+  "penetration-testing-with-strix": true,
+  "voice-of-customer": false,
+  "vulnerability-management": false
+ },
+ "implement accessible modal dialog with focus trap and aria tags": {
+  "accessibility": true,
+  "frontend-a11y": true,
+  "uimax-ui-styling": true
+ },
+ "implement distributed rate limiting on high-frequency telemetry endpoints": {
+  "api-design": true,
+  "endpoint-management": false,
+  "implementing-zero-trust-network-access": false,
+  "ito-inference": false,
+  "redis-patterns": true
+ },
+ "implement drag and drop task board component with smooth physics": {
+  "blend-physics-sim": false,
+  "founder-board": true,
+  "implementing-zero-trust-network-access": false,
+  "locomotive-scroll": true,
+  "pick-ui-library": true,
+  "stitch": false
+ },
+ "implement graceful shutdown handler for http rest server": {
+  "build-mcp-server": true,
+  "fastapi-patterns": true,
+  "implementing-zero-trust-network-access": false,
+  "mcp-server-patterns": true
+ },
+ "implement idempotency keys for payment charge endpoints": {
+  "agent-payment-x402": true,
+  "endpoint-management": false,
+  "implementing-zero-trust-network-access": false,
+  "omni-api-keys": true,
+  "security-review": true
+ },
+ "implement resilience4j circuit breaker on external supplier service": {
+  "cli-health": true,
+  "cli-resilience": true,
+  "error-handling": true,
+  "implementing-zero-trust-network-access": false,
+  "mcp-integration": true,
+  "service-desk": false,
+  "service-level-management": true
+ },
+ "implement thread-safe bounded channel for async task processing": {
+  "counterparty-channel-discipline": true,
+  "django-celery": true,
+  "gsd-thread": true,
+  "implementing-zero-trust-network-access": false,
+  "process-design": true
+ },
+ "implement zero trust service to service authentication with mutual tls": {
+  "access-and-identity": true,
+  "implementing-zero-trust-network-access": false,
+  "service-desk": false,
+  "service-level-management": false
+ },
+ "incoming webhook payloads with unexpected fields cause the worker process to crash": {
+  "esign-field-placement": false,
+  "events-and-field-marketing": false,
+  "n8n-error-handling": true,
+  "n8n-expression-syntax": true,
+  "nutrient-document-processing": false,
+  "omni-webhooks": false
+ },
+ "inspect my website for security weaknesses and exposed api keys": {
+  "api-security-testing": true,
+  "ci-security-scanning-with-strix": true,
+  "cli-keys": true,
+  "omni-api-keys": true,
+  "public-apis": false
+ },
+ "json serialization fails on circular references in nested data structures": {
+  "data-engineering": true,
+  "json-canvas": false,
+  "n8n-binary-and-data": true,
+  "n8n-expression-syntax": true,
+  "plugin-structure": false,
+  "visual-reference-generation": false
+ },
+ "jsonb column querying lacks proper gin indexing causing sequential scans": {
+  "database-migrations": true,
+  "postgres-patterns": true,
+  "quality-scan": true,
+  "repo-scan": false,
+  "security-scan": false,
+  "systematic-debugging": true
+ },
+ "kubernetes pod crashes with out-of-memory kill during peak traffic surge": {
+  "codebase-memory-mcp": true,
+  "kubernetes-patterns": true,
+  "unified-memory": true
+ },
+ "load balancer health checks flood access logs with twenty thousand entries per minute": {
+  "analyzing-api-gateway-access-logs": true,
+  "cli-health": false,
+  "discord-access": false,
+  "growth-log": true,
+  "omni-resilience": true
+ },
+ "long running report exports block the main event loop for interactive users": {
+  "autonomous-loops": true,
+  "blender-threejs-export": true,
+  "continuous-agent-loop": true,
+  "loop-design-check": true,
+  "verification-loop": true
+ },
+ "make my landing page look like an editorial magazine with serif typography and warm paper tones": {
+  "editorial": true,
+  "landing-page-cro-expert": true,
+  "paper": true
+ },
+ "malicious svg upload contains embedded javascript executed in victim browser": {
+  "browser-qa": true,
+  "browser-use": true,
+  "gsd-execute-phase": true,
+  "n8n-code-javascript": true,
+  "reverse-engineer-anything": true
+ },
+ "mocked external third-party api service returns outdated schema drifting from reality": {
+  "api-security-testing": true,
+  "blend-genre-card-party-idle": false,
+  "contract-first": true,
+  "headcount-api-design": true
+ },
+ "modal backdrop overlay doesn't dim the full height of long pages": {
+  "dynamic-full-loop": true,
+  "founder-consumer": true,
+  "frontend-a11y": true,
+  "full-output-enforcement": true,
+  "programmatic-seo": false
+ },
+ "monorepo build rebuilds all forty packages even when only one leaf module changed": {
+  "floorplan": true,
+  "module-regression": true,
+  "pricing-and-packaging": false
+ },
+ "multiple users claiming the same discount code simultaneously over-allocate vouchers": {
+  "code-tour": true,
+  "find-security-vulnerabilities-in-code": true,
+  "floorplan": true,
+  "flutter-dart-code-review": true,
+  "gsd-code-review": true,
+  "n8n-code-python": false,
+  "santa-method": true
+ },
+ "new teammate cannot run the project locally due to missing environment setup instructions": {
+  "cli-setup": true,
+  "flox-environments": true,
+  "gsd-new-project": true,
+  "moneyprinterturbo-video": false,
+  "project-artifact": true
+ },
+ "offline changes made on airplane flight overwrite newer server edits on reconnection": {
+  "build-mcp-server": true,
+  "change-and-adoption": false,
+  "change-impact": true,
+  "mcp-server-patterns": true,
+  "migration": true,
+  "orch-change-feature": true,
+  "video-editing": false
+ },
+ "on-call engineer cannot find runbook documentation during midnight service outage": {
+  "ai-first-engineering": true,
+  "change-impact": true,
+  "documentation-lookup": true,
+  "escalation-management": false,
+  "find-security-vulnerabilities-in-code": true,
+  "self-service-and-knowledge": true
+ },
+ "onboard a new software engineer into our legacy codebase": {
+  "codebase-onboarding": true,
+  "customer-onboarding-and-implementation": false,
+  "gsd-onboard": true,
+  "inherit-legacy-style": true,
+  "m5-onboard": false,
+  "understand-onboard": true
+ },
+ "optimize component re-rendering on product listing filters": {
+  "blend-rendering": false,
+  "break-ui": true,
+  "caveman-optimize": false,
+  "frontend-patterns": true,
+  "listing-distribution": true,
+  "product-lens": true,
+  "react-performance": true,
+  "ux-product-auditor": true
+ },
+ "optimize hibernate n plus one query problems with entity graphs": {
+  "caveman-optimize": false,
+  "codebase-memory-mcp": true,
+  "jpa-patterns": true,
+  "social-graph-ranker": false,
+  "understand-knowledge": true
+ },
+ "optimize memory usage in high throughput data processing pipeline": {
+  "cli-cost-usage": false,
+  "cost-aware-llm-pipeline": true,
+  "data-engineering": true,
+  "data-throughput-accelerator": true,
+  "parallel-execution-optimizer": true
+ },
+ "optimize slow orm query fetching related customer orders with prefetch": {
+  "animation-performance": false,
+  "chief-customer-officer": false,
+  "performance-management": false,
+  "prisma-patterns": true,
+  "react-performance": true,
+  "slow-zoom": false,
+  "voice-of-customer": false
+ },
+ "page scroll stutters violently when large image gallery reaches viewport": {
+  "agent-reach": true,
+  "gpt-image-prompting": true,
+  "gsap": true,
+  "landing-page-cro-expert": true,
+  "locomotive-scroll": true
+ },
+ "pagination using offset becomes exponentially slower on page five hundred": {
+  "benchmark": true,
+  "esign-field-placement": false,
+  "jpa-patterns": true,
+  "landing-page-cro-expert": false,
+  "using-n8n-mcp-skills": false
+ },
+ "playwright browser tests fail randomly due to race conditions waiting for spinner": {
+  "browser-qa": true,
+  "browser-use": true,
+  "e2e-testing": true,
+  "playwright-cli": true
+ },
+ "prevent cross-site request forgery and sql injection on rest endpoints": {
+  "api-security-testing": true,
+  "django-security": true,
+  "endpoint-management": false
+ },
+ "prevent race conditions when updating user wallet balance in parallel": {
+  "evm-token-decimals": false,
+  "gsd-docs-update": true,
+  "parallel-agent-delivery": false,
+  "parallel-execution-optimizer": true,
+  "swift-actor-persistence": true
+ },
+ "primary call to action button looks completely washed out on dark mode background": {
+  "blend-dark-gritty-mood": true,
+  "blend-genre-action-combat": true,
+  "dark-pattern-check": true,
+  "dynamic-workflow-mode": true,
+  "mem-mode-creator": false,
+  "web-interface-guidelines": true
+ },
+ "production docker image artifact is three gigabytes large and takes ten minutes to pull": {
+  "docker-patterns": true,
+  "hardening-docker-containers-for-production": true,
+  "project-artifact": true
+ },
+ "profile latency bottleneck in async database connection pool": {
+  "database-migrations": true,
+  "gsd-profile-user": false,
+  "kotlin-exposed-patterns": true,
+  "latency-critical-systems": true,
+  "omni-resilience": true
+ },
+ "profile react render bottlenecks causing frame drops on scroll": {
+  "animation-performance": true,
+  "locomotive-scroll": true,
+  "react-performance": true,
+  "react-testing": true,
+  "react-three-fiber": true
+ },
+ "property based fuzz testing needed for binary packet parsing state machine": {
+  "api-security-testing": false,
+  "fsharp-testing": true,
+  "gsd-add-tests": true,
+  "n8n-binary-and-data": true,
+  "rust-testing": true
+ },
+ "protect our api endpoints against automated credential stuffing and brute force bots": {
+  "api-design": true,
+  "api-security-testing": true,
+  "omni-api-keys": true,
+  "owasp-top-10-testing": true,
+  "public-apis": false,
+  "security-review": true
+ },
+ "pull request automated test suite takes forty-five minutes to run on every commit": {
+  "api-security-testing": false,
+  "ci-security-scanning-with-strix": true,
+  "conventional-commit-review": true,
+  "rea-ci-tests-audit": true,
+  "springboot-verification": true
+ },
+ "pull request changes three thousand lines across forty files making review impossible": {
+  "claude-security": true,
+  "difftastic": true,
+  "gsd-code-review": true,
+  "react-three-fiber": false,
+  "understand-diff": true
+ },
+ "push notifications fail to deliver when smartphone enters battery saver mode": {
+  "dynamic-workflow-mode": true,
+  "mem-mode-creator": true,
+  "moneyprinterturbo-video": false,
+  "n8n-error-handling": true,
+  "unified-notifications-ops": false
+ },
+ "redesign checkout flow to maximize conversion rate and reduce friction": {
+  "interface-redesign": true,
+  "laws-of-designing": true,
+  "levels": true,
+  "project-flow-ops": false,
+  "prompt-caching-strategy": true
+ },
+ "redesign dashboard analytics cards using contemporary bento style": {
+  "bento": true,
+  "contemporary": true,
+  "interface-redesign": true,
+  "minimalist-ui": true,
+  "stageshow": true
+ },
+ "release changelog misses twenty customer bug fixes merged over the past sprint": {
+  "brownfield-retrospective": true,
+  "customer-onboarding-and-implementation": false,
+  "customer-success-management": false,
+  "merge-batch": true,
+  "orch-fix-defect": true,
+  "rea-changelog-update": true
+ },
+ "review my git changes before pushing to main branch": {
+  "branch-and-worktree-workflow": true,
+  "conventional-commit-review": true,
+  "git-workflow": true,
+  "gsd-pr-branch": true
+ },
+ "schema migration rollbacks leave orphan tables and dangling foreign keys": {
+  "benefits-and-leave": false,
+  "data-migration": true,
+  "database-migrations": true,
+  "migration": true,
+  "release-and-deployment": true
+ },
+ "screen readers skip over custom checkbox components entirely": {
+  "accessibility": true,
+  "accessibility-audit": true,
+  "customs-trade-compliance": false,
+  "frontend-a11y": true
+ },
+ "secret environment tokens accidentally leaked into public docker build layers": {
+  "docker-patterns": true,
+  "hardening-docker-containers-for-production": true,
+  "public-apis": true,
+  "token-budget-advisor": true
+ },
+ "session cookies are missing secure and samesite flags in production response": {
+  "django-security": true,
+  "gsd-secure-phase": true,
+  "hardening-docker-containers-for-production": true,
+  "incident-response": false,
+  "production-audit": true,
+  "production-scheduling": false
+ },
+ "set up background task queues for asynchronous video processing": {
+  "moneyprinterturbo-video": false,
+  "openmontage": true,
+  "process-design": false,
+  "tasteforge-video": false,
+  "video-content": false
+ },
+ "set up monitoring dashboard with prometheus and grafana metrics": {
+  "business-intelligence": false,
+  "cli-health": true,
+  "dashboard-builder": true,
+  "understand-dashboard": false
+ },
+ "sidebar menu animation hesitates for half a second before sliding out": {
+  "animation-performance": true,
+  "blend-animation": true,
+  "frontend-slides": true,
+  "uimax-slides": true
+ },
+ "simulate quantum circuit teleportation algorithms": {
+  "cli-health": false,
+  "dev-team": true,
+  "dithered": false,
+  "error-handling": false,
+  "llm-trading-agent-security": false,
+  "ml-adoption-playbook": false,
+  "recsys-pipeline-architect": false
+ },
+ "smooth sixty frames per second list scrolling drops frames when rendering complex cards": {
+  "locomotive-scroll": true,
+  "price-framing": false,
+  "token-card": false
+ },
+ "soft-deleted tenant records still surface in global analytics queries": {
+  "architecture-decision-records": true,
+  "blend-hard-surface": false,
+  "clickhouse-io": true,
+  "gsd-surface": true,
+  "marketing-analytics": true,
+  "omni-usage-logs": true,
+  "workspace-surface-audit": true
+ },
+ "speed up my database queries that take multiple seconds to finish": {
+  "api-connector-builder": false,
+  "data-throughput-accelerator": false,
+  "database-migrations": true,
+  "dynamic-full-loop": false,
+  "knowledge-ops": false,
+  "polyhaven-material-swap": false,
+  "postgres-patterns": true,
+  "scientific-db-pubmed-database": false,
+  "scientific-db-uspto-database": true
+ },
+ "stale authentication session tokens remain valid after user changes password": {
+  "change-impact": true,
+  "omni-auth": true,
+  "springboot-security": true,
+  "token-budget-advisor": true,
+  "token-card": true
+ },
+ "structure domain entities and repositories using hexagonal architecture": {
+  "android-clean-architecture": true,
+  "architecture-decision-records": true,
+  "hexagonal-architecture": true,
+  "understand-domain": true
+ },
+ "structure domain services using hexagonal clean architecture": {
+  "android-clean-architecture": true,
+  "context-and-decisions": true,
+  "hexagonal-architecture": true,
+  "service-desk": true
+ },
+ "structure error types using thiserror and custom domain enums": {
+  "customs-trade-compliance": true,
+  "error-handling": true,
+  "n8n-error-handling": true,
+  "regex-vs-llm-structured-text": false,
+  "understand-domain": true
+ },
+ "subdomain takeover risk due to dangling cname record pointing to abandoned bucket": {
+  "architecture-decision-records": true,
+  "auditing-aws-s3-bucket-permissions": true,
+  "context-and-decisions": true,
+  "dependency-and-risk-management": true,
+  "enterprise-risk": false
+ },
+ "table migration locked the orders table for twenty minutes in production": {
+  "data-migration": true,
+  "database-migrations": true,
+  "production-scheduling": false,
+  "safety-guard": true
+ },
+ "team lacks recorded architectural justification for migrating from rest to grpc": {
+  "api-security-testing": true,
+  "architecture-decision-records": true,
+  "dev-team": true,
+  "team-agent-orchestration": false
+ },
+ "test coverage metric claims 95 percent but critical business edge cases are untested": {
+  "ai-regression-testing": true,
+  "business-intelligence": false,
+  "golang-testing": true,
+  "regex-vs-llm-structured-text": true,
+  "test-collaboration": true
+ },
+ "test suite passes locally on macbook but fails intermittently on ubuntu ci machine": {
+  "application-security-testing": false,
+  "ci-security-scanning-with-strix": true,
+  "e2e-testing": true,
+  "eval-harness": true,
+  "ralphinho-rfc-pipeline": true,
+  "rea-ci-tests-audit": true
+ },
+ "the main headline text wraps awkwardly on tablet screens": {
+  "break-ui": true,
+  "interface-review": true,
+  "landing-page-cro-expert": true,
+  "mobile-native": true,
+  "persuasion-audit": true,
+  "regex-vs-llm-structured-text": true,
+  "taste-distillation": true
+ },
+ "third-party npm dependency has critical remote code execution cve alert": {
+  "blend-genre-card-party-idle": false,
+  "find-security-vulnerabilities-in-code": true,
+  "latency-critical-systems": false,
+  "mcp-dependency-review": true,
+  "n8n-code-javascript": true,
+  "n8n-code-tool": true,
+  "parallel-execution-optimizer": false,
+  "search-first": true
+ },
+ "time zone offset conversion causes recurring billing events to fire twice": {
+  "customer-billing-ops": true,
+  "ecc-tools-cost-audit": true,
+  "events-and-field-marketing": false,
+  "finance-billing-ops": true,
+  "systematic-debugging": true
+ },
+ "translate and localize application interface strings into multiple languages": {
+  "application-security-testing": false,
+  "error-handling": false,
+  "i18n-sync": true,
+  "interface-craft": false,
+  "visa-doc-translate": false,
+  "web-interface-guidelines": true
+ },
+ "two microservices have duplicate definitions of customer domain data structures": {
+  "chief-customer-officer": false,
+  "customer-onboarding-and-implementation": false,
+  "data-engineering": true,
+  "data-governance": true,
+  "mem-pathfinder": true,
+  "understand-domain": true
+ },
+ "unit test suite takes fifteen seconds per test because fixtures make real network calls": {
+  "homelab-network-setup": true,
+  "implementing-zero-trust-network-access": false,
+  "python-testing": true,
+  "rea-ci-tests-audit": true,
+  "rust-testing": true,
+  "unit-economics": false
+ },
+ "unpinned base image in build configuration broke production after upstream release": {
+  "gpt-image-prompting": true,
+  "hardening-docker-containers-for-production": true,
+  "mem-build-and-release": true,
+  "mem-childhood": true,
+  "production-audit": true,
+  "production-scheduling": false,
+  "validate-release-green": true
+ },
+ "unprotected internal metrics endpoint is publicly reachable over the internet": {
+  "api-security-testing": true,
+  "endpoint-management": true,
+  "internal-comms": false,
+  "internal-controls-and-audit": false,
+  "omni-resilience": true
+ },
+ "untracked dependencies installed via global pip cause deployment discrepancies": {
+  "claude-mem-install": false,
+  "deployment-patterns": true,
+  "mem-childhood": true,
+  "release-and-deployment": true,
+  "repo-scan": true
+ },
+ "user input in search query string allows unauthorized database access": {
+  "analyzing-cloud-storage-access-patterns": true,
+  "deep-research": false,
+  "discord-access": true,
+  "exa-search": false,
+  "implementing-zero-trust-network-access": true,
+  "mem-search": false,
+  "n8n-code-python": false
+ },
+ "user jwt token signature is verified with none algorithm allowing forgery": {
+  "claude-security": true,
+  "dark-pattern-check": false,
+  "evm-token-decimals": false,
+  "token-budget-advisor": true,
+  "token-card": false
+ },
+ "user search query takes four seconds because name column lacks an index": {
+  "cli-models": true,
+  "exa-search": true,
+  "floorplan": false,
+  "mem-search": true,
+  "mysql-patterns": true
+ },
+ "users on touch devices trigger two form submissions with one finger tap": {
+  "break-ui": true,
+  "cardputer-buddy": true,
+  "click-path-audit": true,
+  "foundation-models-on-device": false,
+  "mem-handoff": true,
+  "web-interface-guidelines": true
+ },
+ "verify our web application meets accessibility contrast and keyboard navigation standards": {
+  "accessibility": true,
+  "accessibility-audit": true,
+  "interface-review": true,
+  "verify-and-stop": true,
+  "web-interface-guidelines": true
+ },
+ "virtual keyboard on ios slides up and completely covers form submit button": {
+  "cisco-ios-patterns": false,
+  "frontend-slides": false,
+  "ios-icon-gen": false,
+  "uimax-slides": false
+ },
+ "visual regression snapshot tests break on minor font rendering differences": {
+  "ai-regression-testing": true,
+  "break-ui": true,
+  "module-regression": true,
+  "test-collaboration": true
+ },
+ "write end to end browser tests simulating user checkout": {
+  "browser-qa": true,
+  "browser-use": true,
+  "e2e-testing": true,
+  "founder-consumer": true,
+  "high-end-visual-design": false,
+  "playwright-cli": true,
+  "react-testing": true,
+  "web-app-penetration-testing": true
+ },
+ "write integration tests for jwt authentication middleware": {
+  "ai-regression-testing": false,
+  "csharp-testing": true,
+  "mailtrap-email-integration": false,
+  "owasp-top-10-testing": true,
+  "rust-testing": true,
+  "test-collaboration": false
+ },
+ "write integration tests using testcontainers with real postgres container": {
+  "csharp-testing": true,
+  "detecting-container-escape-attempts": false,
+  "fsharp-testing": true,
+  "mailtrap-email-integration": false,
+  "postgres-patterns": true,
+  "rust-testing": true,
+  "test-collaboration": true,
+  "web-app-penetration-testing": false
+ },
+ "write mockmvc unit tests for customer rest controller endpoints": {
+  "api-security-testing": false,
+  "customer-research": false,
+  "rust-testing": true,
+  "springboot-tdd": true,
+  "test-collaboration": false,
+  "unit-economics": false
+ },
+ "write property based tests verifying json parser edge cases": {
+  "api-security-testing": false,
+  "fsharp-testing": true,
+  "gsd-add-tests": false,
+  "kotlin-testing": true,
+  "regex-vs-llm-structured-text": true,
+  "rust-testing": true
+ },
+ "write table-driven unit tests for concurrent worker pool": {
+  "golang-testing": true,
+  "ralphinho-rfc-pipeline": true,
+  "rust-testing": true,
+  "test-collaboration": false,
+  "test-driven-development": false
+ },
+ "write technical documentation for public developer api": {
+  "api-design": true,
+  "documentation-lookup": false,
+  "public-apis": true,
+  "public-relations": false
+ },
+ "write unit tests and property tests for custom state machine": {
+  "customs-trade-compliance": false,
+  "fsharp-testing": true,
+  "kotlin-testing": true,
+  "rust-testing": true,
+  "test-collaboration": true,
+  "unit-economics": false
+ },
+ "write unit tests for custom user authentication backend": {
+  "api-security-testing": false,
+  "cli-tunnel": false,
+  "owasp-top-10-testing": true,
+  "rust-testing": true,
+  "test-collaboration": false,
+  "unit-economics": false
+ },
+ "write unit tests for rust async web server handlers": {
+  "rust-patterns": true,
+  "rust-testing": true,
+  "web-app-penetration-testing": false
+ }
+}

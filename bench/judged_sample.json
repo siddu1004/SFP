@@ -1,0 +1,302 @@
+[
+ {
+  "task": "screen readers skip over custom checkbox components entirely",
+  "skill": "accessibility-audit",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "find out what competing tools offer in this market space",
+  "skill": "prediction-market-oracle-research",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "verify our web application meets accessibility contrast and keyboard navigation standards",
+  "skill": "interface-review",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "pagination using offset becomes exponentially slower on page five hundred",
+  "skill": "landing-page-cro-expert",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "json serialization fails on circular references in nested data structures",
+  "skill": "n8n-binary-and-data",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "optimize memory usage in high throughput data processing pipeline",
+  "skill": "data-throughput-accelerator",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "incoming webhook payloads with unexpected fields cause the worker process to crash",
+  "skill": "events-and-field-marketing",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "write technical documentation for public developer api",
+  "skill": "public-relations",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "modal backdrop overlay doesn't dim the full height of long pages",
+  "skill": "founder-consumer",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "build an interactive 3d model viewer component",
+  "skill": "react-three-fiber",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "canary traffic rollout lacks automated rollback on error rate threshold breach",
+  "skill": "deployment-patterns",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "third-party npm dependency has critical remote code execution cve alert",
+  "skill": "n8n-code-javascript",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "offline changes made on airplane flight overwrite newer server edits on reconnection",
+  "skill": "orch-change-feature",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "property based fuzz testing needed for binary packet parsing state machine",
+  "skill": "rust-testing",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "deep link navigation opens blank white screen when app is opened cold",
+  "skill": "deep-research",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "git merge conflict destroyed critical feature commit from parallel release branch",
+  "skill": "gsd-pr-branch",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "create a clean bento box style layout for our analytics dashboard",
+  "skill": "bento",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "bottom navigation bar overlaps system gesture bar on modern android devices",
+  "skill": "foundation-models-on-device",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "users on touch devices trigger two form submissions with one finger tap",
+  "skill": "web-interface-guidelines",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "dashboard metric cards are crammed together with zero visual breathing space",
+  "skill": "implementing-zero-trust-network-access",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "api endpoint allows arbitrary password reset attempts without rate throttling",
+  "skill": "omni-api-keys",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "create zero downtime schema migration to add foreign key to payments table",
+  "skill": "database-migrations",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "write unit tests and property tests for custom state machine",
+  "skill": "unit-economics",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "file uploads over fifty megabytes fail silently without informing the uploader",
+  "skill": "n8n-error-handling",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "containerize this full stack application for deployment to production",
+  "skill": "deployment-patterns",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "subdomain takeover risk due to dangling cname record pointing to abandoned bucket",
+  "skill": "dependency-and-risk-management",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "add structured error handling and validation responses for pydantic models",
+  "skill": "ponytail",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "eliminate memory clone overhead using zero-copy deserialization",
+  "skill": "unified-memory",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "canary traffic rollout lacks automated rollback on error rate threshold breach",
+  "skill": "n8n-error-handling",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "inspect my website for security weaknesses and exposed api keys",
+  "skill": "omni-api-keys",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "fix flaky automated tests that intermittently timeout in ci",
+  "skill": "gsd-audit-fix",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "pull request automated test suite takes forty-five minutes to run on every commit",
+  "skill": "api-security-testing",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "file uploads over fifty megabytes fail silently without informing the uploader",
+  "skill": "operating-cadence",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "create zero downtime schema migration to add foreign key to payments table",
+  "skill": "prisma-patterns",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "write integration tests using testcontainers with real postgres container",
+  "skill": "postgres-patterns",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "offline changes made on airplane flight overwrite newer server edits on reconnection",
+  "skill": "migration",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "configure automated rollback for failed canary deployments",
+  "skill": "cli-resilience",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "primary call to action button looks completely washed out on dark mode background",
+  "skill": "dark-pattern-check",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "foreign key constraint violations occur during asynchronous batch deletions",
+  "skill": "omni-api-keys",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "soft-deleted tenant records still surface in global analytics queries",
+  "skill": "gsd-surface",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "duplicate email confirmation messages sent when users refresh checkout confirmation",
+  "skill": "email-ops",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "app memory usage steadily grows until mobile operating system terminates it",
+  "skill": "omni-usage-logs",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "implement thread-safe bounded channel for async task processing",
+  "skill": "django-celery",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "bluetooth accessory connection drops whenever smartphone screen locks",
+  "skill": "omni-resilience",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "optimize slow orm query fetching related customer orders with prefetch",
+  "skill": "animation-performance",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "playwright browser tests fail randomly due to race conditions waiting for spinner",
+  "skill": "playwright-cli",
+  "model_says": true,
+  "checked": null
+ },
+ {
+  "task": "optimize memory usage in high throughput data processing pipeline",
+  "skill": "cli-cost-usage",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "optimize hibernate n plus one query problems with entity graphs",
+  "skill": "caveman-optimize",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "simulate quantum circuit teleportation algorithms",
+  "skill": "cli-health",
+  "model_says": false,
+  "checked": null
+ },
+ {
+  "task": "create a clean bento box style layout for our analytics dashboard",
+  "skill": "uimax-ui-styling",
+  "model_says": true,
+  "checked": null
+ }
+]

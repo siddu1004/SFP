@@ -50,13 +50,23 @@ def main():
     if os.path.exists(out):
         with open(out, encoding='utf-8') as f:
             judged = json.load(f)
+    from concurrent.futures import ThreadPoolExecutor
     rng = random.Random(20)
+
+    unrated = []
     for task in sorted(pool):
-        names = sorted(pool[task])
-        rng.shuffle(names)
-        for name in names:
+        for name in sorted(pool[task]):
             if name not in judged.setdefault(task, {}):
-                judged[task][name] = rate(task, name, model)
+                unrated.append((task, name))
+
+    def _eval_pair(pair):
+        t, n = pair
+        return t, n, rate(t, n, model)
+
+    if unrated:
+        with ThreadPoolExecutor(max_workers=8) as ex:
+            for t, n, res in ex.map(_eval_pair, unrated):
+                judged[t][n] = res
         with open(out + '.tmp', 'w', encoding='utf-8') as f:
             json.dump(judged, f, indent=1, sort_keys=True)
         os.replace(out + '.tmp', out)

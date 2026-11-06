@@ -1,0 +1,3866 @@
+[
+ {
+  "engine": "keyword",
+  "task": "the main headline text wraps awkwardly on tablet screens",
+  "picks": [
+   "regex-vs-llm-structured-text",
+   "break-ui",
+   "mobile-native"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "the main headline text wraps awkwardly on tablet screens",
+  "picks": [
+   "taste-distillation",
+   "persuasion-audit",
+   "regex-vs-llm-structured-text"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "the main headline text wraps awkwardly on tablet screens",
+  "picks": [
+   "landing-page-cro-expert",
+   "interface-review"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "dropdown select option list disappears immediately when mouse leaves border",
+  "picks": [
+   "benefits-and-leave",
+   "listing-distribution",
+   "merge-batch"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "dropdown select option list disappears immediately when mouse leaves border",
+  "picks": [
+   "listing-distribution",
+   "benefits-and-leave"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "dropdown select option list disappears immediately when mouse leaves border",
+  "picks": [
+   "frontend-a11y"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "primary call to action button looks completely washed out on dark mode background",
+  "picks": [
+   "blend-dark-gritty-mood",
+   "dark-pattern-check",
+   "blend-genre-action-combat"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "primary call to action button looks completely washed out on dark mode background",
+  "picks": [
+   "dynamic-workflow-mode",
+   "blend-dark-gritty-mood",
+   "mem-mode-creator",
+   "dark-pattern-check"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "primary call to action button looks completely washed out on dark mode background",
+  "picks": [
+   "web-interface-guidelines"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "page scroll stutters violently when large image gallery reaches viewport",
+  "picks": [
+   "locomotive-scroll",
+   "agent-reach",
+   "landing-page-cro-expert"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "page scroll stutters violently when large image gallery reaches viewport",
+  "picks": [
+   "locomotive-scroll",
+   "landing-page-cro-expert",
+   "gpt-image-prompting",
+   "agent-reach"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "page scroll stutters violently when large image gallery reaches viewport",
+  "picks": [
+   "gsap"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "screen readers skip over custom checkbox components entirely",
+  "picks": [
+   "customs-trade-compliance",
+   "accessibility-audit",
+   "accessibility"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "screen readers skip over custom checkbox components entirely",
+  "picks": [
+   "customs-trade-compliance",
+   "accessibility-audit"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "screen readers skip over custom checkbox components entirely",
+  "picks": [
+   "frontend-a11y"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "sidebar menu animation hesitates for half a second before sliding out",
+  "picks": [
+   "frontend-slides",
+   "uimax-slides",
+   "blend-animation"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "sidebar menu animation hesitates for half a second before sliding out",
+  "picks": [
+   "frontend-slides",
+   "uimax-slides"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "sidebar menu animation hesitates for half a second before sliding out",
+  "picks": [
+   "animation-performance"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "dashboard metric cards are crammed together with zero visual breathing space",
+  "picks": [
+   "blend-genre-card-party-idle",
+   "dashboard-builder",
+   "high-end-visual-design"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "dashboard metric cards are crammed together with zero visual breathing space",
+  "picks": [
+   "high-end-visual-design",
+   "bento",
+   "dashboard-builder",
+   "implementing-zero-trust-network-access"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "dashboard metric cards are crammed together with zero visual breathing space",
+  "picks": [
+   "spacious"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "users on touch devices trigger two form submissions with one finger tap",
+  "picks": [
+   "cardputer-buddy",
+   "foundation-models-on-device",
+   "web-interface-guidelines"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "users on touch devices trigger two form submissions with one finger tap",
+  "picks": [
+   "web-interface-guidelines",
+   "cardputer-buddy",
+   "foundation-models-on-device",
+   "mem-handoff"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "users on touch devices trigger two form submissions with one finger tap",
+  "picks": [
+   "click-path-audit",
+   "break-ui"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "modal backdrop overlay doesn't dim the full height of long pages",
+  "picks": [
+   "dynamic-full-loop",
+   "full-output-enforcement",
+   "programmatic-seo"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "modal backdrop overlay doesn't dim the full height of long pages",
+  "picks": [
+   "programmatic-seo",
+   "founder-consumer",
+   "dynamic-full-loop",
+   "full-output-enforcement"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "modal backdrop overlay doesn't dim the full height of long pages",
+  "picks": [
+   "frontend-a11y"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "custom icon svg colors don't inherit the theme accent color",
+  "picks": [
+   "ios-icon-gen",
+   "theme-factory",
+   "ask-sonner"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "custom icon svg colors don't inherit the theme accent color",
+  "picks": [
+   "theme-factory",
+   "inherit-legacy-style",
+   "customs-trade-compliance",
+   "hairline-adopt"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "custom icon svg colors don't inherit the theme accent color",
+  "picks": [
+   "design-system"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "incoming webhook payloads with unexpected fields cause the worker process to crash",
+  "picks": [
+   "omni-webhooks",
+   "esign-field-placement",
+   "events-and-field-marketing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "incoming webhook payloads with unexpected fields cause the worker process to crash",
+  "picks": [
+   "events-and-field-marketing",
+   "esign-field-placement",
+   "omni-webhooks",
+   "nutrient-document-processing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "incoming webhook payloads with unexpected fields cause the worker process to crash",
+  "picks": [
+   "n8n-error-handling",
+   "n8n-expression-syntax"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "multiple users claiming the same discount code simultaneously over-allocate vouchers",
+  "picks": [
+   "n8n-code-python",
+   "find-security-vulnerabilities-in-code",
+   "code-tour"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "multiple users claiming the same discount code simultaneously over-allocate vouchers",
+  "picks": [
+   "code-tour",
+   "floorplan",
+   "find-security-vulnerabilities-in-code",
+   "gsd-code-review"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "multiple users claiming the same discount code simultaneously over-allocate vouchers",
+  "picks": [
+   "santa-method",
+   "flutter-dart-code-review"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "downstream payment processor timeouts hang worker threads indefinitely",
+  "picks": [
+   "agent-payment-x402",
+   "gsd-thread",
+   "module-regression"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "downstream payment processor timeouts hang worker threads indefinitely",
+  "picks": [
+   "gsd-thread",
+   "agent-payment-x402"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "downstream payment processor timeouts hang worker threads indefinitely",
+  "picks": [
+   "agent-payment-x402"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "database connection pool runs dry during morning traffic spikes",
+  "picks": [
+   "gsd-spike",
+   "database-migrations",
+   "connections-optimizer"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "database connection pool runs dry during morning traffic spikes",
+  "picks": [
+   "gsd-spike"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "database connection pool runs dry during morning traffic spikes",
+  "picks": [
+   "kotlin-exposed-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "json serialization fails on circular references in nested data structures",
+  "picks": [
+   "visual-reference-generation",
+   "n8n-binary-and-data",
+   "plugin-structure"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "json serialization fails on circular references in nested data structures",
+  "picks": [
+   "visual-reference-generation",
+   "plugin-structure",
+   "json-canvas",
+   "n8n-expression-syntax"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "json serialization fails on circular references in nested data structures",
+  "picks": [
+   "data-engineering",
+   "n8n-binary-and-data"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "api clients receive 502 bad gateway during rolling deployments",
+  "picks": [
+   "analyzing-api-gateway-access-logs",
+   "release-and-deployment",
+   "agent-runtime-gateway-smoke-test"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "api clients receive 502 bad gateway during rolling deployments",
+  "picks": [
+   "omni-api-keys",
+   "analyzing-api-gateway-access-logs",
+   "agent-runtime-gateway-smoke-test",
+   "release-and-deployment"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "api clients receive 502 bad gateway during rolling deployments",
+  "picks": [
+   "release-and-deployment",
+   "backend-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "long running report exports block the main event loop for interactive users",
+  "picks": [
+   "blender-threejs-export",
+   "loop-design-check",
+   "continuous-agent-loop"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "long running report exports block the main event loop for interactive users",
+  "picks": [
+   "autonomous-loops",
+   "verification-loop",
+   "continuous-agent-loop",
+   "loop-design-check"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "long running report exports block the main event loop for interactive users",
+  "picks": [
+   "blender-threejs-export"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "stale authentication session tokens remain valid after user changes password",
+  "picks": [
+   "token-budget-advisor",
+   "change-impact",
+   "token-card"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "stale authentication session tokens remain valid after user changes password",
+  "picks": [
+   "change-impact",
+   "token-budget-advisor"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "stale authentication session tokens remain valid after user changes password",
+  "picks": [
+   "omni-auth",
+   "springboot-security"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "duplicate email confirmation messages sent when users refresh checkout confirmation",
+  "picks": [
+   "email-ops",
+   "lifecycle-messaging",
+   "messages-ops"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "duplicate email confirmation messages sent when users refresh checkout confirmation",
+  "picks": [
+   "lifecycle-messaging",
+   "email-ops",
+   "mailtrap-email-integration",
+   "messages-ops"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "duplicate email confirmation messages sent when users refresh checkout confirmation",
+  "picks": [
+   "lifecycle-messaging",
+   "email-ops"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "file uploads over fifty megabytes fail silently without informing the uploader",
+  "picks": [
+   "moneyprinterturbo-video",
+   "n8n-error-handling",
+   "operating-cadence"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "file uploads over fifty megabytes fail silently without informing the uploader",
+  "picks": [
+   "caveman-explore",
+   "moneyprinterturbo-video",
+   "contract-first",
+   "operating-cadence"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "file uploads over fifty megabytes fail silently without informing the uploader",
+  "picks": [
+   "n8n-error-handling",
+   "error-handling"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "foreign key constraint violations occur during asynchronous batch deletions",
+  "picks": [
+   "cli-batches",
+   "gsd-quick-batch",
+   "merge-batch"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "foreign key constraint violations occur during asynchronous batch deletions",
+  "picks": [
+   "gsd-quick-batch",
+   "omni-api-keys",
+   "cli-batches",
+   "merge-batch"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "foreign key constraint violations occur during asynchronous batch deletions",
+  "picks": [
+   "safety-guard",
+   "agent-security-hardening"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "user search query takes four seconds because name column lacks an index",
+  "picks": [
+   "exa-search",
+   "mem-search",
+   "cli-models"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "user search query takes four seconds because name column lacks an index",
+  "picks": [
+   "exa-search",
+   "floorplan",
+   "cli-models",
+   "mem-search"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "user search query takes four seconds because name column lacks an index",
+  "picks": [
+   "mysql-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "table migration locked the orders table for twenty minutes in production",
+  "picks": [
+   "database-migrations",
+   "safety-guard",
+   "data-migration"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "table migration locked the orders table for twenty minutes in production",
+  "picks": [
+   "database-migrations",
+   "safety-guard",
+   "production-scheduling"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "table migration locked the orders table for twenty minutes in production",
+  "picks": [
+   "data-migration",
+   "safety-guard"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "time zone offset conversion causes recurring billing events to fire twice",
+  "picks": [
+   "customer-billing-ops",
+   "finance-billing-ops",
+   "events-and-field-marketing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "time zone offset conversion causes recurring billing events to fire twice",
+  "picks": [
+   "events-and-field-marketing",
+   "customer-billing-ops",
+   "finance-billing-ops"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "time zone offset conversion causes recurring billing events to fire twice",
+  "picks": [
+   "ecc-tools-cost-audit",
+   "systematic-debugging"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "analytical aggregation queries cause production transactional database to spike to 100% cpu",
+  "picks": [
+   "gsd-spike",
+   "database-migrations",
+   "clickhouse-io"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "analytical aggregation queries cause production transactional database to spike to 100% cpu",
+  "picks": [
+   "gsd-spike",
+   "production-scheduling",
+   "production-audit"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "analytical aggregation queries cause production transactional database to spike to 100% cpu",
+  "picks": [
+   "clickhouse-io",
+   "analyzing-cloud-storage-access-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "soft-deleted tenant records still surface in global analytics queries",
+  "picks": [
+   "architecture-decision-records",
+   "marketing-analytics",
+   "blend-hard-surface"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "soft-deleted tenant records still surface in global analytics queries",
+  "picks": [
+   "marketing-analytics",
+   "architecture-decision-records",
+   "gsd-surface",
+   "workspace-surface-audit"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "soft-deleted tenant records still surface in global analytics queries",
+  "picks": [
+   "omni-usage-logs",
+   "clickhouse-io"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "schema migration rollbacks leave orphan tables and dangling foreign keys",
+  "picks": [
+   "database-migrations",
+   "migration",
+   "data-migration"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "schema migration rollbacks leave orphan tables and dangling foreign keys",
+  "picks": [
+   "data-migration",
+   "migration",
+   "benefits-and-leave",
+   "database-migrations"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "schema migration rollbacks leave orphan tables and dangling foreign keys",
+  "picks": [
+   "migration",
+   "release-and-deployment"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "pagination using offset becomes exponentially slower on page five hundred",
+  "picks": [
+   "landing-page-cro-expert",
+   "using-n8n-mcp-skills",
+   "esign-field-placement"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "pagination using offset becomes exponentially slower on page five hundred",
+  "picks": [
+   "landing-page-cro-expert"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "pagination using offset becomes exponentially slower on page five hundred",
+  "picks": [
+   "jpa-patterns",
+   "benchmark"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "jsonb column querying lacks proper gin indexing causing sequential scans",
+  "picks": [
+   "quality-scan",
+   "repo-scan",
+   "security-scan"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "jsonb column querying lacks proper gin indexing causing sequential scans",
+  "picks": [
+   "security-scan",
+   "quality-scan",
+   "repo-scan",
+   "database-migrations"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "jsonb column querying lacks proper gin indexing causing sequential scans",
+  "picks": [
+   "postgres-patterns",
+   "systematic-debugging"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "database read replica falls fifteen minutes behind primary during data load",
+  "picks": [
+   "database-migrations",
+   "data-throughput-accelerator",
+   "scientific-db-uspto-database"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "database read replica falls fifteen minutes behind primary during data load",
+  "picks": [
+   "data-modeling",
+   "data-protection-and-encryption",
+   "corporate-governance",
+   "data-throughput-accelerator"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "database read replica falls fifteen minutes behind primary during data load",
+  "picks": [
+   "data-throughput-accelerator",
+   "mysql-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "production docker image artifact is three gigabytes large and takes ten minutes to pull",
+  "picks": [
+   "hardening-docker-containers-for-production",
+   "docker-patterns",
+   "project-artifact"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "production docker image artifact is three gigabytes large and takes ten minutes to pull",
+  "picks": [
+   "project-artifact",
+   "docker-patterns",
+   "hardening-docker-containers-for-production"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "production docker image artifact is three gigabytes large and takes ten minutes to pull",
+  "picks": [
+   "hardening-docker-containers-for-production",
+   "docker-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "pull request automated test suite takes forty-five minutes to run on every commit",
+  "picks": [
+   "ci-security-scanning-with-strix",
+   "conventional-commit-review",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "pull request automated test suite takes forty-five minutes to run on every commit",
+  "picks": [
+   "rea-ci-tests-audit",
+   "api-security-testing",
+   "conventional-commit-review",
+   "ci-security-scanning-with-strix"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "pull request automated test suite takes forty-five minutes to run on every commit",
+  "picks": [
+   "springboot-verification"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "ephemeral test environments fail to tear down leaving costly cloud instances running",
+  "picks": [
+   "n8n-multi-instance",
+   "auditing-cloud-with-cis-benchmarks",
+   "cloud-infrastructure"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "ephemeral test environments fail to tear down leaving costly cloud instances running",
+  "picks": [
+   "cloud-infrastructure",
+   "n8n-multi-instance",
+   "web-app-penetration-testing",
+   "auditing-cloud-with-cis-benchmarks"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "ephemeral test environments fail to tear down leaving costly cloud instances running",
+  "picks": [
+   "ai-regression-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "kubernetes pod crashes with out-of-memory kill during peak traffic surge",
+  "picks": [
+   "kubernetes-patterns",
+   "codebase-memory-mcp",
+   "unified-memory"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "kubernetes pod crashes with out-of-memory kill during peak traffic surge",
+  "picks": [
+   "kubernetes-patterns"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "kubernetes pod crashes with out-of-memory kill during peak traffic surge",
+  "picks": [
+   "kubernetes-patterns",
+   "unified-memory"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "unpinned base image in build configuration broke production after upstream release",
+  "picks": [
+   "hardening-docker-containers-for-production",
+   "mem-build-and-release",
+   "validate-release-green"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "unpinned base image in build configuration broke production after upstream release",
+  "picks": [
+   "gpt-image-prompting",
+   "hardening-docker-containers-for-production",
+   "production-audit",
+   "production-scheduling"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "unpinned base image in build configuration broke production after upstream release",
+  "picks": [
+   "mem-childhood"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "secret environment tokens accidentally leaked into public docker build layers",
+  "picks": [
+   "hardening-docker-containers-for-production",
+   "docker-patterns",
+   "public-apis"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "secret environment tokens accidentally leaked into public docker build layers",
+  "picks": [
+   "public-apis",
+   "docker-patterns",
+   "hardening-docker-containers-for-production",
+   "token-budget-advisor"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "secret environment tokens accidentally leaked into public docker build layers",
+  "picks": [
+   "docker-patterns",
+   "hardening-docker-containers-for-production",
+   "token-budget-advisor"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "deployment script fails midway leaving the application in a split-brain state",
+  "picks": [
+   "deployment-patterns",
+   "benefits-and-leave",
+   "release-and-deployment"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "deployment script fails midway leaving the application in a split-brain state",
+  "picks": [
+   "application-security-testing",
+   "benefits-and-leave",
+   "deployment-patterns",
+   "release-and-deployment"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "deployment script fails midway leaving the application in a split-brain state",
+  "picks": [
+   "agent-introspection-debugging",
+   "agent-architecture-audit"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "canary traffic rollout lacks automated rollback on error rate threshold breach",
+  "picks": [
+   "canary-watch",
+   "n8n-error-handling",
+   "error-handling"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "canary traffic rollout lacks automated rollback on error rate threshold breach",
+  "picks": [
+   "canary-watch"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "canary traffic rollout lacks automated rollback on error rate threshold breach",
+  "picks": [
+   "deployment-patterns",
+   "canary-watch"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "ci runner disk space fills up completely from leftover artifact cache directories",
+  "picks": [
+   "ci-security-scanning-with-strix",
+   "project-artifact",
+   "prompt-caching-strategy"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "ci runner disk space fills up completely from leftover artifact cache directories",
+  "picks": [
+   "project-artifact",
+   "prompt-caching-strategy",
+   "omni-cache",
+   "opensource-pipeline"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "ci runner disk space fills up completely from leftover artifact cache directories",
+  "picks": [
+   "content-hash-cache-pattern"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "load balancer health checks flood access logs with twenty thousand entries per minute",
+  "picks": [
+   "analyzing-api-gateway-access-logs",
+   "growth-log",
+   "cli-health"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "load balancer health checks flood access logs with twenty thousand entries per minute",
+  "picks": [
+   "growth-log",
+   "cli-health",
+   "analyzing-api-gateway-access-logs",
+   "discord-access"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "load balancer health checks flood access logs with twenty thousand entries per minute",
+  "picks": [
+   "omni-resilience"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "user input in search query string allows unauthorized database access",
+  "picks": [
+   "discord-access",
+   "mem-search",
+   "n8n-code-python"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "user input in search query string allows unauthorized database access",
+  "picks": [
+   "exa-search",
+   "implementing-zero-trust-network-access",
+   "discord-access",
+   "mem-search"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "user input in search query string allows unauthorized database access",
+  "picks": [
+   "deep-research",
+   "analyzing-cloud-storage-access-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "cross-site scripting vulnerability found in user profile biography field",
+  "picks": [
+   "gsd-profile-user",
+   "blend-analog-found-footage-horror",
+   "vulnerability-management"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "cross-site scripting vulnerability found in user profile biography field",
+  "picks": [
+   "events-and-field-marketing",
+   "esign-field-placement",
+   "gsd-profile-user",
+   "vulnerability-management"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "cross-site scripting vulnerability found in user profile biography field",
+  "picks": [
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "session cookies are missing secure and samesite flags in production response",
+  "picks": [
+   "hardening-docker-containers-for-production",
+   "production-scheduling",
+   "incident-response"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "session cookies are missing secure and samesite flags in production response",
+  "picks": [
+   "hardening-docker-containers-for-production",
+   "gsd-secure-phase",
+   "production-scheduling",
+   "production-audit"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "session cookies are missing secure and samesite flags in production response",
+  "picks": [
+   "django-security",
+   "production-audit"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "api endpoint allows arbitrary password reset attempts without rate throttling",
+  "picks": [
+   "api-design",
+   "vibewise-reset",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "api endpoint allows arbitrary password reset attempts without rate throttling",
+  "picks": [
+   "vibewise-reset",
+   "api-connector-builder",
+   "omni-api-keys",
+   "api-design"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "api endpoint allows arbitrary password reset attempts without rate throttling",
+  "picks": [
+   "api-security-testing",
+   "omni-budget"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "unprotected internal metrics endpoint is publicly reachable over the internet",
+  "picks": [
+   "internal-controls-and-audit",
+   "internal-comms",
+   "endpoint-management"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "unprotected internal metrics endpoint is publicly reachable over the internet",
+  "picks": [
+   "internal-comms",
+   "internal-controls-and-audit"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "unprotected internal metrics endpoint is publicly reachable over the internet",
+  "picks": [
+   "api-security-testing",
+   "omni-resilience"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "user jwt token signature is verified with none algorithm allowing forgery",
+  "picks": [
+   "token-budget-advisor",
+   "evm-token-decimals",
+   "token-card"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "user jwt token signature is verified with none algorithm allowing forgery",
+  "picks": [
+   "token-budget-advisor"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "user jwt token signature is verified with none algorithm allowing forgery",
+  "picks": [
+   "claude-security",
+   "dark-pattern-check"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "malicious svg upload contains embedded javascript executed in victim browser",
+  "picks": [
+   "n8n-code-javascript",
+   "browser-use",
+   "browser-qa"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "malicious svg upload contains embedded javascript executed in victim browser",
+  "picks": [
+   "gsd-execute-phase",
+   "n8n-code-javascript"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "malicious svg upload contains embedded javascript executed in victim browser",
+  "picks": [
+   "reverse-engineer-anything"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "subdomain takeover risk due to dangling cname record pointing to abandoned bucket",
+  "picks": [
+   "auditing-aws-s3-bucket-permissions",
+   "enterprise-risk",
+   "architecture-decision-records"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "subdomain takeover risk due to dangling cname record pointing to abandoned bucket",
+  "picks": [
+   "architecture-decision-records",
+   "dependency-and-risk-management",
+   "auditing-aws-s3-bucket-permissions",
+   "enterprise-risk"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "subdomain takeover risk due to dangling cname record pointing to abandoned bucket",
+  "picks": [
+   "auditing-aws-s3-bucket-permissions",
+   "context-and-decisions"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "third-party npm dependency has critical remote code execution cve alert",
+  "picks": [
+   "blend-genre-card-party-idle",
+   "n8n-code-tool",
+   "n8n-code-javascript"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "third-party npm dependency has critical remote code execution cve alert",
+  "picks": [
+   "blend-genre-card-party-idle",
+   "parallel-execution-optimizer",
+   "find-security-vulnerabilities-in-code",
+   "latency-critical-systems"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "third-party npm dependency has critical remote code execution cve alert",
+  "picks": [
+   "mcp-dependency-review",
+   "search-first"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "idor vulnerability allows viewing other customers invoices by incrementing numeric id",
+  "picks": [
+   "vulnerability-management",
+   "chief-customer-officer",
+   "voice-of-customer"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "idor vulnerability allows viewing other customers invoices by incrementing numeric id",
+  "picks": [
+   "customer-onboarding-and-implementation",
+   "chief-customer-officer",
+   "vulnerability-management",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "idor vulnerability allows viewing other customers invoices by incrementing numeric id",
+  "picks": [
+   "penetration-testing-with-strix"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "test suite passes locally on macbook but fails intermittently on ubuntu ci machine",
+  "picks": [
+   "rea-ci-tests-audit",
+   "eval-harness",
+   "ci-security-scanning-with-strix"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "test suite passes locally on macbook but fails intermittently on ubuntu ci machine",
+  "picks": [
+   "eval-harness",
+   "rea-ci-tests-audit",
+   "ralphinho-rfc-pipeline",
+   "application-security-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "test suite passes locally on macbook but fails intermittently on ubuntu ci machine",
+  "picks": [
+   "e2e-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "mocked external third-party api service returns outdated schema drifting from reality",
+  "picks": [
+   "contract-first",
+   "blend-genre-card-party-idle",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "mocked external third-party api service returns outdated schema drifting from reality",
+  "picks": [
+   "contract-first",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "mocked external third-party api service returns outdated schema drifting from reality",
+  "picks": [
+   "contract-first",
+   "headcount-api-design"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "playwright browser tests fail randomly due to race conditions waiting for spinner",
+  "picks": [
+   "playwright-cli",
+   "browser-qa",
+   "browser-use"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "playwright browser tests fail randomly due to race conditions waiting for spinner",
+  "picks": [
+   "browser-use",
+   "playwright-cli"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "playwright browser tests fail randomly due to race conditions waiting for spinner",
+  "picks": [
+   "playwright-cli",
+   "browser-use",
+   "e2e-testing",
+   "browser-qa"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "code change broke checkout calculations but no unit assertion caught the regression",
+  "picks": [
+   "ai-regression-testing",
+   "module-regression",
+   "n8n-code-tool"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "code change broke checkout calculations but no unit assertion caught the regression",
+  "picks": [
+   "ai-regression-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "code change broke checkout calculations but no unit assertion caught the regression",
+  "picks": [
+   "change-impact",
+   "springboot-verification"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "database state from previous test contaminates subsequent test execution",
+  "picks": [
+   "scientific-db-uspto-database",
+   "ai-regression-testing",
+   "database-migrations"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "database state from previous test contaminates subsequent test execution",
+  "picks": [
+   "ai-regression-testing",
+   "test-collaboration",
+   "parallel-execution-optimizer",
+   "application-security-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "database state from previous test contaminates subsequent test execution",
+  "picks": [
+   "tdd-workflow"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "unit test suite takes fifteen seconds per test because fixtures make real network calls",
+  "picks": [
+   "rea-ci-tests-audit",
+   "python-testing",
+   "rust-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "unit test suite takes fifteen seconds per test because fixtures make real network calls",
+  "picks": [
+   "homelab-network-setup",
+   "implementing-zero-trust-network-access",
+   "rea-ci-tests-audit",
+   "unit-economics"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "unit test suite takes fifteen seconds per test because fixtures make real network calls",
+  "picks": [
+   "python-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "test coverage metric claims 95 percent but critical business edge cases are untested",
+  "picks": [
+   "golang-testing",
+   "regex-vs-llm-structured-text",
+   "business-intelligence"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "test coverage metric claims 95 percent but critical business edge cases are untested",
+  "picks": [
+   "business-intelligence",
+   "ai-regression-testing",
+   "golang-testing",
+   "regex-vs-llm-structured-text"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "test coverage metric claims 95 percent but critical business edge cases are untested",
+  "picks": [
+   "test-collaboration"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "property based fuzz testing needed for binary packet parsing state machine",
+  "picks": [
+   "n8n-binary-and-data",
+   "rust-testing",
+   "fsharp-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "property based fuzz testing needed for binary packet parsing state machine",
+  "picks": [
+   "rust-testing",
+   "gsd-add-tests",
+   "api-security-testing",
+   "n8n-binary-and-data"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "property based fuzz testing needed for binary packet parsing state machine",
+  "picks": [
+   "fsharp-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "visual regression snapshot tests break on minor font rendering differences",
+  "picks": [
+   "break-ui",
+   "ai-regression-testing",
+   "module-regression"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "visual regression snapshot tests break on minor font rendering differences",
+  "picks": [
+   "break-ui",
+   "ai-regression-testing",
+   "test-collaboration"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "visual regression snapshot tests break on minor font rendering differences",
+  "picks": [
+   "ai-regression-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "concurrent async integration tests deadlock trying to access the shared sqlite file",
+  "picks": [
+   "rust-testing",
+   "csharp-testing",
+   "test-collaboration"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "concurrent async integration tests deadlock trying to access the shared sqlite file",
+  "picks": [
+   "analyzing-cloud-storage-access-patterns",
+   "implementing-zero-trust-network-access",
+   "test-collaboration",
+   "web-app-penetration-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "concurrent async integration tests deadlock trying to access the shared sqlite file",
+  "picks": [
+   "csharp-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "virtual keyboard on ios slides up and completely covers form submit button",
+  "picks": [
+   "cisco-ios-patterns",
+   "frontend-slides",
+   "uimax-slides"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "virtual keyboard on ios slides up and completely covers form submit button",
+  "picks": [
+   "frontend-slides",
+   "uimax-slides",
+   "ios-icon-gen",
+   "cisco-ios-patterns"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "virtual keyboard on ios slides up and completely covers form submit button",
+  "picks": [
+   "frontend-slides",
+   "uimax-slides",
+   "cisco-ios-patterns",
+   "ios-icon-gen"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "app memory usage steadily grows until mobile operating system terminates it",
+  "picks": [
+   "mobile-native",
+   "operating-cadence",
+   "headcount-design-system"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "app memory usage steadily grows until mobile operating system terminates it",
+  "picks": [
+   "headcount-design-system",
+   "agentic-os",
+   "operating-cadence",
+   "omni-usage-logs"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "app memory usage steadily grows until mobile operating system terminates it",
+  "picks": [
+   "systems-administration"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "push notifications fail to deliver when smartphone enters battery saver mode",
+  "picks": [
+   "unified-notifications-ops",
+   "mem-mode-creator",
+   "dynamic-workflow-mode"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "push notifications fail to deliver when smartphone enters battery saver mode",
+  "picks": [
+   "unified-notifications-ops",
+   "dynamic-workflow-mode",
+   "moneyprinterturbo-video",
+   "mem-mode-creator"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "push notifications fail to deliver when smartphone enters battery saver mode",
+  "picks": [
+   "unified-notifications-ops",
+   "n8n-error-handling"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "offline changes made on airplane flight overwrite newer server edits on reconnection",
+  "picks": [
+   "video-editing",
+   "build-mcp-server",
+   "mcp-server-patterns"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "offline changes made on airplane flight overwrite newer server edits on reconnection",
+  "picks": [
+   "change-impact",
+   "change-and-adoption",
+   "build-mcp-server",
+   "orch-change-feature"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "offline changes made on airplane flight overwrite newer server edits on reconnection",
+  "picks": [
+   "change-impact",
+   "migration"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "bottom navigation bar overlaps system gesture bar on modern android devices",
+  "picks": [
+   "android-clean-architecture",
+   "foundation-models-on-device",
+   "animate-expo"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "bottom navigation bar overlaps system gesture bar on modern android devices",
+  "picks": [
+   "android-clean-architecture"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "bottom navigation bar overlaps system gesture bar on modern android devices",
+  "picks": [
+   "android-clean-architecture"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "bluetooth accessory connection drops whenever smartphone screen locks",
+  "picks": [
+   "connections-optimizer",
+   "redis-patterns",
+   "safety-guard"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "bluetooth accessory connection drops whenever smartphone screen locks",
+  "picks": [
+   "n8n-error-handling",
+   "connections-optimizer",
+   "redis-patterns",
+   "safety-guard"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "bluetooth accessory connection drops whenever smartphone screen locks",
+  "picks": [
+   "omni-resilience"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "camera viewfinder preview displays distorted aspect ratio on certain tablet models",
+  "picks": [
+   "blend-camera-cinematography",
+   "cli-models",
+   "omni-models"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "camera viewfinder preview displays distorted aspect ratio on certain tablet models",
+  "picks": [
+   "financial-modeling",
+   "blend-camera-cinematography",
+   "data-modeling",
+   "cli-models"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "camera viewfinder preview displays distorted aspect ratio on certain tablet models",
+  "picks": [
+   "blend-camera-cinematography",
+   "interface-review"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "deep link navigation opens blank white screen when app is opened cold",
+  "picks": [
+   "deep-research",
+   "web-app-penetration-testing",
+   "react-native-patterns"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "deep link navigation opens blank white screen when app is opened cold",
+  "picks": [
+   "deep-research",
+   "build-mcp-app",
+   "app-store-optimization",
+   "web-app-penetration-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "deep link navigation opens blank white screen when app is opened cold",
+  "picks": [
+   "accessibility"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "biometric fingerprint prompt crashes if user cancels authentication dialog",
+  "picks": [
+   "prompt-caching-strategy",
+   "prompt-optimizer",
+   "prompt-master"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "biometric fingerprint prompt crashes if user cancels authentication dialog",
+  "picks": [
+   "gpt-image-prompting",
+   "prompt-master",
+   "prompt-caching-strategy"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "biometric fingerprint prompt crashes if user cancels authentication dialog",
+  "picks": [
+   "click-path-audit"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "smooth sixty frames per second list scrolling drops frames when rendering complex cards",
+  "picks": [
+   "locomotive-scroll",
+   "token-card",
+   "price-framing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "smooth sixty frames per second list scrolling drops frames when rendering complex cards",
+  "picks": [
+   "locomotive-scroll",
+   "price-framing",
+   "token-card"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "smooth sixty frames per second list scrolling drops frames when rendering complex cards",
+  "picks": [
+   "locomotive-scroll"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "new teammate cannot run the project locally due to missing environment setup instructions",
+  "picks": [
+   "flox-environments",
+   "gsd-new-project",
+   "cli-setup"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "new teammate cannot run the project locally due to missing environment setup instructions",
+  "picks": [
+   "project-artifact",
+   "cli-setup",
+   "flox-environments",
+   "moneyprinterturbo-video"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "new teammate cannot run the project locally due to missing environment setup instructions",
+  "picks": [
+   "flox-environments"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "pull request changes three thousand lines across forty files making review impossible",
+  "picks": [
+   "difftastic",
+   "react-three-fiber",
+   "claude-security"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "pull request changes three thousand lines across forty files making review impossible",
+  "picks": [
+   "difftastic",
+   "understand-diff",
+   "claude-security",
+   "gsd-code-review"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "pull request changes three thousand lines across forty files making review impossible",
+  "picks": [
+   "gsd-code-review"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "two microservices have duplicate definitions of customer domain data structures",
+  "picks": [
+   "customer-onboarding-and-implementation",
+   "understand-domain",
+   "data-engineering"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "two microservices have duplicate definitions of customer domain data structures",
+  "picks": [
+   "customer-onboarding-and-implementation",
+   "understand-domain",
+   "chief-customer-officer",
+   "data-engineering"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "two microservices have duplicate definitions of customer domain data structures",
+  "picks": [
+   "data-governance",
+   "mem-pathfinder"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "git merge conflict destroyed critical feature commit from parallel release branch",
+  "picks": [
+   "git-workflow",
+   "branch-and-worktree-workflow",
+   "gsd-pr-branch"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "git merge conflict destroyed critical feature commit from parallel release branch",
+  "picks": [
+   "branch-and-worktree-workflow",
+   "git-workflow"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "git merge conflict destroyed critical feature commit from parallel release branch",
+  "picks": [
+   "git-workflow",
+   "github-ops"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "team lacks recorded architectural justification for migrating from rest to grpc",
+  "picks": [
+   "architecture-decision-records",
+   "dev-team",
+   "team-agent-orchestration"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "team lacks recorded architectural justification for migrating from rest to grpc",
+  "picks": [
+   "dev-team",
+   "architecture-decision-records",
+   "api-security-testing",
+   "team-agent-orchestration"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "team lacks recorded architectural justification for migrating from rest to grpc",
+  "picks": []
+ },
+ {
+  "engine": "keyword",
+  "task": "release changelog misses twenty customer bug fixes merged over the past sprint",
+  "picks": [
+   "rea-changelog-update",
+   "customer-onboarding-and-implementation",
+   "merge-batch"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "release changelog misses twenty customer bug fixes merged over the past sprint",
+  "picks": [
+   "brownfield-retrospective",
+   "customer-success-management",
+   "rea-changelog-update",
+   "merge-batch"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "release changelog misses twenty customer bug fixes merged over the past sprint",
+  "picks": [
+   "rea-changelog-update",
+   "orch-fix-defect"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "monorepo build rebuilds all forty packages even when only one leaf module changed",
+  "picks": [
+   "floorplan",
+   "module-regression",
+   "pricing-and-packaging"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "monorepo build rebuilds all forty packages even when only one leaf module changed",
+  "picks": [
+   "pricing-and-packaging",
+   "floorplan",
+   "module-regression"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "monorepo build rebuilds all forty packages even when only one leaf module changed",
+  "picks": []
+ },
+ {
+  "engine": "keyword",
+  "task": "on-call engineer cannot find runbook documentation during midnight service outage",
+  "picks": [
+   "self-service-and-knowledge",
+   "documentation-lookup",
+   "find-security-vulnerabilities-in-code"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "on-call engineer cannot find runbook documentation during midnight service outage",
+  "picks": [
+   "change-impact",
+   "self-service-and-knowledge",
+   "ai-first-engineering",
+   "documentation-lookup"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "on-call engineer cannot find runbook documentation during midnight service outage",
+  "picks": [
+   "documentation-lookup",
+   "escalation-management"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "untracked dependencies installed via global pip cause deployment discrepancies",
+  "picks": [
+   "release-and-deployment",
+   "deployment-patterns",
+   "claude-mem-install"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "untracked dependencies installed via global pip cause deployment discrepancies",
+  "picks": [
+   "claude-mem-install",
+   "release-and-deployment",
+   "deployment-patterns",
+   "mem-childhood"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "untracked dependencies installed via global pip cause deployment discrepancies",
+  "picks": [
+   "release-and-deployment",
+   "repo-scan"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "api documentation is three months out of date and lists endpoints deleted in v2",
+  "picks": [
+   "documentation-lookup",
+   "omni-api-keys",
+   "continuous-learning-v2"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "api documentation is three months out of date and lists endpoints deleted in v2",
+  "picks": [
+   "public-apis",
+   "omni-api-keys",
+   "api-design",
+   "documentation-lookup"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "api documentation is three months out of date and lists endpoints deleted in v2",
+  "picks": [
+   "api-security-testing",
+   "gsd-docs-update"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "optimize component re-rendering on product listing filters",
+  "picks": [
+   "listing-distribution",
+   "blend-rendering",
+   "product-lens"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "optimize component re-rendering on product listing filters",
+  "picks": [
+   "ux-product-auditor",
+   "break-ui",
+   "listing-distribution",
+   "caveman-optimize"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "optimize component re-rendering on product listing filters",
+  "picks": [
+   "react-performance",
+   "frontend-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "implement accessible modal dialog with focus trap and aria tags",
+  "picks": [
+   "accessibility",
+   "frontend-a11y",
+   "uimax-ui-styling"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "implement accessible modal dialog with focus trap and aria tags",
+  "picks": [
+   "accessibility",
+   "frontend-a11y"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "implement accessible modal dialog with focus trap and aria tags",
+  "picks": [
+   "accessibility"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "add end-to-end tests for customer checkout flow",
+  "picks": [
+   "customer-research",
+   "gsd-add-tests",
+   "kotlin-coroutines-flows"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "add end-to-end tests for customer checkout flow",
+  "picks": [
+   "customer-research",
+   "customer-success-management",
+   "test-collaboration",
+   "web-app-penetration-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "add end-to-end tests for customer checkout flow",
+  "picks": [
+   "e2e-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "redesign dashboard analytics cards using contemporary bento style",
+  "picks": [
+   "contemporary",
+   "bento",
+   "stageshow"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "redesign dashboard analytics cards using contemporary bento style",
+  "picks": [
+   "contemporary",
+   "interface-redesign"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "redesign dashboard analytics cards using contemporary bento style",
+  "picks": [
+   "minimalist-ui"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "fix layout shift caused by dynamic advertisement banners",
+  "picks": [
+   "uimax-banner-design",
+   "fix-security-vulnerabilities-with-strix",
+   "dynamic-full-loop"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "fix layout shift caused by dynamic advertisement banners",
+  "picks": [
+   "uimax-banner-design",
+   "dynamic-workflow-mode",
+   "gsd-audit-fix",
+   "dynamic-full-loop"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "fix layout shift caused by dynamic advertisement banners",
+  "picks": [
+   "surgical-patch",
+   "interface-review"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write unit tests for custom user authentication backend",
+  "picks": [
+   "rust-testing",
+   "owasp-top-10-testing",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write unit tests for custom user authentication backend",
+  "picks": [
+   "test-collaboration",
+   "unit-economics",
+   "cli-tunnel",
+   "owasp-top-10-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write unit tests for custom user authentication backend",
+  "picks": [
+   "rust-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "optimize slow orm query fetching related customer orders with prefetch",
+  "picks": [
+   "slow-zoom",
+   "chief-customer-officer",
+   "voice-of-customer"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "optimize slow orm query fetching related customer orders with prefetch",
+  "picks": [
+   "chief-customer-officer",
+   "animation-performance",
+   "performance-management",
+   "react-performance"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "optimize slow orm query fetching related customer orders with prefetch",
+  "picks": [
+   "prisma-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "add asynchronous background job to process monthly customer billing reports",
+  "picks": [
+   "customer-billing-ops",
+   "finance-billing-ops",
+   "django-celery"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "add asynchronous background job to process monthly customer billing reports",
+  "picks": [
+   "financial-reporting-and-close",
+   "customer-billing-ops",
+   "finance-billing-ops"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "add asynchronous background job to process monthly customer billing reports",
+  "picks": [
+   "django-celery"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "prevent cross-site request forgery and sql injection on rest endpoints",
+  "picks": [
+   "api-security-testing",
+   "endpoint-management",
+   "django-security"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "prevent cross-site request forgery and sql injection on rest endpoints",
+  "picks": [
+   "endpoint-management",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "prevent cross-site request forgery and sql injection on rest endpoints",
+  "picks": [
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "create zero downtime schema migration to add foreign key to payments table",
+  "picks": [
+   "database-migrations",
+   "agent-payment-x402",
+   "migration"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "create zero downtime schema migration to add foreign key to payments table",
+  "picks": [
+   "database-migrations"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "create zero downtime schema migration to add foreign key to payments table",
+  "picks": [
+   "prisma-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write integration tests for jwt authentication middleware",
+  "picks": [
+   "rust-testing",
+   "csharp-testing",
+   "mailtrap-email-integration"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write integration tests for jwt authentication middleware",
+  "picks": [
+   "mailtrap-email-integration",
+   "ai-regression-testing",
+   "test-collaboration",
+   "owasp-top-10-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write integration tests for jwt authentication middleware",
+  "picks": [
+   "csharp-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "implement distributed rate limiting on high-frequency telemetry endpoints",
+  "picks": [
+   "redis-patterns",
+   "implementing-zero-trust-network-access",
+   "api-design"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "implement distributed rate limiting on high-frequency telemetry endpoints",
+  "picks": [
+   "implementing-zero-trust-network-access",
+   "api-design",
+   "endpoint-management",
+   "ito-inference"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "implement distributed rate limiting on high-frequency telemetry endpoints",
+  "picks": [
+   "redis-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "add structured error handling and validation responses for pydantic models",
+  "picks": [
+   "n8n-error-handling",
+   "n8n-validation-expert",
+   "error-handling"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "add structured error handling and validation responses for pydantic models",
+  "picks": [
+   "error-handling",
+   "n8n-error-handling",
+   "ponytail",
+   "regex-vs-llm-structured-text"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "add structured error handling and validation responses for pydantic models",
+  "picks": [
+   "n8n-error-handling",
+   "fastapi-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "profile latency bottleneck in async database connection pool",
+  "picks": [
+   "latency-critical-systems",
+   "gsd-profile-user",
+   "database-migrations"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "profile latency bottleneck in async database connection pool",
+  "picks": [
+   "gsd-profile-user",
+   "latency-critical-systems",
+   "omni-resilience"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "profile latency bottleneck in async database connection pool",
+  "picks": [
+   "latency-critical-systems",
+   "kotlin-exposed-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "generate openapi documentation and client typescript types",
+  "picks": [
+   "contract-first",
+   "documentation-lookup",
+   "error-handling"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "generate openapi documentation and client typescript types",
+  "picks": [
+   "contract-first",
+   "error-handling",
+   "documentation-lookup",
+   "gsd-docs-update"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "generate openapi documentation and client typescript types",
+  "picks": [
+   "gsd-docs-update",
+   "documentation-lookup"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write table-driven unit tests for concurrent worker pool",
+  "picks": [
+   "test-driven-development",
+   "golang-testing",
+   "rust-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write table-driven unit tests for concurrent worker pool",
+  "picks": [
+   "test-driven-development",
+   "test-collaboration",
+   "ralphinho-rfc-pipeline"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write table-driven unit tests for concurrent worker pool",
+  "picks": [
+   "golang-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "diagnose race condition in channel synchronization logic",
+  "picks": [
+   "counterparty-channel-discipline",
+   "data-throughput-accelerator",
+   "youtube-producer"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "diagnose race condition in channel synchronization logic",
+  "picks": [
+   "counterparty-channel-discipline"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "diagnose race condition in channel synchronization logic",
+  "picks": [
+   "behavior-diagnosis"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "implement graceful shutdown handler for http rest server",
+  "picks": [
+   "build-mcp-server",
+   "mcp-server-patterns",
+   "implementing-zero-trust-network-access"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "implement graceful shutdown handler for http rest server",
+  "picks": [
+   "build-mcp-server",
+   "mcp-server-patterns"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "implement graceful shutdown handler for http rest server",
+  "picks": [
+   "fastapi-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "benchmark memory allocations in binary protocol deserializer",
+  "picks": [
+   "n8n-binary-and-data",
+   "swift-protocol-di-testing",
+   "auditing-cloud-with-cis-benchmarks"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "benchmark memory allocations in binary protocol deserializer",
+  "picks": [
+   "benchmark-methodology",
+   "benchmark-optimization-loop",
+   "unified-memory",
+   "n8n-binary-and-data"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "benchmark memory allocations in binary protocol deserializer",
+  "picks": [
+   "n8n-binary-and-data",
+   "benchmark-optimization-loop"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "structure domain services using hexagonal clean architecture",
+  "picks": [
+   "hexagonal-architecture",
+   "android-clean-architecture",
+   "service-desk"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "structure domain services using hexagonal clean architecture",
+  "picks": [
+   "hexagonal-architecture"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "structure domain services using hexagonal clean architecture",
+  "picks": [
+   "hexagonal-architecture",
+   "context-and-decisions"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write unit tests and property tests for custom state machine",
+  "picks": [
+   "rust-testing",
+   "fsharp-testing",
+   "kotlin-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write unit tests and property tests for custom state machine",
+  "picks": [
+   "customs-trade-compliance",
+   "test-collaboration",
+   "unit-economics"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write unit tests and property tests for custom state machine",
+  "picks": [
+   "rust-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "eliminate memory clone overhead using zero-copy deserialization",
+  "picks": [
+   "implementing-zero-trust-network-access",
+   "codebase-memory-mcp",
+   "swift-actor-persistence"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "eliminate memory clone overhead using zero-copy deserialization",
+  "picks": [
+   "implementing-zero-trust-network-access",
+   "unified-memory",
+   "codebase-memory-mcp"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "eliminate memory clone overhead using zero-copy deserialization",
+  "picks": [
+   "nanoclaw-repl"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "implement thread-safe bounded channel for async task processing",
+  "picks": [
+   "process-design",
+   "gsd-thread",
+   "counterparty-channel-discipline"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "implement thread-safe bounded channel for async task processing",
+  "picks": [
+   "process-design",
+   "gsd-thread",
+   "counterparty-channel-discipline",
+   "implementing-zero-trust-network-access"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "implement thread-safe bounded channel for async task processing",
+  "picks": [
+   "django-celery"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "add fuzz testing harness for untrusted network packet parsing",
+  "picks": [
+   "homelab-network-readiness",
+   "harness-engineering",
+   "healthcare-eval-harness"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "add fuzz testing harness for untrusted network packet parsing",
+  "picks": [
+   "homelab-network-readiness",
+   "deepseek-harness-setup",
+   "harness-engineering",
+   "healthcare-eval-harness"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "add fuzz testing harness for untrusted network packet parsing",
+  "picks": [
+   "agent-security-hardening",
+   "harness-engineering"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "structure error types using thiserror and custom domain enums",
+  "picks": [
+   "error-handling",
+   "n8n-error-handling",
+   "understand-domain"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "structure error types using thiserror and custom domain enums",
+  "picks": [
+   "customs-trade-compliance",
+   "error-handling",
+   "regex-vs-llm-structured-text"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "structure error types using thiserror and custom domain enums",
+  "picks": [
+   "error-handling",
+   "n8n-error-handling"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write mockmvc unit tests for customer rest controller endpoints",
+  "picks": [
+   "unit-economics",
+   "api-security-testing",
+   "rust-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write mockmvc unit tests for customer rest controller endpoints",
+  "picks": [
+   "customer-research",
+   "unit-economics",
+   "test-collaboration",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write mockmvc unit tests for customer rest controller endpoints",
+  "picks": [
+   "springboot-tdd"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "optimize hibernate n plus one query problems with entity graphs",
+  "picks": [
+   "jpa-patterns",
+   "social-graph-ranker",
+   "caveman-optimize"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "optimize hibernate n plus one query problems with entity graphs",
+  "picks": [
+   "understand-knowledge",
+   "jpa-patterns",
+   "codebase-memory-mcp",
+   "caveman-optimize"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "optimize hibernate n plus one query problems with entity graphs",
+  "picks": [
+   "jpa-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "configure spring security with jwt bearer token authorization",
+  "picks": [
+   "quarkus-security",
+   "api-security-testing",
+   "springboot-security"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "configure spring security with jwt bearer token authorization",
+  "picks": [
+   "api-security-testing",
+   "discord-configure",
+   "token-budget-advisor",
+   "omni-auth"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "configure spring security with jwt bearer token authorization",
+  "picks": [
+   "springboot-security",
+   "discord-configure"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "implement resilience4j circuit breaker on external supplier service",
+  "picks": [
+   "service-desk",
+   "service-level-management",
+   "error-handling"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "implement resilience4j circuit breaker on external supplier service",
+  "picks": [
+   "cli-health",
+   "service-level-management",
+   "implementing-zero-trust-network-access",
+   "mcp-integration"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "implement resilience4j circuit breaker on external supplier service",
+  "picks": [
+   "cli-resilience"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write integration tests using testcontainers with real postgres container",
+  "picks": [
+   "rust-testing",
+   "csharp-testing",
+   "fsharp-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write integration tests using testcontainers with real postgres container",
+  "picks": [
+   "mailtrap-email-integration",
+   "test-collaboration",
+   "postgres-patterns",
+   "web-app-penetration-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write integration tests using testcontainers with real postgres container",
+  "picks": [
+   "postgres-patterns",
+   "detecting-container-escape-attempts",
+   "test-collaboration",
+   "mailtrap-email-integration"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "help me construct an autonomous workflow loop that uses tools and recovers from errors",
+  "picks": [
+   "autonomous-loops",
+   "autonomous-agent-harness",
+   "continuous-agent-loop"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "help me construct an autonomous workflow loop that uses tools and recovers from errors",
+  "picks": [
+   "autonomous-loops",
+   "continuous-agent-loop",
+   "autonomous-agent-harness"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "help me construct an autonomous workflow loop that uses tools and recovers from errors",
+  "picks": [
+   "n8n-error-handling",
+   "continuous-agent-loop"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "inspect my website for security weaknesses and exposed api keys",
+  "picks": [
+   "omni-api-keys",
+   "cli-keys",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "inspect my website for security weaknesses and exposed api keys",
+  "picks": [
+   "public-apis",
+   "omni-api-keys",
+   "api-security-testing",
+   "ci-security-scanning-with-strix"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "inspect my website for security weaknesses and exposed api keys",
+  "picks": [
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "make my landing page look like an editorial magazine with serif typography and warm paper tones",
+  "picks": [
+   "editorial",
+   "landing-page-cro-expert",
+   "paper"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "make my landing page look like an editorial magazine with serif typography and warm paper tones",
+  "picks": [
+   "editorial",
+   "landing-page-cro-expert"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "make my landing page look like an editorial magazine with serif typography and warm paper tones",
+  "picks": [
+   "editorial",
+   "paper"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "speed up my database queries that take multiple seconds to finish",
+  "picks": [
+   "scientific-db-pubmed-database",
+   "scientific-db-uspto-database",
+   "database-migrations"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "speed up my database queries that take multiple seconds to finish",
+  "picks": [
+   "polyhaven-material-swap",
+   "api-connector-builder",
+   "knowledge-ops",
+   "dynamic-full-loop"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "speed up my database queries that take multiple seconds to finish",
+  "picks": [
+   "data-throughput-accelerator",
+   "postgres-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "verify our web application meets accessibility contrast and keyboard navigation standards",
+  "picks": [
+   "accessibility",
+   "accessibility-audit",
+   "web-interface-guidelines"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "verify our web application meets accessibility contrast and keyboard navigation standards",
+  "picks": [
+   "web-interface-guidelines",
+   "accessibility",
+   "verify-and-stop",
+   "accessibility-audit"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "verify our web application meets accessibility contrast and keyboard navigation standards",
+  "picks": [
+   "accessibility",
+   "interface-review"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "add automated tests for my go microservice",
+  "picks": [
+   "ai-regression-testing",
+   "gsd-add-tests",
+   "golang-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "add automated tests for my go microservice",
+  "picks": [
+   "ai-regression-testing",
+   "golang-testing",
+   "test-driven-development",
+   "application-security-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "add automated tests for my go microservice",
+  "picks": [
+   "golang-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "build an interactive 3d model viewer component",
+  "picks": [
+   "build-mcp-app",
+   "blender-threejs-export",
+   "image-to-3d"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "build an interactive 3d model viewer component",
+  "picks": [
+   "taste-distillation",
+   "build-mcp-app",
+   "blender-threejs-export",
+   "react-three-fiber"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "build an interactive 3d model viewer component",
+  "picks": [
+   "blender-threejs-export"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "create a clean bento box style layout for our analytics dashboard",
+  "picks": [
+   "bento",
+   "marketing-analytics",
+   "uimax-ui-styling"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "create a clean bento box style layout for our analytics dashboard",
+  "picks": [
+   "marketing-analytics",
+   "bento"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "create a clean bento box style layout for our analytics dashboard",
+  "picks": [
+   "dashboard-builder"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "protect our api endpoints against automated credential stuffing and brute force bots",
+  "picks": [
+   "api-security-testing",
+   "api-design",
+   "omni-api-keys"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "protect our api endpoints against automated credential stuffing and brute force bots",
+  "picks": [
+   "public-apis",
+   "omni-api-keys",
+   "api-design",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "protect our api endpoints against automated credential stuffing and brute force bots",
+  "picks": [
+   "owasp-top-10-testing",
+   "security-review"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write end to end browser tests simulating user checkout",
+  "picks": [
+   "browser-qa",
+   "browser-use",
+   "react-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write end to end browser tests simulating user checkout",
+  "picks": [
+   "high-end-visual-design",
+   "browser-qa",
+   "founder-consumer",
+   "web-app-penetration-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write end to end browser tests simulating user checkout",
+  "picks": [
+   "e2e-testing",
+   "playwright-cli"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "help me prepare for technical system design interviews",
+  "picks": [
+   "hiring-and-interviewing",
+   "technical-debt-management",
+   "design-system"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "help me prepare for technical system design interviews",
+  "picks": [
+   "hiring-and-interviewing",
+   "diagram-design",
+   "design-system",
+   "headcount-design-system"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "help me prepare for technical system design interviews",
+  "picks": [
+   "design-systems"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "review my git changes before pushing to main branch",
+  "picks": [
+   "git-workflow",
+   "branch-and-worktree-workflow",
+   "gsd-pr-branch"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "review my git changes before pushing to main branch",
+  "picks": [
+   "branch-and-worktree-workflow",
+   "gsd-pr-branch",
+   "conventional-commit-review",
+   "git-workflow"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "review my git changes before pushing to main branch",
+  "picks": [
+   "conventional-commit-review"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "containerize this full stack application for deployment to production",
+  "picks": [
+   "deployment-patterns",
+   "application-security-testing",
+   "release-and-deployment"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "containerize this full stack application for deployment to production",
+  "picks": [
+   "application-security-testing",
+   "deployment-patterns",
+   "production-scheduling"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "containerize this full stack application for deployment to production",
+  "picks": [
+   "deployment-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "set up background task queues for asynchronous video processing",
+  "picks": [
+   "process-design",
+   "moneyprinterturbo-video",
+   "video-content"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "set up background task queues for asynchronous video processing",
+  "picks": [
+   "process-design",
+   "video-content",
+   "tasteforge-video",
+   "moneyprinterturbo-video"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "set up background task queues for asynchronous video processing",
+  "picks": [
+   "openmontage"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "design a dark mode cyberpunk theme with glowing neon accents",
+  "picks": [
+   "neon",
+   "cosmic",
+   "blend-neon-retrofuturism"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "design a dark mode cyberpunk theme with glowing neon accents",
+  "picks": [
+   "neon"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "design a dark mode cyberpunk theme with glowing neon accents",
+  "picks": [
+   "uimax-ui-styling"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "simulate quantum circuit teleportation algorithms",
+  "picks": [
+   "ml-adoption-playbook",
+   "recsys-pipeline-architect",
+   "error-handling"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "simulate quantum circuit teleportation algorithms",
+  "picks": [
+   "ml-adoption-playbook",
+   "cli-health",
+   "dithered",
+   "recsys-pipeline-architect"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "simulate quantum circuit teleportation algorithms",
+  "picks": [
+   "llm-trading-agent-security",
+   "dev-team"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "generate a pitch deck slide presentation summarizing our product metrics",
+  "picks": [
+   "presentation-design",
+   "frontend-slides",
+   "uimax-slides"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "generate a pitch deck slide presentation summarizing our product metrics",
+  "picks": [
+   "presentation-design",
+   "frontend-slides",
+   "uimax-slides"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "generate a pitch deck slide presentation summarizing our product metrics",
+  "picks": [
+   "presentation-design",
+   "investor-materials"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "find out what competing tools offer in this market space",
+  "picks": [
+   "behavioral-marketing",
+   "partnership-marketing",
+   "marketing-analytics"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "find out what competing tools offer in this market space",
+  "picks": [
+   "behavioral-marketing",
+   "prediction-market-oracle-research",
+   "marketing-planning",
+   "founder-offer"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "find out what competing tools offer in this market space",
+  "picks": [
+   "market-research",
+   "founder-competitors"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "onboard a new software engineer into our legacy codebase",
+  "picks": [
+   "inherit-legacy-style",
+   "codebase-onboarding",
+   "gsd-onboard"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "onboard a new software engineer into our legacy codebase",
+  "picks": [
+   "understand-onboard",
+   "m5-onboard",
+   "customer-onboarding-and-implementation",
+   "inherit-legacy-style"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "onboard a new software engineer into our legacy codebase",
+  "picks": [
+   "codebase-onboarding"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "fix flaky automated tests that intermittently timeout in ci",
+  "picks": [
+   "e2e-testing",
+   "rea-ci-tests-audit",
+   "cpp-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "fix flaky automated tests that intermittently timeout in ci",
+  "picks": [
+   "orch-pipeline",
+   "gsd-audit-fix",
+   "ai-regression-testing",
+   "e2e-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "fix flaky automated tests that intermittently timeout in ci",
+  "picks": [
+   "e2e-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "implement idempotency keys for payment charge endpoints",
+  "picks": [
+   "omni-api-keys",
+   "agent-payment-x402",
+   "security-review"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "implement idempotency keys for payment charge endpoints",
+  "picks": [
+   "omni-api-keys",
+   "endpoint-management",
+   "implementing-zero-trust-network-access",
+   "security-review"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "implement idempotency keys for payment charge endpoints",
+  "picks": [
+   "agent-payment-x402"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "audit third party dependencies for known security vulnerabilities",
+  "picks": [
+   "find-security-vulnerabilities-in-code",
+   "fix-security-vulnerabilities-with-strix",
+   "api-security-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "audit third party dependencies for known security vulnerabilities",
+  "picks": [
+   "find-security-vulnerabilities-in-code"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "audit third party dependencies for known security vulnerabilities",
+  "picks": [
+   "find-security-vulnerabilities-in-code"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "create subtle micro-interactions and smooth page transitions",
+  "picks": [
+   "interaction-design",
+   "landing-page-cro-expert",
+   "gradient"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "create subtle micro-interactions and smooth page transitions",
+  "picks": [
+   "landing-page-cro-expert",
+   "interaction-design",
+   "gradient"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "create subtle micro-interactions and smooth page transitions",
+  "picks": [
+   "react-bits"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "extract reusable component library from messy monolithic frontend",
+  "picks": [
+   "pick-ui-library",
+   "gsd-extract-learnings",
+   "frontend-design-direction"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "extract reusable component library from messy monolithic frontend",
+  "picks": [
+   "pick-ui-library"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "extract reusable component library from messy monolithic frontend",
+  "picks": [
+   "design-system"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write unit tests for rust async web server handlers",
+  "picks": [
+   "rust-testing",
+   "web-app-penetration-testing",
+   "rust-patterns"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write unit tests for rust async web server handlers",
+  "picks": [
+   "rust-testing"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write unit tests for rust async web server handlers",
+  "picks": [
+   "rust-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "profile react render bottlenecks causing frame drops on scroll",
+  "picks": [
+   "react-three-fiber",
+   "react-performance",
+   "locomotive-scroll"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "profile react render bottlenecks causing frame drops on scroll",
+  "picks": [
+   "locomotive-scroll",
+   "react-three-fiber",
+   "react-testing",
+   "react-performance"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "profile react render bottlenecks causing frame drops on scroll",
+  "picks": [
+   "animation-performance",
+   "react-performance"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "implement zero trust service to service authentication with mutual tls",
+  "picks": [
+   "implementing-zero-trust-network-access",
+   "service-desk",
+   "service-level-management"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "implement zero trust service to service authentication with mutual tls",
+  "picks": [
+   "implementing-zero-trust-network-access"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "implement zero trust service to service authentication with mutual tls",
+  "picks": [
+   "access-and-identity"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "structure domain entities and repositories using hexagonal architecture",
+  "picks": [
+   "hexagonal-architecture",
+   "android-clean-architecture",
+   "understand-domain"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "structure domain entities and repositories using hexagonal architecture",
+  "picks": [
+   "hexagonal-architecture"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "structure domain entities and repositories using hexagonal architecture",
+  "picks": [
+   "hexagonal-architecture",
+   "architecture-decision-records"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "prevent race conditions when updating user wallet balance in parallel",
+  "picks": [
+   "parallel-execution-optimizer",
+   "parallel-agent-delivery",
+   "evm-token-decimals"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "prevent race conditions when updating user wallet balance in parallel",
+  "picks": [
+   "parallel-agent-delivery",
+   "parallel-execution-optimizer",
+   "gsd-docs-update"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "prevent race conditions when updating user wallet balance in parallel",
+  "picks": [
+   "parallel-execution-optimizer",
+   "swift-actor-persistence"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "create customer journey maps illustrating user activation friction",
+  "picks": [
+   "journey-mapping",
+   "behavior-diagnosis",
+   "activation"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "create customer journey maps illustrating user activation friction",
+  "picks": [
+   "activation",
+   "journey-mapping",
+   "customer-billing-ops",
+   "behavior-diagnosis"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "create customer journey maps illustrating user activation friction",
+  "picks": [
+   "journey-mapping",
+   "activation"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "translate and localize application interface strings into multiple languages",
+  "picks": [
+   "visa-doc-translate",
+   "i18n-sync",
+   "application-security-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "translate and localize application interface strings into multiple languages",
+  "picks": [
+   "web-interface-guidelines",
+   "interface-craft",
+   "i18n-sync",
+   "visa-doc-translate"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "translate and localize application interface strings into multiple languages",
+  "picks": [
+   "i18n-sync",
+   "error-handling"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write technical documentation for public developer api",
+  "picks": [
+   "public-apis",
+   "documentation-lookup",
+   "public-relations"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write technical documentation for public developer api",
+  "picks": [
+   "public-apis",
+   "documentation-lookup"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write technical documentation for public developer api",
+  "picks": [
+   "documentation-lookup",
+   "api-design"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "set up monitoring dashboard with prometheus and grafana metrics",
+  "picks": [
+   "dashboard-builder",
+   "business-intelligence",
+   "understand-dashboard"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "set up monitoring dashboard with prometheus and grafana metrics",
+  "picks": [
+   "dashboard-builder"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "set up monitoring dashboard with prometheus and grafana metrics",
+  "picks": [
+   "dashboard-builder",
+   "cli-health"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "implement drag and drop task board component with smooth physics",
+  "picks": [
+   "founder-board",
+   "blend-physics-sim",
+   "pick-ui-library"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "implement drag and drop task board component with smooth physics",
+  "picks": [
+   "pick-ui-library",
+   "stitch",
+   "implementing-zero-trust-network-access",
+   "founder-board"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "implement drag and drop task board component with smooth physics",
+  "picks": [
+   "locomotive-scroll"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "enforce conventional commit messages and automated semantic release notes",
+  "picks": [
+   "conventional-commit-review",
+   "caveman-commit",
+   "mem-build-and-release"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "enforce conventional commit messages and automated semantic release notes",
+  "picks": [
+   "caveman-commit",
+   "conventional-commit-review"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "enforce conventional commit messages and automated semantic release notes",
+  "picks": [
+   "rea-changelog-update",
+   "mem-version-bump"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "detect and prevent container breakout attempts in kubernetes cluster",
+  "picks": [
+   "detecting-container-escape-attempts",
+   "kubernetes-patterns",
+   "hardening-docker-containers-for-production"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "detect and prevent container breakout attempts in kubernetes cluster",
+  "picks": [
+   "detecting-container-escape-attempts"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "detect and prevent container breakout attempts in kubernetes cluster",
+  "picks": [
+   "detecting-container-escape-attempts",
+   "kubernetes-patterns"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "optimize memory usage in high throughput data processing pipeline",
+  "picks": [
+   "data-throughput-accelerator",
+   "data-engineering",
+   "cli-cost-usage"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "optimize memory usage in high throughput data processing pipeline",
+  "picks": [
+   "data-throughput-accelerator",
+   "cost-aware-llm-pipeline"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "optimize memory usage in high throughput data processing pipeline",
+  "picks": [
+   "parallel-execution-optimizer",
+   "data-engineering"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "write property based tests verifying json parser edge cases",
+  "picks": [
+   "rust-testing",
+   "fsharp-testing",
+   "kotlin-testing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "write property based tests verifying json parser edge cases",
+  "picks": [
+   "rust-testing",
+   "gsd-add-tests",
+   "api-security-testing",
+   "regex-vs-llm-structured-text"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "write property based tests verifying json parser edge cases",
+  "picks": [
+   "rust-testing"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "redesign checkout flow to maximize conversion rate and reduce friction",
+  "picks": [
+   "prompt-caching-strategy",
+   "interface-redesign",
+   "laws-of-designing"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "redesign checkout flow to maximize conversion rate and reduce friction",
+  "picks": [
+   "interface-redesign",
+   "laws-of-designing",
+   "project-flow-ops",
+   "prompt-caching-strategy"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "redesign checkout flow to maximize conversion rate and reduce friction",
+  "picks": [
+   "levels"
+  ]
+ },
+ {
+  "engine": "keyword",
+  "task": "configure automated rollback for failed canary deployments",
+  "picks": [
+   "release-and-deployment",
+   "deployment-patterns",
+   "canary-watch"
+  ]
+ },
+ {
+  "engine": "v3.19.0",
+  "task": "configure automated rollback for failed canary deployments",
+  "picks": [
+   "release-and-deployment",
+   "canary-watch",
+   "deployment-patterns"
+  ]
+ },
+ {
+  "engine": "3.20.0",
+  "task": "configure automated rollback for failed canary deployments",
+  "picks": [
+   "release-and-deployment",
+   "cli-resilience"
+  ]
+ }
+]

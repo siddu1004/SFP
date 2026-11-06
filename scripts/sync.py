@@ -566,6 +566,8 @@ def render_readme(cfg, cats, catalog):
     sys.path.insert(0, os.path.join(ROOT, 'scripts'))
     import banner
     banner.main()
+    import readme_art
+    readme_art.main()
 
 
 def write_index(path, cats, cfg, catalog):
