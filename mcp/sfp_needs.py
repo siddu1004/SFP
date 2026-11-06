@@ -209,6 +209,9 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     res['bundles_applied'] = bundles_applied
     res['bundles_left_out'] = bundles_left_out
     res['tokens_used'] = res.get('spent', sum(c.get('tokens', v1.body_tokens(c['name'])) for c in res['stack']))
+    res['share_of_200k'] = round((res['tokens_used'] / 200000.0) * 100, 2)
+    res['bundle_tokens'] = sum(v1.body_tokens(n) for b in bundles_applied for n in b.get('skills', []))
+    res['bundle_share_of_200k'] = round((res['bundle_tokens'] / 200000.0) * 100, 2)
     
     budget_omitted = []
     why_map = res.get('why') or {}
