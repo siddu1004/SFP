@@ -1,0 +1,202 @@
+[
+  {
+    "task": "rename local variable counter to total_steps in calculate()",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations", "safe-refactor"]
+  },
+  {
+    "task": "change timeout duration constant from 10 to 30 seconds",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "delete commented out code block in main.rs",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "fix spelling mistake in error log string",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "swap left and right operands in equality check",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "add newline at end of config.ini",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "rename method get_user_data to fetch_user_data in UserService",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "remove trailing whitespace in all markdown files",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "update copyright year in LICENSE file from 2025 to 2026",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "toggle boolean flag enableFeatureA from false to true",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "change font size of header tag from 16px to 18px",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "bump minor version string in VERSION file",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "replace single quotes with double quotes in json mock fixture",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "wrap return statement in parentheses",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "extract magic string /api/v1/health into constant URL_HEALTH",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "synthesize quantum superposition state in qiskit",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations", "dithered", "founder-marketing"]
+  },
+  {
+    "task": "tune carburetor on two-stroke motorcycle engine",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "origami folding instructions for paper crane",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "calculate celestial navigation bearing using sextant",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "fermentation temperature curve for brewing Belgian ale",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "rules of curling and scoring stone stones on sheet",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "treat chlorosis in indoor bonsai ficus tree",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "how to forge Damascus steel knife blade in coal forge",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "calculate mortgage amortization schedule with extra principal payments",
+    "expect": [],
+    "avoid": ["database-migrations", "blend-genre-action-combat"]
+  },
+  {
+    "task": "train border collie puppy to herd sheep",
+    "expect": [],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "audit graphql endpoint for unauthorized field access and depth abuse",
+    "expect": ["security-review", "agent-security-hardening", "web-app-penetration-testing"],
+    "avoid": ["blend-genre-action-combat", "cost-accounting", "dithered"]
+  },
+  {
+    "task": "migrate mysql table schema with gh-ost online schema change",
+    "expect": ["database-migrations", "mysql-patterns"],
+    "avoid": ["cost-accounting", "dithered"]
+  },
+  {
+    "task": "write property based tests using hypothesis in python",
+    "expect": ["python-testing"],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "implement distributed rate limiter with redis token bucket",
+    "expect": ["redis-patterns", "backend-patterns"],
+    "avoid": ["cost-accounting", "dithered"]
+  },
+  {
+    "task": "harden linux container against privilege escalation exploits",
+    "expect": ["security-review", "agent-security-hardening", "docker-patterns"],
+    "avoid": ["blend-genre-action-combat", "dithered"]
+  },
+  {
+    "task": "optimize nextjs page server side rendering with static generation",
+    "expect": ["frontend-patterns", "react-performance"],
+    "avoid": ["cost-accounting", "database-migrations"]
+  },
+  {
+    "task": "diagnose memory leak and unhandled promise rejection in nodejs process",
+    "expect": ["investigate-first", "behavior-diagnosis", "error-handling"],
+    "avoid": ["cost-accounting", "dithered"]
+  },
+  {
+    "task": "configure istio service mesh mutual tls authentication",
+    "expect": ["kubernetes-patterns", "security-review"],
+    "avoid": ["cost-accounting", "blend-genre-action-combat"]
+  },
+  {
+    "task": "write playwright tests to verify responsive mobile viewport navigation",
+    "expect": ["e2e-testing", "playwright-cli"],
+    "avoid": ["cost-accounting", "dithered"]
+  },
+  {
+    "task": "design zero downtime database replication failover architecture",
+    "expect": ["database-migrations", "postgres-patterns", "mysql-patterns"],
+    "avoid": ["blend-genre-action-combat", "dithered"]
+  },
+  {
+    "task": "setup automated sonarqube code quality checks in gitlab pipeline",
+    "expect": ["github-ops", "deployment-patterns", "ci-security-scanning-with-strix"],
+    "avoid": ["cost-accounting", "dithered"]
+  },
+  {
+    "task": "tune clickhouse analytical query joins on large columnar dataset",
+    "expect": ["clickhouse-io", "latency-critical-systems"],
+    "avoid": ["cost-accounting", "blend-genre-action-combat"]
+  },
+  {
+    "task": "implement csrf token validation for session cookie authentication",
+    "expect": ["security-review", "agent-security-hardening"],
+    "avoid": ["blend-genre-action-combat", "cost-accounting"]
+  },
+  {
+    "task": "write unit tests for spring boot webflux reactive endpoints",
+    "expect": ["springboot-tdd", "springboot-patterns"],
+    "avoid": ["cost-accounting", "dithered"]
+  },
+  {
+    "task": "benchmark latency and throughput of go grpc streaming service",
+    "expect": ["benchmark", "golang-patterns", "latency-critical-systems"],
+    "avoid": ["cost-accounting", "dithered"]
+  }
+]

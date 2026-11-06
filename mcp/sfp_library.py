@@ -326,6 +326,7 @@ def skill_detail(ident):
 
 WORDS_CAP = 1.2      # the weight of query words that counts as a full match: a task needs two or three strong words, not all of them
 MATCH_MIN = 0.45     # a bundle is suggested from this score
+BUNDLE_COMMON_WORD = 60   # a word in more skills than this cannot alone tie a task to a bundle
 PUSH_MIN = 0.6       # a bundle is attached whole from this score
 DF_SCALE = 893       # the library size the weights above were tuned at: a word's count is read relative to it, so the
                      # library growing does not drift every bundle's score down
@@ -337,45 +338,110 @@ def _bundle_terms(b):
     return words
 
 
-def match_bundles(task, chosen=(), limit=2, exclude=(), tech=None):
+def match_bundles(task, chosen=(), limit=None, exclude=(), tech=None, use_bundles=()):
     """The bundles that fit a task, best first: [{id, name, score, push, missing, skills, why}].
 
     Two kinds of evidence: how much of the task's meaning (rarer words count more) the bundle's name, goal, when-to-use
     and skill names cover, and how many of the bundle's skills the hive already chose on its own. A bundle with a
     score of PUSH_MIN or more is worth attaching whole; from MATCH_MIN it is only suggested. `tech` is the project's
     and task's technologies: a bundle built on others (Go skills in a Python project) does not fit, as a skill would not."""
-    q = [t for t in dict.fromkeys(core.tokens(task or '')) if len(t) > 2 and t in core.DF]   # words no skill uses say nothing
-    if not q:
+    if not task and not use_bundles:
         return []
     skip = set(exclude)
     chosen = set(chosen)
+    all_b = {b['id']: b for b in bundles()}
+
+    named_matches = []
+    if use_bundles:
+        b_ids = [x.strip() for x in use_bundles.split(',') if x.strip()] if isinstance(use_bundles, str) else list(use_bundles)
+        for bid in b_ids:
+            if bid in all_b and bid not in skip:
+                b = all_b[bid]
+                named_matches.append({
+                    'id': b['id'], 'name': b['name'], 'score': 1.0, 'push': True, 'named': True,
+                    'skills': b['skills'], 'missing': [n for n in b['skills'] if n not in chosen],
+                    'why': 'named bundle (--use-bundles)', 'hits': []
+                })
+
+    raw_clauses = re.split(r'[,;]|\band\b|\bwith\b|\bthen\b|\balso\b', task or '', flags=re.IGNORECASE)
+    clauses = [c.strip() for c in raw_clauses if len(c.strip()) > 2]
+    if not clauses:
+        clauses = [task or '']
+    elif (task or '').strip() not in clauses:
+        clauses.append((task or '').strip())
+
+    raw_task_words = set(re.findall(r'[a-zA-Z0-9]+', (task or '').lower()))
+    task_tech = raw_task_words | set(tech or ())
+    techs = set(v1.TECH) | {'go', 'py', 'ts', 'js', 'rb', 'rs', 'cs', 'fs'}
+    skip_id_words = {'and', 'the', 'for', 'a', 'an', 'build', 'make', 'add', 'check', 'run', 'set', 'get', 'pattern', 'review'}
+
     scale = DF_SCALE / max(1, len(core.CATALOG['skills']))
-    weight = {t: 1.0 / (1.0 + 0.5 * __import__('math').log(1 + scale * core.DF.get(t, 1))) for t in q}
-    total = sum(weight.values()) or 1.0
-    out = []
+    out = list(named_matches)
+    named_ids = {m['id'] for m in named_matches}
+
     for b in bundles():
-        if not b['skills'] or b['id'] in skip:
+        bid = b['id']
+        if not b['skills'] or bid in skip or bid in named_ids:
             continue
+        
+        # Check if bundle is technology-specific
+        b_words = set(bid.split('-')) | set(b['name'].lower().split())
+        b_tech = b_words & techs
+        if b_tech and not (b_tech & task_tech):
+            continue
+
         if tech:
             import sfp_hive
             btech = set().union(*(v1.SKILL_TECH.get(n, set()) for n in b['skills']))
             if sfp_hive.relation(btech, set(tech)) == 'mismatch':
                 continue
+
         terms = _bundle_terms(b)
-        hit = [t for t in q if t in terms]
-        words = min(1.0, sum(weight[t] for t in hit) / min(total, WORDS_CAP))
-        have = len([n for n in b['skills'] if n in chosen]) / len(b['skills'])
-        score = 0.65 * words + 0.35 * have if hit or have else 0.0
-        if len(hit) < 2 and have < 0.5:
-            score *= 0.6        # one shared word is not a match
-        if score < MATCH_MIN:
+        best_score = 0.0
+        best_hit = []
+        b_id_parts = (set().union(*(core.tokens(n.replace('-', ' ')) for n in b['skills']))
+                      | set(bid.split('-')) | set(core.tokens(b['name']))) - skip_id_words
+
+        for cl in clauses:
+            q = [t for t in dict.fromkeys(core.tokens(cl or '')) if len(t) > 2 and t in core.DF]
+            if not q:
+                continue
+            weight = {t: 1.0 / (1.0 + 0.5 * __import__('math').log(1 + scale * core.DF.get(t, 1))) for t in q}
+            total = sum(weight.values()) or 1.0
+            hit = [t for t in q if t in terms]
+            if not hit:
+                continue
+            words_score = min(1.0, sum(weight[t] for t in hit) / min(total, WORDS_CAP))
+            token_ratio = len(hit) / len(q)
+            words = max(words_score, token_ratio if len(q) <= 3 else words_score)
+            have = len([n for n in b['skills'] if n in chosen]) / len(b['skills'])
+            score = 0.65 * words + 0.35 * have if hit or have else 0.0
+            
+            # Penalize if only 1 hit, UNLESS hit is directly in bundle ID or skill names
+            # A common word such as "test" in a skill's name does not show the bundle fits this job.
+            id_match = any(core.DF.get(t, 0) <= BUNDLE_COMMON_WORD for t in set(hit) & b_id_parts)
+            if len(hit) < 2 and have < 0.5 and not id_match:
+                score *= 0.6
+
+            b_title_parts = (set(bid.split('-')) | set(core.tokens(b['name']))) - skip_id_words
+            name_hits = set(hit) & b_title_parts
+            if name_hits:
+                score = min(1.0, score + 0.12 * min(2, len(name_hits)))
+
+            if score > best_score:
+                best_score = score
+                best_hit = hit
+
+        if best_score < MATCH_MIN:
             continue
-        out.append({'id': b['id'], 'name': b['name'], 'score': round(score, 2), 'push': score >= PUSH_MIN,
+
+        out.append({'id': b['id'], 'name': b['name'], 'score': round(best_score, 2), 'push': best_score >= PUSH_MIN,
                     'skills': b['skills'], 'missing': [n for n in b['skills'] if n not in chosen],
-                    'why': 'matches ' + ', '.join(hit[:4]) if hit else 'the hive already chose %d of its skills' % int(have * len(b['skills'])),
-                    'hits': hit[:6]})
+                    'why': 'matches ' + ', '.join(best_hit[:4]) if best_hit else 'the hive already chose %d of its skills' % int(have * len(b['skills'])),
+                    'hits': best_hit[:6]})
+
     out.sort(key=lambda m: -m['score'])
-    return out[:limit]
+    return out if limit is None else out[:limit]
 
 
 PHASE_MIN = 0.3     # below this the overlap is a coincidence, not a fit

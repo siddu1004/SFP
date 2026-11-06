@@ -372,6 +372,14 @@ def rewrite(task, timeout=REWRITE_TIMEOUT):
     return terms
 
 
+def judge(task, items, project_tech=(), timeout=RERANK_TIMEOUT):
+    """Judge which candidate skills best fit the task using the local model.
+    Returns list of chosen skill names in the model's preferred order.
+    Returns [] when none fits (0). Returns None on timeout/failure/unreachable."""
+    import sfp_retrieve
+    return sfp_retrieve.judge(task, items, tech=project_tech, timeout=timeout)
+
+
 def main(argv=None):
     import argparse
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)

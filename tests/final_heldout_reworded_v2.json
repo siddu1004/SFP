@@ -1,0 +1,202 @@
+[
+  {
+    "task": "perform syntax-aware AST structural diffing on our refactored source files instead of line-by-line diff",
+    "expect": ["difftastic", "gitnexus", "trail-code"],
+    "avoid": ["django-patterns", "ios-icon-gen"]
+  },
+  {
+    "task": "index cross-repository symbol references and trace AST call dependencies across our codebase",
+    "expect": ["gitnexus", "trail-code", "codebase-memory-mcp"],
+    "avoid": ["laravel-tdd", "bento"]
+  },
+  {
+    "task": "cache expensive file parsing outputs using sha-256 content hashes so unchanged files are skipped",
+    "expect": ["content-hash-cache-pattern", "data-throughput-accelerator"],
+    "avoid": ["swiftui-patterns", "sega"]
+  },
+  {
+    "task": "trace every user-facing button through its state transitions to catch actions that cancel each other out",
+    "expect": ["click-path-audit", "interaction-design", "browser-qa"],
+    "avoid": ["mysql-patterns", "perl-testing"]
+  },
+  {
+    "task": "govern cross-module breaking changes using a regression ledger of downstream consumers and acceptance commands",
+    "expect": ["module-regression", "change-impact", "test-collaboration"],
+    "avoid": ["react-colorful", "doodle"]
+  },
+  {
+    "task": "enforce a single machine-checkable openapi contract between our frontend and backend with generated types",
+    "expect": ["contract-first", "api-design", "headcount-api-design"],
+    "avoid": ["blend-cloth-sim", "rust-testing"]
+  },
+  {
+    "task": "run two independent reviewer agents with the same rubric that must both pass before code ships",
+    "expect": ["santa-method", "gsd-code-review", "verification-loop"],
+    "avoid": ["postgres-patterns", "animate-expo"]
+  },
+  {
+    "task": "decompose an engineering RFC into a multi-agent DAG of work units with acceptance gates and merge queue",
+    "expect": ["ralphinho-rfc-pipeline", "blueprint", "parallel-execution-optimizer"],
+    "avoid": ["csharp-testing", "liquid-logo"]
+  },
+  {
+    "task": "speed up our workflow by splitting independent file surfaces into parallel execution lanes and worktrees",
+    "expect": ["parallel-execution-optimizer", "parallel-agent-delivery", "branch-and-worktree-workflow"],
+    "avoid": ["django-celery", "mybatis-patterns"]
+  },
+  {
+    "task": "distill a set of reference videos into a reusable style pack with 3D LUT color grades and shot-length rhythm",
+    "expect": ["taste-distillation", "taste-application", "tasteforge-video"],
+    "avoid": ["kubernetes-patterns", "springboot-tdd"]
+  },
+  {
+    "task": "score our website like an awwwards jury by measuring LCP, CLS, FPS, and axe accessibility on throttled mobile",
+    "expect": ["jury", "awwwards", "benchmark"],
+    "avoid": ["perl-security", "jpa-patterns"]
+  },
+  {
+    "task": "build faux product UI illustrations and animated cursor demos of browser windows and terminals",
+    "expect": ["stageshow", "ui-demo", "impeccable"],
+    "avoid": ["clickhouse-io", "golang-testing"]
+  },
+  {
+    "task": "convert our vector SVG icon into an isometric line figure in the hairline style",
+    "expect": ["hairline-adopt", "hairline-create", "diagram-design"],
+    "avoid": ["postgres-patterns", "django-tdd"]
+  },
+  {
+    "task": "diagnose why users are not completing trial signup using the COM-B motivation-ability-prompt behavior model",
+    "expect": ["behavior-diagnosis", "landing-page-cro-expert", "persuasion-audit"],
+    "avoid": ["rust-patterns", "docker-patterns"]
+  },
+  {
+    "task": "evaluate how our SaaS subscription tiers and anchor prices are framed using behavioral economics",
+    "expect": ["price-framing", "founder-pricing", "persuasion-audit"],
+    "avoid": ["cpp-testing", "kotlin-ktor-patterns"]
+  },
+  {
+    "task": "grade the psychology claims in our marketing copy against replicated studies and meta-analyses",
+    "expect": ["evidence-check", "persuasion-audit"],
+    "avoid": ["laravel-patterns", "vite-patterns"]
+  },
+  {
+    "task": "add x402 payment execution with per-task spending controls and non-custodial wallets to our AI agent",
+    "expect": ["agent-payment-x402", "llm-trading-agent-security"],
+    "avoid": ["vue-patterns", "fsharp-testing"]
+  },
+  {
+    "task": "prevent silent token decimal mismatch drift across bridged EVM chains in our DeFi bot",
+    "expect": ["evm-token-decimals", "defi-amm-security", "nodejs-keccak256"],
+    "avoid": ["django-patterns", "swiftui-patterns"]
+  },
+  {
+    "task": "harden our autonomous trading agent against prompt injection, MEV sandwiching, and unauthorized wallet spend",
+    "expect": ["llm-trading-agent-security", "agent-security-hardening", "defi-amm-security"],
+    "avoid": ["bento", "ui-to-vue"]
+  },
+  {
+    "task": "configure zero trust network access with identity-aware proxies and micro-segmentation instead of VPNs",
+    "expect": ["implementing-zero-trust-network-access", "security-architecture-review"],
+    "avoid": ["react-three-fiber", "pacman"]
+  },
+  {
+    "task": "detect container escape attempts at runtime from namespace manipulation, capability abuse, and anomalous syscalls",
+    "expect": ["detecting-container-escape-attempts", "hardening-docker-containers-for-production", "docker-patterns"],
+    "avoid": ["angular-developer", "ask-sonner"]
+  },
+  {
+    "task": "prepare our defense contractor environment for CMMC Level 2 certification across NIST SP 800-171 controls",
+    "expect": ["achieving-cmmc-level-2-compliance", "auditing-cloud-with-cis-benchmarks"],
+    "avoid": ["shadergradient", "locomotive-scroll"]
+  },
+  {
+    "task": "design clinical decision support alerts with drug interaction checking and NEWS2/qSOFA scoring for an EMR",
+    "expect": ["healthcare-cdss-patterns", "healthcare-emr-patterns", "healthcare-eval-harness"],
+    "avoid": ["rails-patterns", "sega"]
+  },
+  {
+    "task": "optimize retail safety stock, reorder points, and ABC/XYZ demand forecasting across store locations",
+    "expect": ["inventory-demand-planning", "production-scheduling"],
+    "avoid": ["swift-concurrency-6-2", "csharp-testing"]
+  },
+  {
+    "task": "manage regulated manufacturing quality non-conformances with 8D root cause analysis and CAPA workflows",
+    "expect": ["quality-nonconformance", "production-scheduling"],
+    "avoid": ["nuxt4-patterns", "react-colorful"]
+  },
+  {
+    "task": "review Cisco IOS router configurations for wildcard mask bugs, ACL placement, and safe change windows",
+    "expect": ["cisco-ios-patterns", "network-config-validation"],
+    "avoid": ["django-tdd", "vue-patterns"]
+  },
+  {
+    "task": "diagnose why a BGP neighbor session is flapping and inspect AS path route exchange policies",
+    "expect": ["network-bgp-diagnostics", "network-interface-health", "cisco-ios-patterns"],
+    "avoid": ["springboot-patterns", "ios-icon-gen"]
+  },
+  {
+    "task": "automate read-only SSH command collection and TextFSM parsing on network switches using Python Netmiko",
+    "expect": ["netmiko-ssh-automation", "python-patterns", "cisco-ios-patterns"],
+    "avoid": ["flutter-dart-code-review", "bento"]
+  },
+  {
+    "task": "segment our home network into isolated VLANs for IoT, guest, and server traffic on pfSense and UniFi",
+    "expect": ["homelab-vlan-segmentation", "homelab-network-readiness", "homelab-network-setup"],
+    "avoid": ["mybatis-patterns", "fsharp-testing"]
+  },
+  {
+    "task": "create interactive CodeTour walkthrough files with file and line anchors for onboarding new engineers",
+    "expect": ["code-tour", "codebase-onboarding", "understand-onboard"],
+    "avoid": ["perl-security", "defi-amm-security"]
+  },
+  {
+    "task": "search USPTO patent filings, trademark records, and assignment history with a reproducible research log",
+    "expect": ["scientific-db-uspto-database", "research-ops", "deep-research"],
+    "avoid": ["docker-patterns", "kotlin-testing"]
+  },
+  {
+    "task": "extract clean markdown text from cluttered web HTML pages using the defuddle CLI",
+    "expect": ["defuddle", "knap"],
+    "avoid": ["springboot-security", "rust-testing"]
+  },
+  {
+    "task": "build database-like table views, formulas, and filters over Obsidian vault notes using .base files",
+    "expect": ["obsidian-bases", "obsidian-cli", "obsidian-markdown"],
+    "avoid": ["postgres-patterns", "django-celery"]
+  },
+  {
+    "task": "prevent AI style drift on our legacy codebase by scanning implicit conventions into .ai-style-rules.md",
+    "expect": ["inherit-legacy-style", "coding-standards", "plankton-code-quality"],
+    "avoid": ["blend-character-artist", "ios-icon-gen"]
+  },
+  {
+    "task": "garbage-collect stale skills, orphaned hooks, and redundant caches in our ~/.claude configuration",
+    "expect": ["config-gc", "claude-automation-recommender", "configure-ecc"],
+    "avoid": ["mysql-patterns", "laravel-tdd"]
+  },
+  {
+    "task": "optimize our LLM prompt structure to maximize prefix cache hit rates and lower API latency",
+    "expect": ["prompt-caching-strategy", "cost-aware-llm-pipeline", "prompt-optimizer"],
+    "avoid": ["csharp-testing", "swiftui-patterns"]
+  },
+  {
+    "task": "build a hybrid regex-first pipeline with confidence scoring to parse structured invoices and receipts",
+    "expect": ["regex-vs-llm-structured-text", "cost-aware-llm-pipeline"],
+    "avoid": ["animate-expo", "kubernetes-patterns"]
+  },
+  {
+    "task": "compile and run ultra-fast streaming MoE local model inference on CPU using the pure-C Colibri engine",
+    "expect": ["colibri", "cost-aware-llm-pipeline"],
+    "avoid": ["django-patterns", "vue-patterns"]
+  },
+  {
+    "task": "route OpenAI-compatible API requests across 34 free LLM provider tiers with automatic failover",
+    "expect": ["freellmapi", "omni-combos-routing", "cost-aware-llm-pipeline"],
+    "avoid": ["rust-testing", "jpa-patterns"]
+  },
+  {
+    "task": "generate a personal impact and usage receipts report from local Claude Code transcripts for my manager",
+    "expect": ["receipts", "session-report", "cost-tracking"],
+    "avoid": ["perl-patterns", "mybatis-patterns"]
+  }
+]

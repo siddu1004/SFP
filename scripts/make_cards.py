@@ -40,6 +40,9 @@ def skill_md_hash(text):
 
 def card_from_words(name, desc, body):
     full = (name + ' ' + desc + ' ' + body[:2000]).lower()
+    meta = (name.replace('-', ' ') + ' ' + desc).lower()
+    name_parts = set(name.lower().split('-'))
+    desc_low = desc.lower()
     
     # Needs detection
     needs = []
@@ -47,97 +50,98 @@ def card_from_words(name, desc, body):
         if re.search(r'\b' + re.escape(tool) + r'\b', full):
             needs.append(tool)
             
-    # Output forms
+    # Output forms (derived from skill name and description first to avoid body noise)
     outs = []
-    if any(w in full for w in ('animation', 'manim', 'animate', 'lottie', 'motion-graphic')):
+    if any(w in meta for w in ('animation', 'manim', 'animate', 'lottie', 'motion-graphic', 'animated', 'gif')):
         outs.append('animation')
-    if any(w in full for w in ('video', 'remotion', 'mp4', 'screen recording', 'videodb')):
+    if any(w in meta for w in ('video', 'remotion', 'mp4', 'screen recording', 'screencast', 'videodb', 'walkthrough video')):
         outs.append('video')
-    if any(w in full for w in ('slides', 'slide deck', 'presentation', 'pitch deck', 'wowerpoint')):
+    if any(w in meta for w in ('slides', 'slide deck', 'presentation', 'pitch deck', 'wowerpoint')):
         outs.append('slides')
-    if any(w in full for w in ('diagram', 'mermaid', 'chart', 'flowchart', 'architecture diagram', 'wireframe')):
+    if any(w in meta for w in ('diagram', 'mermaid', 'chart', 'flowchart', 'architecture diagram', 'wireframe')):
         outs.append('diagram')
-    if any(w in full for w in ('interactive', 'simulator', 'playground', 'canvas', 'repl')):
+    if any(w in meta for w in ('interactive', 'simulator', 'playground', 'canvas', 'repl')):
         outs.append('interactive')
-    if any(w in full for w in ('image', 'svg', 'icon', 'graphic', 'logo', 'render', 'screenshot')):
+    if any(re.search(r'\b' + re.escape(w) + r'\b', meta) for w in ('image', 'images', 'svg', 'icon', 'icons', 'graphic', 'logo', 'screenshot', 'screenshots', 'gif')):
         outs.append('image')
-    if any(w in full for w in ('config', 'configuration', 'dockerfile', 'yaml', 'k8s manifest', 'helm chart')):
+    if any(w in meta for w in ('config', 'configuration', 'dockerfile', 'yaml', 'k8s manifest', 'helm chart')):
         outs.append('config')
-    if any(w in full for w in ('report', 'audit report', 'findings', 'scorecard', 'metrics log', 'summary report')):
+    if any(w in meta for w in ('report', 'audit report', 'findings', 'scorecard', 'metrics log', 'summary report')):
         outs.append('report')
-    if any(w in full for w in ('document', 'spec', 'documentation', 'markdown doc', 'rfc', 'adr')):
+    if any(re.search(r'\b' + re.escape(w) + r'\b', meta) for w in ('document', 'documents', 'spec', 'documentation', 'docs', 'markdown', 'rfc', 'adr', 'changelog', 'release notes', 'digest', 'standup', 'article', 'blog')):
         outs.append('document')
-    if any(w in full for w in ('code', 'implementation', 'script', 'function', 'test file', 'patterns', 'boilerplate')):
+    if not any(o in outs for o in ('animation', 'video', 'slides', 'diagram', 'image')) and any(re.search(r'\b' + re.escape(w) + r'\b', meta) for w in ('code', 'coding', 'implementation', 'script', 'function', 'test', 'tests', 'testing', 'patterns', 'boilerplate', 'library', 'framework', 'api', 'backend', 'frontend', 'concurrency', 'database', 'queries', 'schema', 'actor', 'persistence', 'swift', 'rust', 'golang', 'python', 'kotlin', 'java', 'cpp', 'middleware', 'token', 'jwt', 'cache', 'tree')):
         outs.append('code')
-    if not outs or any(w in full for w in ('explanation', 'guideline', 'guide', 'lesson', 'advice', 'principles')):
+    if not outs or ('document' in outs and 'write' in name_parts) or (('animation' not in outs and 'video' not in outs and 'slides' not in outs) and any(w in meta for w in ('explanation', 'explain', 'teach', 'lesson', 'guideline', 'guidelines', 'guide', 'advice', 'principles', 'lookup', 'reference', 'article', 'writing', 'summary', 'docs', 'documentation'))):
         outs.append('text')
     # Filter to allowed
     outs = [o for o in outs if o in OUTPUTS]
     if not outs:
         outs = ['code' if any(w in full for w in ('code', 'pattern', 'test', 'build')) else 'text']
 
-    # Job detection
-    if any(w in name for w in ('test', 'tdd', 'testing', 'spec', 'benchmark')) or any(w in desc.lower() for w in ('test', 'unit test', 'integration test', 'e2e test', 'assert')):
-        job = 'test'
-    elif any(w in name for w in ('fix', 'defect', 'debug', 'repair', 'patch')) or any(w in desc.lower() for w in ('fix bug', 'diagnose', 'troubleshoot', 'regression test')):
-        job = 'fix'
-    elif any(w in name for w in ('review', 'audit', 'scan', 'check', 'lint', 'inspector', 'quality')) or any(w in desc.lower() for w in ('code review', 'audit', 'inspect', 'linting')):
-        job = 'review'
-    elif any(w in name for w in ('design', 'ui', 'ux', 'css', 'style', 'taste', 'theme', 'component', 'animation', 'layout')):
-        job = 'design'
-    elif any(w in name for w in ('deploy', 'docker', 'k8s', 'kubernetes', 'release', 'ci', 'cd', 'tunnel')):
-        job = 'deploy'
-    elif any(w in name for w in ('research', 'paper', 'literature', 'pubmed', 'clinical', 'search', 'explore', 'study')):
-        job = 'research'
-    elif any(w in name for w in ('write', 'doc', 'docs', 'copy', 'article', 'changelog', 'authoring')):
-        job = 'write'
-    elif any(w in name for w in ('plan', 'roadmap', 'decision', 'journey', 'spec', 'requirements')):
-        job = 'plan'
-    elif any(w in name for w in ('automate', 'crawl', 'scraper', 'workflow', 'n8n', 'bot', 'agent')):
-        job = 'automate'
-    elif any(w in name for w in ('data', 'sql', 'postgres', 'clickhouse', 'mysql', 'db', 'migration', 'database', 'query')):
-        job = 'data'
-    elif any(w in name for w in ('secure', 'security', 'ciso', 'vulnerability', 'penetration', 'pentest', 'auth')):
-        job = 'secure'
-    elif any(w in name for w in ('optimize', 'perf', 'performance', 'latency', 'compress', 'fast', 'speed')):
-        job = 'optimize'
-    elif any(w in name for w in ('ops', 'operate', 'monitor', 'health', 'sysadmin', 'network', 'status', 'backup')):
-        job = 'operate'
-    elif any(w in name for w in ('teach', 'learn', 'explain', 'concept', 'guide', 'tutorial', 'how-it-works')):
+    # Job detection (using token matching on name_parts to avoid substring collisions like 'fast' in 'fastapi' or 'ui' in 'build')
+    if any(w in name_parts for w in ('teach', 'explain', 'concept', 'tutorial')) or name in ('manim-video', 'documentation-lookup') or any(w in desc_low for w in ('animated explainer', 'manim explainers', 'teach adaptively')):
         job = 'explain'
+    elif (any(w in name_parts for w in ('secure', 'security', 'ciso', 'vulnerability', 'vulnerabilities', 'penetration', 'pentest', 'pentesting', 'owasp', 'hardening')) or any(w in desc_low for w in ('penetration testing', 'security vulnerabilities', 'owasp top 10', 'security checklist', 'security hardening', 'escape attempts', 'container escape'))) and 'review' not in name_parts:
+        job = 'secure'
+    elif any(w in name_parts for w in ('optimize', 'perf', 'performance', 'latency', 'compress', 'compression', 'speed', 'accelerator')) or any(w in desc_low for w in ('performance tuning', 'optimize query', 'speed up', 'profiling', 'frame budget', 'dropped frames')):
+        job = 'optimize'
+    elif any(w in name_parts for w in ('test', 'tests', 'tdd', 'testing', 'benchmark')) or any(w in desc_low for w in ('unit test', 'integration test', 'e2e test', 'test-driven', 'property-based test')):
+        job = 'test'
+    elif any(w in name_parts for w in ('fix', 'defect', 'debug', 'debugging', 'repair', 'patch')) or any(w in desc_low for w in ('fix bug', 'troubleshoot', 'regression test', 'diagnose bug', 'root cause')):
+        job = 'fix'
+    elif any(w in name_parts for w in ('review', 'lint', 'inspector', 'quality')) or name in ('code-quality', 'quality-scan', 'caveman-evidence-review', 'gsd-code-review') or any(w in desc_low for w in ('code review', 'linting', 'quality scan', 'audit for')):
+        job = 'review'
+    elif any(w in name_parts for w in ('video', 'remotion', 'screencast')) or name in ('ui-demo', 'remotion-video-creation', 'moneyprinterturbo-video', 'tasteforge-video'):
+        job = 'build'
+    elif any(w in name_parts for w in ('design', 'ui', 'ux', 'css', 'style', 'taste', 'theme', 'component', 'animation', 'animate', 'motion', 'layout', 'slides', 'wowerpoint', 'gif')) or any(w in desc_low for w in ('slide deck', 'animated gif', 'ui polish', 'visual design')):
+        job = 'design'
+    elif any(w in name_parts for w in ('deploy', 'deployment', 'docker', 'k8s', 'kubernetes', 'release', 'tunnel', 'bump', 'ci', 'cd')) or any(w in desc_low for w in ('release workflow', 'git tagging', 'github releases', 'semantic versioning')):
+        job = 'deploy'
+    elif any(w in name_parts for w in ('research', 'paper', 'literature', 'pubmed', 'clinical', 'search', 'explore', 'study')):
+        job = 'research'
+    elif any(w in name_parts for w in ('write', 'writing', 'docs', 'copy', 'article', 'changelog', 'authoring', 'translate', 'i18n')):
+        job = 'write'
+    elif any(w in name_parts for w in ('plan', 'planning', 'roadmap', 'decision', 'decisions', 'journey', 'requirements', 'milestone', 'council')):
+        job = 'plan'
+    elif any(w in name_parts for w in ('automate', 'automation', 'crawl', 'scraper', 'workflow', 'workflows', 'n8n', 'bot')):
+        job = 'automate'
+    elif any(w in name_parts for w in ('data', 'sql', 'clickhouse', 'db', 'migration', 'migrations', 'database', 'query')) and 'patterns' not in name_parts:
+        job = 'data'
+    elif any(w in name_parts for w in ('ops', 'operate', 'monitor', 'health', 'sysadmin', 'network', 'status', 'backup', 'backups')):
+        job = 'operate'
     else:
         job = 'build'
 
     # Style
-    if 'animation' in outs or 'video' in outs or 'diagram' in outs or 'image' in outs or 'visual' in full:
+    if 'animation' in outs or 'video' in outs or 'diagram' in outs or 'image' in outs or 'visual' in meta:
         style = 'visual'
-    elif job in ('test', 'build', 'fix') or 'hands-on' in full or 'code' in outs:
+    elif job in ('test', 'build', 'fix') or 'hands-on' in meta or 'code' in outs:
         style = 'hands-on'
-    elif job == 'review' or 'checklist' in full:
+    elif job == 'review' or 'checklist' in meta:
         style = 'checklist'
-    elif job == 'explain' or 'reference' in full or 'api' in name:
+    elif job == 'explain' or 'reference' in meta or 'api' in name_parts:
         style = 'reference'
-    elif 'conversational' in full:
+    elif 'conversational' in meta:
         style = 'conversational'
     else:
         style = 'step-by-step'
 
     # Depth
-    if any(w in full for w in ('expert', 'internals', 'advanced', 'hardened', 'kernel', 'low-level', 'security architecture')):
+    if any(w in meta for w in ('expert', 'internals', 'advanced', 'hardened', 'kernel', 'low-level', 'security architecture')):
         depth = 'expert'
-    elif any(w in full for w in ('beginner', 'intro', 'tutorial', 'fundamentals', 'basics')):
+    elif any(w in meta for w in ('beginner', 'intro', 'tutorial', 'fundamentals', 'basics')):
         depth = 'beginner'
     else:
         depth = 'practitioner'
 
     # Substitutes_for: domain/job grouping
-    # e.g. explain-concepts, unit-testing, e2e-testing, code-review, ui-design, database-patterns, etc.
-    if 'video' in outs or any(w in name for w in ('video', 'remotion', 'screencast')):
-        sub = 'video-creation'
-    elif job == 'explain' or name == 'manim-video':
+    if job == 'explain' or name in ('manim-video', 'teach-me', 'documentation-lookup'):
         sub = 'explain-concepts'
         job = 'explain'
-    elif 'animation' in outs or any(w in name for w in ('anim', 'motion')):
+    elif 'video' in outs or any(w in name_parts for w in ('video', 'remotion', 'screencast')) or name == 'ui-demo':
+        sub = 'video-creation'
+    elif 'animation' in outs or any(w in name_parts for w in ('anim', 'animation', 'animate', 'motion')):
         sub = 'motion-and-animation'
     elif job == 'test':
         if 'e2e' in full or 'playwright' in full:
@@ -262,8 +266,8 @@ def make_cards(catalog_path=None, output_path=None, use_model=True):
     # Check which endpoints are available
     ep = None
     if use_model:
-        # Check 8787 first or 1234
-        for url, mname in [('http://127.0.0.1:8787/v1', 'cloud/groq-llama3.3'), ('http://127.0.0.1:1234/v1', 'lfm2-24b-a2b')]:
+        # Check local models (1234 or 11434)
+        for url, mname in [('http://127.0.0.1:1234/v1', 'lfm2-24b-a2b'), ('http://127.0.0.1:11434/v1', 'llama3')]:
             try:
                 test_req = urllib.request.Request(url + '/models', headers={'Content-Type': 'application/json'})
                 with urllib.request.urlopen(test_req, timeout=1.5) as r:

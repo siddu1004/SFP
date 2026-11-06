@@ -73,33 +73,43 @@ def validate_card(c):
 # Explicit output form patterns in user requests
 OUTPUT_PATTERNS = [
     (r'\b(?:animation|animated|animate|manim|motion\s*graphic)\b', 'animation'),
-    (r'\b(?:video|screencast|recording|record|movie|clip)\b', 'video'),
+    (r'\b(?:video|screencast|recording|record\s+(?:a\s+)?(?:video|demo|screen|screencast)|movie|clip)\b', 'video'),
     (r'\b(?:slides?|presentation|slide\s*deck|deck|keynote)\b', 'slides'),
     (r'\b(?:diagram|flowchart|mermaid|wireframe)\b', 'diagram'),
     (r'\b(?:interactive|simulator|playground|sandbox)\b', 'interactive'),
     (r'\b(?:(?:generate|create|make|draw|export)\s+(?:an?\s+)?(?:image|picture|graphic|illustration|svg|logo|(?:app\s+)?icon)|as\s+an?\s+image|svg\s+icon)\b', 'image'),
-    (r'\b(?:text\s+(?:summary|explanation|breakdown|description)|markdown\s+summary|text\s+only|in\s+text|in\s+writing|summary\s+of|bullet\s+list|article|essay)\b', 'text'),
-    (r'\b(?:as\s+code|code\s+only|boilerplate\s+only|code\s+implementation|code\s+benchmarks?|benchmark\s+code|python\s+tests?|python\s+code)\b', 'code'),
+    (r'\b(?:text\s+(?:summary|explanation|breakdown|description|bullet\s+list)|(?:plain|conceptual|brief)\s+text|markdown\s+summary|text\s+only|in\s+(?:plain\s+)?text|in\s+writing|summary\s+of|bullet\s+list|article|essay)\b', 'text'),
+    (r'\b(?:as\s+code|code\s+only|boilerplate\s+only|code\s+implementation|code\s+benchmarks?|benchmark\s+code|python\s+tests?|(?:python|go|rust|java|c\+\+|script)\s+code)\b', 'code'),
     (r'\b(?:generate\s+config|write\s+(?:a\s+)?dockerfile|create\s+(?:a\s+)?manifest)\b', 'config'),
     (r'\b(?:report|scorecard|audit\s*summary|audit\s+report|produce\s+an?\s+audit)\b', 'report'),
-    (r'\b(?:as\s+a\s+document|draft\s+an?\s+(?:rfc|adr|document|spec)|markdown\s+spec|spec\s+document|release\s+notes)\b', 'document'),
+    (r'\b(?:as\s+a\s+document|draft\s+an?\s+(?:rfc|adr|document|spec)|markdown\s+spec|spec\s+document|release\s+notes|decision\s+records?|adrs?)\b', 'document'),
 ]
 
 JOB_PATTERNS = [
-    (r'\b(?:explain|learn|understand|teach|how\s+(?:does|to)|what\s+is)\b', 'explain'),
+    (r'\b(?:record|capture|screencast|walkthrough|walk\s+through|showcase|demonstrate|produce|generate|render)\s+.*(?:video|demo|screen|flow|wizard|modal|layout|profile|upload|tour|reel)\b', 'build'),
+    (r'\b(?:animated\s+gif|gif\s+showing|slide\s*deck|presentation\s+slide)\b', 'design'),
+    (r'\b(?:explain|understand|teach\s+me|what\s+is|show\s+(?:how|visually)|demonstrate\s+visually|illustrat(?:e|ing)|text\s+summary|summary\s+of|comprehensive\s+overview|conceptual\s+text|plain\s+text|visualize|line\s+animation|manim\s+animation|animate\s+the)\b', 'explain'),
+    (r'^how\s+(?:to\s+)?(?:distributed|memory|cpu|zero|b-tree|raft|paxos|quicksort|attention|diffusion)\b', 'explain'),
+    (r'\b(?:breakdown\s+of)\b', 'explain'),
+    (r'\b(?:write\s+(?:a\s+)?(?:[\w-]+\s+){0,2}(?:blog|article|post|changelog|spec\s+document)|draft\s+(?:user[- ]facing\s+)?(?:documentation|doc|rfc|adr|spec)|markdown\s+spec)\b', 'write'),
+    (r'\b(?:provide\s+code|code\s+only)\b', 'build'),
+    (r'\b(?:write|implement|create|develop|build|scaffold)\s+(?:a\s+|an\s+|the\s+)?(?:python|go|rust|java|c\+\+|cpp|ts|typescript|js|javascript|vue(?:\s+3)?|react|fastapi|swift|modern\s+cpp|idiomatic\s+rust|in-memory|asynchronous|token\s+bucket|trie|jwt|circuit\s+breaker|lsm\s+tree|code|function|functions|composable|middleware|endpoint|class|service|component|pipeline|cache|tree|worker|tool|server|app|interactive\s+playground)\b', 'build'),
     (r'\b(?:tests?|unit\s*tests?|e2e|coverage|assert(?:ion)?s?|benchmarks?)\b', 'test'),
     (r'\b(?:fix|debug|troubleshoot|bug|repair|patch|defect)\b', 'fix'),
-    (r'\b(?:review|audit|inspect|lint|check\s+code)\b', 'review'),
-    (r'\b(?:design|style|theme|ui|ux|css|palette|layout)\b', 'design'),
+    (r'\b(?:review|audit|inspect|lint|check\s+code|accessibility|wcag|a11y|screen\s+reader)\b', 'review'),
+    (r'\b(?:secure|security|vulnerability|vulnerabilities|pentest|owasp|hack|hacked|sql\s+injection|xss)\b', 'secure'),
+    (r'\b(?:optimize|perf|performance|latency|speed\s+up|re-render|rerender|profile|profiling|bottleneck|slow|seconds|load\s*time|loading\s*time|ttfb|fcp|lcp|responsiveness|freez(?:e|ing)|hang(?:s|ing)|lag(?:s|gy)?|flicker)\b', 'optimize'),
+    (r'\b(?:generate\s+a\s+flowchart|flowchart\s+diagram)\b', 'design'),
+    (r'\b(?:build|implement|create|develop|scaffold|tooltip|popover|overflow|z-index|dropdown|modal|touch\s+target)\b', 'build'),
+    (r'\b(?:design|style|theme|ui|ux|css|palette|layout|typography|fonts?|typeface|hues|visual\s+hierarchy|spacing|padding|color\s+contrast|contrast\s+ratio)\b', 'design'),
     (r'\b(?:deploy|docker|k8s|kubernetes|release|ship|ci/cd)\b', 'deploy'),
     (r'\b(?:research|search|papers?|literature|pubmed|study)\b', 'research'),
-    (r'\b(?:write|doc|docs|article|changelog)\b', 'write'),
+    (r'\b(?:doc|docs|article|changelog)\b', 'write'),
     (r'\b(?:plan|roadmap|decision|spec|requirements)\b', 'plan'),
-    (r'\b(?:automate|script|bot|crawler|scrape|workflow)\b', 'automate'),
-    (r'\b(?:data|sql|postgres|clickhouse|db|query|database)\b', 'data'),
-    (r'\b(?:secure|security|vulnerability|pentest|auth|encrypt)\b', 'secure'),
-    (r'\b(?:optimize|perf|performance|latency|fast|speed)\b', 'optimize'),
-    (r'\b(?:operate|ops|monitor|sysadmin|status|health)\b', 'operate'),
+    (r'\b(?:automate|bot|crawler|scrape|workflow)\b', 'automate'),
+    (r'\b(?:data|sql|postgres|clickhouse|db|query|database|schema|migrate)\b', 'data'),
+    (r'\b(?:operate|ops|monitor|sysadmin|status|health|prometheus|grafana|alert|backup)\b', 'operate'),
+    (r'\b(?:explain|summary|summarize|overview|breakdown|explanation)\b', 'explain'),
 ]
 
 def task_intent(task):
@@ -118,7 +128,7 @@ def task_intent(task):
             break
 
     # Job check
-    job = 'build'
+    job = None
     for pat, j in JOB_PATTERNS:
         if re.search(pat, low):
             job = j

@@ -317,7 +317,19 @@ class LearningCurveTest(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.orig_data_dir = os.environ.get('SFP_DATA_DIR')
+        os.environ['SFP_DATA_DIR'] = cls.tmp.name
+        learn._CACHE.clear()
         cls.lc = learn.learning_curve(os.path.join(ROOT, 'tests'))
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.orig_data_dir is not None:
+            os.environ['SFP_DATA_DIR'] = cls.orig_data_dir
+        else:
+            os.environ.pop('SFP_DATA_DIR', None)
+        cls.tmp.cleanup()
 
     def test_reported_mistakes_are_mostly_fixed_when_the_same_task_is_asked_again(self):
         self.assertGreaterEqual(self.lc['training_mistakes_fixed_on_retry'], 0.80)
@@ -414,6 +426,23 @@ class CommandLineTest(IsolatedData):
         self.assertEqual(row['source'], 'test_passed')
         row_neg = learn.record_reward('django-celery', -0.5, task='write tests', source='test_failed')
         self.assertEqual(row_neg['verdict'], 'unhelpful')
+
+    def test_user_sfp_dir_is_untouched(self):
+        real_sfp = os.path.expanduser('~/.sfp')
+        before_files = set(os.listdir(real_sfp)) if os.path.isdir(real_sfp) else set()
+        with tempfile.TemporaryDirectory() as tmp:
+            old_dir = os.environ.get('SFP_DATA_DIR')
+            os.environ['SFP_DATA_DIR'] = tmp
+            try:
+                learn.reset_taste()
+                learn.record_reward('python-testing', 1.0, task='test python')
+            finally:
+                if old_dir is not None:
+                    os.environ['SFP_DATA_DIR'] = old_dir
+                else:
+                    os.environ.pop('SFP_DATA_DIR', None)
+        after_files = set(os.listdir(real_sfp)) if os.path.isdir(real_sfp) else set()
+        self.assertEqual(before_files, after_files)
 
 
 if __name__ == '__main__':

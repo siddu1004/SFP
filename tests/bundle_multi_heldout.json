@@ -1,0 +1,197 @@
+[
+  {
+    "task": "build the signup page with tests, deploy it and check security",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "ship", "secure"],
+    "expect_bundles": ["frontend-ship", "security-audit"]
+  },
+  {
+    "task": "design database schema, write migrations, implement restful endpoints and add unit tests",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["design", "build", "test"],
+    "expect_bundles": ["backend-ship", "testing-complete"]
+  },
+  {
+    "task": "refactor authentication service, write e2e tests, dockerize container and scan for vulnerabilities",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "ship", "secure"],
+    "expect_bundles": ["security-audit", "testing-complete"]
+  },
+  {
+    "task": "create full stack react app with node backend, database models, automated tests and deploy to production",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "ship"],
+    "expect_bundles": ["fullstack-ship", "frontend-ship"]
+  },
+  {
+    "task": "implement payment checkout flow, run penetration test, and setup prometheus monitoring dashboards",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "secure", "ship"],
+    "expect_bundles": ["security-audit", "ops-monitoring"]
+  },
+  {
+    "task": "develop graphql api, generate client sdk, write integration tests and publish npm package",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "ship"],
+    "expect_bundles": ["backend-ship", "testing-complete"]
+  },
+  {
+    "task": "write rust microservice with tokio, add benchmark suite, verify memory safety and create kubernetes helm chart",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "ship"],
+    "expect_bundles": ["cloud-native", "testing-complete"]
+  },
+  {
+    "task": "audit smart contract code, run property fuzz tests, and verify gas optimizations",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["secure", "test", "optimize"],
+    "expect_bundles": ["security-audit", "testing-complete"]
+  },
+  {
+    "task": "build mobile onboarding screens with flutter, add unit and widget tests, and configure fastlane release",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "ship"],
+    "expect_bundles": ["mobile-ship", "testing-complete"]
+  },
+  {
+    "task": "create accessible design system components in react, test with screen reader and document in storybook",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["design", "build", "test"],
+    "expect_bundles": ["frontend-ship", "design-system-core"]
+  },
+  {
+    "task": "build python data ingestion pipeline, add data quality validation checks and automate airflow dag deployment",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "ship"],
+    "expect_bundles": ["data-engineering", "backend-ship"]
+  },
+  {
+    "task": "implement oauth2 server, write comprehensive rfc compliance tests and configure reverse proxy rate limiting",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "secure"],
+    "expect_bundles": ["security-audit", "backend-ship"]
+  },
+  {
+    "task": "refactor legacy monolithic service into grpc microservices, benchmark latency and setup distributed tracing",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "optimize", "ship"],
+    "expect_bundles": ["backend-ship", "ops-monitoring"]
+  },
+  {
+    "task": "create cli tool in go, write cross-platform acceptance tests and setup goreleaser github action",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "test", "ship"],
+    "expect_bundles": ["backend-ship", "testing-complete"]
+  },
+  {
+    "task": "develop nextjs marketing landing page, optimize core web vitals and run accessibility audit",
+    "kind": "multi",
+    "min_bundles": 2,
+    "expect_jobs": ["build", "optimize", "test"],
+    "expect_bundles": ["frontend-ship", "accessibility-compliance"]
+  },
+  {
+    "task": "format this json file",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "explain python list comprehension syntax",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "fix indentation in styles.css",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "what does git stash pop do",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "rename variable x to item_index",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "convert hex color to rgb",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "print current date in iso format in bash",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "check if string starts with https",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "sort array of numbers ascending in javascript",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "regex to validate us zip code",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "find port listening on 8080 with netstat",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "curl command to send json post request with headers",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "sql query to count rows grouped by status",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "markdown syntax for hyperlinking text",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  },
+  {
+    "task": "calculate sha256 hash of a file on linux",
+    "kind": "narrow",
+    "max_bundles": 0,
+    "expect_bundles": []
+  }
+]

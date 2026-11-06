@@ -1,0 +1,404 @@
+{
+  "about": "Final exam: 30 project tasks with real project technology context",
+  "projects": {
+    "nextjs": {
+      "package.json": "{\"dependencies\": {\"next\": \"15.0.0\", \"react\": \"19.0.0\"}, \"devDependencies\": {\"typescript\": \"5.6.0\", \"@playwright/test\": \"1.48.0\"}}",
+      "app/page.tsx": "",
+      "app/layout.tsx": "",
+      "next.config.mjs": ""
+    },
+    "django": {
+      "requirements.txt": "django>=5.1\npsycopg2-binary\ncelery\n",
+      "manage.py": "",
+      "shop/models.py": "",
+      "shop/views.py": "",
+      "shop/migrations/0001_initial.py": ""
+    },
+    "fastapi": {
+      "pyproject.toml": "[project]\nname = \"api\"\ndependencies = [\"fastapi\", \"asyncpg\", \"redis\"]\n",
+      "app/main.py": "",
+      "app/routes.py": ""
+    },
+    "go": {
+      "go.mod": "module example.com/svc\n\ngo 1.23\n",
+      "main.go": "",
+      "internal/store.go": "",
+      "Dockerfile": ""
+    },
+    "spring": {
+      "pom.xml": "<project><parent><artifactId>spring-boot-starter-parent</artifactId></parent><dependency>spring-boot-starter-data-jpa</dependency></project>",
+      "src/main/java/App.java": ""
+    },
+    "flutter": {
+      "pubspec.yaml": "name: shop\ndependencies:\n  flutter:\n    sdk: flutter\n",
+      "lib/main.dart": "",
+      "lib/cart.dart": ""
+    },
+    "android": {
+      "build.gradle.kts": "plugins { id(\"com.android.application\") }\ndependencies { implementation(\"androidx.compose.ui:ui\") }",
+      "app/src/main/AndroidManifest.xml": "",
+      "app/src/main/java/Main.kt": ""
+    },
+    "rust": {
+      "Cargo.toml": "[package]\nname = \"cli\"\n",
+      "src/main.rs": "",
+      "src/lib.rs": ""
+    },
+    "laravel": {
+      "composer.json": "{\"require\": {\"laravel/framework\": \"^11.0\"}}",
+      "app/Http/Controllers/OrderController.php": ""
+    },
+    "vue": {
+      "package.json": "{\"dependencies\": {\"vue\": \"3.5.0\", \"vite\": \"5.4.0\"}}",
+      "src/App.vue": "",
+      "vite.config.ts": ""
+    }
+  },
+  "cases": [
+    {
+      "project": "nextjs",
+      "task": "optimize component re-rendering on product listing filters",
+      "expect": [
+        "react-performance",
+        "frontend-patterns"
+      ],
+      "avoid": [
+        "django-patterns",
+        "django-tdd",
+        "golang-patterns"
+      ]
+    },
+    {
+      "project": "nextjs",
+      "task": "implement accessible modal dialog with focus trap and aria tags",
+      "expect": [
+        "frontend-a11y",
+        "accessibility",
+        "accessibility-audit"
+      ],
+      "avoid": [
+        "backend-patterns",
+        "python-testing"
+      ]
+    },
+    {
+      "project": "nextjs",
+      "task": "add end-to-end tests for customer checkout flow",
+      "expect": [
+        "e2e-testing",
+        "browser-qa"
+      ],
+      "avoid": [
+        "django-tdd",
+        "golang-testing"
+      ]
+    },
+    {
+      "project": "nextjs",
+      "task": "redesign dashboard analytics cards using contemporary bento style",
+      "expect": [
+        "bento",
+        "design-taste-frontend",
+        "clean"
+      ],
+      "avoid": [
+        "backend-patterns"
+      ]
+    },
+    {
+      "project": "nextjs",
+      "task": "fix layout shift caused by dynamic advertisement banners",
+      "expect": [
+        "frontend-patterns",
+        "react-performance"
+      ],
+      "avoid": [
+        "django-patterns"
+      ]
+    },
+    {
+      "project": "django",
+      "task": "write unit tests for custom user authentication backend",
+      "expect": [
+        "django-tdd",
+        "python-testing"
+      ],
+      "avoid": [
+        "react-testing",
+        "golang-testing",
+        "rust-testing"
+      ]
+    },
+    {
+      "project": "django",
+      "task": "optimize slow orm query fetching related customer orders with prefetch",
+      "expect": [
+        "django-patterns",
+        "postgres-patterns"
+      ],
+      "avoid": [
+        "react-performance"
+      ]
+    },
+    {
+      "project": "django",
+      "task": "add asynchronous background job to process monthly customer billing reports",
+      "expect": [
+        "django-celery",
+        "backend-patterns"
+      ],
+      "avoid": [
+        "react-patterns"
+      ]
+    },
+    {
+      "project": "django",
+      "task": "prevent cross-site request forgery and sql injection on rest endpoints",
+      "expect": [
+        "django-security",
+        "security-review",
+        "web-app-penetration-testing"
+      ],
+      "avoid": [
+        "frontend-patterns"
+      ]
+    },
+    {
+      "project": "django",
+      "task": "create zero downtime schema migration to add foreign key to payments table",
+      "expect": [
+        "database-migrations",
+        "django-patterns"
+      ],
+      "avoid": [
+        "react-testing"
+      ]
+    },
+    {
+      "project": "fastapi",
+      "task": "write integration tests for jwt authentication middleware",
+      "expect": [
+        "python-testing",
+        "fastapi-patterns"
+      ],
+      "avoid": [
+        "react-testing",
+        "golang-testing"
+      ]
+    },
+    {
+      "project": "fastapi",
+      "task": "implement distributed rate limiting on high-frequency telemetry endpoints",
+      "expect": [
+        "fastapi-patterns",
+        "backend-patterns",
+        "redis-patterns"
+      ],
+      "avoid": [
+        "frontend-patterns"
+      ]
+    },
+    {
+      "project": "fastapi",
+      "task": "add structured error handling and validation responses for pydantic models",
+      "expect": [
+        "fastapi-patterns",
+        "backend-patterns",
+        "error-handling"
+      ],
+      "avoid": [
+        "django-tdd"
+      ]
+    },
+    {
+      "project": "fastapi",
+      "task": "profile latency bottleneck in async database connection pool",
+      "expect": [
+        "fastapi-patterns",
+        "backend-patterns",
+        "postgres-patterns"
+      ],
+      "avoid": [
+        "react-performance"
+      ]
+    },
+    {
+      "project": "fastapi",
+      "task": "generate openapi documentation and client typescript types",
+      "expect": [
+        "api-design",
+        "fastapi-patterns"
+      ],
+      "avoid": [
+        "django-patterns"
+      ]
+    },
+    {
+      "project": "go",
+      "task": "write table-driven unit tests for concurrent worker pool",
+      "expect": [
+        "golang-testing"
+      ],
+      "avoid": [
+        "python-testing",
+        "rust-testing",
+        "django-tdd"
+      ]
+    },
+    {
+      "project": "go",
+      "task": "diagnose race condition in channel synchronization logic",
+      "expect": [
+        "golang-patterns",
+        "golang-testing"
+      ],
+      "avoid": [
+        "python-patterns",
+        "react-patterns"
+      ]
+    },
+    {
+      "project": "go",
+      "task": "implement graceful shutdown handler for http rest server",
+      "expect": [
+        "golang-patterns",
+        "backend-patterns"
+      ],
+      "avoid": [
+        "django-patterns"
+      ]
+    },
+    {
+      "project": "go",
+      "task": "benchmark memory allocations in binary protocol deserializer",
+      "expect": [
+        "golang-testing",
+        "benchmark"
+      ],
+      "avoid": [
+        "python-testing"
+      ]
+    },
+    {
+      "project": "go",
+      "task": "structure domain services using hexagonal clean architecture",
+      "expect": [
+        "golang-patterns",
+        "hexagonal-architecture"
+      ],
+      "avoid": [
+        "react-patterns"
+      ]
+    },
+    {
+      "project": "rust",
+      "task": "write unit tests and property tests for custom state machine",
+      "expect": [
+        "rust-testing"
+      ],
+      "avoid": [
+        "python-testing",
+        "golang-testing",
+        "django-tdd"
+      ]
+    },
+    {
+      "project": "rust",
+      "task": "eliminate memory clone overhead using zero-copy deserialization",
+      "expect": [
+        "rust-patterns"
+      ],
+      "avoid": [
+        "python-patterns",
+        "django-patterns"
+      ]
+    },
+    {
+      "project": "rust",
+      "task": "implement thread-safe bounded channel for async task processing",
+      "expect": [
+        "rust-patterns"
+      ],
+      "avoid": [
+        "golang-patterns"
+      ]
+    },
+    {
+      "project": "rust",
+      "task": "add fuzz testing harness for untrusted network packet parsing",
+      "expect": [
+        "rust-testing"
+      ],
+      "avoid": [
+        "python-testing"
+      ]
+    },
+    {
+      "project": "rust",
+      "task": "structure error types using thiserror and custom domain enums",
+      "expect": [
+        "rust-patterns",
+        "error-handling"
+      ],
+      "avoid": [
+        "react-patterns"
+      ]
+    },
+    {
+      "project": "springboot",
+      "task": "write mockmvc unit tests for customer rest controller endpoints",
+      "expect": [
+        "springboot-tdd"
+      ],
+      "avoid": [
+        "python-testing",
+        "golang-testing",
+        "django-tdd"
+      ]
+    },
+    {
+      "project": "springboot",
+      "task": "optimize hibernate n plus one query problems with entity graphs",
+      "expect": [
+        "springboot-patterns",
+        "jpa-patterns"
+      ],
+      "avoid": [
+        "react-performance"
+      ]
+    },
+    {
+      "project": "springboot",
+      "task": "configure spring security with jwt bearer token authorization",
+      "expect": [
+        "springboot-security",
+        "security-review"
+      ],
+      "avoid": [
+        "frontend-patterns"
+      ]
+    },
+    {
+      "project": "springboot",
+      "task": "implement resilience4j circuit breaker on external supplier service",
+      "expect": [
+        "springboot-patterns",
+        "backend-patterns"
+      ],
+      "avoid": [
+        "django-patterns"
+      ]
+    },
+    {
+      "project": "springboot",
+      "task": "write integration tests using testcontainers with real postgres container",
+      "expect": [
+        "springboot-tdd"
+      ],
+      "avoid": [
+        "django-tdd",
+        "python-testing"
+      ]
+    }
+  ]
+}

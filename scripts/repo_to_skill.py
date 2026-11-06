@@ -131,11 +131,7 @@ def query_local_llm(prompt, name='skill', runtimes=None, timeout=40):
     except ImportError:
         return None
     candidates = []
-    try:
-        with urllib.request.urlopen('http://127.0.0.1:8787/health', timeout=0.5):
-            candidates.append(('http://127.0.0.1:8787/v1', 'sfp/heavy'))
-    except OSError:
-        pass
+    # Never probe 8787; local models only via sfp_route
     for f in sfp_route.discover(runtimes, timeout=0.6):
         best = max(f['models'], key=sfp_route.strength_of)
         candidates.append((f['base_url'], best))
