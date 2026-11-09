@@ -8,7 +8,7 @@ The router and the hive: find the right skill for any task, installed or not, an
 
 | Skill | What it does |
 |---|---|
-| `sfp` | SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
+| `sfp` | SFP (Skills for Productivity) is a library of 1,065 agent skills across 24 categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks… |
 | `sfp-hive` | Chooses which SFP skills to use for a task, in what order, and learns from feedback. Use at the start of any substantial build, fix, test, review, security or deploy task, and again when the work move… |
 
 ## frontend (88)

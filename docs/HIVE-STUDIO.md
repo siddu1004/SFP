@@ -4,7 +4,7 @@ Two SFP extensions are installed in Antigravity today: the "SFP Hive Monitor" we
 
 - **Follow the agent.** Phase tracking from workspace activity, with a Kalman filter and a Markov chain: `docs/TRACKING.md`.
 - **See and steer the choice.** `--explain`, `--include` and `--exclude`: `docs/HIVE-INSPECTOR.md`.
-- **Browse 819 skills as about 40 clusters,** and add your own.
+- **Browse 1,065 skills as about 40 clusters,** and add your own.
 
 The engine and the bridge are built and tested. `extensions/antigravity-hive/src/hive.ts` has every call the interface needs: `selectArgs`, `feedbackArgs`, `interventionFeedback`, `trackArgs`, `parseTrack`, `ActivityBuffer`, `relative`, `clustersArgs`, `clusterAddArgs`, `clusterRemoveArgs` and `parseClusters`. The build is the interface and the wiring.
 

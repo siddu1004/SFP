@@ -9826,7 +9826,7 @@
   {
    "name": "sfp",
    "category": "sfp",
-   "description": "SFP (Skills for Productivity) is a library of about 520 agent skills sorted into categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks, MCP), AI/ML, AI gateway, data APIs, content, business, industry, networking, research, web3, engineering, memory. Use it first whenever a task might have a matching skill - building UI, APIs or apps, reviewing or securing code, designing agents, plugins or MCP servers, finding a free API or data source, writing or video work - or when the user asks \"is there a skill for...\", \"what can SFP do\", or which skill to use.",
+   "description": "SFP (Skills for Productivity) is a library of 1,065 agent skills across 24 categories - frontend, backend, mobile, languages, testing, devops, security, agents, agent-dev (skills, plugins, hooks, MCP), AI/ML, AI gateway, data APIs, content, business, industry, networking, research, web3, engineering, memory. Use it first whenever a task might have a matching skill - building UI, APIs or apps, reviewing or securing code, designing agents, plugins or MCP servers, finding a free API or data source, writing or video work - or when the user asks \"is there a skill for...\", \"what can SFP do\", or which skill to use.",
    "source": "siddu1004/SFP",
    "license": "",
    "path": "plugins/sfp/skills/sfp",

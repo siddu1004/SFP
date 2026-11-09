@@ -45,7 +45,7 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 <table align="center">
   <tr>
     <td align="center" valign="top" width="33%"><h3>97%</h3>right skill chosen on the 150-task blind-judged final exam (<b>93%</b> right first)</td>
-    <td align="center" valign="top" width="33%"><h3>95%</h3>less for your AI to carry than having every skill always on (4,268 vs 81,691 tokens)</td>
+    <td align="center" valign="top" width="33%"><h3>95%</h3>less for your AI to carry than having every skill always on (4,268 vs 81,690 tokens)</td>
     <td align="center" valign="top" width="33%"><h3>0</h3>words sent out by SFP when it picks: it runs on your machine</td>
   </tr>
 </table>
@@ -54,7 +54,7 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 
 | | Keyword search | Every skill always on | SFP |
 |---|---|---|---|
-| **What your AI carries** | Only what it finds | 81,691 tokens (41% of its memory) | About 4,000 tokens |
+| **What your AI carries** | Only what it finds | 81,690 tokens (41% of its memory) | About 4,000 tokens |
 | **Knows your project** | No | No | Yes: it reads your project files |
 | **Drops unrelated junk picks** | No (62.5% junk on negative/edge tasks) | No | Yes: **0.0% junk** on `precision_heldout` (87.5% hit / 76.5% precision) |
 | **Learns what you like** | No | No | Yes, from your feedback (80% to 100% format fit, 100% named-format override) |
@@ -436,13 +436,13 @@ Words only, recomputed from this repository each time this page is built, so it 
 
 | What you install | Skills your agent can use | Skill descriptions it carries each session | Share of a 200k-token window |
 |---|---:|---:|---:|
-| `sfp` and `sfp-hive` only (the rest on demand) | 2 + all 1063 through them | about 266 tokens | 0.1% |
-| `starter` preset | 174 | about 15,372 tokens | 7.7% |
-| `frontend-dev` preset | 225 | about 16,454 tokens | 8.2% |
-| `backend-dev` preset | 151 | about 13,407 tokens | 6.7% |
-| `mobile-dev` preset | 84 | about 6,893 tokens | 3.4% |
-| `agent-builder` preset | 309 | about 20,675 tokens | 10.3% |
-| `everything` | 1065 | about 81,691 tokens | 40.8% |
+| `sfp` and `sfp-hive` only (the rest on demand) | 2 + all 1063 through them | about 265 tokens | 0.1% |
+| `starter` preset | 174 | about 15,371 tokens | 7.7% |
+| `frontend-dev` preset | 225 | about 16,453 tokens | 8.2% |
+| `backend-dev` preset | 151 | about 13,406 tokens | 6.7% |
+| `mobile-dev` preset | 84 | about 6,892 tokens | 3.4% |
+| `agent-builder` preset | 309 | about 20,674 tokens | 10.3% |
+| `everything` | 1065 | about 81,690 tokens | 40.8% |
 
 **How fast is it?**
 

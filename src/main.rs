@@ -122,7 +122,7 @@ fn resolve_sfp_root() -> Result<PathBuf, String> {
 
 fn print_help() {
     println!(
-        "\x1b[1m\x1b[36mSFP (Skills for Productivity)\x1b[0m v{} — 819 skills, one intelligent hive.
+        "\x1b[1m\x1b[36mSFP (Skills for Productivity)\x1b[0m v{} — 1,065 skills across 24 categories, one intelligent hive.
 Give your AI coding agent the right skills for the job, not all of them.
 
 \x1b[1mUSAGE:\x1b[0m
@@ -137,6 +137,10 @@ Give your AI coding agent the right skills for the job, not all of them.
   \x1b[33mneeds\x1b[0m \"<task>\"       Check what capabilities or external tools a task needs
   \x1b[33mdoctor\x1b[0m              Check catalog, index, local models, and hive connections
   \x1b[33mroute\x1b[0m [args]          Manage or start the local model router (Ollama, LM Studio, etc.)
+  \x1b[33mmodels\x1b[0m [probe|add|remove] The models the hive asks: local ones found, plus any you add by API
+  \x1b[33mtaste\x1b[0m [--reset]        Learned facet preferences (output forms, delivery style, depth)
+  \x1b[33mmentor\x1b[0m [profile|grow]  What you lean towards, and new skills grown from research for it
+  \x1b[33mresearch\x1b[0m [args]       Draft, refresh, approve or reject skills written from research papers
   \x1b[33mapps\x1b[0m [args]           Manage companion apps (OmniRoute, Strix, etc.)
   \x1b[33mlist\x1b[0m                List categories and install profiles
   \x1b[33mversion\x1b[0m             Show version information
@@ -218,7 +222,8 @@ fn main() {
                 )
             }
         }
-        "select" | "live" | "track" | "feedback" | "clusters" | "library" | "bundles" => (
+        "select" | "live" | "track" | "feedback" | "clusters" | "library" | "bundles"
+        | "models" | "taste" | "mentor" | "research" => (
             root_dir.join("mcp").join("sfp_hive.py"),
             args.iter().map(|s| s.as_str()).collect(),
         ),

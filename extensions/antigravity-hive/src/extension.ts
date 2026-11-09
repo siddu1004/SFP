@@ -1473,7 +1473,7 @@ export class StudioViewProvider implements vscode.WebviewViewProvider {
     const libraryScriptUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'library.js')));
     const iconUri = webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionPath, 'media', 'hive.svg')));
     const root = sfpRoot();
-    const catalogCount = root ? hive.catalogNames(root).length : 819;
+    const catalogCount = root ? hive.catalogNames(root).length : 1065;
 
     return `<!DOCTYPE html>
 <html lang="en">

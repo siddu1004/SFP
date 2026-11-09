@@ -168,7 +168,7 @@ def read_situation(task, goal, scan_result):
 
 
 def detect_missing(words, said=None):
-    """Detects when a task is asking for domain concepts absent from the entire 819-skill catalog."""
+    """Detects when a task is asking for domain concepts absent from the entire 1,065-skill catalog."""
     if not words:
         return None
     content = [w for w in words if len(w) > 2]

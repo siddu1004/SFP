@@ -5,7 +5,7 @@ SFP Hive connects your editor to hundreds of productivity skills, automatically 
 ## Visual Tour
 
 ### Areas
-Browse 819 skills organized across 11 functional domains:
+Browse 1,065 skills organized across 11 functional domains:
 ![Skill Library Areas](media/screenshot-areas.png)
 
 ### Bundles

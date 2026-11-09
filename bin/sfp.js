@@ -366,7 +366,7 @@ function resolveSfpRoot() {
 }
 
 function showHelp(skillCount) {
-  const countStr = skillCount ? `${skillCount} skills` : '894 skills';
+  const countStr = skillCount ? `${skillCount} skills` : '1,065 skills';
   console.log(`
 \x1b[1m\x1b[36mSFP (Skills for Productivity)\x1b[0m — ${countStr}, one intelligent hive.
 Give your AI coding agent the right skills for the job, not all of them.

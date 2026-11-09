@@ -1,6 +1,6 @@
 # The skill library: what skills do, and bundles
 
-819 skills are too many to browse by name. The library groups them three ways, in the sidebar and in `sfp_hive.py library`:
+1,065 skills are too many to browse by name. The library groups them three ways, in the sidebar and in `sfp_hive.py library`:
 
 - **What it does** (15 purposes): the job the skill is for, such as "Test and verify" or "Deploy and release".
 - **Clusters** (about 40): the topic, such as "Animation and motion" or "GSD project workflow". See `clusters.json`.
