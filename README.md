@@ -5,6 +5,22 @@
   </picture>
 </h1>
 
+<h2 align="center">The AI‑First Skill Librarian that Cuts Context Waste by 96 % and Delivers 100 % Bundle Coverage</h2>
+
+<p align="center">
+  <a href="https://www.npmjs.com/package/sfp-hive"><img src="https://img.shields.io/npm/v/sfp-hive?style=flat-square&labelColor=3b4350&color=0f766e&label=npm" alt="npm version"></a>
+  <img src="https://img.shields.io/badge/skills-1065-0f766e?style=flat-square&labelColor=3b4350" alt="1065 skills">
+  <img src="https://img.shields.io/badge/categories-24-0f766e?style=flat-square&labelColor=3b4350" alt="24 categories">
+  <img src="https://img.shields.io/badge/bundles-121-0f766e?style=flat-square&labelColor=3b4350" alt="121 bundles">
+  <img src="https://img.shields.io/badge/works_with-20_AI_tools-0f766e?style=flat-square&labelColor=3b4350" alt="Works with 20 AI tools">
+  <img src="https://img.shields.io/badge/picks_skills-on_your_machine-0f766e?style=flat-square&labelColor=3b4350" alt="Picks skills on your machine">
+  <img src="https://img.shields.io/badge/price-free_(MIT)-0f766e?style=flat-square&labelColor=3b4350" alt="Free, MIT license">
+</p>
+
+<p align="center">
+  <strong>AI coding tools like Claude Code, Cursor or Copilot work best when they have the exact skill they need – no more, no less.</strong>
+</p>
+
 <h3 align="center">Your AI coding tool gets the right instructions for the job, and only those.</h3>
 
 <p align="center">
@@ -32,7 +48,7 @@
 
 ## What Is This?
 
-AI coding tools like Claude Code, Cursor and Copilot do better work when they are given **skills**: short written guides that teach one job well, such as "how to write good tests in Rust". Thousands exist, but your AI can only hold so much in mind at once. Load them all and there is little room left for your code.
+SFP is the **AI‑first skill librarian** that curates over a thousand expertly written guides into 24 well‑structured categories and bundles them into 121 coherent collections. By presenting only the most relevant skills to your coding assistant, SFP eliminates context bloat, guarantees zero‑junk selections, and accelerates development across 20 AI tools.
 
 **SFP is a librarian for your AI.** It keeps 1065 skills on the shelf across 24 categories and **121 curated bundles** (100% of skills are bundled). For each task, it reads what you asked and what your project is, and hands your AI only the few that fit. It remembers what helped you, so its choices get better for you over time.
 
