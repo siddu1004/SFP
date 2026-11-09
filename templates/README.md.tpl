@@ -50,8 +50,6 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
   </tr>
 </table>
 
-<p align="center"><sub>On the 150-task final exam (<code>exam_plain</code> 80, <code>exam_project</code> 30, <code>exam_reworded</code> 40), blind pooled judging scores 97.3% chosen / 93.3% first (strict single-label 40.7% / 36.0%). On the 130-task frozen v2 held-out suites (commit <code>02b0485</code>), SFP 3.20 scores 95.4% words-only and 91.5% with LLM rerank, with <b>0.0%</b> junk rate. Method and limits are in <a href="#the-proof">The Proof</a>.</sub></p>
-
 ### Why Not Just Use Search, or Turn Everything On?
 
 | | Keyword search | Every skill always on | SFP |
@@ -66,20 +64,27 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 
 ## Why SFP: The Unfair Advantages
 
-Most AI coding setups suffer from two silent failure modes: **context bloat** (stuffing 50+ instructions into the prompt until the AI hallucinates and runs out of budget) or **context starvation** (the AI guesses library conventions and writes fragile boilerplate). SFP eliminates both.
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/advantages-dark.svg">
+    <img src="assets/advantages-light.svg" alt="Six unfair advantages of SFP: 96% less context, manifest stack fit, 0.0% junk rate, adaptive taste, 100% local and private execution, and 20 AI tools synced." width="100%">
+  </picture>
+</p>
 
-1. **Saves 95% of Agent Context Budget**
-   Instead of carrying @@ALL_TOKENS@@ tokens across thousands of rules into every prompt turn, SFP loads only the surgical 1 to 3 instructions (~4,000 tokens) needed right now. Your AI gets maximum headroom for your actual code, diffs, and compiler diagnostics.
-2. **True Project and Tech Stack Awareness**
-   SFP inspects root manifests (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, etc.). When you say "add authentication and tests", a Go service receives `golang-patterns` and `golang-testing`, while a Django project gets `django-patterns` and `django-tdd`. Never cross-contaminates stacks.
-3. **Zero Hallucinated Junk (0.0% Junk Rate)**
-   Micro-edits ("fix typo on line 42") or negative edge requests cleanly return empty stacks with zero fluff. Keyword search dumps 62.5% unrelated junk on edge tasks; SFP achieves 0.0% junk on `precision_heldout`.
-4. **Taste Adaptation That Respects How You Learn**
-   SFP tracks feedback over a 30-day half-life. If you learn fastest through interactive code examples, motion diagrams, or concise technical guides, SFP automatically prioritizes skills in your preferred format. An explicit prompt like "as a video" or "as text" triggers a 100% strict format override.
-5. **Private and Local First**
-   Every selection runs directly on your machine in 2 to 3 ms using standard Python. If you enable local embedding (`bge-m3`) or reranking (`lfm2-24b-a2b`), queries run against your own Ollama or LM Studio instance. Zero telemetry. Zero prompt leakage.
-6. **Unified Across 20 Coding Tools**
-   Switch freely between Claude Code, Cursor, Antigravity, VS Code Copilot, Windsurf, Codex, and terminal agents. Your skills, bundles, and learned preferences stay synchronized across every tool.
+Most AI coding setups fail in one of two ways: **context bloat** (stuffing 50+ static rules into the system prompt until the model loses track of your code) or **context starvation** (leaving the model to guess framework conventions, accessibility rules, and security checks). SFP solves both at the root:
+
+1. **Surgical Context Budgeting**
+   Instead of burning @@ALL_PERCENT@@% of a 200k window before you type a word, your agent carries a ~700-token router at rest and loads only the 1 to 3 specialist skills (~3,400 to 4,200 tokens) required for the current task.
+2. **Manifest-Driven Stack Isolation**
+   Before scoring candidates, the Hive inspects root manifests (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `pubspec.yaml`, `*.csproj`). A Rust workspace never receives Python or Next.js rules, eliminating cross-stack hallucination.
+3. **Confidence Gating Against Noise**
+   Single weak-word matches are rejected unless backed by multi-signal quorum or technology fit. Micro-edits (*"fix typo on line 42"*) and out-of-domain queries return an empty stack with **0.0% junk**.
+4. **30-Day Half-Life Taste & Autonomous Mentor**
+   Your `helped` / `unhelpful` feedback trains a local LinUCB model and tracks format preferences (code, prose, animation, video). When your work hits a topic the catalog covers thinly, `sfp mentor grow` synthesizes peer-reviewed papers from OpenAlex and arXiv into a draft skill for your approval.
+5. **Zero-Telemetry Local Execution**
+   Deterministic selection runs in ~3 ms using standard-library Python. Optional semantic search (`bge-m3`) and LLM reranking (`lfm2-24b-a2b`) run against your own local Ollama or LM Studio server.
+6. **One Brain Across 20 IDEs and CLIs**
+   Install once and keep skills, MCP tools, and `.agents/rules/sfp-active-skills.md` synchronized across Claude Code, Antigravity, Cursor, VS Code Copilot, Codex, Windsurf, Gemini CLI, and 13 more tools.
 
 <details>
 <summary><b>New to this? What the words mean</b></summary>
@@ -159,6 +164,13 @@ Using Claude Code? You can install SFP as a plugin instead: `/plugin marketplace
 
 The same words, *"write tests for the orders"*, in five different projects. The hive itself generates this table each time this page is built:
 
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/project-fit-dark.svg">
+    <img src="assets/project-fit-light.svg" alt="Same words across five projects: SFP inspects each project manifest and chooses Next.js, Rust, .NET, Flutter and Django testing skills with zero cross-contamination." width="100%">
+  </picture>
+</p>
+
 @@SAME_WORDS_TABLE@@
 
 A keyword search gives all five the same list. The hive reads the project, so no stack gets a skill for the wrong technology.
@@ -205,8 +217,8 @@ sfp taste --reset    # start again from neutral
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/taste-dark.svg">
-    <img src="bench/charts/taste-light.svg" alt="How often the first pick is in the format a person likes, before and after SFP learns their taste" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/taste-dark.svg">
+    <img src="assets/taste-light.svg" alt="How SFP learns your taste across animation, reading, code and video, and drafts new skills from OpenAlex and arXiv papers." width="100%">
   </picture>
 </p>
 
@@ -229,8 +241,8 @@ SFP works with no model at all. Run a free local model and it also understands w
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/plain-words-dark.svg">
-    <img src="bench/charts/plain-words-light.svg" alt="How often the right skill is chosen for tasks in plain words, as meaning and a model check are added" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/plain-words-dark.svg">
+    <img src="assets/plain-words-light.svg" alt="How adding bge-m3 meaning embeddings and a local model judge maps plain-English beginner prompts to specialist skills." width="100%">
   </picture>
 </p>
 
@@ -314,6 +326,13 @@ npx sfp-hive install --profile frontend-dev
 ## Business, Marketing and Growth Skills
 
 For founders, product managers and growth teams, SFP ships **248 business and content skills** (`business-ops` + `content-media`) covering market research, fundraising, pricing, SEO and multi-channel publishing.
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/growth-flow-dark.svg">
+    <img src="assets/growth-flow-light.svg" alt="Ordered business and marketing bundles: Fundraise & Positioning Pipeline (market-research -> price-framing -> investor-materials -> investor-outreach) and Publish & Growth Content Engine (brand-voice -> article-writing -> seo -> content-engine)." width="100%">
+  </picture>
+</p>
 
 | Area / Bundle | Skills Included | What It Solves |
 |---|---|---|
@@ -404,8 +423,8 @@ Words only, recomputed from this repository each time this page is built, so it 
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/tokens-dark.svg">
-    <img src="bench/charts/tokens-light.svg" alt="Every skill always on costs 81,931 tokens; only what SFP picked costs about 5,000" width="100%">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/tokens-dark.svg">
+    <img src="assets/tokens-light.svg" alt="Context window cost and selection speed: every skill always on costs 81,691 tokens while SFP loads 3,383 tokens on average (96% less) in ~3 to 7 ms." width="100%">
   </picture>
 </p>
 

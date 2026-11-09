@@ -330,7 +330,11 @@ def main():
         write(ASSETS, 'how-it-works-%s.svg' % mode, flow(total, t))
         write(ASSETS, 'hive-architecture-%s.svg' % mode, architecture(t))
         write(ASSETS, 'results-rounds-%s.svg' % mode, rounds(dz, t))
-    print('wrote assets/{how-it-works,hive-architecture,results-rounds}-*.svg and bench/charts/* from', os.path.basename(latest))
+    import sys
+    sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+    import readme_art
+    readme_art.main()
+    print('wrote bench/charts/* and animated assets/* from', os.path.basename(latest))
 
 
 if __name__ == '__main__':
