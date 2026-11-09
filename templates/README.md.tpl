@@ -11,6 +11,7 @@
   <a href="https://www.npmjs.com/package/sfp-hive"><img src="https://img.shields.io/npm/v/sfp-hive?style=flat-square&labelColor=3b4350&color=0f766e&label=npm" alt="npm version"></a>
   <img src="https://img.shields.io/badge/skills-@@TOTAL@@-0f766e?style=flat-square&labelColor=3b4350" alt="@@TOTAL@@ skills">
   <img src="https://img.shields.io/badge/categories-@@NCATS@@-0f766e?style=flat-square&labelColor=3b4350" alt="@@NCATS@@ categories">
+  <img src="https://img.shields.io/badge/bundles-121-0f766e?style=flat-square&labelColor=3b4350" alt="121 bundles">
   <img src="https://img.shields.io/badge/works_with-20_AI_tools-0f766e?style=flat-square&labelColor=3b4350" alt="Works with 20 AI coding tools">
   <img src="https://img.shields.io/badge/picks_skills-on_your_machine-0f766e?style=flat-square&labelColor=3b4350" alt="Picks skills on your machine">
   <img src="https://img.shields.io/badge/price-free_(MIT)-0f766e?style=flat-square&labelColor=3b4350" alt="Free, MIT license">
@@ -33,7 +34,7 @@
 
 AI coding tools like Claude Code, Cursor and Copilot do better work when they are given **skills**: short written guides that teach one job well, such as "how to write good tests in Rust". Thousands exist, but your AI can only hold so much in mind at once. Load them all and there is little room left for your code.
 
-**SFP is a librarian for your AI.** It keeps @@TOTAL@@ skills on the shelf across @@NCATS@@ categories. For each task, it reads what you asked and what your project is, and hands your AI only the few that fit. It remembers what helped you, so its choices get better for you over time.
+**SFP is a librarian for your AI.** It keeps @@TOTAL@@ skills on the shelf across @@NCATS@@ categories and **121 curated bundles** (100% of skills are bundled). For each task, it reads what you asked and what your project is, and hands your AI only the few that fit. It remembers what helped you, so its choices get better for you over time.
 
 <p align="center">
   <picture>
@@ -439,7 +440,7 @@ Words only, a choice takes about @@SEL_MS@@ ms inside the host process. With mea
 We would rather you hear this from us. These are real results from version @@SEL_VERSION@@:
 
 - **Strict confidence gating trades recall on oblique paraphrases for 0% junk.** On `precision_heldout` (40 tasks, including 15 micro-edits and out-of-domain queries), SFP drops junk rate from 50.0% to **0.0%** (87.5% hit, 76.5% mean precision; 79.8% words-only). However, because single weak-token matches without technology or job corroboration are now rejected (`clears_confidence`), recall on the earlier `230cc07` held-out sets (`final_heldout_plain` 50.0%, `final_heldout_project` 63.3%, `final_heldout_reworded` 52.5%) and `plain_words_holdout2` (40.0%) remains below 80%.
-- **Multi-clause bundle stacking only fires when clauses match built-in bundle vocabularies.** While narrow tasks cleanly attach 0 bundles (**100.0%** on `bundle_multi_heldout` narrow tasks) and `--use-bundles` stacks any number of named bundles without duplicates, automatic multi-bundle attachment on `bundle_multi_heldout` multi-job tasks hits **26.7%** (4 of 15 attach $\ge 2$ bundles) because `bundles.json` only covers specific stacks (React, Flutter, Docker, security hardening, e2e).
+- **Multi-clause bundle stacking only fires when clauses match focused workflow bundles.** All 1,065 skills are organized across **121 bundles** in `bundles.json`. While narrow tasks cleanly attach 0 bundles (**100.0%** on `bundle_multi_heldout` narrow tasks) and `--use-bundles` stacks any number of named bundles without duplicates, automatic push only attaches focused workflow bundles (up to 6 skills) so broad domain collections stay suggested rather than flooding context.
 - **Secondary skills in multi-skill stacks still dilute mean precision.** Even when the lead skill is right and no `avoid` skill appears (0.0% junk), picking a 2nd or 3rd supporting skill that was not in the narrow human `expect` list brings mean precision on `precision_heldout` to **76.5%** (words-only **79.8%**), just shy of 80%.
 - **The model check has a latency and top-1 trade-off.** Asking `lfm2-24b-a2b` takes ~360 ms typical (up to ~1.7 s p95) and on the 91 tuned tasks "right skill first" is 80.2% vs 84.6% with embeddings alone.
 

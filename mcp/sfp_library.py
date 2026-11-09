@@ -328,6 +328,7 @@ WORDS_CAP = 1.2      # the weight of query words that counts as a full match: a 
 MATCH_MIN = 0.45     # a bundle is suggested from this score
 BUNDLE_COMMON_WORD = 60   # a word in more skills than this cannot alone tie a task to a bundle
 PUSH_MIN = 0.6       # a bundle is attached whole from this score
+PUSH_MAX_SKILLS = 6  # automatic push attaches focused workflows (up to 6 skills); larger domain collections are suggested or attached via --use-bundles
 DF_SCALE = 893       # the library size the weights above were tuned at: a word's count is read relative to it, so the
                      # library growing does not drift every bundle's score down
 
@@ -435,7 +436,8 @@ def match_bundles(task, chosen=(), limit=None, exclude=(), tech=None, use_bundle
         if best_score < MATCH_MIN:
             continue
 
-        out.append({'id': b['id'], 'name': b['name'], 'score': round(best_score, 2), 'push': best_score >= PUSH_MIN,
+        out.append({'id': b['id'], 'name': b['name'], 'score': round(best_score, 2),
+                    'push': best_score >= PUSH_MIN and len(b['skills']) <= PUSH_MAX_SKILLS,
                     'skills': b['skills'], 'missing': [n for n in b['skills'] if n not in chosen],
                     'why': 'matches ' + ', '.join(best_hit[:4]) if best_hit else 'the hive already chose %d of its skills' % int(have * len(b['skills'])),
                     'hits': best_hit[:6]})

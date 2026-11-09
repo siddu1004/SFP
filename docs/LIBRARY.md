@@ -51,7 +51,7 @@ The first round of rules scored 76% on the first 80 dev skills and 57% on a firs
 
 ## Bundles
 
-Bundles live in `bundles.json`. Eighteen of them are the hive's own recipes (`mcp/stack_recipes.json`), shown here by reference so there is one source: the hive also uses those recipes to seed its predictions. The rest are curated sets. Every skill named is checked against the catalog by `tests/test_library.py`.
+All 1,065 skills are organized into **121 bundles** in `bundles.json` (100% bundle coverage). Eighteen of them are the hive's own recipes (`mcp/stack_recipes.json`), shown here by reference so there is one source: the hive also uses those recipes to seed its predictions. The remaining 103 are curated sets across all 24 categories. Every skill named is checked against the catalog by `tests/test_library.py`. Here are the core workflow bundles (run `python3 mcp/sfp_hive.py bundles` to see all 121):
 
 | Bundle | Purpose | Skills in order | For |
 |---|---|---|---|

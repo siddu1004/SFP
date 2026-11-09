@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.20.0
+
+- **100% Bundle Coverage (121 Curated Bundles):** Every one of the 1,065 skills across all 24 categories now belongs to a named, ordered bundle in `bundles.json` (121 bundles total across 11 areas). Focused workflow bundles (up to 6 skills) attach automatically when a task matches, while larger domain collections are suggested and attach on demand via `--use-bundles`.
+- **Confidence Gating Against Noise (`clears_confidence`):** Single weak-word matches without technology or job corroboration are rejected, cutting junk rate on `precision_heldout` (micro-edits and out-of-domain queries) from 50.0% to **0.0%** (87.5% hit, 76.5% mean precision; 79.8% words-only).
+- **Per-Clause Multi-Bundle Stacking & Token Budget Reporting:** `sfp_library.match_bundles()` evaluates multi-step tasks clause by clause, and `sfp_needs.decide()` reports `tokens_used`, `share_of_200k`, `bundles_applied`, `bundles_left_out`, and `budget_omitted`.
+- **Final Exam & Frozen v2 Held-Out Benchmarks:** Evaluated across 150 unseen final exam tasks (`bench/pool_judge.py` blind pooled judge + strict original labels) and 130 pre-committed frozen v2 held-out tasks (`02b0485`), achieving **97% hit / 93% top-1** on the blind exam judge and **95.4% words-only / 91.5% full** on frozen v2 held-out sets with **0.0% junk**.
+- **Animated Dual-Theme SVG Diagrams & Expanded README:** Replaced all static charts with 18 pairs of animated dark/light SVG illustrations (`scripts/readme_art.py`), added UI/design and business/marketing workflow guides, and documented full cross-OS and 20-tool installation matrices.
+
 ## 3.19.0
 
 - **Skill Cards & Understanding:** Generated structured skill cards (skill_cards.json) for all 1,065 skills detailing output format, job category, interaction style, depth, prerequisites, and substitute equivalence groups. The hive understands what each skill produces (code, text, animation, video, diagram, etc.) and avoids stacking redundant duplicate substitutes.

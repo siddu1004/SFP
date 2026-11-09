@@ -8,7 +8,7 @@ Two kinds of evidence, combined:
 - **Words** (65%): how much of the task's meaning the bundle's name, goal, when-to-use and skill names cover. Rarer words count more, and words no skill uses are ignored.
 - **The hive's own choice** (35%): how many of the bundle's skills the hive picks on its own for this task.
 
-From a score of 0.45 a bundle is **suggested** (listed, the rest of it preloaded). From 0.6 it is **pushed**: every skill joins the stack, in the bundle's order, even past the usual limit of four. A low limit set on purpose (below 3) is respected and nothing is pushed. A skill you removed stays out of a pushed bundle.
+From a score of 0.45 a bundle is **suggested** (listed, the rest of it preloaded). From 0.6 a focused workflow bundle (up to 6 skills) is **pushed**: every skill joins the stack, in the bundle's order, even past the usual limit of four, while larger domain collections stay suggested and attach on demand via `--use-bundles`. A low limit set on purpose (below 3) is respected and nothing is pushed. A skill you removed stays out of a pushed bundle.
 
 `sfp_hive.py select` takes `--bundles push` (the default), `suggest` or `off`. The result carries `bundles` (best first, each with `score`, `push`, `applied`, `missing`, `why`) and, when one was attached, `bundle: {id, name}`. `live` and the MCP `select_skills` do the same, and `live` keeps the pushed bundle steady while you keep typing the same idea.
 
