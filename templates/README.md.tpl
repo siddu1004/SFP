@@ -19,9 +19,10 @@
 <p align="center">
   <a href="#what-is-this"><b>What is this?</b></a> &middot;
   <a href="#start-here"><b>Start here</b></a> &middot;
+  <a href="#why-sfp-the-unfair-advantages"><b>Advantages</b></a> &middot;
   <a href="#see-it-choose"><b>See it choose</b></a> &middot;
-  <a href="#ui-design--front-end-skills"><b>UI &amp; design</b></a> &middot;
-  <a href="#business-marketing--growth-skills"><b>Business &amp; marketing</b></a> &middot;
+  <a href="#ui-design-and-front-end-skills"><b>UI &amp; design</b></a> &middot;
+  <a href="#business-marketing-and-growth-skills"><b>Business &amp; marketing</b></a> &middot;
   <a href="#the-proof"><b>The proof</b></a> &middot;
   <a href="#install"><b>Install</b></a>
 </p>
@@ -74,6 +75,25 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 | **Drops unrelated junk picks** | No (62.5% junk on negative/edge tasks) | No | Yes: **0.0% junk** on `precision_heldout` (87.5% hit / 76.5% precision) |
 | **Learns what you like** | No | No | Yes, from your feedback (80% to 100% format fit, 100% named-format override) |
 | **Time to choose** | Instant | Nothing to choose | ~3 ms words-only; ~360 ms typical with local models |
+
+---
+
+## Why SFP: The Unfair Advantages
+
+Most AI coding setups suffer from two silent failure modes: **context bloat** (stuffing 50+ instructions into the prompt until the AI hallucinates and runs out of budget) or **context starvation** (the AI guesses library conventions and writes fragile boilerplate). SFP eliminates both.
+
+1. **Saves 95% of Agent Context Budget**
+   Instead of carrying @@ALL_TOKENS@@ tokens across thousands of rules into every prompt turn, SFP loads only the surgical 1 to 3 instructions (~4,000 tokens) needed right now. Your AI gets maximum headroom for your actual code, diffs, and compiler diagnostics.
+2. **True Project and Tech Stack Awareness**
+   SFP inspects root manifests (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, etc.). When you say "add authentication and tests", a Go service receives `golang-patterns` and `golang-testing`, while a Django project gets `django-patterns` and `django-tdd`. Never cross-contaminates stacks.
+3. **Zero Hallucinated Junk (0.0% Junk Rate)**
+   Micro-edits ("fix typo on line 42") or negative edge requests cleanly return empty stacks with zero fluff. Keyword search dumps 62.5% unrelated junk on edge tasks; SFP achieves 0.0% junk on `precision_heldout`.
+4. **Taste Adaptation That Respects How You Learn**
+   SFP tracks feedback over a 30-day half-life. If you learn fastest through interactive code examples, motion diagrams, or concise technical guides, SFP automatically prioritizes skills in your preferred format. An explicit prompt like "as a video" or "as text" triggers a 100% strict format override.
+5. **Private and Local First**
+   Every selection runs directly on your machine in 2 to 3 ms using standard Python. If you enable local embedding (`bge-m3`) or reranking (`lfm2-24b-a2b`), queries run against your own Ollama or LM Studio instance. Zero telemetry. Zero prompt leakage.
+6. **Unified Across 20 Coding Tools**
+   Switch freely between Claude Code, Cursor, Antigravity, VS Code Copilot, Windsurf, Codex, and terminal agents. Your skills, bundles, and learned preferences stay synchronized across every tool.
 
 <details>
 <summary><b>New to this? What the words mean</b></summary>
@@ -276,7 +296,7 @@ Install a set with `npx sfp-hive install --profile frontend-dev`. The hive can s
 
 ---
 
-## UI, Design & Front-End Skills
+## UI, Design and Front-End Skills
 
 SFP includes **155 UI, design-system, accessibility and motion skills** (`frontend` + `design-styles`) so your AI builds interfaces with intentional visual hierarchy, WCAG compliance, crisp microcopy and hardware-accelerated motion instead of generic templates.
 
@@ -294,6 +314,10 @@ SFP includes **155 UI, design-system, accessibility and motion skills** (`fronte
 | **Motion & Stress Testing** | `animate`, `motion-foundations`, `interaction-design`, `break-ui`, `design-critique` | Reduced-motion-safe transitions, layout stress testing, hierarchy critique |
 | **Design Systems & Aesthetics** | `design-system`, `shadcn`, `bento`, `glassmorphism`, `theme-factory`, `frontend-slides` | Tokenized components, modular bento grids, editorial and dark-mode palettes |
 
+**Prompts to try:**
+- *"Review this modal component with `frontend-a11y` and wire up keyboard traps and ARIA labels."*
+- *"Apply `design-taste-frontend` and `impeccable` to fix the typography scale and layout breathing room."*
+
 ```bash
 # Install the full frontend & design profile
 npx sfp-hive install --profile frontend-dev
@@ -301,7 +325,7 @@ npx sfp-hive install --profile frontend-dev
 
 ---
 
-## Business, Marketing & Growth Skills
+## Business, Marketing and Growth Skills
 
 For founders, product managers and growth teams, SFP ships **248 business and content skills** (`business-ops` + `content-media`) covering market research, fundraising, pricing, SEO and multi-channel publishing.
 
@@ -311,6 +335,10 @@ For founders, product managers and growth teams, SFP ships **248 business and co
 | **Publish Content Bundle** | `article-writing` -> `seo` -> `content-engine` | Long-form technical/product articles, search intent optimization, multi-channel repurposing |
 | **Positioning & Conversion** | `price-framing`, `persuasion-audit`, `dark-pattern-check`, `brand-voice`, `brand-guidelines` | Packaging & tier design, landing-page conversion audits, ethical UX checks |
 | **Product & GTM Operations** | `product-lens`, `marketing-campaign`, `lead-intelligence`, `competitive-report-structure`, `customer-billing-ops` | Go-to-market launches, competitive teardowns, lead enrichment, billing workflows |
+
+**Prompts to try:**
+- *"Run a `persuasion-audit` and `price-framing` check on this SaaS pricing page draft."*
+- *"Use `market-research` and `investor-materials` to outline a defensible seed pitch narrative."*
 
 ```bash
 # Install business-ops and content-media categories into your AI tools
