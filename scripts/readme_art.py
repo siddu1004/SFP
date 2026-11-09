@@ -188,7 +188,7 @@ def hero(t, total, ncats, example):
     body.append(text(56, 76, 'SKILLS FOR PRODUCTIVITY', 13, t['accent'], 700, cls='rise',
                      extra=' letter-spacing="3"'))
     body.append(text(52, 172, 'SFP', 108, t['ink'], 800, cls='rise', extra=d(.08) + ' letter-spacing="-4"'))
-    body.append(text(56, 218, f'{total:,} specialist skills across {ncats} categories.', 24, t['ink'], 700, cls='rise', extra=d(.16)))
+    body.append(text(56, 218, f'{total:,} specialist skills in {ncats} categories & 121 bundles.', 24, t['ink'], 700, cls='rise', extra=d(.16)))
     body.append(text(56, 250, 'SFP reads your task & project, then loads only the 1 to 3 you need.', 17, t['ink2'], 500, cls='rise', extra=d(.22)))
 
     # Six domain pills (two neat rows of three) so they complement rather than repeat the shields.io badges below.
@@ -733,7 +733,7 @@ def hive_architecture(t):
         ('5. Taste & Out', 'teal', [
             ('30d Half-Life', 'animation, text, code'),
             ('LinUCB Model', 'word-to-skill weights'),
-            ('Bundle Attach', 'ordered workflow sets'),
+            ('121 Bundles', '100% skills bundled'),
             ('Markov Next', 'predicts next phase skill'),
         ]),
     ]
@@ -786,7 +786,7 @@ def library(t, catalog):
         fams.append(('More', 'sky', extra))
     left, span, row_h = 230, 730, 54
     h = 120 + row_h * len(fams) + 30
-    body = [header(t, f'{total:,} skills in {len(per)} categories',
+    body = [header(t, f'{total:,} skills in {len(per)} categories & 121 bundles',
                    'Install a few. SFP reaches every other skill on demand. Each block is one category, sized within its area.')]
     for r, (name, col, cs) in enumerate(fams):
         y = 112 + r * row_h
