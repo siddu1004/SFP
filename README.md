@@ -44,13 +44,6 @@ AI coding tools like Claude Code, Cursor and Copilot do better work when they ar
 
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/how-it-works-dark.svg">
-    <img src="assets/how-it-works-light.svg" alt="How SFP works: you ask, SFP reads your words and project, it picks a few skills, your AI follows them, you say if they helped, and it learns." width="100%">
-  </picture>
-</p>
-
-<p align="center">
-  <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/pipeline-dark.svg">
     <img src="assets/pipeline-light.svg" alt="How SFP picks: words, meaning and project fit fuse into one shortlist, an optional local judge orders it, and your stack is returned." width="100%">
   </picture>
@@ -364,13 +357,6 @@ Every number here can be reproduced. A task counts as right when the chosen skil
   </picture>
 </p>
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="bench/charts/headline-dark.svg">
-    <img src="bench/charts/headline-light.svg" alt="How often the right skill is chosen across held-out suites" width="100%">
-  </picture>
-</p>
-
 With local models on (`python3 bench/run_all.py`; full method in [bench/RESULTS.md](bench/RESULTS.md)). Each cell shows **right skill chosen / right skill first**:
 
 ### 1. Final Exam Suites (150 Unseen Tasks, Two Scoreboards)
@@ -448,7 +434,7 @@ Words only, recomputed from this repository each time this page is built, so it 
 
 **How fast is it?**
 
-Words only, a choice takes about 6 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
+Words only, a choice takes about 7 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 ### Where It Still Fails
 
@@ -732,8 +718,6 @@ Open the **SFP Hive** icon in the activity bar. It has three views: **SFP Hive**
 | **Choose** | Type a task; the hive picks a few skills and orders them. Click one to see why it was chosen, `+` to pin another, `x` to drop one |
 | **Library** | Browse all 1065 skills by area, goal, bundle and cluster; open a skill, pin it or add it to a bundle |
 | **Insights** | What the hive has learned from your feedback, and **Check connection** |
-
-![A bundle in the Skill Library](extensions/antigravity-hive/media/screenshot-bundle.png)
 
 There are three ways to get the skills to the agent:
 
