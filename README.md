@@ -27,13 +27,6 @@
   <a href="#install"><b>Install</b></a>
 </p>
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/hero-dark.svg">
-    <img src="assets/hero-light.svg" alt="SFP shelf of 1065 skills in 24 categories: one animated line picks the exact skill stack for your task." width="100%">
-  </picture>
-</p>
-
 ---
 
 ## What Is This?
