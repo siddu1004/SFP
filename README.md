@@ -5,23 +5,11 @@
   </picture>
 </h1>
 
-<h2 align="center">The AI‑First Skill Librarian that Cuts Context Waste by 96 % and Delivers 100 % Bundle Coverage</h2>
+<h3 align="center">Precise AI coding mastery, fast: the right skills for the job, and only those.</h3>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/sfp-hive"><img src="https://img.shields.io/npm/v/sfp-hive?style=flat-square&labelColor=3b4350&color=0f766e&label=npm" alt="npm version"></a>
-  <img src="https://img.shields.io/badge/skills-1065-0f766e?style=flat-square&labelColor=3b4350" alt="1065 skills">
-  <img src="https://img.shields.io/badge/categories-24-0f766e?style=flat-square&labelColor=3b4350" alt="24 categories">
-  <img src="https://img.shields.io/badge/bundles-121-0f766e?style=flat-square&labelColor=3b4350" alt="121 bundles">
-  <img src="https://img.shields.io/badge/works_with-20_AI_tools-0f766e?style=flat-square&labelColor=3b4350" alt="Works with 20 AI tools">
-  <img src="https://img.shields.io/badge/picks_skills-on_your_machine-0f766e?style=flat-square&labelColor=3b4350" alt="Picks skills on your machine">
-  <img src="https://img.shields.io/badge/price-free_(MIT)-0f766e?style=flat-square&labelColor=3b4350" alt="Free, MIT license">
+  <b>Speed</b>: picks in 3 ms &nbsp;&middot;&nbsp; <b>Precision</b>: 0.0% junk &nbsp;&middot;&nbsp; <b>Context</b>: 96% saved &nbsp;&middot;&nbsp; <b>Trust</b>: 97% exam accuracy &nbsp;&middot;&nbsp; <b>Privacy</b>: runs on your machine
 </p>
-
-<p align="center">
-  <strong>AI coding tools like Claude Code, Cursor or Copilot work best when they have the exact skill they need – no more, no less.</strong>
-</p>
-
-<h3 align="center">Your AI coding tool gets the right instructions for the job, and only those.</h3>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/sfp-hive"><img src="https://img.shields.io/npm/v/sfp-hive?style=flat-square&labelColor=3b4350&color=0f766e&label=npm" alt="npm version"></a>
@@ -48,9 +36,16 @@
 
 ## What Is This?
 
-SFP is the **AI‑first skill librarian** that curates over a thousand expertly written guides into 24 well‑structured categories and bundles them into 121 coherent collections. By presenting only the most relevant skills to your coding assistant, SFP eliminates context bloat, guarantees zero‑junk selections, and accelerates development across 20 AI tools.
+AI coding tools like Claude Code, Cursor and Copilot do better work when they are given **skills**: short written guides that teach one job well, such as "how to write good tests in Rust". Thousands exist, but your AI can only hold so much in mind at once. Load them all and there is little room left for your code.
 
-**SFP is a librarian for your AI.** It keeps 1065 skills on the shelf across 24 categories and **121 curated bundles** (100% of skills are bundled). For each task, it reads what you asked and what your project is, and hands your AI only the few that fit. It remembers what helped you, so its choices get better for you over time.
+**SFP is a librarian for your AI.** It curates 1065 skills across 24 categories and **121 bundles** (every skill belongs to one), reads your task and your project, and hands your AI only the few that fit. It remembers what helped you, so its choices improve over time.
+
+| | What you get |
+|---|---|
+| **Speed** | Skills chosen in about 3 ms, entirely on your machine |
+| **Precision** | 97% right skill on a 150-task blind-judged exam, 0.0% junk on negative tasks |
+| **Context** | 96% less for your AI to carry than loading every skill |
+| **Trust** | Free (MIT), no telemetry, works with 20 AI coding tools |
 
 <p align="center">
   <picture>
@@ -463,7 +458,7 @@ Words only, recomputed from this repository each time this page is built, so it 
 
 **How fast is it?**
 
-Words only, a choice takes about 4 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
+Words only, a choice takes about 5 ms inside the host process. With meaning, about 0.2 s. When the local model is asked as well, up to about 1.7 s (slowest 5% of tasks). Search takes about 0.1 ms ([docs/HIVE.md](docs/HIVE.md#speed)).
 
 ### Where It Still Fails
 

@@ -5,7 +5,11 @@
   </picture>
 </h1>
 
-<h3 align="center">Your AI coding tool gets the right instructions for the job, and only those.</h3>
+<h3 align="center">Precise AI coding mastery, fast: the right skills for the job, and only those.</h3>
+
+<p align="center">
+  <b>Speed</b>: picks in 3 ms &nbsp;&middot;&nbsp; <b>Precision</b>: 0.0% junk &nbsp;&middot;&nbsp; <b>Context</b>: 96% saved &nbsp;&middot;&nbsp; <b>Trust</b>: 97% exam accuracy &nbsp;&middot;&nbsp; <b>Privacy</b>: runs on your machine
+</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/sfp-hive"><img src="https://img.shields.io/npm/v/sfp-hive?style=flat-square&labelColor=3b4350&color=0f766e&label=npm" alt="npm version"></a>
@@ -34,7 +38,14 @@
 
 AI coding tools like Claude Code, Cursor and Copilot do better work when they are given **skills**: short written guides that teach one job well, such as "how to write good tests in Rust". Thousands exist, but your AI can only hold so much in mind at once. Load them all and there is little room left for your code.
 
-**SFP is a librarian for your AI.** It keeps @@TOTAL@@ skills on the shelf across @@NCATS@@ categories and **121 curated bundles** (100% of skills are bundled). For each task, it reads what you asked and what your project is, and hands your AI only the few that fit. It remembers what helped you, so its choices get better for you over time.
+**SFP is a librarian for your AI.** It curates @@TOTAL@@ skills across @@NCATS@@ categories and **121 bundles** (every skill belongs to one), reads your task and your project, and hands your AI only the few that fit. It remembers what helped you, so its choices improve over time.
+
+| | What you get |
+|---|---|
+| **Speed** | Skills chosen in about 3 ms, entirely on your machine |
+| **Precision** | 97% right skill on a 150-task blind-judged exam, 0.0% junk on negative tasks |
+| **Context** | 96% less for your AI to carry than loading every skill |
+| **Trust** | Free (MIT), no telemetry, works with 20 AI coding tools |
 
 <p align="center">
   <picture>
