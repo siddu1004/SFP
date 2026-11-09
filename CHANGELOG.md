@@ -99,7 +99,7 @@ Scores: benchmark 87.9% to 89.0%, projects 79.2% (unchanged), held-out 86.4% (un
 
 ## 3.12.0
 
-- **Areas.** `families.json` groups the 40 clusters and 36 bundles into eleven areas (Design and UI, Build apps and services, Test and quality, Security, Ship and run, Prompts and agents, Models and gateways, Run a project, Research and docs, 3D and creative, Business and automation). The `library` payload carries `families`, and every skill, cluster and bundle names its area. Two new bundles: Never run out of tokens, Find the right API.
+- **Areas.** `families.json` groups the 40 clusters and 121 bundles into eleven areas (Design and UI, Build apps and services, Test and quality, Security, Ship and run, Prompts and agents, Models and gateways, Run a project, Research and docs, 3D and creative, Business and automation). The `library` payload carries `families`, and every skill, cluster and bundle names its area. Two new bundles: Never run out of tokens, Find the right API.
 - `sfp_hive.py skill NAME` gives everything the skill detail window shows: the full description, when to use it, its area, topic and goals, the bundles it is in and similar skills.
 - Recipe bundle names keep their acronyms ("Critique a UI").
 
