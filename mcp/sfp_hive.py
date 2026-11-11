@@ -774,17 +774,13 @@ def judge_stage(task, sit, votes, exclude, after, named_form, taste):
     import sfp_cards
     import sfp_intent
     import sfp_retrieve
-    expand_env = os.environ.get('SFP_EXPAND', '0').lower()
-    expand = expand_env in ('1', 'true', 'yes', 'on')
-    if sit.get('semantic') and isinstance(sit['semantic'], dict) and 'terms' in sit['semantic']:
-        terms = sit['semantic']['terms']
-    else:
-        terms = sfp_intent.rewrite(task) if expand else []
+    # The expert's terms widen the candidates (about 87% to 92% holding the right skill). SFP_EXPAND=0 turns them off.
+    expand = os.environ.get('SFP_EXPAND', '1').lower() not in ('0', 'off', 'false', 'no')
+    terms = ((sit.get('semantic') or {}).get('terms') or []) or (sfp_intent.rewrite(task) if expand else [])
     allow = lambda n: (n not in exclude and n not in after and n not in INTERNAL_SKILLS and
                        relation(v1.SKILL_TECH.get(n, set()), sit['ctx_tech']) != 'mismatch')
     tech = sorted(sit['ctx_tech'], key=lambda t: (-sit['ctx'][t], t))[:3]
-    sem_sim = (sit.get('semantic') or {}).get('similar')
-    pool = sfp_retrieve.candidates(task, project_tech=tech, terms=terms, allow=allow, size=30, similar=sem_sim)
+    pool = sfp_retrieve.judge_pool(task, terms=terms, allow=allow)
     if named_form:
         fitting = [n for n in pool if named_form in (sfp_cards.get_card(n).get('output') or [])]
         pool = fitting or pool
@@ -1098,6 +1094,13 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                     break
 
         chosen = keep + [(n, max(v1.PHASE_ORDER, key=lambda p: affinity(n)[p]), 1.0) for n in lead_skills][:room]
+        spent = sum(v1.body_tokens(c[0]) for c in chosen)
+
+    if judged:
+        # The model read the candidates: its picks are the stack, in its order, all of them. Pinned skills stay.
+        keep = [c for c in chosen if c[0] in pinned]
+        room = max(0, max_skills - len(keep))
+        chosen = keep + [(n, max(v1.PHASE_ORDER, key=lambda p: affinity(n)[p]), 1.0) for n in judged if n not in pinned][:room]
         spent = sum(v1.body_tokens(c[0]) for c in chosen)
 
     stack = []
