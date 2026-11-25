@@ -1,0 +1,1497 @@
+{
+ "version": "3.20.1",
+ "commit": "03453dd",
+ "date": "2026-11-26",
+ "engines": {
+  "keyword": {
+   "sets": {
+    "plain_words_holdout2": {
+     "n": 40,
+     "chosen": 14,
+     "first": 12,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "search_reworded_holdout": {
+     "n": 35,
+     "chosen": 9,
+     "first": 6,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_plain": {
+     "n": 60,
+     "chosen": 30,
+     "first": 21,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_reworded": {
+     "n": 40,
+     "chosen": 25,
+     "first": 20,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "hive_heldout": {
+     "n": 22,
+     "chosen": 4,
+     "first": 2,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_project": {
+     "n": 30,
+     "chosen": 14,
+     "first": 9,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "stack_eval": {
+     "n": 24,
+     "chosen": 6,
+     "first": 5,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "precision_heldout": {
+     "n": 15,
+     "chosen": 9,
+     "first": 9,
+     "empty": 0,
+     "nothing_n": 25,
+     "nothing_empty": 0
+    }
+   },
+   "groups": {
+    "plain": {
+     "n": 175,
+     "chosen": 45,
+     "first": 34,
+     "range": [
+      37,
+      52
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "project": {
+     "n": 52,
+     "chosen": 35,
+     "first": 21,
+     "range": [
+      23,
+      48
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "project_tuned": {
+     "n": 24,
+     "chosen": 25,
+     "first": 21,
+     "range": [
+      12,
+      45
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "nothing": {
+     "n": 15,
+     "chosen": 60,
+     "first": 60,
+     "range": [
+      36,
+      80
+     ],
+     "nothing_n": 25,
+     "nothing_empty": 0
+    }
+   },
+   "ms": {
+    "typical": 0.2,
+    "slowest_5": 0.4
+   }
+  },
+  "words": {
+   "sets": {
+    "plain_words_holdout2": {
+     "n": 40,
+     "chosen": 16,
+     "first": 11,
+     "empty": 1,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "search_reworded_holdout": {
+     "n": 35,
+     "chosen": 14,
+     "first": 12,
+     "empty": 1,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_plain": {
+     "n": 60,
+     "chosen": 37,
+     "first": 26,
+     "empty": 1,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_reworded": {
+     "n": 40,
+     "chosen": 30,
+     "first": 23,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "hive_heldout": {
+     "n": 22,
+     "chosen": 20,
+     "first": 15,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_project": {
+     "n": 30,
+     "chosen": 20,
+     "first": 18,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "stack_eval": {
+     "n": 24,
+     "chosen": 19,
+     "first": 15,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "precision_heldout": {
+     "n": 15,
+     "chosen": 10,
+     "first": 9,
+     "empty": 0,
+     "nothing_n": 25,
+     "nothing_empty": 23
+    }
+   },
+   "groups": {
+    "plain": {
+     "n": 175,
+     "chosen": 55,
+     "first": 41,
+     "range": [
+      48,
+      63
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "project": {
+     "n": 52,
+     "chosen": 77,
+     "first": 63,
+     "range": [
+      64,
+      86
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "project_tuned": {
+     "n": 24,
+     "chosen": 79,
+     "first": 62,
+     "range": [
+      60,
+      91
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "nothing": {
+     "n": 15,
+     "chosen": 67,
+     "first": 60,
+     "range": [
+      42,
+      85
+     ],
+     "nothing_n": 25,
+     "nothing_empty": 92
+    }
+   },
+   "ms": {
+    "typical": 7.0,
+    "slowest_5": 19.9
+   },
+   "tokens": {
+    "stack": 5896,
+    "map": 1226
+   },
+   "map": {
+    "n": 175,
+    "hold": {
+     "3": 57.7,
+     "10": 71.4,
+     "24": 81.1,
+     "40": 84.0,
+     "60": 86.9
+    }
+   },
+   "asks": [
+    {
+     "task": "make the login not get hacked",
+     "stack": [
+      {
+       "name": "web-app-penetration-testing",
+       "category": "security"
+      },
+      {
+       "name": "penetration-testing-with-strix",
+       "category": "security"
+      },
+      {
+       "name": "omni-auth",
+       "category": "ai-gateway"
+      }
+     ],
+     "lead": "web-app-penetration-testing",
+     "city": [
+      {
+       "tower": "Security",
+       "floors": [
+        "fix-security-vulnerabilities-with-strix",
+        "application-security-testing",
+        "quarkus-security",
+        "llm-trading-agent-security",
+        "security-bounty-hunter",
+        "ci-security-scanning-with-strix",
+        "agent-security-hardening",
+        "api-security-testing",
+        "claude-security",
+        "defi-amm-security",
+        "detecting-container-escape-attempts",
+        "django-security",
+        "find-security-vulnerabilities-in-code",
+        "hardening-docker-containers-for-production",
+        "laravel-security",
+        "managed-pentesting-with-strix",
+        "owasp-top-10-testing",
+        "perl-security",
+        "security-audit",
+        "security-scan",
+        "springboot-security"
+       ]
+      },
+      {
+       "tower": "Blender styles, moods and genres",
+       "floors": [
+        "blend-genre-action-combat"
+       ]
+      },
+      {
+       "tower": "OmniRoute AI gateway",
+       "floors": [
+        "omni-settings",
+        "omni-proxies",
+        "omni-inference",
+        "omni-models"
+       ]
+      },
+      {
+       "tower": "Testing and QA",
+       "floors": [
+        "laravel-tdd",
+        "windows-desktop-e2e",
+        "django-tdd"
+       ]
+      },
+      {
+       "tower": "Memory across sessions",
+       "floors": [
+        "claude-mem-install",
+        "mem-babysit",
+        "mem-wowerpoint"
+       ]
+      },
+      {
+       "tower": "Free APIs and data sources",
+       "floors": [
+        "agent-reach"
+       ]
+      },
+      {
+       "tower": "GSD project workflow",
+       "floors": [
+        "gsd-sketch",
+        "gsd-secure-phase",
+        "gsd-ui-phase"
+       ]
+      },
+      {
+       "tower": "Business operations",
+       "floors": [
+        "chief-information-security-officer",
+        "vulnerability-management"
+       ]
+      },
+      {
+       "tower": "UI components and design systems",
+       "floors": [
+        "pick-ui-library"
+       ]
+      },
+      {
+       "tower": "Writing, marketing and media",
+       "floors": [
+        "project-artifact"
+       ]
+      }
+     ]
+    },
+    {
+     "task": "test all the buttons on my site",
+     "stack": [
+      {
+       "name": "web-app-penetration-testing",
+       "category": "security"
+      },
+      {
+       "name": "tdd-workflow",
+       "category": "testing-quality"
+      }
+     ],
+     "lead": "web-app-penetration-testing",
+     "city": [
+      {
+       "tower": "Testing and QA",
+       "floors": [
+        "windows-desktop-e2e",
+        "click-path-audit",
+        "golang-testing",
+        "django-tdd",
+        "e2e-testing",
+        "python-testing",
+        "perl-testing",
+        "rust-testing",
+        "cpp-testing",
+        "quarkus-verification",
+        "fsharp-testing",
+        "csharp-testing",
+        "quarkus-tdd",
+        "ai-regression-testing",
+        "test-collaboration",
+        "kotlin-testing"
+       ]
+      },
+      {
+       "tower": "Design taste and critique",
+       "floors": [
+        "awwwards",
+        "jury",
+        "redesign-existing-projects",
+        "break-ui",
+        "high-end-visual-design",
+        "impeccable"
+       ]
+      },
+      {
+       "tower": "Front end, other",
+       "floors": [
+        "mobile-native",
+        "stageshow"
+       ]
+      },
+      {
+       "tower": "Accessibility",
+       "floors": [
+        "accessibility-audit",
+        "accessibility"
+       ]
+      },
+      {
+       "tower": "Business operations",
+       "floors": [
+        "business-continuity-and-resilience",
+        "test-driven-development",
+        "network-administration",
+        "seo-strategy"
+       ]
+      },
+      {
+       "tower": "Animation and motion",
+       "floors": [
+        "motion-patterns"
+       ]
+      },
+      {
+       "tower": "UI components and design systems",
+       "floors": [
+        "design-systems"
+       ]
+      },
+      {
+       "tower": "3D, shaders and effects for the web",
+       "floors": [
+        "liquid-glass-js",
+        "liquid-glass-design"
+       ]
+      },
+      {
+       "tower": "UX research, writing and journeys",
+       "floors": [
+        "ux-writing",
+        "interaction-design"
+       ]
+      },
+      {
+       "tower": "Hardware and devices",
+       "floors": [
+        "m5-onboard"
+       ]
+      },
+      {
+       "tower": "React, Next.js, Vue and friends",
+       "floors": [
+        "react-testing"
+       ]
+      },
+      {
+       "tower": "Security",
+       "floors": [
+        "application-security-testing"
+       ]
+      },
+      {
+       "tower": "Mobile apps",
+       "floors": [
+        "swift-protocol-di-testing"
+       ]
+      }
+     ]
+    },
+    {
+     "task": "my page loads too slowly",
+     "stack": [
+      {
+       "name": "data-modeling",
+       "category": "business-ops"
+      },
+      {
+       "name": "awwwards",
+       "category": "frontend"
+      },
+      {
+       "name": "project-artifact",
+       "category": "content-media"
+      }
+     ],
+     "lead": "data-modeling",
+     "city": [
+      {
+       "tower": "Business operations",
+       "floors": [
+        "interface-craft",
+        "payroll-operations",
+        "landing-page-cro-expert",
+        "chief-marketing-officer",
+        "portfolio-governance",
+        "skill-authoring"
+       ]
+      },
+      {
+       "tower": "Design taste and critique",
+       "floors": [
+        "jury",
+        "design-critique",
+        "gpt-taste",
+        "industrial-brutalist-ui"
+       ]
+      },
+      {
+       "tower": "UI components and design systems",
+       "floors": [
+        "ask-sonner",
+        "frontend-design-direction",
+        "frontend-design"
+       ]
+      },
+      {
+       "tower": "React, Next.js, Vue and friends",
+       "floors": [
+        "nuxt4-patterns",
+        "react-performance"
+       ]
+      },
+      {
+       "tower": "Testing and QA",
+       "floors": [
+        "playwright-cli",
+        "e2e-testing",
+        "kotlin-testing"
+       ]
+      },
+      {
+       "tower": "Architecture and engineering practice",
+       "floors": [
+        "benchmark",
+        "data-throughput-accelerator"
+       ]
+      },
+      {
+       "tower": "UX research, writing and journeys",
+       "floors": [
+        "ux-product-auditor",
+        "ux-writing"
+       ]
+      },
+      {
+       "tower": "Front end, other",
+       "floors": [
+        "stageshow",
+        "hallmark"
+       ]
+      },
+      {
+       "tower": "3D, shaders and effects for the web",
+       "floors": [
+        "liquid-logo",
+        "liquid-glass-js"
+       ]
+      },
+      {
+       "tower": "Named visual styles",
+       "floors": [
+        "brutalism",
+        "doodle",
+        "cafe",
+        "editorial",
+        "minimal"
+       ]
+      },
+      {
+       "tower": "Animation and motion",
+       "floors": [
+        "animation-performance",
+        "animation-vocabulary",
+        "motion-patterns"
+       ]
+      },
+      {
+       "tower": "APIs and backend frameworks",
+       "floors": [
+        "api-design"
+       ]
+      },
+      {
+       "tower": "Agent orchestration and workflows",
+       "floors": [
+        "plan-canvas"
+       ]
+      },
+      {
+       "tower": "Free APIs and data sources",
+       "floors": [
+        "agent-reach"
+       ]
+      },
+      {
+       "tower": "Context and token budgets",
+       "floors": [
+        "headroom"
+       ]
+      },
+      {
+       "tower": "Blender styles, moods and genres",
+       "floors": [
+        "blend-voxel-style"
+       ]
+      },
+      {
+       "tower": "LLMs, prompts and ML",
+       "floors": [
+        "pytorch-patterns"
+       ]
+      }
+     ]
+    },
+    {
+     "task": "turn my notes into a slide deck",
+     "stack": [
+      {
+       "name": "mem-wowerpoint",
+       "category": "memory"
+      },
+      {
+       "name": "frontend-slides",
+       "category": "content-media"
+      },
+      {
+       "name": "uimax-slides",
+       "category": "frontend"
+      }
+     ],
+     "lead": "mem-wowerpoint",
+     "city": [
+      {
+       "tower": "Business operations",
+       "floors": [
+        "presentation-design",
+        "google-workspace-ops",
+        "investor-materials",
+        "sales-enablement",
+        "visual-content",
+        "social-post-craft",
+        "founder-offer",
+        "founder-plan",
+        "product-discovery",
+        "video-content",
+        "youtube-producer",
+        "ceo-advisor",
+        "newsletter-writer",
+        "customer-research"
+       ]
+      },
+      {
+       "tower": "UI components and design systems",
+       "floors": [
+        "theme-factory",
+        "uimax-design-system",
+        "uimax-design",
+        "dashboard-builder"
+       ]
+      },
+      {
+       "tower": "Blender styles, moods and genres",
+       "floors": [
+        "blend-genre-card-party-idle",
+        "blend-genre-strategy-sim"
+       ]
+      },
+      {
+       "tower": "Design taste and critique",
+       "floors": [
+        "design-elevation",
+        "huashu-design"
+       ]
+      },
+      {
+       "tower": "Animation and motion",
+       "floors": [
+        "animation-vocabulary",
+        "animate"
+       ]
+      },
+      {
+       "tower": "Research and documentation",
+       "floors": [
+        "notebooklm",
+        "knap",
+        "graphify",
+        "defuddle",
+        "obsidian-markdown"
+       ]
+      },
+      {
+       "tower": "Writing, marketing and media",
+       "floors": [
+        "evidence-check",
+        "slack-gif-creator",
+        "moneyprinterturbo-video"
+       ]
+      },
+      {
+       "tower": "Blender scenes and 3D assets",
+       "floors": [
+        "blender-motion-state-inspection",
+        "multi-image-to-3d",
+        "image-to-3d"
+       ]
+      },
+      {
+       "tower": "Caveman terse modes",
+       "floors": [
+        "caveman-optimize",
+        "caveman-compress"
+       ]
+      },
+      {
+       "tower": "Architecture and engineering practice",
+       "floors": [
+        "engineering-graphify"
+       ]
+      },
+      {
+       "tower": "Agent orchestration and workflows",
+       "floors": [
+        "intent-driven-development"
+       ]
+      },
+      {
+       "tower": "3D, shaders and effects for the web",
+       "floors": [
+        "liquid-logo"
+       ]
+      }
+     ]
+    }
+   ],
+   "taste": {
+    "visual_animation": {
+     "name": "Visual Learner (Animation)",
+     "n": 10,
+     "before": 40,
+     "after": 80,
+     "named_n": 3,
+     "named_right": 3
+    },
+    "reader_text": {
+     "name": "Deep Reader (Text / Prose)",
+     "n": 10,
+     "before": 50,
+     "after": 60,
+     "named_n": 3,
+     "named_right": 2
+    },
+    "hands_on_code": {
+     "name": "Hands-on Engineer (Code / Patterns)",
+     "n": 10,
+     "before": 90,
+     "after": 90,
+     "named_n": 3,
+     "named_right": 2
+    },
+    "video_producer": {
+     "name": "Video & Demo Producer (Video / Screencasts)",
+     "n": 10,
+     "before": 100,
+     "after": 100,
+     "named_n": 3,
+     "named_right": 3
+    }
+   }
+  },
+  "meaning": {
+   "sets": {
+    "plain_words_holdout2": {
+     "n": 40,
+     "chosen": 22,
+     "first": 16,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "search_reworded_holdout": {
+     "n": 35,
+     "chosen": 18,
+     "first": 14,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_plain": {
+     "n": 60,
+     "chosen": 40,
+     "first": 32,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_reworded": {
+     "n": 40,
+     "chosen": 31,
+     "first": 23,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "hive_heldout": {
+     "n": 22,
+     "chosen": 19,
+     "first": 14,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "final_heldout_project": {
+     "n": 30,
+     "chosen": 20,
+     "first": 17,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "stack_eval": {
+     "n": 24,
+     "chosen": 20,
+     "first": 15,
+     "empty": 0,
+     "nothing_n": 0,
+     "nothing_empty": 0
+    },
+    "precision_heldout": {
+     "n": 15,
+     "chosen": 13,
+     "first": 9,
+     "empty": 0,
+     "nothing_n": 25,
+     "nothing_empty": 21
+    }
+   },
+   "groups": {
+    "plain": {
+     "n": 175,
+     "chosen": 63,
+     "first": 49,
+     "range": [
+      56,
+      70
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "project": {
+     "n": 52,
+     "chosen": 75,
+     "first": 60,
+     "range": [
+      62,
+      85
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "project_tuned": {
+     "n": 24,
+     "chosen": 83,
+     "first": 62,
+     "range": [
+      64,
+      93
+     ],
+     "nothing_n": 0,
+     "nothing_empty": null
+    },
+    "nothing": {
+     "n": 15,
+     "chosen": 87,
+     "first": 60,
+     "range": [
+      62,
+      96
+     ],
+     "nothing_n": 25,
+     "nothing_empty": 84
+    }
+   },
+   "ms": {
+    "typical": 413.0,
+    "slowest_5": 510.1
+   },
+   "tokens": {
+    "stack": 6117,
+    "map": 1216
+   },
+   "map": {
+    "n": 175,
+    "hold": {
+     "3": 64.6,
+     "10": 81.7,
+     "24": 86.9,
+     "40": 93.1,
+     "60": 95.4
+    }
+   },
+   "asks": [
+    {
+     "task": "make the login not get hacked",
+     "stack": [
+      {
+       "name": "web-app-penetration-testing",
+       "category": "security"
+      },
+      {
+       "name": "laravel-security",
+       "category": "security"
+      },
+      {
+       "name": "omni-auth",
+       "category": "ai-gateway"
+      }
+     ],
+     "lead": "web-app-penetration-testing",
+     "city": [
+      {
+       "tower": "Security",
+       "floors": [
+        "penetration-testing-with-strix",
+        "django-security",
+        "springboot-security",
+        "agent-security-hardening",
+        "perl-security",
+        "fix-security-vulnerabilities-with-strix",
+        "llm-trading-agent-security",
+        "quarkus-security",
+        "security-review",
+        "claude-security",
+        "managed-pentesting-with-strix",
+        "security-scan",
+        "application-security-testing",
+        "security-audit",
+        "ci-security-scanning-with-strix",
+        "security-bounty-hunter",
+        "implementing-zero-trust-network-access"
+       ]
+      },
+      {
+       "tower": "OmniRoute AI gateway",
+       "floors": [
+        "omni-settings",
+        "omni-sync-cloud",
+        "omni-tunnels"
+       ]
+      },
+      {
+       "tower": "Testing and QA",
+       "floors": [
+        "safety-guard",
+        "laravel-tdd"
+       ]
+      },
+      {
+       "tower": "Business operations",
+       "floors": [
+        "access-and-identity",
+        "data-protection-and-encryption",
+        "identity-lifecycle-administration",
+        "collaboration-platform-administration",
+        "counterparty-channel-discipline"
+       ]
+      },
+      {
+       "tower": "Memory across sessions",
+       "floors": [
+        "claude-mem-install",
+        "mem-cloud-sync",
+        "mem-wowerpoint"
+       ]
+      },
+      {
+       "tower": "Free APIs and data sources",
+       "floors": [
+        "agent-reach"
+       ]
+      },
+      {
+       "tower": "Blender styles, moods and genres",
+       "floors": [
+        "blend-genre-action-combat"
+       ]
+      },
+      {
+       "tower": "Networking and homelab",
+       "floors": [
+        "homelab-network-readiness",
+        "homelab-vlan-segmentation"
+       ]
+      },
+      {
+       "tower": "GSD project workflow",
+       "floors": [
+        "gsd-secure-phase"
+       ]
+      },
+      {
+       "tower": "Front end, other",
+       "floors": [
+        "hallmark"
+       ]
+      },
+      {
+       "tower": "Caveman terse modes",
+       "floors": [
+        "caveman-setup"
+       ]
+      },
+      {
+       "tower": "Agent orchestration and workflows",
+       "floors": [
+        "hermes-imports"
+       ]
+      },
+      {
+       "tower": "Web3",
+       "floors": [
+        "ito-compute"
+       ]
+      },
+      {
+       "tower": "Research and documentation",
+       "floors": [
+        "notebooklm"
+       ]
+      }
+     ]
+    },
+    {
+     "task": "test all the buttons on my site",
+     "stack": [
+      {
+       "name": "click-path-audit",
+       "category": "testing-quality"
+      },
+      {
+       "name": "web-app-penetration-testing",
+       "category": "security"
+      },
+      {
+       "name": "awwwards",
+       "category": "frontend"
+      }
+     ],
+     "lead": "click-path-audit",
+     "city": [
+      {
+       "tower": "Testing and QA",
+       "floors": [
+        "windows-desktop-e2e",
+        "browser-qa",
+        "tdd-workflow",
+        "e2e-testing",
+        "playwright-cli",
+        "springboot-verification",
+        "quarkus-verification",
+        "cpp-testing",
+        "rea-ci-tests-audit",
+        "python-testing",
+        "golang-testing",
+        "django-tdd",
+        "rust-testing",
+        "perl-testing",
+        "fsharp-testing"
+       ]
+      },
+      {
+       "tower": "Accessibility",
+       "floors": [
+        "accessibility-audit",
+        "accessibility"
+       ]
+      },
+      {
+       "tower": "UI components and design systems",
+       "floors": [
+        "design-systems",
+        "interface-review"
+       ]
+      },
+      {
+       "tower": "React, Next.js, Vue and friends",
+       "floors": [
+        "react-testing"
+       ]
+      },
+      {
+       "tower": "Design taste and critique",
+       "floors": [
+        "jury",
+        "impeccable",
+        "redesign-existing-projects",
+        "break-ui"
+       ]
+      },
+      {
+       "tower": "Front end, other",
+       "floors": [
+        "mobile-native",
+        "hallmark",
+        "stageshow"
+       ]
+      },
+      {
+       "tower": "OmniRoute AI gateway",
+       "floors": [
+        "omni-cli-tools",
+        "omni-webhooks",
+        "omni-providers",
+        "cli-providers"
+       ]
+      },
+      {
+       "tower": "Writing, marketing and media",
+       "floors": [
+        "persuasion-audit",
+        "ui-demo",
+        "dark-pattern-check"
+       ]
+      },
+      {
+       "tower": "3D, shaders and effects for the web",
+       "floors": [
+        "liquid-glass-js"
+       ]
+      },
+      {
+       "tower": "UX research, writing and journeys",
+       "floors": [
+        "ux-writing"
+       ]
+      },
+      {
+       "tower": "Animation and motion",
+       "floors": [
+        "motion-patterns"
+       ]
+      },
+      {
+       "tower": "Security",
+       "floors": [
+        "application-security-testing"
+       ]
+      },
+      {
+       "tower": "Research and documentation",
+       "floors": [
+        "understand-dashboard"
+       ]
+      },
+      {
+       "tower": "Agent evaluation and harnesses",
+       "floors": [
+        "agent-runtime-gateway-smoke-test"
+       ]
+      }
+     ]
+    },
+    {
+     "task": "my page loads too slowly",
+     "stack": [
+      {
+       "name": "awwwards",
+       "category": "frontend"
+      },
+      {
+       "name": "animation-performance",
+       "category": "frontend"
+      },
+      {
+       "name": "benchmark",
+       "category": "engineering"
+      }
+     ],
+     "lead": "awwwards",
+     "city": [
+      {
+       "tower": "Business operations",
+       "floors": [
+        "landing-page-cro-expert",
+        "seo-strategy",
+        "data-modeling",
+        "interface-craft"
+       ]
+      },
+      {
+       "tower": "Design taste and critique",
+       "floors": [
+        "jury",
+        "gpt-taste",
+        "make-interfaces-feel-better",
+        "redesign-existing-projects",
+        "design-critique"
+       ]
+      },
+      {
+       "tower": "React, Next.js, Vue and friends",
+       "floors": [
+        "nuxt4-patterns",
+        "react-performance",
+        "nextjs-turbopack"
+       ]
+      },
+      {
+       "tower": "Front end, other",
+       "floors": [
+        "mobile-native",
+        "stageshow"
+       ]
+      },
+      {
+       "tower": "Blender scenes and 3D assets",
+       "floors": [
+        "slow-zoom"
+       ]
+      },
+      {
+       "tower": "Testing and QA",
+       "floors": [
+        "playwright-cli",
+        "browser-qa"
+       ]
+      },
+      {
+       "tower": "Animation and motion",
+       "floors": [
+        "review-animations",
+        "motion-patterns",
+        "improve-animations",
+        "find-animation-opportunities"
+       ]
+      },
+      {
+       "tower": "UI components and design systems",
+       "floors": [
+        "ask-sonner",
+        "interface-review"
+       ]
+      },
+      {
+       "tower": "3D, shaders and effects for the web",
+       "floors": [
+        "liquid-logo",
+        "liquid-glass-js"
+       ]
+      },
+      {
+       "tower": "Databases and data",
+       "floors": [
+        "mybatis-patterns",
+        "clickhouse-io",
+        "mysql-patterns",
+        "jpa-patterns"
+       ]
+      },
+      {
+       "tower": "APIs and backend frameworks",
+       "floors": [
+        "api-design",
+        "springboot-patterns"
+       ]
+      },
+      {
+       "tower": "Architecture and engineering practice",
+       "floors": [
+        "latency-critical-systems",
+        "data-throughput-accelerator"
+       ]
+      },
+      {
+       "tower": "Writing, marketing and media",
+       "floors": [
+        "project-artifact",
+        "seo"
+       ]
+      },
+      {
+       "tower": "Agent orchestration and workflows",
+       "floors": [
+        "moli"
+       ]
+      },
+      {
+       "tower": "Named visual styles",
+       "floors": [
+        "creative",
+        "flat"
+       ]
+      },
+      {
+       "tower": "Free APIs and data sources",
+       "floors": [
+        "agent-reach"
+       ]
+      },
+      {
+       "tower": "Research and documentation",
+       "floors": [
+        "defuddle"
+       ]
+      }
+     ]
+    },
+    {
+     "task": "turn my notes into a slide deck",
+     "stack": [
+      {
+       "name": "mem-wowerpoint",
+       "category": "memory"
+      },
+      {
+       "name": "frontend-slides",
+       "category": "content-media"
+      },
+      {
+       "name": "presentation-design",
+       "category": "business-ops"
+      }
+     ],
+     "lead": "mem-wowerpoint",
+     "city": [
+      {
+       "tower": "UI components and design systems",
+       "floors": [
+        "uimax-slides",
+        "theme-factory",
+        "uimax-design-system",
+        "uimax-design",
+        "playground"
+       ]
+      },
+      {
+       "tower": "Business operations",
+       "floors": [
+        "google-workspace-ops",
+        "investor-materials",
+        "sales-enablement",
+        "visual-content"
+       ]
+      },
+      {
+       "tower": "Blender styles, moods and genres",
+       "floors": [
+        "blend-genre-card-party-idle"
+       ]
+      },
+      {
+       "tower": "Design taste and critique",
+       "floors": [
+        "design-elevation",
+        "huashu-design",
+        "redesign-existing-projects",
+        "awwwards"
+       ]
+      },
+      {
+       "tower": "Research and documentation",
+       "floors": [
+        "knap",
+        "notebooklm",
+        "obsidian-markdown",
+        "obsidian-cli",
+        "obsidian-bases",
+        "defuddle",
+        "json-canvas",
+        "knowledge-ops",
+        "graphify"
+       ]
+      },
+      {
+       "tower": "Memory across sessions",
+       "floors": [
+        "mem-standup",
+        "mem-screenpipe",
+        "mem-handoff"
+       ]
+      },
+      {
+       "tower": "Agent orchestration and workflows",
+       "floors": [
+        "task-observer",
+        "ck",
+        "plan-canvas"
+       ]
+      },
+      {
+       "tower": "Writing, marketing and media",
+       "floors": [
+        "ui-demo",
+        "slack-gif-creator",
+        "project-artifact"
+       ]
+      },
+      {
+       "tower": "Architecture and engineering practice",
+       "floors": [
+        "rea-changelog-update"
+       ]
+      },
+      {
+       "tower": "3D, shaders and effects for the web",
+       "floors": [
+        "liquid-glass-js",
+        "liquid-logo"
+       ]
+      },
+      {
+       "tower": "Front end, other",
+       "floors": [
+        "stageshow"
+       ]
+      },
+      {
+       "tower": "Science and maths",
+       "floors": [
+        "solo"
+       ]
+      },
+      {
+       "tower": "Named visual styles",
+       "floors": [
+        "sketch"
+       ]
+      },
+      {
+       "tower": "Animation and motion",
+       "floors": [
+        "animation-vocabulary"
+       ]
+      },
+      {
+       "tower": "GSD project workflow",
+       "floors": [
+        "gsd-capture"
+       ]
+      }
+     ]
+    }
+   ],
+   "taste": {
+    "visual_animation": {
+     "name": "Visual Learner (Animation)",
+     "n": 10,
+     "before": 40,
+     "after": 60,
+     "named_n": 3,
+     "named_right": 3
+    },
+    "reader_text": {
+     "name": "Deep Reader (Text / Prose)",
+     "n": 10,
+     "before": 30,
+     "after": 30,
+     "named_n": 3,
+     "named_right": 2
+    },
+    "hands_on_code": {
+     "name": "Hands-on Engineer (Code / Patterns)",
+     "n": 10,
+     "before": 90,
+     "after": 90,
+     "named_n": 3,
+     "named_right": 2
+    },
+    "video_producer": {
+     "name": "Video & Demo Producer (Video / Screencasts)",
+     "n": 10,
+     "before": 100,
+     "after": 100,
+     "named_n": 3,
+     "named_right": 3
+    }
+   }
+  }
+ }
+}

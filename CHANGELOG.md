@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.20.1
+
+- **The skill city.** Every skill has a story (`sfp story <skill>`), readers draw height maps over the skills (words, full text, requests, story, meaning, and the whole text with shipped `bge-m3` vectors), neighbours lend height, and a softmax policy trained on the tuning sets only ranks them. Right skill chosen / first on 175 plain tasks: keyword search 45% / 34%, no model 55% / 41%, with `bge-m3` 63% / 49%.
+- **A map for your agent.** The MCP answer and `select --map` list the next 40 skills in towers. The right skill is on it for 93.1% of plain tasks with `bge-m3` and 84.0% with none.
+- **No skill selected, and why,** when nothing fits: 92% of the tasks that need none are left empty with no model, 84% with `bge-m3`.
+- **Job, taste and named format.** The kind of work asked for lifts the skills made for it. Taste had stopped changing picks and works again.
+- **Research.** `sfp research auto on` looks for new papers every few days, fastest growing topics first. arXiv is asked for all the words and works without Python's certificate. Skills you approve can now be selected.
+- **Faster.** No chat model is asked when picking unless `SFP_RERANK=1`, and only a loaded one is waited for.
+- **Honest numbers.** One benchmark (`bench/release.py`) feeds the README and every image. The earlier "97%", "0.0% junk" and "96% saved" claims are withdrawn: see bench/RESULTS.md.
+
 ## 3.20.0
 
 - **100% Bundle Coverage (121 Curated Bundles):** Every one of the 1,065 skills across all 24 categories now belongs to a named, ordered bundle in `bundles.json` (121 bundles total across 11 areas). Focused workflow bundles (up to 6 skills) attach automatically when a task matches, while larger domain collections are suggested and attach on demand via `--use-bundles`.

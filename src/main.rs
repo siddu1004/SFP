@@ -222,7 +222,7 @@ fn main() {
                 )
             }
         }
-        "select" | "live" | "track" | "feedback" | "clusters" | "library" | "bundles"
+        "select" | "story" | "live" | "track" | "feedback" | "clusters" | "library" | "bundles"
         | "models" | "taste" | "mentor" | "research" => (
             root_dir.join("mcp").join("sfp_hive.py"),
             args.iter().map(|s| s.as_str()).collect(),

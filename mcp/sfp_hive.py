@@ -56,7 +56,7 @@ if HERE not in sys.path:
 import sfp_mcp as core  # noqa: E402
 import sfp_stack as v1  # noqa: E402  (vocabulary, project fingerprint, recipes, usage log)
 
-VERSION = '3.20.0'
+VERSION = '3.20.1'
 INTERNAL_SKILLS = ('sfp', 'sfp-hive')   # the router and the hive never recommend themselves
 # Catalog skills whose description names every domain (public-apis lists 51 kinds of API): words always match them, so
 # they are candidates only when their capability in capabilities.json fires ("is there a free API for...").
@@ -754,6 +754,7 @@ def rerank(sit, votes, quality, exclude, allowed=None):
 
 NO_REAL_JOB = re.compile(r"\b(rename|renaming|typo|spelling|comma|semicolon|whitespace|indent(ation)?)\b|\bchange (the |this )?\w* ?(text|label|wording|constant|value)\b|^\s*what is \d", re.I)
 CITY_PICKS = 3           # skills the city selector gives a plain task
+CITY_RARE = 12           # a job this few skills do is reason enough to choose one, without a model
 CITY_BONUS = 0.3         # extra height for a skill the signals chose, without a model (tests/*_tuning.json)
 MICRO_EDIT = re.compile(r'\b(rename|swap|toggle|wrap|replace|remove|delete|extract|add|change|fix|bump|indent|update)\b.*\b(variable|method|constant|operands?|boolean|flag|quotes?|whitespace|newline|commented|spelling|parentheses|font\s+size|timeout\s+duration|copyright\s+year|minor\s+version)\b', re.I)
 
@@ -811,22 +812,8 @@ def why_none(task, missing, judged):
 
 
 
-def as_asked(order, named_form, within=12):
-    """The order with the skills that make the form the user named first, among the first few."""
-    if not named_form:
-        return order
-    import sfp_cards
-    forms = {'text', 'document'} if named_form in ('text', 'document') else {named_form}
-    return sorted(order[:within], key=lambda n: not forms & set(sfp_cards.get_card(n).get('output') or []))
-
-
-def fit_taste(picks, taste, budget):
-    """Fused picks with the output the user prefers first, as many as the token budget holds (the first always stays)."""
-    outputs = (taste or {}).get('output') or {}
-    if outputs:
-        import sfp_cards
-        top = max(outputs, key=outputs.get)
-        picks = sorted(picks, key=lambda n: top not in (sfp_cards.get_card(n).get('output') or []))
+def within_budget(picks, budget):
+    """As many of the picks as the token budget holds; the first always stays."""
     kept, spent = [], 0
     for n in picks:
         cost = v1.body_tokens(n)
@@ -968,12 +955,12 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     if sem_sim_list and not caller_semantic:
         import sfp_embed
         meaning = sfp_embed.survey(sit['text'])
-    city, height, city_kind, city_features = ([], {}, 'text', {}) if judged == [] else sfp_city.rank(task, meaning, allow)
+    city, height, city_kind, city_features = ([], {}, 'text', {}) if judged == [] else sfp_city.rank(task, meaning, allow, taste)
     plain = (judged is None and not caller_semantic and not has_proj and not learned and not after
              and not phase_hint and os.environ.get('SFP_FUSED', '1') != '0')
     fused = []
     if plain and meaning:
-        judged = fused = fit_taste(as_asked(city, named_form)[:CITY_PICKS], {} if named_form else taste, budget)
+        judged = fused = within_budget(city[:CITY_PICKS], budget)
     if judged is not None:
         picks = list(judged)
     else:
@@ -1125,8 +1112,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         # Without a model nothing chosen stays nothing, and what the signals chose stands a little taller.
         mine = [c[0] for c in chosen if c[0] not in pinned]
         lifted = {n: height.get(n, 0.0) + (CITY_BONUS if n in mine else 0.0) for n in list(city) + mine}
-        tall = as_asked(sorted(lifted, key=lambda n: (-lifted[n], n)), named_form) if mine else []
-        judged = fused = fit_taste(tall[:CITY_PICKS], {} if named_form else taste, budget)
+        rare = len(sfp_city.job_lift(task_job)[0] or ()) in range(1, CITY_RARE + 1)     # "explain how X works" needs an explainer, whatever X is
+        tall = sorted(lifted, key=lambda n: (-lifted[n], n)) if mine or rare else []
+        judged = fused = within_budget(tall[:CITY_PICKS], budget)
         for i, n in enumerate(fused):
             votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
             quality[n] = RERANK_LEAD - 0.01 * i

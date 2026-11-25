@@ -5,9 +5,11 @@ buildings, and a learned selector reads all the maps.
   story     what a building is: what the skill does, the words that call it, its district (category) and tower (cluster),
             the job it does, what it makes, what it needs and how many tokens it costs.
   maps      one per reader: words, name, full text, requests, story, and with an embedding model the description, the
-            closest request, the closest three requests and the two together. A building's height on a map is its rank
+            closest request, the closest three requests, the two together and, with bge-m3, the whole text. A building's height on a map is its rank
             there, 21 / (21 + rank), next to how far it rises above the sixtieth building.
   towers    neighbours lend each other height: a building among tall ones is more likely right than one that stands alone.
+  job       a task that asks for a kind of work (explain, write, deploy...) lifts the skills made for it, the rarer the work
+            the more; a format you name, or the one you are known to like, lifts the skills that make it.
   selector  a softmax policy p(skill) = exp(5 w.f) / sum, where f are the heights. The shipped weights were trained on
             tests/plain_tuning.json and search_reworded.json only (scripts/make_city.py). Feedback moves them on this
             machine by the policy gradient of the expected reward, held near the shipped weights, so a few wrong reports
@@ -33,11 +35,14 @@ import sfp_mcp as core  # noqa: E402
 CITY_FILE = os.path.join(core.ROOT, 'skill_city.json')
 TEXT_MAPS = ('words', 'name', 'body', 'keys', 'story')
 MEANING_MAPS = ('doc', 'exmax', 'exmean', 'meaning')
+BODY_MAPS = ('whole',)    # the whole SKILL.md in meaning: shipped vectors, for bge-m3
 POOL = 80                # buildings the selector scores
 MAP_SIZE = 40            # buildings on the map the agent reads
 RANK_K = 21
 TEMPER = 5.0
 KEEP = 20                # buildings kept in the log for learning
+JOB, TASTE, FORM = 0.6, 1.0, 1.0   # extra height for the job asked for, the output liked, the output named (tests/taste_eval.json)
+RARE_JOB = 60            # a job more skills than this do says nothing about a skill
 RATE, PULL, REACH = 0.05, 0.05, 0.4   # learning step, pull back to the shipped weights, furthest a weight may move
 _DATA = {}
 _HOMES = {}
@@ -90,6 +95,9 @@ def maps(task, meaning=None):
         out['exmax'] = {n: v[1] for n, v in meaning.items() if v[1] is not None}
         out['exmean'] = {n: v[2] for n, v in meaning.items() if v[2] is not None}
         out['meaning'] = {n: (0.5 * v[0] + 0.5 * v[1]) if v[1] is not None else v[0] for n, v in meaning.items()}
+        whole = {n: v[3] for n, v in meaning.items() if len(v) > 3 and v[3] is not None}
+        if len(whole) >= 0.9 * len(meaning):
+            out['whole'] = whole
     return out
 
 
@@ -106,9 +114,9 @@ def _heights(raw):
 
 def features(task, meaning=None, allow=None):
     """(kind, pool, {skill: [features]}): the buildings worth scoring and their heights on every map."""
-    kind = 'model' if meaning else 'text'
-    use = TEXT_MAPS + (MEANING_MAPS if meaning else ())
     got = maps(task, meaning)
+    kind = 'whole' if 'whole' in got else 'model' if meaning else 'text'
+    use = TEXT_MAPS + (MEANING_MAPS if meaning else ()) + (BODY_MAPS if kind == 'whole' else ())
     high, rise = {}, {}
     for m in use:
         high[m], rise[m] = _heights(got.get(m) or {})
@@ -165,14 +173,57 @@ def weights(kind, size):
     return shipped
 
 
-def rank(task, meaning=None, allow=None):
-    """(skills best first, {skill: height}, kind, {skill: features})."""
+_JOBS = {}
+
+
+def _jobs():
+    """{job: [skills]} from the cards."""
+    if not _JOBS:
+        import sfp_cards
+        for n in core.SKILLS:
+            _JOBS.setdefault(sfp_cards.get_card(n).get('job'), []).append(n)
+    return _JOBS
+
+
+def job_lift(job):
+    """({skills made for the job}, how rare it is, 0 to 1); (empty, 0) when the job says nothing."""
+    made = _jobs().get(job) or [] if job else []
+    if not made or len(made) > RARE_JOB:
+        return frozenset(), 0.0
+    return frozenset(made), math.log(len(core.SKILLS) / len(made)) / math.log(len(core.SKILLS))
+
+
+def makes(name, form):
+    import sfp_cards
+    out = set(sfp_cards.get_card(name).get('output') or [])
+    return bool(out & ({'text', 'document'} if form in ('text', 'document') else {form}))
+
+
+def rank(task, meaning=None, allow=None, taste=None):
+    """(skills best first, {skill: height}, kind, {skill: features}). `taste` is sfp_learn.load_taste's answer."""
+    import sfp_cards
     kind, pool, f = features(task, meaning, allow)
     if not pool:
         return [], {}, kind, {}
     w = weights(kind, len(f[pool[0]]))
     score = {n: sum(a * b for a, b in zip(w, f[n])) for n in pool}
-    return sorted(pool, key=lambda n: (-score[n], n)), score, kind, f
+    job, form = sfp_cards.task_intent(task)
+    made, rare = job_lift(job)
+    low, flat = min(score.values()), [0.0] * len(w)
+    for n in sorted(made):
+        if n in core.SKILLS and n not in score and (allow is None or allow(n)):
+            score[n], f[n] = low, flat
+    liked = {k: v for k, v in ((taste or {}).get('output') or {}).items() if v > 0}
+    total = sum(liked.values())
+    for n in score:
+        if n in made:
+            score[n] += JOB * rare
+        if form:
+            score[n] += FORM * makes(n, form)
+        elif total:
+            share = max([liked.get(x, 0.0) / total for x in sfp_cards.get_card(n).get('output') or []] or [0.0])
+            score[n] += TASTE * share * (1.0 if not job or sfp_cards.get_card(n).get('job') == job else 0.3)
+    return sorted(score, key=lambda n: (-score[n], n)), score, kind, f
 
 
 def policy(score):

@@ -1,7 +1,7 @@
 """Draw the README's animated illustrations, in dark and light themes.
 
-Every number and example comes from the repository itself: the catalog, the newest file in bench/results,
-the final exam picks and judgements, and real words-only output from the hive. Run it after a benchmark,
+Every number and example comes from the repository itself: the catalog,
+bench/results/release.json, and real words-only output from the hive. Run it after a benchmark,
 or let scripts/sync.py run it. Writes assets/<name>-dark.svg and assets/<name>-light.svg.
 
 Animations are CSS and SMIL inside each SVG, so they play on GitHub. Each drawing is complete when
@@ -13,7 +13,7 @@ import os
 import subprocess
 import sys
 import tempfile
-from collections import Counter, defaultdict
+from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ASSETS = os.path.join(ROOT, 'assets')
@@ -113,11 +113,6 @@ def load_catalog():
     return c['skills'] if isinstance(c, dict) else c
 
 
-def latest_results():
-    files = sorted(glob.glob(os.path.join(ROOT, 'bench', 'results', '*.json')))
-    return json.load(open(files[-1], encoding='utf-8')) if files else None
-
-
 def design_numbers():
     runs = []
     for f in sorted(glob.glob(os.path.join(ROOT, 'bench', 'design', 'results', '*.json'))):
@@ -129,37 +124,6 @@ def design_numbers():
         if xs:
             out[arm] = {'n': len(xs), 'shipped': sum(1 for r in xs if r['rounds_to_ship']),
                         'rounds': sum((r['rounds_to_ship'] or 5) for r in xs) / len(xs)}
-    return out
-
-
-def exam_scores():
-    """Both scoreboards for the final exam, from the saved picks: the original labels, and the blind pooled judge."""
-    picks_path = os.path.join(ROOT, 'bench', 'exam_picks.json')
-    judged_path = os.path.join(ROOT, 'tests', 'exam_judged.json')
-    if not (os.path.isfile(picks_path) and os.path.isfile(judged_path)):
-        return None
-    picks = json.load(open(picks_path, encoding='utf-8'))
-    judged = json.load(open(judged_path, encoding='utf-8'))
-    expect = {}
-    for name in ('exam_plain', 'exam_project', 'exam_reworded'):
-        data = json.load(open(os.path.join(ROOT, 'tests', name + '.json'), encoding='utf-8'))
-        for case in (data if isinstance(data, list) else data.get('cases', [])):
-            expect[case['task']] = set(case.get('expect', []))
-    agg = defaultdict(Counter)
-    for row in picks:
-        task, engine, chosen = row['task'], row['engine'], row['picks']
-        ok = judged.get(task, {})
-        exp = expect.get(task, set())
-        a = agg[engine]
-        a['n'] += 1
-        a['judge_chosen'] += any(ok.get(p) or p in exp for p in chosen)
-        a['judge_first'] += bool(chosen) and bool(ok.get(chosen[0]) or chosen[0] in exp)
-        a['label_chosen'] += bool(set(chosen) & exp)
-        a['label_first'] += bool(chosen) and chosen[0] in exp
-    out = {}
-    for e, a in agg.items():
-        out[e] = {k: round(100 * v / a['n']) for k, v in a.items() if k != 'n'}
-        out[e]['n'] = a['n']
     return out
 
 
@@ -175,401 +139,470 @@ def hive(task):
         return {}
 
 
-# ----------------------------------------------------------------- drawings
+# ----------------------------------------------------------------- measured results
 
 
-def hero(t, total, ncats, example):
-    """Unified animated banner at the top of the README: wordmark, domain pills, animated shelf and live stack."""
+def release():
+    """bench/results/release.json (bench/release.py): the one source of every accuracy, speed and token figure drawn here."""
+    try:
+        with open(os.path.join(ROOT, 'bench', 'results', 'release.json'), encoding='utf-8') as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def got(rel, engine, *path):
+    x = rel.get('engines', {}).get(engine, {})
+    for p in path:
+        x = x.get(p) if isinstance(x, dict) else None
+    return x
+
+
+def engines_shown(rel):
+    rows = [('keyword', 'Keyword search', 'muted'), ('words', 'SFP, no model', 'sky'), ('meaning', 'SFP + bge-m3', 'teal')]
+    return [r for r in rows if r[0] in rel.get('engines', {})]
+
+
+def best_engine(rel):
+    return 'meaning' if 'meaning' in rel.get('engines', {}) else 'words'
+
+
+def all_on_tokens(catalog):
+    return sum(-(-(len(s['name']) + len(s['description']) + 12) // 4) for s in catalog)
+
+
+def context_saved(rel, catalog):
+    used = (got(rel, best_engine(rel), 'tokens', 'stack') or 0) + (got(rel, best_engine(rel), 'tokens', 'map') or 0)
+    return used, round(100 - 100.0 * used / all_on_tokens(catalog)) if used else 0
+
+
+SAME = r"""
+import json, os, sys, tempfile
+sys.path.insert(0, os.path.join(os.getcwd(), 'mcp'))
+import sfp_hive as eng
+hist, out = eng.History(eng.v1.RECIPES, []), []
+with tempfile.TemporaryDirectory() as tmp:
+    homes = {}
+    for f in ('stack_eval.json', 'hive_heldout.json'):
+        data = json.load(open(os.path.join('tests', f), encoding='utf-8'))
+        eng._projects(data, os.path.join(tmp, f))
+        homes.update({k: os.path.join(tmp, f, k) for k in data['projects']})
+    for label, key in (('Next.js', 'nextjs'), ('Rust', 'rust'), ('.NET', 'dotnet'), ('Flutter', 'flutter'), ('Django', 'django')):
+        out.append([label, [c['name'] for c in eng.select('write tests for the orders', homes[key], history=hist)['stack']]])
+print(json.dumps(out))
+"""
+STORY = r"""
+import json, os, sys
+sys.path.insert(0, os.path.join(os.getcwd(), 'mcp'))
+import sfp_city
+print(json.dumps(sfp_city.story(sys.argv[1])))
+"""
+
+
+def ask_python(code, *args):
+    """Run a little code against the engine, words only, in a throwaway data folder."""
+    env = dict(os.environ, SFP_SEMANTIC='0', SFP_DATA_DIR=tempfile.mkdtemp(prefix='sfp-art-'), PYTHONIOENCODING='utf-8')
+    done = subprocess.run([sys.executable, '-c', code] + list(args), capture_output=True, text=True, encoding='utf-8', env=env, cwd=ROOT, timeout=180)
+    try:
+        return json.loads(done.stdout)
+    except ValueError:
+        return None
+
+
+# ----------------------------------------------------------------- the city
+
+
+def block(cx, cy, w, depth, height, color, t, lit=False, floors=0, cls='', delay=0.0):
+    """One isometric building standing on (cx, cy), the middle of its ground tile."""
+    hw, hd = w / 2, depth / 2
+    top = cy - height
+    left = f'{cx - hw},{cy} {cx},{cy + hd} {cx},{top + hd} {cx - hw},{top}'
+    right = f'{cx + hw},{cy} {cx},{cy + hd} {cx},{top + hd} {cx + hw},{top}'
+    roof = f'{cx - hw},{top} {cx},{top + hd} {cx + hw},{top} {cx},{top - hd}'
+    a, b, c = (1.0, .78, .55) if lit else (.5, .34, .22)
+    s = f'<g class="{cls}"{d(delay)}>' if cls else '<g>'
+    for pts, o in ((left, b), (right, c), (roof, a)):
+        s += f'<polygon points="{pts}" fill="{t["bg"]}"/><polygon points="{pts}" fill="{color}" fill-opacity="{o}"/>'
+    for k in range(1, floors):
+        y = cy - height * k / floors
+        s += (f'<path d="M{cx - hw} {y:.1f} L{cx} {y + hd:.1f} L{cx + hw} {y:.1f}" fill="none" stroke="{t["bg"]}" '
+              f'stroke-width="1.5" stroke-opacity=".8"/>')
+    return s + '</g>'
+
+
+def city_blocks(t, catalog, x0, y0, tw, td, cols, tallest, lit=(), delay=.2):
+    """Every category is a building; its height grows with its skills. Returns (svg, {category: roof point})."""
+    per = Counter(s['category'] for s in catalog)
+    color = {c: col for _, col, cs in FAMILIES for c in cs}
+    cats = sorted(per, key=lambda c: (next((i for i, f in enumerate(FAMILIES) if c in f[2]), 9), -per[c]))
+    top = max(per.values()) ** .5
+    spots, out, roofs = [], [], {}
+    for k, c in enumerate(cats):
+        i, j = k % cols, k // cols
+        spots.append((i + j, x0 + (i - j) * tw / 2, y0 + (i + j) * td / 2, c))
+    for n, (_, x, y, c) in enumerate(sorted(spots)):
+        h = 8 + tallest * (per[c] ** .5) / top
+        out.append(block(x, y, tw * .78, td * .78, h, t[color.get(c, 'sky')], t, c in lit, cls='rise', delay=delay + .025 * n))
+        roofs[c] = (x, y - h)
+    return ''.join(out), roofs
+
+
+def hero(t, total, ncats, example, catalog, rel):
+    """The banner: the skill city, the task, and the towers it lights up."""
     task = example['task']
-    stack = [s['name'] for s in example.get('stack', [])][:3] or ['web-app-penetration-testing', 'security-review']
-    body = [f'<defs><radialGradient id="g" cx="76%" cy="46%" r="54%"><stop offset="0" stop-color="{t["accent"]}" '
+    chosen = example.get('stack', [])[:3]
+    stack = [s['name'] for s in chosen]
+    lit = [s['category'] for s in chosen]
+    used, saved = context_saved(rel, catalog)
+    hold = got(rel, best_engine(rel), 'map', 'hold', '40')
+    body = [f'<defs><radialGradient id="g" cx="66%" cy="56%" r="46%"><stop offset="0" stop-color="{t["accent"]}" '
             f'stop-opacity="{t["soft"]}"/><stop offset="1" stop-color="{t["accent"]}" stop-opacity="0"/>'
             f'</radialGradient></defs><rect width="1280" height="360" rx="16" fill="url(#g)"/>']
-    body.append(text(56, 76, 'SKILLS FOR PRODUCTIVITY', 13, t['accent'], 700, cls='rise',
-                     extra=' letter-spacing="3"'))
+    body.append(text(56, 76, 'SKILLS FOR PRODUCTIVITY', 13, t['accent'], 700, cls='rise', extra=' letter-spacing="3"'))
     body.append(text(52, 172, 'SFP', 108, t['ink'], 800, cls='rise', extra=d(.08) + ' letter-spacing="-4"'))
-    body.append(text(56, 218, f'{total:,} specialist skills in {ncats} categories & 121 bundles.', 24, t['ink'], 700, cls='rise', extra=d(.16)))
-    body.append(text(56, 250, 'SFP reads your task & project, then loads only the 1 to 3 you need.', 17, t['ink2'], 500, cls='rise', extra=d(.22)))
-
-    # Six domain pills (two neat rows of three) so they complement rather than repeat the shields.io badges below.
-    domains = [
-        ('AI & MCP', 'violet'),
-        ('UI & Design', 'rose'),
-        ('Engineering', 'sky'),
-        ('Business & Growth', 'amber'),
-        ('Testing & Security', 'teal'),
-        ('Science & Docs', 'lime'),
-    ]
-    for i, (label, col) in enumerate(domains):
-        row_i, col_i = divmod(i, 3)
-        px = 56 + col_i * 172
-        py = 274 + row_i * 34
-        c = t[col]
+    body.append(text(56, 218, f'A city of {total:,} skills for your AI.', 26, t['ink'], 700, cls='rise', extra=d(.16)))
+    body.append(text(56, 248, 'It reads your task and lights up the few that fit.', 17, t['ink2'], 500, cls='rise', extra=d(.22)))
+    for i, (label, col) in enumerate([('AI and MCP', 'violet'), ('UI and design', 'rose'), ('Engineering', 'sky'),
+                                      ('Business and content', 'amber'), ('Testing and security', 'teal'), ('Science and docs', 'lime')]):
+        px, py, c = 56 + (i % 3) * 172, 274 + (i // 3) * 34, t[col]
         body.append(f'<g class="rise"{d(.32 + i * .06)}><rect x="{px}" y="{py}" width="162" height="26" rx="13" '
-                    f'fill="{t["tile"]}" stroke="{c}" stroke-width="1.5"/>'
-                    f'<circle cx="{px + 15}" cy="{py + 13}" r="4" fill="{c}"/>'
+                    f'fill="{t["tile"]}" stroke="{c}" stroke-width="1.5"/><circle cx="{px + 15}" cy="{py + 13}" r="4" fill="{c}"/>'
                     + text(px + 26, py + 17, label, 12, t['ink'], 600) + '</g>')
-
-    # The shelf: one tile per group of skills, coloured by family.
-    gx, gy, cols, rows, size, gap = 620, 74, 10, 7, 28, 8
-    lit = [(1, 6), (3, 2), (5, 7)][:len(stack)]
-    for r in range(rows):
-        for c in range(cols):
-            i = r * cols + c
-            x0, y0 = gx + c * (size + gap), gy + r * (size + gap)
-            color = t[COLORS[(c * 7 + r * 3) % len(COLORS)]]
-            body.append(f'<rect class="pop" x="{x0}" y="{y0}" width="{size}" height="{size}" rx="6" fill="{color}" '
-                        f'fill-opacity="{t["soft"]}"{d(.18 + i * .005)}/>')
-    # The task, the lines to the chosen tiles, and the stack.
-    cw = width(task, 14) + 36
-    body.append(f'<g class="rise"{d(.45)}><rect x="{gx}" y="24" width="{cw:.0f}" height="34" rx="17" fill="{t["tile"]}" '
-                f'stroke="{t["grid"]}" stroke-width="1.5"/>' + text(gx + 18, 46, f'Task: "{task}"', 13, t['ink'], 600) + '</g>')
-    card_x, card_y = 1012, 114
-    body.append(f'<g class="rise"{d(1.4)}><rect x="{card_x}" y="{card_y}" width="238" height="{64 + 38 * len(stack)}" '
+    drawn, roofs = city_blocks(t, catalog, 780, 148, 68, 34, 6, 92, lit)
+    body.append(drawn)
+    cw = width(f'Task: "{task}"', 13) + 36
+    body.append(f'<g class="rise"{d(.45)}><rect x="620" y="22" width="{cw:.0f}" height="34" rx="17" fill="{t["tile"]}" '
+                f'stroke="{t["grid"]}" stroke-width="1.5"/>' + text(638, 44, f'Task: "{task}"', 13, t['ink'], 600) + '</g>')
+    card_x, card_y = 1012, 104
+    body.append(f'<g class="rise"{d(1.2)}><rect x="{card_x}" y="{card_y}" width="242" height="{86 + 34 * len(stack)}" '
                 f'rx="12" fill="{t["tile"]}" stroke="{t["accent"]}" stroke-width="2"/>'
-                + text(card_x + 18, card_y + 30, 'Picked for this task', 14, t['ink'], 700)
-                + text(card_x + 18, card_y + 46, '96% context saved', 11, t['accent'], 600) + '</g>')
-    for i, (r, c) in enumerate(lit):
-        cx, cy = gx + c * (size + gap) + size / 2, gy + r * (size + gap) + size / 2
-        ry = card_y + 72 + 38 * i
-        p1 = f'M{gx + 40} 58 C{gx + 40} {cy - 36} {cx - 60} {cy} {cx - size / 2} {cy}'
-        p2 = f'M{cx + size / 2} {cy} C{cx + 90} {cy} {card_x - 70} {ry} {card_x} {ry}'
-        for k, p in enumerate((p1, p2)):
-            body.append(f'<path class="draw" pathLength="1" d="{p}" fill="none" stroke="{t["accent"]}" '
-                        f'stroke-width="2" stroke-linecap="round"{d(.7 + .45 * k + .15 * i)}/>')
-        body.append(f'<rect class="glow" x="{cx - size / 2 - 3}" y="{cy - size / 2 - 3}" width="{size + 6}" '
-                    f'height="{size + 6}" rx="8" fill="{t["accent"]}"/>')
-        body.append(pulse(p2, t['accent'], 2.0 + .4 * i))
-        label_name = stack[i] if len(stack[i]) <= 24 else stack[i][:22] + '..'
-        body.append(f'<g class="rise"{d(1.6 + .15 * i)}><circle cx="{card_x + 26}" cy="{ry - 4}" r="10" fill="{t["accent"]}"/>'
+                + text(card_x + 18, card_y + 30, 'Picked for this task', 14, t['ink'], 700) + '</g>')
+    for i, n in enumerate(stack):
+        ry = card_y + 60 + 34 * i
+        rx, rtop = roofs.get(lit[i], (780, 200))
+        p = f'M{rx} {rtop} C{rx + 60} {rtop - 34} {card_x - 70} {ry - 4} {card_x} {ry - 4}'
+        body.append(f'<path class="draw" pathLength="1" d="{p}" fill="none" stroke="{t["accent"]}" stroke-width="2" '
+                    f'stroke-linecap="round"{d(.8 + .2 * i)}/><circle class="glow" cx="{rx}" cy="{rtop}" r="5" fill="{t["accent"]}"/>')
+        body.append(pulse(p, t['accent'], 2.0 + .4 * i))
+        body.append(f'<g class="rise"{d(1.4 + .15 * i)}><circle cx="{card_x + 26}" cy="{ry - 4}" r="10" fill="{t["accent"]}"/>'
                     + text(card_x + 26, ry, str(i + 1), 11, t['on_accent'], 700, 'middle')
-                    + text(card_x + 42, ry, label_name, 12, t['ink'], 600, cls='mono') + '</g>')
-    desc = (f'SFP keeps {total:,} skills on a shelf across {ncats} categories. For the task "{task}" it lights up '
-            f'the few that fit and hands them to your AI: {", ".join(stack)}.')
+                    + text(card_x + 42, ry, n if len(n) <= 25 else n[:23] + '..', 12, t['ink'], 600, cls='mono') + '</g>')
+    note = 'and a map of the next 40' if hold else 'only what fits'
+    body.append(text(card_x + 18, card_y + 70 + 34 * len(stack), note, 12, t['accent'], 600, cls='fade', extra=d(1.9)))
+    desc = (f'SFP is a city of {total:,} skills in {ncats} categories. For the task "{task}" it lights up the few buildings that '
+            f'fit and hands them to your AI: {", ".join(stack)}.')
     return svg(1280, 360, 'SFP: Skills for Productivity', desc, ''.join(body), t)
 
 
+def skyline(t, x, y, heights, color, w=11, gap=4, delay=0.0, tall=34):
+    out = ''
+    for k, h in enumerate(heights):
+        out += (f'<rect class="rise" x="{x + k * (w + gap)}" y="{y - tall * h:.1f}" width="{w}" height="{tall * h:.1f}" rx="2" '
+                f'fill="{color}"{d(delay + .04 * k)}/>')
+    return out
+
+
 def pipeline(t):
-    body = [header(t, 'How SFP picks', 'Everything runs on your machine. Dashed steps are optional and use a local model.')]
-    nodes = [  # x, y, w, title, lines, dashed, color
-        (40, 200, 150, 'Your task', ['what you asked,', 'and your project'], False, 'ink2'),
-        (250, 140, 170, 'Words', ['matching words in', 'names and examples'], False, 'sky'),
-        (250, 230, 170, 'Meaning', ['a local embedding', 'model (bge-m3)'], True, 'violet'),
-        (250, 320, 170, 'Project fit', ['drops skills for', 'other technologies'], False, 'amber'),
-        (480, 230, 150, 'Fuse', ['rank fusion,', 'one shortlist'], False, 'teal'),
-        (670, 230, 150, 'Local judge', ['a chat model', 'orders the list'], True, 'rose'),
-        (860, 230, 110, 'Your stack', ['1 to 3 skills,', 'plus bundles'], False, 'teal'),
-    ]
-    centers = {}
-    for i, (x, y, w, title, lines, dashed, col) in enumerate(nodes):
-        h = 74
+    body = [header(t, 'How SFP picks', 'Each reader draws a map of the city. The tallest buildings over all the maps win. Dashed needs a local model.')]
+    readers = [('Words', 'sky', False, [.3, .8, .2, .5, .1]), ('Full text', 'lime', False, [.5, .9, .3, .2, .2]),
+               ('Requests', 'amber', False, [.2, .7, .4, .6, .1]), ('Meaning', 'violet', True, [.4, 1., .3, .3, .2]),
+               ('Your project', 'rose', False, [.6, .8, 0.06, .5, 0.06])]
+    body.append(f'<g class="rise"{d(.15)}><rect x="40" y="214" width="140" height="74" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" '
+                f'stroke-width="2"/>' + text(58, 246, 'Your task', 16, t['ink'], 700) + text(58, 268, 'in your words', 13, t['ink2']) + '</g>')
+    for i, (name, col, dashed, hs) in enumerate(readers):
+        y, c = 106 + i * 60, t[col]
         dash = ' stroke-dasharray="6 5"' if dashed else ''
-        stroke = t[col] if col != 'ink2' else t['grid']
-        top = y - h / 2
-        body.append(f'<g class="rise"{d(.2 + .12 * i)}><rect x="{x}" y="{top}" width="{w}" height="{h}" rx="12" '
-                    f'fill="{t["tile"]}" stroke="{stroke}" stroke-width="2"{dash}/>'
-                    f'<rect x="{x}" y="{top + 14}" width="4" height="{h - 28}" rx="2" fill="{stroke}"/>'
-                    + text(x + 16, top + 26, title, 16, t['ink'], 700)
-                    + text(x + 16, top + 46, lines[0], 13, t['ink2'])
-                    + text(x + 16, top + 63, lines[1], 13, t['ink2']) + '</g>')
-        centers[title] = (x, y, w)
-
-    def link(a, b, delay, color=None):
-        ax, ay, aw = centers[a]
-        bx, by, _ = centers[b]
-        x1, x2 = ax + aw, bx
-        mid = (x1 + x2) / 2
-        p = f'M{x1} {ay} C{mid} {ay} {mid} {by} {x2 - 6} {by}'
-        c = color or t['accent']
-        return (f'<path class="draw" pathLength="1" d="{p}" fill="none" stroke="{c}" stroke-width="2" '
-                f'stroke-linecap="round"{d(delay)}/><path class="fade" d="M{x2} {by} l-9 -5 v10 z" fill="{c}"{d(delay + .8)}/>',
-                p)
-
-    paths = []
-    for i, (a, b) in enumerate([('Your task', 'Words'), ('Your task', 'Meaning'), ('Your task', 'Project fit'),
-                                ('Words', 'Fuse'), ('Meaning', 'Fuse'), ('Project fit', 'Fuse'),
-                                ('Fuse', 'Local judge'), ('Local judge', 'Your stack')]):
-        s, p = link(a, b, 1.0 + .18 * i)
-        body.append(s)
-        paths.append(p)
-    for i, p in enumerate(paths):
-        body.append(pulse(p, t['accent'], 2.6 + .3 * (i % 4), 2.0))
-    # The feedback loop.
-    loop = 'M915 267 V382 H555 V267'
-    body.append(f'<path class="draw" pathLength="1" d="{loop}" fill="none" stroke="{t["accent"]}" stroke-width="2" '
-                f'stroke-dasharray="1"{d(2.6)}/>')
-    body.append(f'<path class="fade" d="M555 269 l-5 9 h10 z" fill="{t["accent"]}"{d(3.2)}/>')
-    body.append(f'<rect x="600" y="370" width="270" height="24" fill="{t["bg"]}"/>')
-    body.append(text(735, 387, 'learns from "helped" and "did not help"', 13, t['accent'], 600, 'middle', 'fade', d(3.0)))
-    desc = ('Your task and project go to three signals: words, meaning and project fit. Rank fusion joins them into '
-            'one shortlist, an optional local model orders it, and you get one to three skills plus fitting bundles. '
-            'Your feedback flows back into the choice.')
-    return svg(1000, 410, 'How SFP picks', desc, ''.join(body), t)
+        body.append(f'<g class="rise"{d(.25 + .1 * i)}><rect x="250" y="{y}" width="236" height="50" rx="10" fill="{t["tile"]}" '
+                    f'stroke="{c}" stroke-width="2"{dash}/>' + text(266, y + 31, name, 15, t['ink'], 700) + '</g>')
+        body.append(skyline(t, 394, y + 43, hs, c, delay=.5 + .1 * i))
+        a, b = f'M180 251 C215 251 215 {y + 25} 244 {y + 25}', f'M486 {y + 25} C530 {y + 25} 530 251 574 251'
+        for k, p in enumerate((a, b)):
+            body.append(f'<path class="draw" pathLength="1" d="{p}" fill="none" stroke="{c}" stroke-width="1.8"{d(.5 + .5 * k + .08 * i)}/>')
+        body.append(pulse(b, c, 2.0 + .3 * i, 2.0))
+    body.append(f'<g class="rise"{d(1.0)}><rect x="580" y="176" width="180" height="150" rx="14" fill="{t["tile"]}" stroke="{t["accent"]}" '
+                f'stroke-width="2.5"/>' + text(670, 204, 'City selector', 16, t['ink'], 700, 'middle') + '</g>')
+    for k, (h, on) in enumerate([(26, 0), (74, 1), (34, 0), (46, 0)]):
+        body.append(block(616 + k * 36, 296, 30, 15, h, t['accent'] if on else t['muted'], t, bool(on), floors=max(2, h // 14), cls='rise', delay=1.1 + .1 * k))
+    outs = [('1 to 3 skills', 'loaded for this job', 'teal', 128), ('Map of the next 40', 'your AI can swap one in', 'violet', 214),
+            ('Or nothing', 'when no skill fits', 'ink2', 300)]
+    for i, (a, b, col, y) in enumerate(outs):
+        c = t[col]
+        p = f'M760 251 C795 251 795 {y + 33} 818 {y + 33}'
+        body.append(f'<path class="draw" pathLength="1" d="{p}" fill="none" stroke="{c}" stroke-width="2"{d(1.4 + .12 * i)}/>'
+                    f'<path class="fade" d="M826 {y + 33} l-9 -5 v10 z" fill="{c}"{d(2.0)}/>')
+        body.append(f'<g class="rise"{d(1.5 + .12 * i)}><rect x="828" y="{y}" width="142" height="66" rx="12" fill="{t["tile"]}" stroke="{c}" '
+                    f'stroke-width="2"/>' + text(840, y + 28, a, 13, t['ink'], 700) + text(840, y + 48, b, 11, t['ink2']) + '</g>')
+    loop = 'M899 372 V424 H670 V332'
+    body.append(f'<path class="draw" pathLength="1" d="{loop}" fill="none" stroke="{t["accent"]}" stroke-width="2"{d(2.2)}/>'
+                f'<path class="fade" d="M670 328 l-5 9 h10 z" fill="{t["accent"]}"{d(2.8)}/>')
+    body.append(text(656, 429, 'what helped moves the weights', 13, t['accent'], 600, 'end', 'fade', d(2.6)))
+    desc = ('Your task goes to five readers: words, full text, requests, meaning and your project. Each draws a map of heights over '
+            'the skills. A learned selector adds the maps and returns one to three skills, a map of the next forty your AI can choose '
+            'from, or nothing when no skill fits. Your feedback moves its weights.')
+    return svg(1000, 446, 'How SFP picks', desc, ''.join(body), t)
 
 
-def advantages(t, total):
-    """Six animated bento cards showing the core architectural advantages of SFP."""
-    body = [header(t, 'Why teams switch to SFP',
-                   'Eliminates context bloat (loading 50+ rules) and context starvation (guessing conventions).')]
+def city(t, story, example):
+    """One building's story, and the towers a real task raises."""
+    body = [header(t, 'The skill city', 'Every skill is a building with a story. A task raises towers; the tallest are read first.')]
+    c = t['accent']
+    body.append(f'<g class="rise"{d(.15)}><rect x="40" y="106" width="350" height="316" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" '
+                f'stroke-width="1.5"/>' + text(60, 138, 'One building', 13, c, 700) + text(60, 164, story['name'], 18, t['ink'], 700, cls='mono') + '</g>')
+    words = story['does'].split()
+    lines, line = [], ''
+    for w in words:
+        if len(line) + len(w) > 46:
+            lines.append(line)
+            line = ''
+        line = (line + ' ' + w).strip()
+    lines = (lines + [line])[:2]
+    if len(' '.join(lines)) < len(story['does']):
+        lines[-1] = lines[-1].rstrip(' ,.;') + '...'
+    for k, ln in enumerate(lines):
+        body.append(text(60, 190 + 18 * k, ln, 12, t['ink2'], cls='fade', extra=d(.3)))
+    body.append(text(60, 246, 'Words that call it', 12, t['ink'], 700, cls='fade', extra=d(.35)))
+    x, y = 60, 256
+    for k, w in enumerate(story['activates_on'][:9]):
+        ww = width(w, 12, True) + 16
+        if x + ww > 374:
+            x, y = 60, y + 28
+        if y > 284:
+            break
+        body.append(f'<g class="pop"{d(.4 + .05 * k)}><rect x="{x}" y="{y}" width="{ww:.0f}" height="22" rx="6" fill="{c}" fill-opacity="{t["soft"]}"/>'
+                    + text(x + 8, y + 15, w, 12, t['ink'], 500, cls='mono') + '</g>')
+        x += ww + 6
+    for k, (a, b) in enumerate([('Tower', story['tower']), ('Makes', ', '.join(story['makes'])), ('Needs', ', '.join(story['needs']) or 'nothing'),
+                                ('Next to', ', '.join(story['next_to'][:2]))]):
+        body.append(text(60, 334 + 22 * k, a, 12, t['ink'], 700, cls='fade', extra=d(.7 + .05 * k))
+                    + text(124, 334 + 22 * k, b if len(b) < 40 else b[:38] + '..', 12, t['ink2'], cls='mono fade', extra=d(.7 + .05 * k)))
+    rows = [r for r in example.get('city', [])][:5]
+    body.append(f'<g class="rise"{d(.25)}><rect x="410" y="106" width="550" height="316" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" '
+                f'stroke-width="1.5"/>' + text(430, 138, 'A task raises towers', 13, c, 700)
+                + text(430, 164, '"%s"' % example.get('task', ''), 15, t['ink'], 700) + '</g>')
+    inner = dict(t, bg=t['tile'])
+    for k, r in enumerate(rows):
+        x, n = 476 + k * 104, len(r['floors'])
+        fl = max(1, min(9, n))
+        col = t[COLORS[k % len(COLORS)]]
+        body.append(block(x, 336, 66, 33, 16 * fl + 4, col, inner, k < 2, floors=fl, cls='rise', delay=.5 + .12 * k))
+        label = r['tower']
+        a, b = (label, '')
+        if len(label) > 15:
+            cut = label.rfind(' ', 0, 16)
+            cut = cut if cut > 0 else 15
+            a, b = label[:cut], label[cut:].strip()
+            b = b if len(b) <= 15 else b[:13] + '..'
+        body.append(text(x, 376, a, 11, t['ink'], 700, 'middle', 'fade', d(.8 + .1 * k)) + text(x, 390, b, 11, t['ink'], 700, 'middle', 'fade', d(.8 + .1 * k))
+                    + text(x, 408, '%d skill%s' % (n, '' if n == 1 else 's'), 11, t['ink2'], 400, 'middle', 'fade', d(.9 + .1 * k)))
+    desc = ('The story of %s: the words that call it are %s. For the task "%s" the tallest towers are %s.'
+            % (story['name'], ', '.join(story['activates_on'][:6]), example.get('task', ''), ', '.join(r['tower'] for r in rows)))
+    return svg(1000, 442, 'The skill city', desc, ''.join(body), t)
+
+
+def advantages(t, total, rel, catalog):
+    e = best_engine(rel)
+    used, saved = context_saved(rel, catalog)
+    hold = got(rel, e, 'map', 'hold', '40')
+    nothing, kw = got(rel, e, 'groups', 'nothing', 'nothing_empty'), got(rel, 'keyword', 'groups', 'nothing', 'nothing_empty')
+    ms = got(rel, 'words', 'ms', 'typical')
+    body = [header(t, 'Why use SFP', 'Too many skills crowd out your code. Too few, and your AI guesses. Measured with bench/release.py.')]
     cards = [
-        ('96% Less Context', 'teal', '3,383 vs 81,691 tokens',
-         'Loads only the 1 to 3 skills needed right now,', 'leaving 98% of your 200k window free for code.'),
-        ('Manifest Stack Fit', 'sky', '0 wrong-tech picks',
-         'Inspects package.json, Cargo.toml and go.mod', 'so Go never gets Django rules and Rust stays Rust.'),
-        ('0.0% Junk Rate', 'violet', 'Strict confidence gating',
-         'Micro-edits and negative edge tasks return clean', 'empty stacks instead of 62% keyword noise.'),
-        ('Adaptive Taste', 'rose', '100% format override',
-         'Learns whether you prefer code, prose, motion', 'or video over a 30-day feedback half-life.'),
-        ('100% Local & Private', 'amber', '~3 ms words-only pick',
-         'Runs in stdlib Python on your machine. Optional', 'Ollama / LM Studio models keep prompts local.'),
-        ('20 AI Tools Synced', 'lime', f'{total:,} skills everywhere',
-         'Claude Code, Cursor, Antigravity, Copilot, Codex,', 'Windsurf and any MCP client share one brain.'),
+        (f'{saved}% less to carry', 'teal', f'{used:,} of {all_on_tokens(catalog):,} tokens', 'Your AI loads the few skills this job needs,', 'and a short map of the next 40.'),
+        ('A map, not a guess', 'violet', f'{hold}% on the map' if hold else 'the next 40 skills', 'The right skill is on the 40-skill map that often.', 'Your AI reads it and can swap one in.'),
+        ('Fits your project', 'sky', 'reads your manifests', 'package.json, Cargo.toml, go.mod and more, so a', 'Rust project gets Rust skills.'),
+        ('Says "nothing fits"', 'rose', f'{nothing}% left empty', 'On tasks that need no skill, SFP stays out of the', f'way. Keyword search: {kw}%.'),
+        ('Learns from you', 'amber', 'stays in ~/.sfp', 'Say what helped, and the weights move on your', 'machine. No task text is kept.'),
+        ('Runs on your machine', 'lime', f'about {ms:.0f} ms, no model', 'Plain Python. Local models are optional, and', 'nothing is sent to pick a skill.'),
     ]
     cw, ch = 295, 148
-    for i, (title, col, badge, line1, line2) in enumerate(cards):
-        x, y = 40 + (i % 3) * (cw + 17.5), 108 + (i // 3) * (ch + 18)
-        c = t[col]
+    for i, (title, col, badge, a, b) in enumerate(cards):
+        x, y, c = 40 + (i % 3) * (cw + 17.5), 108 + (i // 3) * (ch + 18), t[col]
         bw = width(badge, 12, True) + 20
-        body.append(
-            f'<g class="rise"{d(.18 + .1 * i)}>'
-            f'<rect x="{x}" y="{y}" width="{cw}" height="{ch}" rx="14" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
-            f'<path class="draw" pathLength="1" d="M{x + 14} {y + 1} H{x + cw - 14}" stroke="{c}" stroke-width="4" stroke-linecap="round" fill="none"{d(.45 + .1 * i)}/>'
-            f'<rect x="{x + 18}" y="{y + 20}" width="{bw:.0f}" height="24" rx="12" fill="{c}" fill-opacity="{t["soft"]}"/>'
-            + text(x + 28, y + 36, badge, 12, c, 700, cls='mono')
-            + text(x + 18, y + 70, title, 18, t['ink'], 700)
-            + text(x + 18, y + 98, line1, 13, t['ink2'])
-            + text(x + 18, y + 118, line2, 13, t['ink2'])
-            + '</g>'
-        )
-    desc = 'Six unfair advantages of SFP: 96% less context, manifest stack fit, 0.0% junk rate, adaptive taste, 100% local and private execution, and 20 AI tools synced.'
-    return svg(1000, 444, 'Why SFP: The Unfair Advantages', desc, ''.join(body), t)
+        body.append(f'<g class="rise"{d(.18 + .1 * i)}><rect x="{x}" y="{y}" width="{cw}" height="{ch}" rx="14" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
+                    f'<path class="draw" pathLength="1" d="M{x + 14} {y + 1} H{x + cw - 14}" stroke="{c}" stroke-width="4" stroke-linecap="round" fill="none"{d(.45 + .1 * i)}/>'
+                    f'<rect x="{x + 18}" y="{y + 20}" width="{bw:.0f}" height="24" rx="12" fill="{c}" fill-opacity="{t["soft"]}"/>'
+                    + text(x + 28, y + 36, badge, 12, c, 700, cls='mono') + text(x + 18, y + 72, title, 18, t['ink'], 700)
+                    + text(x + 18, y + 100, a, 12, t['ink2']) + text(x + 18, y + 120, b, 12, t['ink2']) + '</g>')
+    desc = 'Why use SFP: ' + '; '.join('%s (%s)' % (c[0], c[2]) for c in cards) + '.'
+    return svg(1000, 444, 'Why use SFP', desc, ''.join(body), t)
 
 
-def project_fit(t):
-    """Animated branching diagram: one prompt routes to 5 distinct project stacks based on root manifests."""
-    body = [header(t, 'Same words, five projects, zero cross-contamination',
-                   'Keyword search returns the same generic list every time. SFP inspects your project manifest first.')]
-    # Left prompt box
-    body.append(
-        f'<g class="rise"{d(.15)}>'
-        f'<rect x="40" y="186" width="210" height="84" rx="12" fill="{t["tile"]}" stroke="{t["accent"]}" stroke-width="2"/>'
-        + text(58, 216, 'Your prompt', 13, t['accent'], 700)
-        + text(58, 240, '"write tests for', 15, t['ink'], 700, cls='mono')
-        + text(58, 258, ' the orders"', 15, t['ink'], 700, cls='mono')
-        + '</g>'
-    )
-    # Center Hive node
-    body.append(
-        f'<g class="rise"{d(.35)}>'
-        f'<rect x="300" y="176" width="156" height="104" rx="14" fill="{t["tile"]}" stroke="{t["teal"]}" stroke-width="2"/>'
-        + text(378, 212, 'SFP Hive', 17, t['ink'], 700, 'middle')
-        + text(378, 234, 'Reads manifest', 13, t['ink2'], 500, 'middle')
-        + text(378, 254, '+ filters stack', 13, t['teal'], 600, 'middle')
-        + '</g>'
-    )
+def project_fit(t, same):
+    body = [header(t, 'Same words, five projects', 'Real output, no model. Keyword search gives all five the same list; SFP reads the project first.')]
+    body.append(f'<g class="rise"{d(.15)}><rect x="40" y="186" width="210" height="84" rx="12" fill="{t["tile"]}" stroke="{t["accent"]}" stroke-width="2"/>'
+                + text(58, 216, 'You ask', 13, t['accent'], 700) + text(58, 240, '"write tests for', 15, t['ink'], 700, cls='mono')
+                + text(58, 258, ' the orders"', 15, t['ink'], 700, cls='mono') + '</g>')
+    body.append(f'<g class="rise"{d(.35)}><rect x="300" y="176" width="156" height="104" rx="14" fill="{t["tile"]}" stroke="{t["teal"]}" stroke-width="2"/>'
+                + text(378, 220, 'SFP', 17, t['ink'], 700, 'middle') + text(378, 246, 'reads the project', 13, t['ink2'], 500, 'middle') + '</g>')
     p_in = 'M250 228 H294'
     body.append(f'<path class="draw" pathLength="1" d="{p_in}" fill="none" stroke="{t["accent"]}" stroke-width="2"{d(.5)}/>'
-                f'<path class="fade" d="M300 228 l-8 -4 v8 z" fill="{t["accent"]}"{d(.9)}/>')
-    body.append(pulse(p_in, t['accent'], 1.2, 1.6))
-
-    targets = [
-        ('Next.js', 'package.json', 'sky', 'e2e-testing, react-testing, typescript-Write-Tests'),
-        ('Rust', 'Cargo.toml', 'amber', 'rust-testing, test-collaboration'),
-        ('.NET', '*.csproj', 'violet', 'csharp-testing, fsharp-testing, tdd-workflow'),
-        ('Flutter', 'pubspec.yaml', 'teal', 'dart-flutter-patterns, flutter-dart-code-review'),
-        ('Django', 'manage.py', 'lime', 'django-tdd, python-testing, tdd-workflow'),
-    ]
-    for i, (proj, manifest, col, picks) in enumerate(targets):
-        ry = 122 + i * 54
-        c = t[col]
+                f'<path class="fade" d="M300 228 l-8 -4 v8 z" fill="{t["accent"]}"{d(.9)}/>' + pulse(p_in, t['accent'], 1.2, 1.6))
+    for i, (proj, picks) in enumerate(same):
+        ry, c = 122 + i * 54, t[COLORS[i % len(COLORS)]]
+        shown, rest = [], list(picks)
+        while rest and width(', '.join(shown + [rest[0]]), 12, True) < 300:
+            shown.append(rest.pop(0))
         p = f'M456 228 C500 228 500 {ry} 544 {ry}'
         body.append(f'<path class="draw" pathLength="1" d="{p}" fill="none" stroke="{c}" stroke-width="2"{d(.65 + .12 * i)}/>'
-                    f'<path class="fade" d="M550 {ry} l-8 -4 v8 z" fill="{c}"{d(1.1 + .12 * i)}/>')
-        body.append(pulse(p, c, 1.5 + .28 * i, 2.0))
-        body.append(
-            f'<g class="rise"{d(.75 + .12 * i)}>'
-            f'<rect x="552" y="{ry - 21}" width="408" height="42" rx="10" fill="{t["tile"]}" stroke="{c}" stroke-width="1.5"/>'
-            f'<rect x="562" y="{ry - 13}" width="132" height="26" rx="6" fill="{c}" fill-opacity="{t["soft"]}"/>'
-            + text(572, ry + 4, f'{proj} ({manifest})', 12, t['ink'], 700)
-            + text(706, ry + 4, picks, 12, t['ink'], 500, cls='mono')
-            + '</g>'
-        )
-    desc = ('For the prompt "write tests for the orders", SFP inspects the project manifest and chooses '
-            'Next.js -> e2e-testing/react-testing, Rust -> rust-testing, .NET -> csharp-testing, '
-            'Flutter -> dart-flutter-patterns, Django -> django-tdd.')
+                    f'<path class="fade" d="M550 {ry} l-8 -4 v8 z" fill="{c}"{d(1.1 + .12 * i)}/>' + pulse(p, c, 1.5 + .28 * i, 2.0))
+        body.append(f'<g class="rise"{d(.75 + .12 * i)}><rect x="552" y="{ry - 21}" width="408" height="42" rx="10" fill="{t["tile"]}" stroke="{c}" stroke-width="1.5"/>'
+                    f'<rect x="562" y="{ry - 13}" width="74" height="26" rx="6" fill="{c}" fill-opacity="{t["soft"]}"/>'
+                    + text(599, ry + 4, proj, 12, t['ink'], 700, 'middle') + text(648, ry + 4, ', '.join(shown) + (' +%d' % len(rest) if rest else ''), 12, t['ink'], 500, cls='mono') + '</g>')
+    desc = 'For "write tests for the orders", SFP chooses: ' + '; '.join('%s: %s' % (p, ', '.join(k)) for p, k in same) + '.'
     return svg(1000, 396, 'Same words across five projects', desc, ''.join(body), t)
 
 
-def taste(t):
-    """Animated dual-panel illustration: Persona Format Adaptation (left) + Autonomous Research Mentor (right)."""
-    body = [header(t, 'It learns your taste and grows missing skills',
-                   'Tracks format preferences with a 30-day half-life, and drafts new skills from peer-reviewed papers.')]
-    # Left panel: Format adaptation across 4 learner personas
-    body.append(
-        f'<g class="rise"{d(.15)}>'
-        f'<rect x="40" y="106" width="450" height="296" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
-        + text(60, 138, '1. Format Adaptation by Learner Persona', 17, t['ink'], 700)
-        + text(60, 158, 'First pick matches preferred format (40 unseen tasks)', 12, t['ink2'])
-        + f'<rect x="60" y="172" width="12" height="10" rx="3" fill="{t["muted"]}"/>'
-        + text(78, 181, 'Cold start', 12, t['ink2'])
-        + f'<rect x="164" y="172" width="12" height="10" rx="3" fill="{t["accent"]}"/>'
-        + text(182, 181, 'After learning taste', 12, t['ink'], 600)
-        + '</g>'
-    )
-    personas = [
-        ('Visual (Animation)', 'violet', 40, 80),
-        ('Reader (Deep Text)', 'sky', 70, 100),
-        ('Hands-on (Code)', 'teal', 80, 100),
-        ('Producer (Video)', 'amber', 90, 100),
+def taste(t, rel):
+    """What learning changes for simulated learners, and how a research skill is made."""
+    people = list((got(rel, 'words', 'taste') or {}).values())
+    body = [header(t, 'It learns from you, and grows missing skills', 'Your feedback and history stay on your machine. A research skill is a draft until you approve it.')]
+    n = people[0]['n'] if people else 0
+    body.append(f'<g class="rise"{d(.15)}><rect x="40" y="106" width="450" height="296" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
+                + text(60, 138, 'First pick in the format you like', 17, t['ink'], 700)
+                + text(60, 158, f'{len(people)} simulated learners, {n} new tasks each, no model', 12, t['ink2'])
+                + f'<rect x="60" y="172" width="12" height="10" rx="3" fill="{t["muted"]}"/>' + text(78, 181, 'Before', 12, t['ink2'])
+                + f'<rect x="140" y="172" width="12" height="10" rx="3" fill="{t["accent"]}"/>' + text(158, 181, 'After it has learned', 12, t['ink'], 600) + '</g>')
+    for i, p in enumerate(people[:4]):
+        y, c, bw = 204 + i * 46, t[['violet', 'sky', 'teal', 'amber'][i]], 190
+        body.append(text(60, y + 14, p['name'].split('(')[0].strip()[:22], 12, t['ink'], 600, cls='fade', extra=d(.3 + .1 * i)))
+        body.append(f'<rect class="grow" x="212" y="{y - 2}" width="{max(2, bw * p["before"] / 100):.1f}" height="10" rx="3" fill="{t["muted"]}"{d(.45 + .1 * i)}/>')
+        body.append(f'<rect class="grow" x="212" y="{y + 11}" width="{max(2, bw * p["after"] / 100):.1f}" height="12" rx="3" fill="{c}"{d(.65 + .1 * i)}/>')
+        body.append(text(212 + bw * max(p['after'], p['before']) / 100 + 8, y + 18, f'{p["before"]}% to {p["after"]}%', 12, t['ink'], 700, cls='mono fade', extra=d(.95 + .1 * i)))
+    body.append(f'<g class="rise"{d(.25)}><rect x="510" y="106" width="450" height="296" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
+                + text(530, 138, 'A skill from new research', 17, t['ink'], 700) + text(530, 158, 'sfp research auto on: looks every few days', 12, t['ink2']) + '</g>')
+    steps = [('1. Follow', 'your topics, the fastest growing first', 'rose'), ('2. Read', 'new papers from arXiv and two other indexes', 'sky'),
+             ('3. Draft', 'a local model writes a cited SKILL.md', 'violet'), ('4. You approve', 'then SFP can pick it for your tasks', 'teal')]
+    for i, (a, b, col) in enumerate(steps):
+        sy, c = 178 + i * 54, t[col]
+        body.append(f'<g class="rise"{d(.4 + .15 * i)}><rect x="530" y="{sy}" width="410" height="42" rx="8" fill="{t["bg"]}" stroke="{c}" stroke-width="1.5"/>'
+                    + text(546, sy + 18, a, 13, c, 700, cls='mono') + text(546, sy + 34, b, 12, t['ink2']) + '</g>')
+        if i < 3:
+            p = f'M735 {sy + 42} V{sy + 54}'
+            body.append(f'<path class="draw" pathLength="1" d="{p}" stroke="{c}" stroke-width="2" fill="none"{d(.7 + .15 * i)}/>' + pulse(p, c, 1.4 + .3 * i, 1.6))
+    desc = ('First pick in the preferred format, before and after learning: ' + '; '.join('%s %d%% to %d%%' % (p['name'], p['before'], p['after']) for p in people)
+            + '. A research skill is made by following your topics, reading new papers, drafting with a local model, and your approval.')
+    return svg(1000, 424, 'How SFP learns and grows skills', desc, ''.join(body), t)
+
+
+def plain_words(t, rel, asks):
+    n = got(rel, 'words', 'groups', 'plain', 'n') or 0
+    body = [header(t, 'When you just say what you want', f'{n} tasks in plain words, most sharing few words with the skill they need.')]
+    body.append(f'<g class="rise"{d(.15)}><rect x="40" y="106" width="440" height="276" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
+                + text(60, 138, 'Right skill among the picks', 17, t['ink'], 700) + text(60, 158, 'and, for SFP, on the 40-skill map your AI reads', 12, t['ink2']) + '</g>')
+    for i, (eng, label, col) in enumerate(engines_shown(rel)):
+        y, c, bw = 186 + i * 64, t[col], 190
+        v, h = got(rel, eng, 'groups', 'plain', 'chosen') or 0, got(rel, eng, 'map', 'hold', '40')
+        body.append(text(60, y + 16, label, 13, t['ink'], 700 if eng != 'keyword' else 500, cls='fade', extra=d(.3 + .1 * i)))
+        body.append(f'<rect x="184" y="{y}" width="{bw}" height="20" rx="5" fill="{t["grid"]}" fill-opacity=".5"/>'
+                    f'<rect class="grow" x="184" y="{y}" width="{bw * v / 100:.1f}" height="20" rx="5" fill="{c}"{d(.5 + .14 * i)}/>')
+        body.append(text(184 + bw + 10, y + 15, f'{v}% picked', 12, t['ink'], 700, cls='fade', extra=d(.9 + .1 * i)))
+        if h:
+            body.append(f'<rect class="grow" x="184" y="{y + 25}" width="{bw * h / 100:.1f}" height="7" rx="3.5" fill="{c}" fill-opacity=".5"{d(.7 + .14 * i)}/>'
+                        + text(184 + bw + 10, y + 33, f'{h:.0f}% on the map', 11, t['ink2'], cls='fade', extra=d(1.0 + .1 * i)))
+    body.append(f'<g class="rise"{d(.25)}><rect x="500" y="106" width="460" height="276" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
+                + text(520, 138, 'Real first picks', 17, t['ink'], 700) + text(520, 158, ('with bge-m3' if best_engine(rel) == 'meaning' else 'no model') + ', as measured, right or wrong', 12, t['ink2']) + '</g>')
+    for i, (ask, picked) in enumerate(asks[:4]):
+        y, c = 186 + i * 48, t[['teal', 'violet', 'amber', 'rose'][i]]
+        body.append(f'<g class="rise"{d(.45 + .14 * i)}><rect x="520" y="{y - 4}" width="234" height="32" rx="7" fill="{t["bg"]}" stroke="{t["grid"]}"/>'
+                    + text(530, y + 16, '"%s"' % ask, 12, t['ink2'])
+                    + f'<rect x="784" y="{y - 4}" width="160" height="32" rx="7" fill="{c}" fill-opacity="{t["soft"]}" stroke="{c}" stroke-width="1.5"/>'
+                    + text(864, y + 16, picked if len(picked) <= 21 else picked[:19] + '..', 12, t['ink'], 700, 'middle', cls='mono') + '</g>')
+        p = f'M754 {y + 12} H778'
+        body.append(f'<path class="draw" pathLength="1" d="{p}" stroke="{c}" stroke-width="2" fill="none"{d(.7 + .14 * i)}/>' + pulse(p, c, 1.5 + .3 * i, 1.8))
+    desc = ('On %d plain tasks the right skill is among the picks for ' % n + '; '.join('%s %s%%' % (l, got(rel, e, 'groups', 'plain', 'chosen')) for e, l, _ in engines_shown(rel)) + '.')
+    return svg(1000, 404, 'Plain words', desc, ''.join(body), t)
+
+
+def results(t, rel):
+    """Three panels of measured results, every engine on the same tasks."""
+    body = [header(t, 'What we measured', 'Thick bar: right skill among the picks. Thin bar: right skill first. Same tasks for every engine.')]
+    panels = [('plain', 'Plain words'), ('project', 'In a project'), ('nothing', 'No skill needed')]
+    for p, (g, title) in enumerate(panels):
+        px = 40 + p * 313
+        key = 'nothing_n' if g == 'nothing' else 'n'
+        n = got(rel, 'words', 'groups', g, key) or 0
+        body.append(f'<g class="rise"{d(.2 + .1 * p)}><rect x="{px}" y="108" width="294" height="272" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
+                    + text(px + 18, 140, title, 18, t['ink'], 700) + text(px + 18, 162, f'{n} tasks' + (', left empty on purpose' if g == 'nothing' else ''), 13, t['ink2']) + '</g>')
+        for i, (eng, label, col) in enumerate(engines_shown(rel)):
+            y, c, bw = 206 + i * 60, t[col], 196
+            v = got(rel, eng, 'groups', g, 'nothing_empty' if g == 'nothing' else 'chosen') or 0
+            f = None if g == 'nothing' else got(rel, eng, 'groups', g, 'first') or 0
+            body.append(text(px + 18, y - 6, label, 13, t['ink'] if eng != 'keyword' else t['ink2'], 700 if eng != 'keyword' else 500, cls='fade', extra=d(.4)))
+            body.append(f'<rect x="{px + 18}" y="{y}" width="{bw}" height="16" rx="4" fill="{t["grid"]}" fill-opacity=".6"/>'
+                        f'<rect class="grow" x="{px + 18}" y="{y}" width="{max(2, bw * v / 100):.1f}" height="16" rx="4" fill="{c}"{d(.6 + .15 * i + .1 * p)}/>')
+            body.append(text(px + 18 + bw + 10, y + 14, f'{v}%', 15, t['ink'], 700, cls='fade', extra=d(1.2)))
+            if f is not None:
+                body.append(f'<rect class="grow" x="{px + 18}" y="{y + 20}" width="{max(2, bw * f / 100):.1f}" height="5" rx="2.5" fill="{c}" fill-opacity=".55"{d(.8 + .15 * i)}/>'
+                            + text(px + 18 + bw + 10, y + 28, f'{f}% first', 11, t['ink2'], cls='fade', extra=d(1.3)))
+    body.append(text(40, 404, 'Never used to train SFP, but its totals were watched while it was built. Every set: bench/RESULTS.md.', 13, t['ink2'], cls='fade', extra=d(1.4)))
+    desc = '; '.join('%s: %s' % (title, ', '.join('%s %s%%' % (l, got(rel, e, 'groups', g, 'nothing_empty' if g == 'nothing' else 'chosen')) for e, l, _ in engines_shown(rel)))
+                     for g, title in panels) + '.'
+    return svg(1000, 422, 'What we measured', desc, ''.join(body), t)
+
+
+def tokens(t, rel, catalog):
+    e, meta = best_engine(rel), all_on_tokens(catalog)
+    stack, mp = got(rel, e, 'tokens', 'stack') or 0, got(rel, e, 'tokens', 'map') or 0
+    used, saved = context_saved(rel, catalog)
+    body = [header(t, 'What it costs your AI', f'{saved}% less text to hold than every skill switched on. Token counts are estimates (4 characters each).')]
+    body.append(f'<g class="rise"{d(.15)}><rect x="40" y="106" width="450" height="246" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
+                + text(60, 138, 'Tokens held (lower is better)', 17, t['ink'], 700) + text(60, 158, f'average over the benchmark tasks; {100.0 * meta / 200000:.0f}% of a 200k window if all are on', 12, t['ink2']) + '</g>')
+    for i, (label, v, col) in enumerate([('Every skill on', meta, 'rose'), ('SFP picks', stack, 'teal'), ('SFP picks + map', used, 'violet')]):
+        y, c, bw = 188 + i * 52, t[col], 180
+        body.append(text(60, y + 16, label, 13, t['ink'], 700 if i else 500, cls='fade', extra=d(.3 + .1 * i)))
+        body.append(f'<rect x="186" y="{y}" width="{bw}" height="22" rx="5" fill="{t["grid"]}" fill-opacity=".5"/>'
+                    f'<rect class="grow" x="186" y="{y}" width="{max(6, bw * v / meta):.1f}" height="22" rx="5" fill="{c}"{d(.5 + .15 * i)}/>')
+        body.append(text(186 + bw + 10, y + 16, f'{v:,}', 13, t['ink'], 700, cls='mono fade', extra=d(.9 + .1 * i)))
+    body.append(f'<g class="rise"{d(.25)}><rect x="510" y="106" width="450" height="246" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
+                + text(530, 138, 'Time to pick', 17, t['ink'], 700) + text(530, 158, 'one laptop, models already loaded; typical and slowest 5%', 12, t['ink2']) + '</g>')
+    rows = [(l, got(rel, k, 'ms')) for k, l, _ in engines_shown(rel) if k != 'keyword']
+    top = max([m['slowest_5'] for _, m in rows] or [1])
+    for i, (label, m) in enumerate(rows):
+        y, c, bw = 196 + i * 70, t[['sky', 'teal'][i % 2]], 200
+        body.append(text(530, y - 6, label, 13, t['ink'], 700, cls='fade', extra=d(.35 + .1 * i)))
+        body.append(f'<rect x="530" y="{y}" width="{bw}" height="20" rx="5" fill="{t["grid"]}" fill-opacity=".5"/>'
+                    f'<rect class="grow" x="530" y="{y}" width="{max(4, bw * m["slowest_5"] / top):.1f}" height="20" rx="5" fill="{c}" fill-opacity=".4"{d(.5)}/>'
+                    f'<rect class="grow" x="530" y="{y}" width="{max(4, bw * m["typical"] / top):.1f}" height="20" rx="5" fill="{c}"{d(.7)}/>')
+        body.append(text(530 + bw + 10, y + 15, f'{m["typical"]:.0f} ms, slowest {m["slowest_5"]:.0f} ms', 12, t['ink'], 700, cls='mono fade', extra=d(1.0)))
+    desc = f'Every skill switched on is {meta:,} tokens. SFP picks average {stack:,} tokens, {used:,} with the map: {saved}% less.'
+    return svg(1000, 374, 'What it costs your AI', desc, ''.join(body), t)
+
+
+def hive_architecture(t):
+    body = [header(t, 'Inside the engine', 'One select_skills call, left to right. Only Meaning needs a model; without it the rest still runs.')]
+    cols = [
+        ('1. Readers', 'sky', [('Words', 'name, tags, description'), ('Full text', 'BM25 over SKILL.md'), ('Requests', '10 examples per skill'), ('Meaning', 'bge-m3, four views')]),
+        ('2. Situation', 'amber', [('Project', 'manifests and files'), ('Phase', 'Kalman filter on work'), ('Before', 'Markov over sequences'), ('Wrong tech', 'dropped')]),
+        ('3. The city', 'teal', [('Heights', 'rank on every map'), ('Neighbours', 'lend each other height'), ('Selector', 'softmax over the maps'), ('Towers', 'the next 40, grouped')]),
+        ('4. Guards', 'rose', [('Nothing fits', 'says so, and why'), ('Quorum', 'in a project, signals agree'), ('Budget', 'tokens are capped'), ('Pins', 'your choices always win')]),
+        ('5. Learning', 'violet', [('Feedback', 'moves map weights'), ('Taste', '30-day half-life'), ('LinUCB', 'words to skills'), ('Research', 'drafts you approve')]),
     ]
-    for i, (label, col, cold, warm) in enumerate(personas):
-        y = 202 + i * 42
-        c = t[col]
-        bw = 210
-        body.append(text(60, y + 14, label, 13, t['ink'], 600, cls='fade', extra=d(.3 + .1 * i)))
-        body.append(f'<rect class="grow" x="205" y="{y - 2}" width="{bw * cold / 100:.1f}" height="10" rx="3" fill="{t["muted"]}"{d(.45 + .1 * i)}/>')
-        body.append(f'<rect class="grow" x="205" y="{y + 11}" width="{bw * warm / 100:.1f}" height="12" rx="3" fill="{c}"{d(.65 + .1 * i)}/>')
-        body.append(text(205 + bw * warm / 100 + 8, y + 21, f'{cold}% -> {warm}%', 12, t['ink'], 700, cls='mono fade', extra=d(.95 + .1 * i)))
-    body.append(
-        f'<g class="rise"{d(1.1)}>'
-        f'<rect x="60" y="366" width="410" height="24" rx="6" fill="{t["accent"]}" fill-opacity="{t["soft"]}"/>'
-        + text(265, 382, '100% strict compliance when prompt names a format ("as text")', 12, t['accent'], 700, 'middle')
-        + '</g>'
-    )
-
-    # Right panel: The Autonomous Research Mentor pipeline
-    body.append(
-        f'<g class="rise"{d(.25)}>'
-        f'<rect x="510" y="106" width="450" height="296" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
-        + text(530, 138, '2. Autonomous Research Mentor', 17, t['ink'], 700)
-        + text(530, 158, 'Fills library gaps from OpenAlex, arXiv & Semantic Scholar', 12, t['ink2'])
-        + '</g>'
-    )
-    msteps = [
-        ('1. Detect Gap', 'sfp mentor spots thin stack coverage', 'rose'),
-        ('2. Fetch Papers', 'Well-cited works from OpenAlex & arXiv', 'sky'),
-        ('3. Draft Skill', 'Local model distills methods into SKILL.md', 'violet'),
-        ('4. You Approve', 'sfp research approve <name> installs it', 'teal'),
-    ]
-    for i, (st, sub, col) in enumerate(msteps):
-        sy = 178 + i * 52
-        c = t[col]
-        body.append(
-            f'<g class="rise"{d(.4 + .15 * i)}>'
-            f'<rect x="530" y="{sy}" width="410" height="40" rx="8" fill="{t["bg"]}" stroke="{c}" stroke-width="1.5"/>'
-            + text(546, sy + 18, st, 13, c, 700, cls='mono')
-            + text(546, sy + 33, sub, 12, t['ink2'])
-            + '</g>'
-        )
-        if i < len(msteps) - 1:
-            p = f'M735 {sy + 40} V{sy + 52}'
-            body.append(f'<path class="draw" pathLength="1" d="{p}" stroke="{c}" stroke-width="2" fill="none"{d(.7 + .15 * i)}/>')
-            body.append(pulse(p, c, 1.4 + .3 * i, 1.6))
-
-    desc = ('SFP learns which format helps you across animation, reading, code and video, respecting explicit format '
-            'overrides 100% of the time, while the research mentor turns academic papers into draft skills for your approval.')
-    return svg(1000, 424, 'How SFP learns your taste and grows skills', desc, ''.join(body), t)
+    cw, ch, top, gap = 172, 290, 108, 15
+    for i, (title, col, items) in enumerate(cols):
+        x, c = 40 + i * (cw + gap), t[col]
+        g = [f'<g class="rise"{d(.18 + .12 * i)}><rect x="{x}" y="{top}" width="{cw}" height="{ch}" rx="12" fill="{t["tile"]}" stroke="{c}" stroke-width="1.5"/>'
+             f'<path class="draw" pathLength="1" d="M{x + 12} {top + 1} H{x + cw - 12}" stroke="{c}" stroke-width="4" stroke-linecap="round" fill="none"{d(.45 + .12 * i)}/>'
+             + text(x + 14, top + 30, title, 15, c, 700)]
+        for k, (a, b) in enumerate(items):
+            iy = top + 52 + k * 56
+            g.append(f'<rect x="{x + 10}" y="{iy}" width="{cw - 20}" height="46" rx="7" fill="{t["bg"]}" stroke="{t["grid"]}"/>'
+                     + text(x + 18, iy + 19, a, 13, t['ink'], 700) + text(x + 18, iy + 36, b, 11, t['ink2']))
+        body.append(''.join(g) + '</g>')
+        if i < len(cols) - 1:
+            x1, x2, my = x + cw, x + cw + gap, top + ch / 2
+            p = f'M{x1} {my} H{x2 - 5}'
+            body.append(f'<path class="draw" pathLength="1" d="{p}" stroke="{c}" stroke-width="2" fill="none"{d(.7 + .12 * i)}/>'
+                        f'<path class="fade" d="M{x2} {my} l-7 -4 v8 z" fill="{c}"{d(1.0 + .12 * i)}/>' + pulse(p, c, 1.5 + .25 * i, 1.8))
+    ly = top + ch + 36
+    loop = f'M874 {top + ch + 2} V{ly} H500 V{top + ch + 8}'
+    body.append(f'<path class="draw" pathLength="1" d="{loop}" fill="none" stroke="{t["accent"]}" stroke-width="2"{d(1.8)}/>'
+                f'<path class="fade" d="M500 {top + ch + 2} l-5 8 h10 z" fill="{t["accent"]}"{d(2.4)}/>')
+    body.append(text(486, ly + 4, 'feedback moves the weights in ~/.sfp; no task text is stored', 13, t['accent'], 600, 'end', 'fade', d(2.2)))
+    desc = 'Inside the engine: ' + '; '.join('%s: %s' % (c[0], ', '.join(a for a, _ in c[2])) for c in cols) + '.'
+    return svg(1000, 462, 'Inside the engine', desc, ''.join(body), t)
 
 
-def plain_words(t):
-    """Animated dual-panel illustration: Local Model Accuracy Lift (left) + Plain-Words Semantic Bridge (right)."""
-    body = [header(t, 'When you describe the problem in plain words',
-                   'Add a free local embedding model (bge-m3) and chat judge to understand intent, not just keywords.')]
-    # Left panel: Paraphrased / Reworded Benchmark Lift
-    body.append(
-        f'<g class="rise"{d(.15)}>'
-        f'<rect x="40" y="106" width="440" height="276" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
-        + text(60, 138, 'Paraphrased Tasks (Zero Shared Keywords)', 17, t['ink'], 700)
-        + text(60, 158, 'Right skill chosen when phrasing is reworded', 12, t['ink2'])
-        + '</g>'
-    )
-    bars = [
-        ('Keyword search', 57, 'muted', '57%'),
-        ('SFP words only', 57, 'sky', '57% (0% junk)'),
-        ('+ Meaning (bge-m3)', 77, 'violet', '77% (+20 pts)'),
-        ('+ Local model judge', 83, 'teal', '83% (97% on final exam)'),
-    ]
-    for i, (label, val, col, note) in enumerate(bars):
-        y = 184 + i * 46
-        c = t[col]
-        bw = 175
-        body.append(text(60, y + 15, label, 13, t['ink'] if col == 'teal' else t['ink2'], 700 if col == 'teal' else 500, cls='fade', extra=d(.3 + .1 * i)))
-        body.append(f'<rect x="200" y="{y}" width="{bw}" height="20" rx="5" fill="{t["grid"]}" fill-opacity=".5"/>')
-        body.append(f'<rect class="grow" x="200" y="{y}" width="{bw * val / 100:.1f}" height="20" rx="5" fill="{c}"{d(.5 + .14 * i)}/>')
-        body.append(text(200 + bw + 10, y + 15, note, 12, t['ink'] if col == 'teal' else t['ink2'], 700 if col == 'teal' else 500, cls='fade', extra=d(.9 + .1 * i)))
-
-    # Right panel: Live Semantic Translation Bridge
-    body.append(
-        f'<g class="rise"{d(.25)}>'
-        f'<rect x="500" y="106" width="460" height="276" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
-        + text(520, 138, 'How Plain English Maps to Specialist Skills', 17, t['ink'], 700)
-        + text(520, 158, 'bge-m3 cosine similarity + local chat model rerank', 12, t['ink2'])
-        + '</g>'
-    )
-    examples = [
-        ('"make the login not get hacked"', 'security-review', 'teal'),
-        ('"test all the buttons on my site"', 'playwright-cli', 'violet'),
-        ('"sneaky memory leaks in goroutines"', 'golang-patterns', 'amber'),
-        ('"explain attention visually"', 'manim-video', 'rose'),
-    ]
-    for i, (ask, picked, col) in enumerate(examples):
-        y = 184 + i * 46
-        c = t[col]
-        body.append(
-            f'<g class="rise"{d(.45 + .14 * i)}>'
-            f'<rect x="520" y="{y - 4}" width="228" height="30" rx="7" fill="{t["bg"]}" stroke="{t["grid"]}" stroke-width="1"/>'
-            + text(530, y + 15, ask, 12, t['ink2'])
-            + f'<rect x="782" y="{y - 4}" width="158" height="30" rx="7" fill="{c}" fill-opacity="{t["soft"]}" stroke="{c}" stroke-width="1.5"/>'
-            + text(861, y + 15, picked, 12, t['ink'], 700, 'middle', cls='mono')
-            + '</g>'
-        )
-        p = f'M748 {y + 11} H776'
-        body.append(f'<path class="draw" pathLength="1" d="{p}" stroke="{c}" stroke-width="2" fill="none"{d(.7 + .14 * i)}/>'
-                    f'<path class="fade" d="M780 {y + 11} l-6 -4 v8 z" fill="{c}"{d(1.0 + .14 * i)}/>')
-        body.append(pulse(p, c, 1.5 + .3 * i, 1.8))
-
-    desc = ('Adding a local embedding model (bge-m3) and chat judge raises accuracy on paraphrased tasks from 57% to 83% '
-            '(and 97% on the 150-task final exam), mapping beginner prompts directly to specialist skills.')
-    return svg(1000, 404, 'Understanding plain words with local models', desc, ''.join(body), t)
-
-
-def exam(t, scores):
-    engines = [('3.20.0', 'SFP 3.20', 'accent'), ('keyword', 'Keyword search', 'muted'), ('v3.19.0', 'SFP 3.19', 'muted')]
-    n = max(v['n'] for v in scores.values())
-    body = [header(t, f'Final exam: {n} new tasks',
-                   'Written after the work was done, scored once. Thick bar: right skill first. Thin bar: right skill anywhere in the stack.')]
-    panels = [('judge', 'Blind judge', 'A local model rated every pick without knowing the engine'),
-              ('label', 'Original labels', 'Only the skills named when each task was written')]
-    for p, (key, title, sub) in enumerate(panels):
-        px = 40 + p * 470
-        body.append(f'<g class="rise"{d(.2 + .1 * p)}><rect x="{px}" y="108" width="450" height="272" rx="12" '
-                    f'fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
-                    + text(px + 20, 140, title, 18, t['ink'], 700) + text(px + 20, 162, sub, 13, t['ink2']) + '</g>')
-        for i, (eng, label, col) in enumerate(engines):
-            s = scores.get(eng)
-            if not s:
-                continue
-            y = 200 + i * 60
-            first, chosen = s[key + '_first'], s[key + '_chosen']
-            bw = 250
-            color = t[col]
-            body.append(text(px + 20, y + 14, label, 14, t['ink'] if col == 'accent' else t['ink2'],
-                             700 if col == 'accent' else 500, cls='fade', extra=d(.4)))
-            body.append(f'<rect x="{px + 140}" y="{y}" width="{bw}" height="18" rx="4" fill="{t["grid"]}" fill-opacity=".6"/>')
-            body.append(f'<rect class="grow" x="{px + 140}" y="{y}" width="{bw * first / 100:.1f}" height="18" rx="4" '
-                        f'fill="{color}"{d(.6 + .15 * i + .1 * p)}/>')
-            body.append(f'<rect class="grow" x="{px + 140}" y="{y + 24}" width="{bw * chosen / 100:.1f}" height="5" rx="2.5" '
-                        f'fill="{color}" fill-opacity=".55"{d(.8 + .15 * i + .1 * p)}/>')
-            body.append(text(px + 140 + bw + 10, y + 15, f'{first}%', 15, t['ink'], 700, cls='fade', extra=d(1.4)))
-            body.append(text(px + 140 + bw + 10, y + 31, f'{chosen}% in stack', 11, t['ink2'], cls='fade', extra=d(1.5)))
-    body.append(text(40, 402, 'The judge is generous and the labels are narrow: the truth is between them. '
-                              'Method and every set: bench/RESULTS.md.', 13, t['ink2'], cls='fade', extra=d(1.6)))
-    s = scores.get('3.20.0', {})
-    desc = (f'On {n} new tasks, SFP 3.20 put the right skill first {s.get("judge_first")}% of the time by the blind judge '
-            f'and {s.get("label_first")}% by the original labels, against {scores.get("keyword", {}).get("judge_first")}% '
-            f'and {scores.get("keyword", {}).get("label_first")}% for keyword search and '
-            f'{scores.get("v3.19.0", {}).get("judge_first")}% and {scores.get("v3.19.0", {}).get("label_first")}% for SFP 3.19.')
-    return svg(1000, 420, 'Final exam results', desc, ''.join(body), t)
+# ----------------------------------------------------------------- drawings
 
 
 def results_rounds(t, dz):
@@ -582,14 +615,14 @@ def results_rounds(t, dz):
     pick_s = dz.get('picked', {}).get('shipped', 6)
     base_s = dz.get('baseline', {}).get('shipped', 5)
 
-    body = [header(t, 'Does it make the agent’s output better?',
+    body = [header(t, "Does it make the agent's output better?",
                    'Blind design reviews and unseen CLI verification checks (docs/EFFECT.md).')]
     # Left panel: Design review rounds
     body.append(
         f'<g class="rise"{d(.15)}>'
         f'<rect x="40" y="106" width="450" height="246" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
         + text(60, 138, '1. Blind UI Design Reviews (Lower is Better)', 17, t['ink'], 700)
-        + text(60, 158, 'Review rounds until a blind judge accepts the page', 12, t['ink2'])
+        + text(60, 158, f'Review rounds until a blind judge accepts the page, {sfp_n} pages each', 12, t['ink2'])
         + '</g>'
     )
     rows = [
@@ -600,7 +633,7 @@ def results_rounds(t, dz):
     for i, (label, val, col, note) in enumerate(rows):
         y = 186 + i * 50
         c = t[col]
-        bw = 160
+        bw = 126
         body.append(text(60, y + 16, label, 13, t['ink'] if col == 'teal' else t['ink2'], 700 if col == 'teal' else 500, cls='fade', extra=d(.3 + .1 * i)))
         body.append(f'<rect x="195" y="{y}" width="{bw}" height="22" rx="5" fill="{t["grid"]}" fill-opacity=".5"/>')
         body.append(f'<rect class="grow" x="195" y="{y}" width="{bw * val / 5.0:.1f}" height="22" rx="5" fill="{c}"{d(.5 + .15 * i)}/>')
@@ -641,139 +674,6 @@ def results_rounds(t, dz):
     desc = (f'In blind UI design reviews, agents with SFP shipped in {sfp_r:.1f} rounds vs {base_r:.1f} with no skills. '
             f'On an unseen tool benchmark, agents with SFP passed 7 of 7 checks vs 0 of 7 without SFP.')
     return svg(1000, 374, 'Blind design reviews and unseen tool verification', desc, ''.join(body), t)
-
-
-def tokens(t, res_data):
-    """Animated dual-panel illustration: 200k Context Window Budget (left) + Local Selection Latency (right)."""
-    meta = (res_data or {}).get('catalog_meta_tokens', 81691)
-    used = (res_data or {}).get('results', {}).get('hive_rerank_auto', {}).get('suites', {}).get('bench', {}).get('avg_tokens', 3383)
-    saved = round(100 - 100.0 * used / max(1, meta))
-
-    body = [header(t, 'Context window cost and selection speed',
-                   f'SFP cuts per-session skill overhead by {saved}%, leaving your 200k window free for code.')]
-    # Left panel: Token budget comparison
-    body.append(
-        f'<g class="rise"{d(.15)}>'
-        f'<rect x="40" y="106" width="450" height="246" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
-        + text(60, 138, '1. Tokens Held in Context (Lower is Better)', 17, t['ink'], 700)
-        + text(60, 158, 'Measured across 91 benchmark tasks in a 200k window', 12, t['ink2'])
-        + '</g>'
-    )
-    t_rows = [
-        ('Every skill always on', meta, 'rose', f'{meta:,} tok (41% of 200k)'),
-        ('Only what SFP picked', used, 'teal', f'{used:,} tok ({saved}% less)'),
-        ('Router idle (sfp only)', 700, 'sky', '~700 tok (0.3% of 200k)'),
-    ]
-    for i, (label, val, col, note) in enumerate(t_rows):
-        y = 186 + i * 50
-        c = t[col]
-        bw = 155
-        w_bar = max(8.0, bw * val / meta)
-        body.append(text(60, y + 16, label, 13, t['ink'] if col == 'teal' else t['ink2'], 700 if col == 'teal' else 500, cls='fade', extra=d(.3 + .1 * i)))
-        body.append(f'<rect x="200" y="{y}" width="{bw}" height="22" rx="5" fill="{t["grid"]}" fill-opacity=".5"/>')
-        body.append(f'<rect class="grow" x="200" y="{y}" width="{w_bar:.1f}" height="22" rx="5" fill="{c}"{d(.5 + .15 * i)}/>')
-        body.append(text(200 + bw + 10, y + 16, note, 12, t['ink'] if col == 'teal' else t['ink2'], 700 if col == 'teal' else 500, cls='mono fade', extra=d(.9 + .1 * i)))
-
-    # Right panel: Selection speed
-    body.append(
-        f'<g class="rise"{d(.25)}>'
-        f'<rect x="510" y="106" width="450" height="246" rx="12" fill="{t["tile"]}" stroke="{t["grid"]}" stroke-width="1.5"/>'
-        + text(530, 138, '2. Time to Pick Skills on Your Machine', 17, t['ink'], 700)
-        + text(530, 158, 'Local model judge runs only when word match is weak', 12, t['ink2'])
-        + '</g>'
-    )
-    s_rows = [
-        ('Words + project fit', 8, 'teal', '~3 to 7 ms (instant)'),
-        ('+ Meaning (bge-m3)', 48, 'violet', '~200 ms (vector cosine)'),
-        ('+ Model judge (p50)', 95, 'amber', '~360 ms typical'),
-    ]
-    for i, (label, pct_w, col, note) in enumerate(s_rows):
-        y = 186 + i * 50
-        c = t[col]
-        bw = 155
-        body.append(text(530, y + 16, label, 13, t['ink'] if col == 'teal' else t['ink2'], 700 if col == 'teal' else 500, cls='fade', extra=d(.35 + .1 * i)))
-        body.append(f'<rect x="675" y="{y}" width="{bw}" height="22" rx="5" fill="{t["grid"]}" fill-opacity=".5"/>')
-        body.append(f'<rect class="grow" x="675" y="{y}" width="{bw * pct_w / 100:.1f}" height="22" rx="5" fill="{c}"{d(.55 + .15 * i)}/>')
-        body.append(text(675 + bw + 10, y + 16, note, 12, t['ink'] if col == 'teal' else t['ink2'], 700 if col == 'teal' else 500, cls='mono fade', extra=d(.95 + .1 * i)))
-
-    desc = (f'Every skill always on costs {meta:,} tokens (41% of a 200k window), while SFP loads only {used:,} tokens '
-            f'on average ({saved}% less), choosing in ~3-7 ms words-only or ~200 ms with local embeddings.')
-    return svg(1000, 374, 'Context window cost and selection speed', desc, ''.join(body), t)
-
-
-def hive_architecture(t):
-    """Animated 5-column architecture diagram for the For Experts section."""
-    body = [header(t, 'Inside the five-layer Hive engine',
-                   'One select_skills call. Local models are optional; without them the deterministic layers still run.')]
-    cols = [
-        ('1. Scouts & Fit', 'sky', [
-            ('Task Stems', 'tokenized prompt words'),
-            ('Manifests', 'Cargo.toml, package.json'),
-            ('Work Phase', 'Kalman filter on edits'),
-            ('Tech Gate', 'drops mismatched stacks'),
-        ]),
-        ('2. Meaning', 'violet', [
-            ('bge-m3 Vectors', 'local embedding cosine'),
-            ('Skill Cards', 'descriptions & triggers'),
-            ('Example Bank', 'paraphrased queries'),
-            ('Adaptive Lead', 'leads if words < 50%'),
-        ]),
-        ('3. Local Judge', 'amber', [
-            ('Auto Gate', 'fires only on weak words'),
-            ('Top-20 Slate', 'reads closest candidates'),
-            ('Selects 1 to 3', 'orders by direct utility'),
-            ('Safe Guard', 'never overrides tech fit'),
-        ]),
-        ('4. Card Quorum', 'rose', [
-            ('Quorum Rule', 'requires multi-signal vote'),
-            ('Substitutes', 'deduplicates twin skills'),
-            ('Role Slots', 'base, check, finish, style'),
-            ('Confidence', '0.0% junk on edge tasks'),
-        ]),
-        ('5. Taste & Out', 'teal', [
-            ('30d Half-Life', 'animation, text, code'),
-            ('LinUCB Model', 'word-to-skill weights'),
-            ('121 Bundles', '100% skills bundled'),
-            ('Markov Next', 'predicts next phase skill'),
-        ]),
-    ]
-    cw, ch, top, gap = 172, 290, 108, 15
-    for i, (title, col, items) in enumerate(cols):
-        x = 40 + i * (cw + gap)
-        c = t[col]
-        g = [
-            f'<g class="rise"{d(.18 + .12 * i)}>'
-            f'<rect x="{x}" y="{top}" width="{cw}" height="{ch}" rx="12" fill="{t["tile"]}" stroke="{c}" stroke-width="1.5"/>'
-            f'<path class="draw" pathLength="1" d="M{x + 12} {top + 1} H{x + cw - 12}" stroke="{c}" stroke-width="4" stroke-linecap="round" fill="none"{d(.45 + .12 * i)}/>'
-            + text(x + 14, top + 30, title, 15, c, 700)
-        ]
-        for k, (head_s, sub_s) in enumerate(items):
-            iy = top + 52 + k * 56
-            g.append(
-                f'<rect x="{x + 10}" y="{iy}" width="{cw - 20}" height="46" rx="7" fill="{t["bg"]}" stroke="{t["grid"]}" stroke-width="1"/>'
-                + text(x + 18, iy + 19, head_s, 13, t['ink'], 700)
-                + text(x + 18, iy + 36, sub_s, 11, t['ink2'])
-            )
-        g.append('</g>')
-        body.append(''.join(g))
-        if i < len(cols) - 1:
-            x1, x2, my = x + cw, x + cw + gap, top + ch / 2
-            p = f'M{x1} {my} H{x2 - 5}'
-            body.append(f'<path class="draw" pathLength="1" d="{p}" stroke="{c}" stroke-width="2" fill="none"{d(.7 + .12 * i)}/>'
-                        f'<path class="fade" d="M{x2} {my} l-7 -4 v8 z" fill="{c}"{d(1.0 + .12 * i)}/>')
-            body.append(pulse(p, c, 1.5 + .25 * i, 1.8))
-
-    # Bottom feedback loop from Layer 5 back to Layer 1
-    ly = top + ch + 36
-    loop = f'M874 {top + ch + 2} V{ly} H126 V{top + ch + 8}'
-    body.append(f'<path class="draw" pathLength="1" d="{loop}" fill="none" stroke="{t["accent"]}" stroke-width="2" stroke-dasharray="1"{d(1.8)}/>')
-    body.append(f'<path class="fade" d="M126 {top + ch + 2} l-5 8 h10 z" fill="{t["accent"]}"{d(2.4)}/>')
-    body.append(f'<rect x="210" y="{ly - 13}" width="580" height="24" rx="6" fill="{t["bg"]}"/>')
-    body.append(text(500, ly + 4, 'Feedback, test runs & commits update LinUCB & taste in ~/.sfp (zero task text stored)',
-                     13, t['accent'], 600, 'middle', 'fade', d(2.2)))
-    desc = ('Inside the five-layer Hive engine: 1. Scouts and Manifest Fit, 2. Semantic Meaning (bge-m3), '
-            '3. Local Model Judge, 4. Skill Card Quorum and Dedup, 5. LinUCB Taste and Ordered Bundles.')
-    return svg(1000, 462, 'Inside the five-layer Hive engine', desc, ''.join(body), t)
 
 
 def library(t, catalog):
@@ -938,28 +838,28 @@ def terminal(t, example):
 
 def ui_flow(t):
     """Dedicated animated workflow for UI, Design Systems, Accessibility & Motion."""
-    body = [header(t, 'UI, design systems and motion workflows',
-                   'Ordered frontend bundles guide your AI from semantic markup and typography scale to hardware-accelerated motion.')]
+    body = [header(t, 'Bundles for UI work',
+                   'Skills that work well together, in the order to use them.')]
     tracks = [
-        ('Accessible UI & Forms Bundle', 'rose', 150, [
+        ('Accessible form bundle', 'rose', 150, [
             ('frontend-a11y', 'semantic HTML & ARIA'),
             ('ux-writing', 'concise microcopy'),
             ('react-patterns', 'state & composition'),
             ('accessibility-audit', 'WCAG & keyboard check'),
         ]),
-        ('Visual Taste & Motion Studio', 'violet', 265, [
+        ('Ship a page bundle', 'violet', 265, [
             ('design-taste-frontend', 'hierarchy & spacing'),
             ('impeccable', 'editorial polish'),
-            ('animate', 'spring & CSS motion'),
+            ('accessibility-audit', 'WCAG & keyboard check'),
             ('break-ui', 'layout stress test'),
         ]),
     ]
     for tr, (label, col, y, nodes) in enumerate(tracks):
         c = t[col]
         body.append(text(40, y - 34, label, 13, c, 700, cls='fade', extra=d(.15 + .2 * tr)))
-        w = 212
+        w = 206
         for i, (name, sub) in enumerate(nodes):
-            x = 40 + i * 242
+            x = 40 + i * 238
             disp = name if len(name) <= 19 else name[:18] + '..'
             body.append(f'<g class="rise"{d(.2 + .12 * i + .2 * tr)}><rect x="{x}" y="{y - 24}" width="{w}" height="58" '
                         f'rx="12" fill="{t["tile"]}" stroke="{c}" stroke-width="2"/>'
@@ -968,40 +868,39 @@ def ui_flow(t):
                         + text(x + 40, y, disp, 12, t['ink'], 700, cls='mono')
                         + text(x + 40, y + 18, sub, 12, t['ink2']) + '</g>')
             if i < len(nodes) - 1:
-                x1, x2 = x + w, x + 242
+                x1, x2 = x + w, x + 238
                 p = f'M{x1} {y + 5} H{x2 - 6}'
                 body.append(f'<path class="draw" pathLength="1" d="{p}" fill="none" stroke="{c}" stroke-width="2"{d(.6 + .15 * i + .2 * tr)}/>'
                             f'<path class="fade" d="M{x2} {y + 5} l-8 -4 v8 z" fill="{c}"{d(1.1 + .15 * i + .2 * tr)}/>')
                 body.append(pulse(p, c, 1.8 + .35 * i + .4 * tr, 1.8))
-    desc = ('Two ordered UI and frontend bundles: Accessible UI & Forms Bundle (frontend-a11y -> ux-writing -> react-patterns -> '
-            'accessibility-audit) and Visual Taste & Motion Studio (design-taste-frontend -> impeccable -> animate -> break-ui).')
-    return svg(1000, 355, 'UI, design systems and motion workflows', desc, ''.join(body), t)
+    desc = ('Two bundles: Accessible form (frontend-a11y, ux-writing, react-patterns, accessibility-audit) and Ship a page '
+            '(design-taste-frontend, impeccable, accessibility-audit, break-ui).')
+    return svg(1000, 355, 'Bundles for UI work', desc, ''.join(body), t)
 
 
 def growth_flow(t):
     """Dedicated animated workflow for Business, Marketing, Fundraising & Content."""
-    body = [header(t, 'Business, fundraising and content growth engines',
-                   'From market sizing and pricing psychology to operator-voice articles, technical SEO and multi-channel distribution.')]
+    body = [header(t, 'Bundles for business and content',
+                   'Skills that work well together, in the order to use them.')]
     tracks = [
-        ('Fundraise & Positioning Pipeline', 'amber', 150, [
+        ('Fundraise bundle', 'amber', 150, [
             ('market-research', 'TAM & positioning'),
-            ('price-framing', 'tiers & packaging'),
             ('investor-materials', 'deck & narrative'),
             ('investor-outreach', 'warm & cold outreach'),
         ]),
-        ('Publish & Growth Content Engine', 'teal', 265, [
-            ('brand-voice', 'operator voice profile'),
+        ('Write and promote bundle', 'teal', 265, [
             ('article-writing', 'proof-led long-form'),
             ('seo', 'intent & schema audit'),
             ('content-engine', 'multi-channel launch'),
+            ('brand-voice', 'your own voice'),
         ]),
     ]
     for tr, (label, col, y, nodes) in enumerate(tracks):
         c = t[col]
         body.append(text(40, y - 34, label, 13, c, 700, cls='fade', extra=d(.15 + .2 * tr)))
-        w = 212
+        w = 206
         for i, (name, sub) in enumerate(nodes):
-            x = 40 + i * 242
+            x = 40 + i * 238
             disp = name if len(name) <= 19 else name[:18] + '..'
             body.append(f'<g class="rise"{d(.2 + .12 * i + .2 * tr)}><rect x="{x}" y="{y - 24}" width="{w}" height="58" '
                         f'rx="12" fill="{t["tile"]}" stroke="{c}" stroke-width="2"/>'
@@ -1010,14 +909,14 @@ def growth_flow(t):
                         + text(x + 40, y, disp, 12, t['ink'], 700, cls='mono')
                         + text(x + 40, y + 18, sub, 12, t['ink2']) + '</g>')
             if i < len(nodes) - 1:
-                x1, x2 = x + w, x + 242
+                x1, x2 = x + w, x + 238
                 p = f'M{x1} {y + 5} H{x2 - 6}'
                 body.append(f'<path class="draw" pathLength="1" d="{p}" fill="none" stroke="{c}" stroke-width="2"{d(.6 + .15 * i + .2 * tr)}/>'
                             f'<path class="fade" d="M{x2} {y + 5} l-8 -4 v8 z" fill="{c}"{d(1.1 + .15 * i + .2 * tr)}/>')
                 body.append(pulse(p, c, 1.8 + .35 * i + .4 * tr, 1.8))
-    desc = ('Two ordered business and marketing bundles: Fundraise & Positioning Pipeline (market-research -> price-framing -> '
-            'investor-materials -> investor-outreach) and Publish & Growth Content Engine (brand-voice -> article-writing -> seo -> content-engine).')
-    return svg(1000, 355, 'Business, fundraising and content growth workflows', desc, ''.join(body), t)
+    desc = ('Two bundles: Fundraise (market-research, investor-materials, investor-outreach) and Write and promote '
+            '(article-writing, seo, content-engine, brand-voice).')
+    return svg(1000, 355, 'Bundles for business and content', desc, ''.join(body), t)
 
 
 def tools(t):
@@ -1047,26 +946,33 @@ def write(name, theme, body):
         f.write(body)
 
 
+ASKS = ('make the login not get hacked', 'test all the buttons on my site', 'my page loads too slowly', 'turn my notes into a slide deck')
+
+
 def main():
     catalog = load_catalog()
     total, ncats = len(catalog), len({s['category'] for s in catalog})
-    hero_example = hive('make the login not get hacked') or {'task': 'make the login not get hacked', 'stack': []}
-    hero_example.setdefault('task', 'make the login not get hacked')
+    rel = release()
+    # The examples are the ones the benchmark recorded, so a picture, the README and the results always agree.
+    asked = got(rel, best_engine(rel), 'asks') or []
+    hero_example = asked[0] if asked else (hive(ASKS[0]) or {'stack': []})
+    hero_example.setdefault('task', ASKS[0])
     term_example = hive('build a signup page with a form, store users in postgres, '
                         'add end to end tests and deploy it with docker')
     term_example.setdefault('task', 'build a signup page')
-    scores = exam_scores()
-    res_data = latest_results()
+    city_example = hero_example
+    asks = [(a['task'], a['lead'] or 'no skill selected') for a in asked]
+    same = ask_python(SAME) or []
+    story = ask_python(STORY, 'react-performance')
     dz = design_numbers()
     for name, t in THEMES.items():
-        hero_svg = hero(t, total, ncats, hero_example)
+        hero_svg = hero(t, total, ncats, hero_example, catalog, rel)
         write('banner', name, hero_svg)
         write('hero', name, hero_svg)
         write('pipeline', name, pipeline(t))
-        write('advantages', name, advantages(t, total))
-        write('project-fit', name, project_fit(t))
-        write('taste', name, taste(t))
-        write('plain-words', name, plain_words(t))
+        if story:
+            write('city', name, city(t, story, city_example))
+        write('project-fit', name, project_fit(t, same))
         write('library', name, library(t, catalog))
         write('roles', name, roles(t, catalog))
         write('install-steps', name, install_steps(t))
@@ -1074,14 +980,15 @@ def main():
         write('ui-flow', name, ui_flow(t))
         write('growth-flow', name, growth_flow(t))
         write('results-rounds', name, results_rounds(t, dz))
-        write('tokens', name, tokens(t, res_data))
         write('hive-architecture', name, hive_architecture(t))
         write('tools', name, tools(t))
-        if scores:
-            write('exam', name, exam(t, scores))
-    print('README art written to assets/: banner, hero, pipeline, advantages, project-fit, taste, plain-words, '
-          'library, roles, install-steps, terminal, ui-flow, growth-flow, results-rounds, tokens, hive-architecture, tools'
-          + (', exam' if scores else ''))
+        if rel.get('engines', {}).get('words'):
+            write('advantages', name, advantages(t, total, rel, catalog))
+            write('taste', name, taste(t, rel))
+            write('plain-words', name, plain_words(t, rel, asks))
+            write('results', name, results(t, rel))
+            write('tokens', name, tokens(t, rel, catalog))
+    print('README art written to assets/')
 
 
 if __name__ == '__main__':

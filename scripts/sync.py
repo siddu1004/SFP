@@ -25,7 +25,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IGNORE = shutil.ignore_patterns('.git', '.github', 'node_modules', '__pycache__', '.DS_Store', 'bin')
 MARKETPLACE = 'sfp'
-VERSION = '3.20.0'
+VERSION = '3.20.1'
 OUT = os.path.join(ROOT, 'plugins')
 
 
@@ -529,6 +529,62 @@ def measure(cfg, cats, catalog):
     })
 
 
+def release_values():
+    """Every figure the README quotes from the benchmark (bench/release.py). The images read the same file."""
+    try:
+        with open(os.path.join(ROOT, 'bench', 'results', 'release.json'), encoding='utf-8') as f:
+            rel = json.load(f)
+    except (OSError, ValueError):
+        raise SystemExit('run python3 bench/release.py first: the README and its images are made from bench/results/release.json')
+    e = rel['engines']
+    kw, words, best = e['keyword'], e['words'], e.get('meaning') or e['words']
+    g = lambda x, k, f: str(x['groups'][k][f])
+    ms = lambda x, k: '%d' % max(1, round(x['ms'][k]))
+    rows = ['| Measured on | Keyword search | SFP, no model | SFP + `bge-m3` |', '|---|---:|---:|---:|']
+    names = (('plain', 'plain-words tasks, no project'), ('project', 'tasks in sample projects'), ('project_tuned', 'tasks in sample projects (used for tuning)'))
+    for k, label in names:
+        cells = ['%s%% / %s%% first (%d to %d)' % (g(x, k, 'chosen'), g(x, k, 'first'), x['groups'][k]['range'][0], x['groups'][k]['range'][1]) for x in (kw, words, best)]
+        rows.append('| %s %s | %s |' % (g(words, k, 'n'), label, ' | '.join(cells)))
+    rows.append('| %s tasks that need no skill, left empty | %s |' % (g(words, 'nothing', 'nothing_n'), ' | '.join('%s%%' % g(x, 'nothing', 'nothing_empty') for x in (kw, words, best))))
+    rows.append('| Right skill on the 40-skill map, plain words | - | %.1f%% | %.1f%% |' % (words['map']['hold']['40'], best['map']['hold']['40']))
+    rows.append('| Right skill on a 60-skill map, plain words | - | %.1f%% | %.1f%% |' % (words['map']['hold']['60'], best['map']['hold']['60']))
+    asks = ['| What you ask | SFP\'s picks |', '|---|---|'] + ['| *"%s"* | %s |' % (a['task'], ', '.join('`%s`' % s['name'] for s in a['stack']) or 'no skill selected') for a in best['asks']]
+    people = list(best['taste'].values())
+    n = sum(p['n'] for p in people)
+    share = lambda k: round(sum(p[k] * p['n'] for p in people) / n)
+    used = best['tokens']['stack'] + best['tokens']['map']
+    with open(os.path.join(ROOT, 'catalog.json'), encoding='utf-8') as f:
+        every = sum(-(-(len(s['name']) + len(s['description']) + 12) // 4) for s in json.load(f)['skills'])
+    return {
+        'R_SAVED': str(round(100 - 100.0 * used / every)), 'R_USED': format(int(round(used, -2)), ','), 'R_MAP_TOKENS': format(int(round(best['tokens']['map'], -2)), ','),
+        'R_MAP40': '%.0f' % best['map']['hold']['40'], 'R_MAP40_W': '%.0f' % words['map']['hold']['40'],
+        'R_NOTHING': g(words, 'nothing', 'nothing_empty'), 'R_NOTHING_W': g(words, 'nothing', 'nothing_empty'), 'R_NOTHING_M': g(best, 'nothing', 'nothing_empty'),
+        'R_NOTHING_KW': g(kw, 'nothing', 'nothing_empty'), 'R_KW_PLAIN': g(kw, 'plain', 'chosen'), 'R_W_PLAIN': g(words, 'plain', 'chosen'),
+        'R_M_PLAIN': g(best, 'plain', 'chosen'), 'R_KW_PROJECT': g(kw, 'project', 'chosen'), 'R_W_PROJECT': g(words, 'project', 'chosen'),
+        'R_MS_W': ms(words, 'typical'), 'R_MS_W95': ms(words, 'slowest_5'), 'R_MS_M': ms(best, 'typical'), 'R_MS_M95': ms(best, 'slowest_5'),
+        'R_RESULTS_TABLE': '\n'.join(rows), 'R_ASKS_TABLE': '\n'.join(asks),
+        'R_TASTE': 'on %d new tasks for simulated learners, the first pick in the format they like went from %d%% to %d%%' % (n, share('before'), share('after')),
+        'R_RUST_SAMPLE': rust_sample(),
+    }
+
+
+def rust_sample():
+    """What `sfp select "write tests for the orders"` prints in a small Rust project, shortened."""
+    import subprocess
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        with open(os.path.join(tmp, 'Cargo.toml'), 'w') as f:
+            f.write('[package]\nname = "shop"\nversion = "0.1.0"\n')
+        os.makedirs(os.path.join(tmp, 'src'))
+        with open(os.path.join(tmp, 'src', 'main.rs'), 'w') as f:
+            f.write('fn main() {}\n')
+        env = dict(os.environ, SFP_SEMANTIC='0', SFP_DATA_DIR=os.path.join(tmp, 'data'), SFP_RESEARCH='0', PYTHONIOENCODING='utf-8')
+        out = subprocess.run([sys.executable, os.path.join(ROOT, 'mcp', 'sfp_hive.py'), 'select', 'write tests for the orders', '--project', tmp],
+                             capture_output=True, text=True, encoding='utf-8', env=env).stdout
+    keep = [x for x in out.splitlines() if x.startswith(('Stack for', 'Project', 'Phase', '1.', '2.', '   why'))]
+    return '\n'.join(keep[:7])
+
+
 def render_readme(cfg, cats, catalog):
     """Fill templates/README.md.tpl from the catalog; write README.md and draw the banners."""
     tpl = os.path.join(ROOT, 'templates', 'README.md.tpl')
@@ -557,6 +613,7 @@ def render_readme(cfg, cats, catalog):
     values = {'TOTAL': str(total), 'NCATS': str(len(per_cat)), 'SOURCES': str(repos),
               'CATEGORY_TABLE': '\n'.join(rows), 'PRESET_TABLE': '\n'.join(prows)}
     values.update(measure(cfg, cats, catalog))
+    values.update(release_values())
     for key in ('omniroute', 'claude-mem', 'strix'):
         values['APP_' + key.upper().replace('-', '_')] = str(sum(1 for c in catalog if c.get('app') == key))
     for key, value in values.items():

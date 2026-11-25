@@ -20,6 +20,7 @@ Env
 """
 import array
 import base64
+import array
 import functools
 import hashlib
 import json
@@ -48,6 +49,7 @@ RUNTIMES = [
 EMBED_HINTS = ('embed', 'bge', 'e5-', 'gte', 'minilm', 'nomic')
 EMBED_PREFERENCE = ('bge-m3', 'mxbai-embed', 'nomic-embed', 'bge', 'gte', 'e5-', 'minilm', 'embed')
 EXAMPLES_FILE = os.path.join(core.ROOT, 'skill_examples.json')   # requests a developer might type, per skill
+BODIES_FILE = os.path.join(core.ROOT, 'skill_bodies.json')       # one vector per SKILL.md body, made once for everyone
 EXAMPLE_WEIGHT = 0.5     # a skill's closeness: half its description, half its closest example request
 BATCH = 32
 QUERY_TIMEOUT = 4.0     # a task waits at most this long for its vector, then the hive goes on with words alone
@@ -305,17 +307,37 @@ def similar(text, limit=40, min_coverage=0.9):
         _ENDPOINT['checked'] = 0.0   # look for the runtime again next time
         return []
     scored = []
-    for n, (d, best, _) in _closeness(ep['model'], q).items():
+    for n, (d, best, _, _) in _closeness(ep['model'], q).items():
         scored.append(((1 - EXAMPLE_WEIGHT) * d + EXAMPLE_WEIGHT * best if best is not None else d, n))
     scored.sort(reverse=True)
     return scored[:limit]
+
+
+@functools.lru_cache(maxsize=2)
+def _bodies(model):
+    """{skill: vector of its whole SKILL.md} from the shipped file, {} when it was made with another embedding model."""
+    try:
+        with open(BODIES_FILE, encoding='utf-8') as f:
+            d = json.load(f)
+        if d['model'] not in model:
+            return {}
+        out = {}
+        for n, text in d['skills'].items():
+            v = array.array('b')
+            v.frombytes(base64.b64decode(text))
+            size = math.sqrt(sum(x * x for x in v)) or 1.0
+            out[n] = [x / size for x in v]
+        return out
+    except (OSError, ValueError, KeyError, TypeError):
+        return {}
 
 
 _CLOSE = {'index': None, 'rows': {}}
 
 
 def _closeness(model, q):
-    """{skill: (cosine to its description, to its closest example request, mean of its closest three)}; None without examples.
+    """{skill: (cosine to its description, to its closest example request, mean of its closest three, to its whole body)};
+    None where there is nothing to compare.
     Kept for the last vectors, and dropped when the index is read again."""
     index = _index(model)
     if _CLOSE['index'] is not index or len(_CLOSE['rows']) > 64:
@@ -324,9 +346,11 @@ def _closeness(model, q):
     if key not in _CLOSE['rows']:
         out = {}
         dot = lambda v: sum(map(operator.mul, q, v))
+        bodies = _bodies(model)
         for n, v, ex in zip(*index):
             top = sorted((dot(e) for e in ex), reverse=True)[:3]
-            out[n] = (dot(v), top[0] if top else None, sum(top) / len(top) if top else None)
+            whole = bodies.get(n)
+            out[n] = (dot(v), top[0] if top else None, sum(top) / len(top) if top else None, dot(whole) if whole and len(whole) == len(q) else None)
         _CLOSE['rows'][key] = out
     return _CLOSE['rows'][key]
 

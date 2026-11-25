@@ -91,6 +91,35 @@ class MapTest(CityCase):
         self.assertNotIn(order[0], city.rank(TASK, allow=lambda n: n != order[0])[0])
 
 
+class LiftTest(CityCase):
+    def test_a_rare_kind_of_work_lifts_the_skills_made_for_it(self):
+        made, rare = city.job_lift('explain')
+        self.assertTrue(made and rare > 0.5)
+        self.assertEqual(city.job_lift('build'), (frozenset(), 0.0))
+        self.assertEqual(city.job_lift(None), (frozenset(), 0.0))
+        order = city.rank('explain how bloom filters work and why false positives occur')[0]
+        self.assertTrue(made & set(order[:3]), order[:3])
+
+    def test_a_named_format_comes_first(self):
+        order = city.rank('record a demo video of the checkout flow')[0]
+        self.assertTrue(city.makes(order[0], 'video'), order[0])
+
+    def test_a_liked_format_lifts_what_makes_it_and_never_beats_a_named_one(self):
+        task = 'explain how attention works in transformers'
+        liked = {'output': {'animation': 10.0}}
+        plain, after = city.rank(task)[1], city.rank(task, taste=liked)[1]
+        self.assertTrue(all(after[n] >= plain[n] for n in plain))
+        self.assertTrue(any(after[n] > plain[n] and city.makes(n, 'animation') for n in plain))
+        named = city.rank('give me just a text explanation of how attention works', taste=liked)[0]
+        self.assertTrue(city.makes(named[0], 'text'), named[0])
+
+    def test_whole_text_vectors_join_only_when_nearly_every_skill_has_one(self):
+        near = {n: (0.5, 0.4, 0.3, 0.6) for n in core.SKILLS}
+        self.assertEqual(city.rank(TASK, near)[2], 'whole')
+        few = {n: v if i % 2 else v[:3] + (None,) for i, (n, v) in enumerate(near.items())}
+        self.assertEqual(city.rank(TASK, few)[2], 'model')
+
+
 class LearningTest(CityCase):
     F = [[1.0, 0.0], [0.0, 1.0]]
 

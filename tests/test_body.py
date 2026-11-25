@@ -94,8 +94,8 @@ class ChoiceTest(unittest.TestCase):
 
     def test_the_budget_holds_and_the_first_pick_always_stays(self):
         names = sorted(core.SKILLS)[:3]
-        self.assertEqual(hive.fit_taste(names, {}, 1), names[:1])
-        self.assertEqual(hive.fit_taste(names, {}, 10 ** 9), names)
+        self.assertEqual(hive.within_budget(names, 1), names[:1])
+        self.assertEqual(hive.within_budget(names, 10 ** 9), names)
 
 
 if __name__ == '__main__':

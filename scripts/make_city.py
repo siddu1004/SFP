@@ -6,7 +6,9 @@ The weights are trained on tests/plain_tuning.json and tests/search_reworded.jso
 
   make_city.py            build everything
   make_city.py --weights  keep the words and neighbours, train the weights again
+  make_city.py --bodies   first embed every SKILL.md body (bge-m3, slow: an hour or more) into skill_bodies.json
 """
+import base64
 import json
 import math
 import os
@@ -24,6 +26,7 @@ import sfp_mcp as core  # noqa: E402
 TUNING = ('plain_tuning', 'search_reworded')
 NEIGHBOURS, SHARPNESS, WORDS = 8, 0.05, 12
 L2, EPOCHS, RATE, START = 0.1, 300, 0.05, 0.15
+WHOLE = 0.3              # weight of the whole-text rank: over five splits of the tuning sets better than training it
 COMMON = frozenset('the and for with your you that this from into use when how what can are help need want make using have not '
                    'get all any our its user users skill skills about should which without before after more than them they'.split())
 
@@ -67,6 +70,36 @@ def neighbours(model):
     return out
 
 
+CHUNK, CHUNKS, BODY_MODEL = 1500, 4, 'bge-m3'
+
+
+def chunks(name):
+    """The pieces of a body that are embedded: up to four of 1,500 characters, each led by the skill's name."""
+    with open(os.path.join(ROOT, core.SKILLS[name]['path'], 'SKILL.md'), encoding='utf-8', errors='ignore') as f:
+        body = re.sub(r'\s+', ' ', re.sub(r'^---.*?---', '', f.read(), count=1, flags=re.S))[:CHUNK * CHUNKS]
+    return [name.replace('-', ' ') + ': ' + body[i:i + CHUNK] for i in range(0, max(1, len(body)), CHUNK)][:CHUNKS]
+
+
+def write_bodies(vectors):
+    """{skill: [chunk vectors]} to skill_bodies.json: one vector a skill (the mean of its chunks), as signed bytes."""
+    out = {}
+    for n in sorted(vectors):
+        v = unit(unit(np.array(vectors[n], dtype=np.float32)).mean(0))
+        out[n] = base64.b64encode(np.round(v / np.abs(v).max() * 127).astype(np.int8).tobytes()).decode()
+    with open(sfp_embed.BODIES_FILE, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump({'_note': 'Built by scripts/make_city.py --bodies.', 'model': BODY_MODEL, 'skills': out}, f, separators=(',', ':'))
+        f.write('\n')
+
+
+def embed_bodies(ep):
+    done = {}
+    for i, n in enumerate(sorted(core.SKILLS)):
+        done[n] = sfp_embed.embed(ep, chunks(n), 'document', 600)
+        if i % 50 == 0:
+            print('  %d bodies' % i, flush=True)
+    write_bodies(done)
+
+
 def cases():
     out = []
     for name in TUNING:
@@ -96,12 +129,14 @@ def train(rows, l2=L2):
     return w
 
 
-def rows_for(tasks, with_model):
+def rows_for(tasks, kind):
     out = []
     for task, want in tasks:
-        meaning = sfp_embed.survey(task) if with_model else {}
-        if with_model and not meaning:
+        meaning = sfp_embed.survey(task) if kind != 'text' else {}
+        if kind != 'text' and not meaning:
             raise SystemExit('no embedding model answers')
+        if kind == 'model':
+            meaning = {n: v[:3] for n, v in meaning.items()}
         _, pool, f = sfp_city.features(task, meaning)
         out.append((np.array([f[n] for n in pool], dtype=np.float64), np.array([n in want for n in pool], dtype=np.float64), pool, want))
     return out
@@ -121,16 +156,21 @@ def main():
            'near': old.get('near') or neighbours(ep['model'])}
     sfp_city._DATA.clear()
     sfp_city._DATA.update(dict(out, weights={}))
+    if '--bodies' in sys.argv:
+        embed_bodies(ep)
     out['weights'], tasks = {}, cases()
     folds = np.array_split(np.random.default_rng(0).permutation(len(tasks)), 5)
     for kind in ('text', 'model'):
-        rows = rows_for(tasks, kind == 'model')
+        rows = rows_for(tasks, kind)
         cv = []
         for fold in folds:
             w = train([r[:2] for i, r in enumerate(rows) if i not in set(fold)])
             cv.append([hits([rows[i] for i in fold], w, k) for k in (1, 3, 10, 40)])
         print('%s, 5-fold on tuning: @1 %.1f @3 %.1f @10 %.1f @40 %.1f' % ((kind,) + tuple(np.mean(cv, 0))), flush=True)
         out['weights'][kind] = [round(float(x), 4) for x in train([r[:2] for r in rows])]
+    n = len(sfp_city.TEXT_MAPS + sfp_city.MEANING_MAPS)
+    w = out['weights']['model']
+    out['weights']['whole'] = w[:n] + [WHOLE] + w[n:2 * n] + [0.0] + w[2 * n:]
     with open(sfp_city.CITY_FILE, 'w', encoding='utf-8', newline='\n') as f:
         json.dump(out, f, separators=(',', ':'), ensure_ascii=False)
         f.write('\n')
