@@ -796,6 +796,22 @@ def judge_stage(task, sit, votes, exclude, after, named_form, taste):
     return picks
 
 
+def fit_taste(picks, taste, budget):
+    """Fused picks with the output the user prefers first, as many as the token budget holds (the first always stays)."""
+    outputs = (taste or {}).get('output') or {}
+    if outputs:
+        import sfp_cards
+        top = max(outputs, key=outputs.get)
+        picks = sorted(picks, key=lambda n: top not in (sfp_cards.get_card(n).get('output') or []))
+    kept, spent = [], 0
+    for n in picks:
+        cost = v1.body_tokens(n)
+        if not kept or spent + cost <= budget:
+            kept.append(n)
+            spent += cost
+    return kept
+
+
 def understand(text):
     """{'terms', 'similar'} from the local models, or None when neither answers (or SFP_SEMANTIC=0)."""
     if not (text or '').strip():
@@ -845,7 +861,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     hist = history if history is not None else History(v1.RECIPES, v1.read_usage())
     sc = scan_result if scan_result is not None else scan(project)
     sit = read_situation(task, goal, sc)
-    caller_semantic = semantic is not None and semantic is not True
+    caller_semantic = semantic is not None and semantic is not True      # False too: the caller asked for words as before
     if semantic is None or semantic is True:
         # Filler with no word of substance ("for the of a") means nothing, in words or in meaning.
         semantic = understand(sit['text']) if sit['words'] else None
@@ -922,11 +938,12 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     elif sit.get('semantic') and rerank_wanted(sit, votes) and (not caller_semantic or os.environ.get('SFP_RERANK') == '1'):
         judged = judge_stage(task, sit, votes, exclude, after, named_form, taste)
 
-    if (judged is None and sem_sim_list and not caller_semantic and not has_proj and not named_form and not learned and not after
-            and not phase_hint and os.environ.get('SFP_FUSED', '1') != '0'):
-        # No project to read and no model asked: the fused ranking of words and meaning is the choice. On 175 plain tasks it
-        # holds the right skill in its top 3 for 59%, the votes and bars above for 47%.
-        judged = sfp_retrieve.fused_picks(task, sem_sim_list, allow)
+    # No project to read and no chat model asked: a fused ranking is the choice (see sfp_retrieve.fused_picks and text_picks).
+    plain = (judged is None and not caller_semantic and not has_proj and not named_form and not learned and not after
+             and not phase_hint and os.environ.get('SFP_FUSED', '1') != '0')
+    fused = []
+    if plain and sem_sim_list:
+        judged = fused = fit_taste(sfp_retrieve.fused_picks(task, sem_sim_list, allow), taste, budget)
     if judged is not None:
         picks = list(judged)
     else:
@@ -1074,6 +1091,14 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         quality.setdefault(n, 0.0)
         votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
 
+    if plain and not sem_sim_list:
+        mine = [c[0] for c in chosen if c[0] not in pinned]
+        judged = fused = fit_taste(sfp_retrieve.text_picks(task, sorted(mine, key=lambda n: -quality.get(n, 0.0)), allow), taste, budget)
+        for i, n in enumerate(fused):
+            votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
+            quality[n] = RERANK_LEAD - 0.01 * i
+        picks = list(fused)
+
     if judged is not None:
         # The model read the candidates: its choice is the stack, in its order. A pinned skill always stays.
         # Step 5: Judge's picks lead, in the judge's order. Add at most one extra skill, only when it covers a different job in the task.
@@ -1133,7 +1158,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         elif learned.get(name, 0) <= -0.15:
             reasons.append('down-weighted by feedback')
         if name in picks:
-            reasons.append('judged the best fit by the local model')
+            reasons.append('a best match over its name, description and full text' if name in fused else 'judged the best fit by the local model')
         card = sfp_cards.get_card(name)
         if named_form and named_form in card.get('output', []):
             reasons.append('requested format: ' + named_form)

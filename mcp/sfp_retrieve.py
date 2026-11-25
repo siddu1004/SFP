@@ -210,8 +210,21 @@ FUSED_PICKS = 3
 
 
 def fused_picks(task, similar, allow=None, size=FUSED_PICKS):
-    """The best skills by word rank and meaning rank together: no model, no rules. `similar` is sfp_embed.similar's answer."""
-    ranks = rrf([(_rank_words(task, 80), 1.0), ([n for n, _ in similar] if isinstance(similar[0][0], str) else [n for _, n in similar], 1.0)], FUSED_K)
+    """The best skills by word rank, meaning rank and full-text rank together: no model, no rules. `similar` is sfp_embed.similar's answer."""
+    import sfp_body
+    meaning = [n for n, _ in similar] if similar and isinstance(similar[0][0], str) else [n for _, n in similar]
+    ranks = rrf([(_rank_words(task, 80), 1.0), (meaning, 1.0), ([n for _, n in sfp_body.search(task)], 1.0)], FUSED_K)
+    return [n for n in ranks if n in core.SKILLS and (allow is None or allow(n))][:size]
+
+
+
+def text_picks(task, chosen, allow=None, size=FUSED_PICKS):
+    """Without an embedding model: word rank, full-text rank and what the signals chose, together. The weights were chosen on
+    tests/plain_tuning.json, search_reworded.json and precision_tuning.json. Nothing chosen stays nothing."""
+    if not chosen:
+        return []
+    import sfp_body
+    ranks = rrf([(_rank_words(task, 80), 1.0), ([n for _, n in sfp_body.search(task)], 2.0), (list(chosen), 0.5)], FUSED_K)
     return [n for n in ranks if n in core.SKILLS and (allow is None or allow(n))][:size]
 
 
