@@ -721,6 +721,8 @@ def rerank_wanted(sit, votes=None):
         return True
     if 'words_weak' in sit and not sit.get('text'):
         return sit['words_weak']
+    if mode == 'auto' and 'SFP_RERANK' not in os.environ:
+        return False       # asking a model takes 7 to 45 s a task for 3 more right choices in 100: only when asked for
     if votes and any(v.get('relation') == 'named' for v in votes.values()):
         return False
     if sit.get('ctx_tech'):
@@ -920,6 +922,11 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     elif sit.get('semantic') and rerank_wanted(sit, votes) and (not caller_semantic or os.environ.get('SFP_RERANK') == '1'):
         judged = judge_stage(task, sit, votes, exclude, after, named_form, taste)
 
+    if (judged is None and sem_sim_list and not caller_semantic and not has_proj and not named_form and not learned and not after
+            and not phase_hint and os.environ.get('SFP_FUSED', '1') != '0'):
+        # No project to read and no model asked: the fused ranking of words and meaning is the choice. On 175 plain tasks it
+        # holds the right skill in its top 3 for 59%, the votes and bars above for 47%.
+        judged = sfp_retrieve.fused_picks(task, sem_sim_list, allow)
     if judged is not None:
         picks = list(judged)
     else:

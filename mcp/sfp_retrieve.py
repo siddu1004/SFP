@@ -205,6 +205,16 @@ def candidates(task, project_tech=None, terms=None, allow=None, size=POOL, simil
     return out[:size]
 
 
+FUSED_K = 20             # chosen on tests/plain_tuning.json and tests/search_reworded.json
+FUSED_PICKS = 3
+
+
+def fused_picks(task, similar, allow=None, size=FUSED_PICKS):
+    """The best skills by word rank and meaning rank together: no model, no rules. `similar` is sfp_embed.similar's answer."""
+    ranks = rrf([(_rank_words(task, 80), 1.0), ([n for n, _ in similar] if isinstance(similar[0][0], str) else [n for _, n in similar], 1.0)], FUSED_K)
+    return [n for n in ranks if n in core.SKILLS and (allow is None or allow(n))][:size]
+
+
 def describe(name):
     card = cards().get(name) or {}
     desc = ' '.join((core.SKILLS.get(name, {}).get('description') or '').split())[:DESC_CHARS]
