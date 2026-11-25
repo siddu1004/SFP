@@ -27,7 +27,7 @@ RRF_K = 60
 RANK_DEPTH = 60          # how far down each ranking counts
 POOL = 40                # candidates the judge reads
 JUDGE_PICKS = 3
-JUDGE_TIMEOUT = 30.0
+JUDGE_TIMEOUT = 15.0
 DESC_CHARS = 170
 COMMON_WORD_SKILLS = 25   # a word in more skills than this is too common to show a task is about a specialist field
 # Whole fields that join only when the task is about them: they share everyday words with software tasks.
@@ -264,7 +264,10 @@ def judge(task, names, tech=(), timeout=JUDGE_TIMEOUT):
         return cache[key]['picks']
     try:
         answer = sfp_intent.chat(ep, prompt, 24, timeout)
-    except (OSError, ValueError, KeyError, IndexError, urllib.error.URLError):
+    except (OSError, urllib.error.URLError):
+        sfp_intent.cool_down()
+        return None
+    except (ValueError, KeyError, IndexError):
         return None
     if not re.search(r'\d', re.sub(r'<think>.*?</think>', ' ', answer or '', flags=re.S)):
         return None      # no number at all: a model that only reasoned has not judged

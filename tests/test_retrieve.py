@@ -137,5 +137,56 @@ class JudgeTest(unittest.TestCase):
         self.assertIsNone(res)
 
 
+class WaitTest(unittest.TestCase):
+    """A task never waits long for a model: only a loaded one is asked, and one that fails is left alone for a while."""
+    def setUp(self):
+        self.tmp = tempfile.mkdtemp()
+        self.saved = {k: os.environ.pop(k, None) for k in ('SFP_DATA_DIR', 'SFP_REWRITE_URL', 'SFP_REWRITE_MODEL', 'SFP_RERANK', 'SFP_SEMANTIC')}
+        os.environ['SFP_DATA_DIR'] = self.tmp
+        self.found, self.chat, self.get_json = sfp_intent.found, sfp_intent.chat, sfp_intent.sfp_embed._get_json
+        sfp_intent._MODEL['checked'] = 0.0
+
+    def tearDown(self):
+        sfp_intent.found, sfp_intent.chat, sfp_intent.sfp_embed._get_json = self.found, self.chat, self.get_json
+        sfp_intent._MODEL['checked'] = 0.0
+        for k, v in self.saved.items():
+            os.environ.pop(k, None)
+            if v is not None:
+                os.environ[k] = v
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def models(self, *rows):
+        sfp_intent._MODEL['checked'] = 0.0
+        sfp_intent.found = lambda timeout=1.0, for_tasks=False: [
+            {'base_url': 'http://x/v1', 'model': m, 'runtime': runtime, 'loaded': loaded, 'key_env': ''} for m, runtime, loaded in rows]
+
+    def test_a_model_that_is_not_loaded_is_not_asked(self):
+        self.models(('cold-7b', 'LM Studio', False))
+        self.assertIsNone(sfp_intent.model_cached())
+        self.models(('cold-7b', 'LM Studio', False), ('warm-7b', 'LM Studio', True))
+        self.assertEqual(sfp_intent.model_cached()['model'], 'warm-7b')
+
+    def test_an_ollama_model_counts_only_when_held_in_memory(self):
+        sfp_intent.sfp_embed._get_json = lambda url, timeout: {'models': [{'name': 'warm:7b'}]}
+        self.models(('cold:7b', 'Ollama', None), ('warm:7b', 'Ollama', None))
+        self.assertEqual(sfp_intent.model_cached()['model'], 'warm:7b')
+
+    def test_asking_always_may_load_one(self):
+        os.environ['SFP_RERANK'] = '1'
+        self.models(('cold-7b', 'LM Studio', False))
+        self.assertEqual(sfp_intent.model_cached()['model'], 'cold-7b')
+
+    def test_a_model_that_fails_is_left_alone_then_tried_again(self):
+        self.models(('warm-7b', 'LM Studio', True))
+
+        def fail(ep, prompt, tokens, timeout):
+            raise TimeoutError('slow')
+        sfp_intent.chat = fail
+        self.assertIsNone(rt.judge('write tests', ['react-testing']))
+        self.assertIsNone(sfp_intent.model_cached(), 'resting after a timeout')
+        sfp_intent.cool_down(-1)
+        self.assertEqual(sfp_intent.model_cached()['model'], 'warm-7b')
+
+
 if __name__ == '__main__':
     unittest.main()
