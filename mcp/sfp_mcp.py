@@ -321,6 +321,11 @@ def tool_get_skill(a):
     if name and name not in ('sfp', 'sfp-hive') and (not SESSION_HISTORY or SESSION_HISTORY[-1] != name):
         SESSION_HISTORY.append(name)
     if not name:
+        hive()
+        import sfp_own
+        mine = sfp_own.read(a.get('name'))
+        if mine:
+            return '# Skill: %s\nCategory: yours (approved by the user)\n\n---\n\n%s' % (a.get('name'), mine)
         near = [s['name'] for s in search(a.get('name', ''), limit=5)]
         raise ValueError('no skill named %r.%s' % (a.get('name'), (' Closest: %s.' % ', '.join(near)) if near else ''))
     base = skill_dir(name)
@@ -438,8 +443,23 @@ def tool_select_skills(a):
     res = sfp_needs.decide(task, project and os.path.expanduser(project), a.get('goal'), after,
                            int(a.get('budget', 12000)), max(1, min(int(a.get('max_skills', 4)), 8)),
                            use_bundles=a.get('use_bundles', ()))
-    res['next_step'] = ('Call get_skill for each skill in the stack, in order: base layers do the work, '
-                        'check layers verify it, finish layers ship it.')
+    import sfp_city
+    rows = res.pop('city', None) or []
+    if res.get('stack'):
+        res['next_step'] = ('Call get_skill for each skill in the stack, in order: base layers do the work, '
+                            'check layers verify it, finish layers ship it.')
+        if rows and os.environ.get('SFP_MAP', '1') != '0':
+            res['map'] = sfp_city.format_map(rows).split('\n')
+            res['next_step'] += (' You know the task better than the scores do: if a pick does not fit it, leave it and take '
+                                 'a better one from map (the next best skills, in towers), or none.')
+    elif not res.get('yours'):
+        res['next_step'] = 'No skill selected: tell the user so in one line, and do the task normally.'
+    if res.get('yours'):
+        res['next_step'] = ('The user\'s own skills (yours) fit this task: call get_skill for them first. ' + (res.get('next_step') or '')).strip()
+    import sfp_research
+    sfp_research.start_if_due()
+    if sfp_research.news():
+        res['research'] = sfp_research.news()
     if res.get('gap'):
         res['next_step'] += (' The library is thin for this (see gap): if the user agrees, call research_skill to have a '
                              'local model draft a skill from research papers.')

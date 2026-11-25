@@ -14,7 +14,6 @@ sys.path.insert(0, os.path.join(ROOT, 'mcp'))
 import sfp_body  # noqa: E402
 import sfp_hive as hive  # noqa: E402
 import sfp_mcp as core  # noqa: E402
-import sfp_retrieve  # noqa: E402
 
 
 class BodyTest(unittest.TestCase):
@@ -59,7 +58,7 @@ class BodyTest(unittest.TestCase):
 
 
 class ChoiceTest(unittest.TestCase):
-    """The choice without a model: words, full text and what the signals chose."""
+    """The choice without a model."""
 
     def setUp(self):
         self.tmp = tempfile.mkdtemp()
@@ -76,14 +75,6 @@ class ChoiceTest(unittest.TestCase):
                 os.environ[k] = v
         shutil.rmtree(self.tmp, ignore_errors=True)
 
-    def test_nothing_chosen_stays_nothing(self):
-        self.assertEqual(sfp_retrieve.text_picks('write unit tests', []), [])
-
-    def test_text_picks_respect_what_is_allowed(self):
-        picks = sfp_retrieve.text_picks('write unit tests for my python code', ['python-testing'])
-        self.assertTrue(picks and len(picks) <= sfp_retrieve.FUSED_PICKS)
-        self.assertNotIn(picks[0], sfp_retrieve.text_picks('write unit tests for my python code', ['python-testing'], lambda n: n != picks[0]))
-
     def test_no_model_is_never_called_a_judge(self):
         res = hive.select('make my react page load faster')
         self.assertTrue(res['stack'])
@@ -99,7 +90,7 @@ class ChoiceTest(unittest.TestCase):
     def test_the_old_choice_is_one_setting_away(self):
         os.environ['SFP_FUSED'] = '0'
         res = hive.select('make my react page load faster')
-        self.assertFalse([r for s in res['stack'] for r in s['reasons'] if 'full text' in r])
+        self.assertFalse([r for s in res['stack'] for r in s['reasons'] if 'over every map' in r])
 
     def test_the_budget_holds_and_the_first_pick_always_stays(self):
         names = sorted(core.SKILLS)[:3]

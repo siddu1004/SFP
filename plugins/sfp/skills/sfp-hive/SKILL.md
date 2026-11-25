@@ -12,7 +12,7 @@ SFP has hundreds of skills. Loading many at once costs context and blurs the ins
 Run the hive from this skill's folder with the user's own words and the project folder. It takes a few milliseconds and runs on this machine:
 
 ```bash
-python3 scripts/select_skills.py select "<the user's task>" --project <project folder>
+python3 scripts/select_skills.py select "<the user's task>" --project <project folder> --map
 ```
 
 Add what you know:
@@ -25,6 +25,8 @@ Add what you know:
 If the SFP MCP server is connected, call its `select_skills` tool instead, with `task` and `project_path`.
 
 Call it once at the start, and again when the work moves to a new phase (from building to testing, or to shipping). Do not call it for every message: the list holds until the job changes. Keep the **decision id** it returns: you need it for feedback.
+
+The city map under the list holds the next best skills, grouped in towers, tallest first. You know the task better than the scores do: if a pick does not fit it, leave it and take a better one from the map, or none. Take one or two, not more, and report the one you needed as `--missing` so the hive learns.
 
 ## 2. Apply the list in order
 
@@ -71,7 +73,7 @@ If you cannot run the script, apply the same rules yourself, using the `sfp` ski
 
 ## Rules
 
-- Use the list, not more. If it is empty, no skill fits well: say so and do the task normally.
+- Use the list, and the map when a pick does not fit. "No skill selected" means nothing in the library matches: say so in one line and do the task normally.
 - Trust the project fingerprint over your guess. If it lists the wrong technologies, name the right one in the task, for example "add tests in Django".
 - A "Matching recipe" line is a proven sequence for this kind of goal. Prefer it when the user wants the whole job done, not one step.
 - Give feedback once per task, when it ends. Do not ask the user for feedback in the middle of the work.

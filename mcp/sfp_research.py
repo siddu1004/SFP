@@ -23,6 +23,8 @@ CLI
   sfp_research.py drafts                     the drafts waiting for review
   sfp_research.py approve <name> [--install claude,antigravity]
   sfp_research.py reject <name>
+  sfp_research.py auto on|off|status [--days 7]   look for new papers by itself, every few days (off until you turn it on)
+  sfp_research.py found                           what it found that still waits for a local model to write it up
 """
 import datetime
 import json
@@ -30,6 +32,8 @@ import math
 import os
 import re
 import shutil
+import ssl
+import subprocess
 import sys
 import time
 import urllib.error
@@ -103,8 +107,30 @@ def make_queries(task, role=None, ep=None):
 
 def _get(url, timeout=FETCH_TIMEOUT):
     req = urllib.request.Request(url, headers={'User-Agent': USER_AGENT, 'Accept': 'application/json, application/atom+xml'})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read().decode('utf-8', 'replace')
+    for wait in (4, 0):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read().decode('utf-8', 'replace')
+        except urllib.error.HTTPError as e:
+            if e.code != 429 or not wait:
+                raise
+            time.sleep(wait)                    # the free indexes ask for a pause now and then
+        except urllib.error.URLError as e:
+            if not isinstance(getattr(e, 'reason', None), ssl.SSLCertVerificationError):
+                raise
+            return _curl(url, timeout)
+
+
+def _curl(url, timeout):
+    """The same request through the system's curl, for a Python that lacks a certificate the system has. curl verifies too."""
+    exe = shutil.which('curl')
+    if not exe:
+        raise OSError('the certificate could not be verified')
+    done = subprocess.run([exe, '-sS', '--fail', '--proto', '=https', '--max-time', str(timeout), '-A', USER_AGENT, '--', url],
+                          capture_output=True, timeout=timeout + 5)
+    if done.returncode:
+        raise OSError('curl: %s' % done.stderr.decode('utf-8', 'replace').strip()[:200])
+    return done.stdout.decode('utf-8', 'replace')
 
 
 def abstract_from_index(inv):
@@ -148,13 +174,30 @@ def parse_s2(text):
     return out
 
 
+STOP = frozenset('the a an of for in on to and or with how what newest new latest practical techniques best using use from by is are'.split())
+
+
+def arxiv_query(q, since=None):
+    """All of the query's main words (arXiv reads plain words as "any of them", which finds noise), and its dates."""
+    words = [w for w in re.findall(r'[a-z0-9][a-z0-9-]+', q.lower()) if w not in STOP][:4] or [q]
+    out = ' AND '.join('all:"%s"' % w if '-' in w else 'all:' + w for w in words)
+    if since:
+        out += ' AND submittedDate:[%s0000 TO %s2359]' % (since.replace('-', ''), datetime.date.today().strftime('%Y%m%d'))
+    return out
+
+
+def _openalex_key():
+    k = os.environ.get('OPENALEX_API_KEY')
+    return {'api_key': k} if k else {}
+
+
 SOURCES = (
     ('OpenAlex', lambda q, n, since=None: 'https://api.openalex.org/works?' + urllib.parse.urlencode(
-        {'search': q, 'per-page': n, 'filter': 'has_abstract:true' + (',from_publication_date:%s' % since if since else ''),
-         'select': 'id,doi,title,display_name,publication_year,cited_by_count,abstract_inverted_index,primary_location'}),
+        dict({'search': q, 'per-page': n, 'filter': 'has_abstract:true' + (',from_publication_date:%s' % since if since else ''),
+              'select': 'id,doi,title,display_name,publication_year,cited_by_count,abstract_inverted_index,primary_location'}, **_openalex_key())),
      parse_openalex),
     ('arXiv', lambda q, n, since=None: 'https://export.arxiv.org/api/query?' + urllib.parse.urlencode(
-        {'search_query': 'all:' + q, 'start': 0, 'max_results': n, 'sortBy': 'submittedDate' if since else 'relevance'}),
+        {'search_query': arxiv_query(q, since), 'start': 0, 'max_results': n, 'sortBy': 'submittedDate' if since else 'relevance'}),
      parse_arxiv),
     ('Semantic Scholar', lambda q, n, since=None: 'https://api.semanticscholar.org/graph/v1/paper/search?' + urllib.parse.urlencode(
         dict({'query': q, 'limit': n, 'fields': 'title,abstract,year,citationCount,url'}, **({'year': since[:4] + '-'} if since else {}))),
@@ -198,7 +241,7 @@ def rank(task, papers, limit=6, now_year=None):
     if not papers:
         return []
     now_year = now_year or datetime.date.today().year
-    rel = None
+    rel, by = None, 'meaning'
     ep = sfp_embed.find_endpoint() if sfp_embed.enabled() else None
     if ep:
         try:
@@ -208,7 +251,7 @@ def rank(task, papers, limit=6, now_year=None):
         except (OSError, ValueError, KeyError, urllib.error.URLError):
             rel = None
     if rel is None:
-        rel = [_overlap(task, p['title'] + ' ' + p['abstract']) for p in papers]
+        rel, by = [_overlap(task, p['title'] + ' ' + p['abstract']) for p in papers], 'words'
     lo, hi = min(rel), max(rel)
     top_cit = max(math.log1p(p['citations']) for p in papers) or 1.0
     scored = []
@@ -217,7 +260,7 @@ def rank(task, papers, limit=6, now_year=None):
         cit = math.log1p(p['citations']) / top_cit
         age = max(0, now_year - (p['year'] or now_year - 10))
         recent = math.exp(-age / 6.0)
-        p = dict(p, relevance=round(r, 4), score=round(0.6 * r_n + 0.25 * cit + 0.15 * recent, 4))
+        p = dict(p, relevance=round(r, 4), by=by, score=round(0.6 * r_n + 0.25 * cit + 0.15 * recent, 4))
         scored.append(p)
     scored.sort(key=lambda p: -p['score'])
     return scored[:limit]
@@ -431,10 +474,114 @@ def _seen_path():
     return os.path.join(data_dir(), 'research_seen.json')
 
 
-def watch(topics=None, days=45, n_papers=5, min_new=2, log=print, fetch=_get):
+MIN_RELEVANCE = {'meaning': 0.5, 'words': 0.04}    # below this a paper is not about the topic
+AUTO_DAYS, AUTO_TOPICS = 7, 2
+
+
+def trend(topic, fetch=_get, today=None, span=90):
+    """{'recent', 'before', 'growth'}: arXiv papers on the topic in the last `span` days and in the `span` days before. {} when
+    arXiv does not answer."""
+    today = today or datetime.date.today()
+    counts = []
+    for end in (today, today - datetime.timedelta(days=span)):
+        start = end - datetime.timedelta(days=span)
+        q = arxiv_query(topic) + ' AND submittedDate:[%s0000 TO %s2359]' % (start.strftime('%Y%m%d'), end.strftime('%Y%m%d'))
+        try:
+            root = ET.fromstring(fetch('https://export.arxiv.org/api/query?' + urllib.parse.urlencode(
+                {'search_query': q, 'start': 0, 'max_results': 1})))
+            counts.append(int(root.findtext('{http://a9.com/-/spec/opensearch/1.1/}totalResults') or 0))
+        except (OSError, ValueError, ET.ParseError, urllib.error.URLError):
+            return {}
+        time.sleep(0.3)
+    return {'recent': counts[0], 'before': counts[1], 'growth': round((counts[0] + 1) / (counts[1] + 1), 2)}
+
+
+def _read_json(name, default):
+    try:
+        with open(os.path.join(data_dir(), name), encoding='utf-8') as f:
+            got = json.load(f)
+        return got if isinstance(got, type(default)) else default
+    except (OSError, ValueError):
+        return default
+
+
+def _write_json(name, value):
+    os.makedirs(data_dir(), exist_ok=True)
+    path = os.path.join(data_dir(), name)
+    with open(path + '.tmp', 'w', encoding='utf-8') as f:
+        json.dump(value, f, indent=1)
+    os.replace(path + '.tmp', path)
+
+
+def auto(on=None, days=None):
+    """The switch: {'auto', 'days', 'last'}. Off until the user turns it on, because it sends topic names to paper indexes."""
+    s = dict({'auto': False, 'days': AUTO_DAYS, 'last': 0}, **_read_json('research.json', {}))
+    if on is not None or days is not None:
+        if on is not None:
+            s['auto'] = bool(on)
+        if days is not None:
+            s['days'] = max(1, int(days))
+        _write_json('research.json', s)
+    return s
+
+
+def due(now=None):
+    s = auto()
+    try:
+        return bool(s['auto']) and (now or time.time()) - float(s['last'] or 0) >= float(s['days']) * 86400
+    except (TypeError, ValueError):
+        return False
+
+
+def start_if_due(now=None, run=None):
+    """Start the watch in the background when it is on and due. Returns True when it was started. Never waits."""
+    if os.environ.get('SFP_RESEARCH') == '0' or not due(now):
+        return False
+    _write_json('research.json', dict(auto(), last=now or time.time()))     # first, so two servers do not both start one
+    cmd = [sys.executable, os.path.abspath(__file__), 'watch', '--auto']
+    if run:
+        run(cmd)
+        return True
+    kw = {'creationflags': 0x08000000} if os.name == 'nt' else {'start_new_session': True}     # no window, outlives the caller
+    try:
+        subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, **kw)
+    except OSError:
+        return False
+    return True
+
+
+def auto_watch(log=print, fetch=_get):
+    """One automatic run: the user's topics, the fastest growing first; write drafts only with a model that is already
+    loaded, else keep the papers for later. Nothing is ever approved here."""
+    topics = [(t, trend(t, fetch)) for t in load_topics()]
+    topics.sort(key=lambda x: -x[1].get('growth', 0))
+    ep = sfp_intent.find_model(max_params_b=MAX_WRITER_B, ready_only=True)
+    out = watch([t for t, _ in topics[:AUTO_TOPICS]], log=log, fetch=fetch, ep=ep, write=bool(ep)) if topics else []
+    grown = dict(topics)
+    for r in out:
+        r.update(grown.get(r['topic']) or {})
+    waiting = [r for r in out if r.get('papers')]
+    if waiting:
+        kept = [r for r in _read_json('research_found.json', []) if r.get('topic') not in {w['topic'] for w in waiting}]
+        _write_json('research_found.json', (waiting + kept)[:20])
+    return out
+
+
+def news():
+    """Short lines for the user: drafts that wait for approval and papers that wait for a model. [] when there are none."""
+    out = []
+    for d in list_drafts()[:3]:
+        out.append('Research draft ready: %s (%d papers). Read it, then: sfp research approve %s' % (d['name'], d['papers'], d['name']))
+    for r in _read_json('research_found.json', [])[:2]:
+        out.append('%d new papers on "%s"%s. Load a local model, then: sfp research watch --topic "%s"'
+                   % (len(r.get('papers') or []), r.get('topic'), (', growing x%s' % r['growth']) if r.get('growth') else '', r.get('topic')))
+    return out
+
+
+def watch(topics=None, days=45, n_papers=5, min_new=2, log=print, fetch=_get, ep=None, write=True):
     """For each topic, look for papers from the last `days` days that this watch has not seen; when at least `min_new`
     relevant ones turned up, draft "<topic>-latest" from them. Seen papers are remembered, so a run only acts on what
-    is new. Returns one result per topic."""
+    is new. Returns one result per topic. With `write` False the papers are returned under 'papers' and stay new."""
     topics = topics or load_topics()
     try:
         with open(_seen_path(), encoding='utf-8') as f:
@@ -448,17 +595,24 @@ def watch(topics=None, days=45, n_papers=5, min_new=2, log=print, fetch=_get):
         queries = make_queries('the newest practical techniques in ' + topic)
         papers = [p for p in search_papers(queries, fetch=fetch, log=log, since=since)
                   if (p.get('url') or p['title']) not in seen]
-        best = rank(topic, papers, n_papers)
+        best = [p for p in rank(topic, papers, n_papers) if p['relevance'] >= MIN_RELEVANCE.get(p['by'], 0)]
         if len(best) < min_new:
             out.append({'topic': topic, 'new_papers': len(best), 'draft': None})
+            continue
+        if not write:
+            out.append({'topic': topic, 'new_papers': len(best), 'draft': None,
+                        'papers': [{k: p.get(k) for k in ('title', 'year', 'url')} for p in best]})
             continue
         task = ('Apply the newest research on %s in practice: what a working engineer should now do differently, with '
                 'concrete steps' % topic)
         try:
-            _, md, model = write_skill(task, None, best)
+            _, md, model = write_skill(task, None, best, ep)
         except RuntimeError as e:
             out.append({'topic': topic, 'new_papers': len(best), 'draft': None, 'error': str(e)})
             continue
+        left = [r for r in _read_json('research_found.json', []) if r.get('topic') != topic]
+        if os.path.exists(os.path.join(data_dir(), 'research_found.json')):
+            _write_json('research_found.json', left)
         name = slugify(topic.split('(')[0] + '-latest')
         md = re.sub(r'^name: .*$', 'name: ' + name, md, count=1, flags=re.M)
         p = _save_draft(name, md, {'watch_topic': topic, 'since': since, 'queries': queries, 'model': model, 'papers': best})
@@ -521,6 +675,13 @@ def main(argv=None):
     w = sub.add_parser('watch', help='draft <topic>-latest skills from new papers on your topics')
     w.add_argument('--days', type=int, default=45)
     w.add_argument('--topic', action='append', help='watch only this topic (repeatable)')
+    w.add_argument('--auto', action='store_true', help='one automatic run: your topics, the fastest growing first, only a loaded model writes')
+    au = sub.add_parser('auto', help='look for new papers by itself every few days')
+    au.add_argument('state', choices=['on', 'off', 'status'])
+    au.add_argument('--days', type=int)
+    tr = sub.add_parser('trend', help='how fast research on a topic grows')
+    tr.add_argument('topic')
+    sub.add_parser('found', help='papers found that wait for a local model')
     t = sub.add_parser('topics', help='list, add or remove the watched topics')
     t.add_argument('--add', action='append', default=[])
     t.add_argument('--remove', action='append', default=[])
@@ -540,7 +701,15 @@ def main(argv=None):
             res = refresh(a.skill, a.months, log=lambda s: print(s, file=sys.stderr))
             print('Draft written: %s\nRead it, then: python3 mcp/sfp_research.py approve %s' % (res['path'], res['name']))
         elif a.cmd == 'watch':
-            print(json.dumps(watch(a.topic, a.days, log=lambda s: print(s, file=sys.stderr)), indent=1))
+            log = lambda s: print(s, file=sys.stderr)
+            print(json.dumps(auto_watch(log) if a.auto else watch(a.topic, a.days, log=log), indent=1))
+        elif a.cmd == 'auto':
+            s = auto({'on': True, 'off': False}.get(a.state), a.days)
+            print('Research watch is %s (every %d days). Topic names go to OpenAlex, arXiv and Semantic Scholar; nothing else leaves this machine, and\nevery skill it writes is a draft until you approve it.' % ('on' if s['auto'] else 'off', s['days']))
+        elif a.cmd == 'trend':
+            print(json.dumps(trend(a.topic), indent=1))
+        elif a.cmd == 'found':
+            print(json.dumps(_read_json('research_found.json', []), indent=1))
         elif a.cmd == 'topics':
             topics = [x for x in load_topics() if x not in a.remove] + [x for x in a.add if x not in load_topics()]
             if a.add or a.remove:

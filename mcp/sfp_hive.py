@@ -753,6 +753,8 @@ def rerank(sit, votes, quality, exclude, allowed=None):
 
 
 NO_REAL_JOB = re.compile(r"\b(rename|renaming|typo|spelling|comma|semicolon|whitespace|indent(ation)?)\b|\bchange (the |this )?\w* ?(text|label|wording|constant|value)\b|^\s*what is \d", re.I)
+CITY_PICKS = 3           # skills the city selector gives a plain task
+CITY_BONUS = 0.3         # extra height for a skill the signals chose, without a model (tests/*_tuning.json)
 MICRO_EDIT = re.compile(r'\b(rename|swap|toggle|wrap|replace|remove|delete|extract|add|change|fix|bump|indent|update)\b.*\b(variable|method|constant|operands?|boolean|flag|quotes?|whitespace|newline|commented|spelling|parentheses|font\s+size|timeout\s+duration|copyright\s+year|minor\s+version)\b', re.I)
 
 
@@ -794,6 +796,28 @@ def judge_stage(task, sit, votes, exclude, after, named_form, taste):
         top = max(outputs, key=outputs.get)
         picks = sorted(picks, key=lambda n: top not in (sfp_cards.get_card(n).get('output') or []))
     return picks
+
+
+
+def why_none(task, missing, judged):
+    """Why no skill was selected, in one sentence for the user."""
+    if missing and missing.get('unknown_words'):
+        return 'The library has no skill for: ' + ', '.join(missing['unknown_words'][:4])
+    if MICRO_EDIT.search(task or '') or NO_REAL_JOB.search(task or ''):
+        return 'This is small or general enough to do without a skill'
+    if judged == []:
+        return 'Nothing in the library is close enough to this task'
+    return 'No skill had enough agreement between the signals'
+
+
+
+def as_asked(order, named_form, within=12):
+    """The order with the skills that make the form the user named first, among the first few."""
+    if not named_form:
+        return order
+    import sfp_cards
+    forms = {'text', 'document'} if named_form in ('text', 'document') else {named_form}
+    return sorted(order[:within], key=lambda n: not forms & set(sfp_cards.get_card(n).get('output') or []))
 
 
 def fit_taste(picks, taste, budget):
@@ -938,12 +962,18 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
     elif sit.get('semantic') and rerank_wanted(sit, votes) and (not caller_semantic or os.environ.get('SFP_RERANK') == '1'):
         judged = judge_stage(task, sit, votes, exclude, after, named_form, taste)
 
-    # No project to read and no chat model asked: a fused ranking is the choice (see sfp_retrieve.fused_picks and text_picks).
-    plain = (judged is None and not caller_semantic and not has_proj and not named_form and not learned and not after
+    # Every reader's map of the skill city (sfp_city). Without a project and without a chat model the selector's ranking is the choice.
+    import sfp_city
+    meaning = {}
+    if sem_sim_list and not caller_semantic:
+        import sfp_embed
+        meaning = sfp_embed.survey(sit['text'])
+    city, height, city_kind, city_features = ([], {}, 'text', {}) if judged == [] else sfp_city.rank(task, meaning, allow)
+    plain = (judged is None and not caller_semantic and not has_proj and not learned and not after
              and not phase_hint and os.environ.get('SFP_FUSED', '1') != '0')
     fused = []
-    if plain and sem_sim_list:
-        judged = fused = fit_taste(sfp_retrieve.fused_picks(task, sem_sim_list, allow), taste, budget)
+    if plain and meaning:
+        judged = fused = fit_taste(as_asked(city, named_form)[:CITY_PICKS], {} if named_form else taste, budget)
     if judged is not None:
         picks = list(judged)
     else:
@@ -1091,9 +1121,12 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         quality.setdefault(n, 0.0)
         votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
 
-    if plain and not sem_sim_list:
+    if plain and not meaning:
+        # Without a model nothing chosen stays nothing, and what the signals chose stands a little taller.
         mine = [c[0] for c in chosen if c[0] not in pinned]
-        judged = fused = fit_taste(sfp_retrieve.text_picks(task, sorted(mine, key=lambda n: -quality.get(n, 0.0)), allow), taste, budget)
+        lifted = {n: height.get(n, 0.0) + (CITY_BONUS if n in mine else 0.0) for n in list(city) + mine}
+        tall = as_asked(sorted(lifted, key=lambda n: (-lifted[n], n)), named_form) if mine else []
+        judged = fused = fit_taste(tall[:CITY_PICKS], {} if named_form else taste, budget)
         for i, n in enumerate(fused):
             votes.setdefault(n, {'words': 0.0, 'project': None, 'role': None, 'category': None, 'history': None, 'relation': 'general'})
             quality[n] = RERANK_LEAD - 0.01 * i
@@ -1158,7 +1191,8 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         elif learned.get(name, 0) <= -0.15:
             reasons.append('down-weighted by feedback')
         if name in picks:
-            reasons.append('a best match over its name, description and full text' if name in fused else 'judged the best fit by the local model')
+            reasons.append('among the tallest over every map: words, name, full text, requests%s' % (', meaning' if meaning else '')
+                           if name in fused else 'judged the best fit by the local model')
         card = sfp_cards.get_card(name)
         if named_form and named_form in card.get('output', []):
             reasons.append('requested format: ' + named_form)
@@ -1171,7 +1205,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                 reasons.append(f"{card.get('needs')[0]} is installed in this project")
         if name in pinned:
             reasons.insert(0, 'pinned by you')
-        else:
+        elif backers(v):
             reasons.append('backed by: ' + ', '.join(backers(v)))
         stack.append({'name': name, 'phase': phase, 'layer': v1.LAYER[phase], 'category': core.SKILLS[name]['category'],
                       'tokens': v1.body_tokens(name), 'score': round(quality[name], 3), 'support': len(backers(v)),
@@ -1202,6 +1236,9 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             if len(nxt) == 3:
                 break
 
+    import sfp_own
+    yours = [r for r in sfp_own.match(task) if r['name'] not in exclude]
+
     ctx = sit['ctx']
     layers = {'base': [], 'check': [], 'finish': []}
     for c in stack:
@@ -1223,6 +1260,10 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         'phases': {p: round(v, 2) for p, v in sorted(sit['demand'].items(), key=lambda kv: -kv[1])},
         'layers': layers,
         'stack': stack,
+        'status': 'selected' if stack or yours else 'no skill selected',
+        'why_none': None if stack or yours else why_none(task, missing, judged),
+        'yours': yours,
+        'city': sfp_city.towers(city, height, skip=used | set(after)) if stack else [],
         'tokens': spent,
         'recipe': recipe and {'name': recipe['name'], 'skills': recipe['skills']},
         'next': nxt,
@@ -1260,6 +1301,7 @@ def select(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
         res['explain'] = rows
     if want_signals:
         # What the learner needs to remember about this decision: numbers only, no text from the task.
+        res['_view'] = sfp_city.seen(city, city_kind, city_features) if city else None
         res['_record'] = {'tech': tech, 'words': words, 'phases': {p: round(v, 2) for p, v in sit['demand'].items()},
                           'candidates': {n: {k: (None if votes[n][k] is None else round(votes[n][k], 3)) for k in SIGNALS}
                                          for n in sorted(quality, key=lambda n: -quality[n])[:25]}}
@@ -1394,17 +1436,19 @@ def evaluate(tests_dir=None, only=None, semantic=False):
 # ----------------------------------------------------------------------- CLI
 
 def format_stack(res):
+    mine = ['Your own skill: %s: %s\n   read: %s' % (r['name'], r['does'], r['path']) for r in res.get('yours') or []]
+    if not res.get('stack') and mine:
+        return '\n'.join(['Stack for: ' + (res.get('task') or '')] + mine)
     if not res.get('stack'):
-        lines = ['Stack for: ' + (res.get('task') or '')]
+        lines = ['Stack for: ' + (res.get('task') or ''), 'No skill selected. Carry on without one.']
         if res.get('missing'):
             m = res['missing']
             lines.append('[Notice] The catalog has no skill for: %s' % ', '.join(m['unknown_words']))
             lines.append('  To add a skill from Git: python3 scripts/repo_to_skill.py <url>')
-        elif res.get('gap') and res['gap'].get('task'):
-            lines.append('[Notice] ' + res['gap']['task'])
-            lines.append('  To add a skill from Git: python3 scripts/repo_to_skill.py <url>')
         else:
-            lines.append('[Notice] No skill in the catalog fits this task.')
+            lines.append('[Notice] ' + (res.get('why_none') or 'No skill in the catalog fits this task') + '.')
+        if res.get('missing') or (res.get('gap') and not MICRO_EDIT.search(res.get('task') or '')):
+            lines.append('  To have one written from research papers: sfp research draft "<task>"')
         return '\n'.join(lines)
     lines = v1.format_stack(res).split('\n')
     if res.get('missing'):
@@ -1412,6 +1456,8 @@ def format_stack(res):
         lines.insert(2, '[Notice] The catalog has no skill for: %s' % ', '.join(m['unknown_words']))
         lines.insert(3, '  To add a skill from Git: python3 scripts/repo_to_skill.py <url>')
         lines.insert(4, '')
+    for line in reversed(mine):
+        lines.insert(2, line)
     info = res.get('analysis') or {}
     if info:
         lines.insert(-1, 'Hive: %d scouted, %d reached quorum, %d took a job.' % (info['candidates'], info['agreed'], len(res['stack'])))
@@ -1448,7 +1494,10 @@ def main(argv=None):
     r.add_argument('--no-needs', action='store_true', help='do not add skills for what the model cannot do alone (3D, web, limits...)')
     r.add_argument('--check', action='store_true', help='also check the programs and keys the needs depend on')
     r.add_argument('--bundles', choices=['push', 'suggest', 'off'], default='push', help='push a bundle that fits the task whole (default), only suggest it, or ignore bundles')
+    r.add_argument('--map', action='store_true', help='also print the map: the next best skills, in towers')
     r.add_argument('--json', action='store_true')
+    st = sub.add_parser('story', help='what a skill does, the words that call it, its tower and its neighbours')
+    st.add_argument('skill')
     f = sub.add_parser('feedback', help='tell the hive what helped, what did not, and what was missing')
     f.add_argument('decision', help='the decision id printed by select, or "last"')
     f.add_argument('--helped', default='', help='comma-separated skills that helped')
@@ -1566,6 +1615,20 @@ def main(argv=None):
             if bundle:
                 res['bundle'] = {'id': bundle['id'], 'name': bundle['name']}
         print(json.dumps(res, indent=1) if a.json else format_stack(res))
+        import sfp_research
+        sfp_research.start_if_due()
+        if not a.json:
+            for line in sfp_research.news():
+                print(line)
+        if a.map and res.get('city') and not a.json:
+            import sfp_city
+            print(sfp_city.format_map(res['city']))
+    elif a.cmd == 'story':
+        import sfp_city
+        name = core.resolve_name(a.skill)
+        if not name:
+            raise SystemExit('no skill named %r' % a.skill)
+        print(json.dumps(sfp_city.story(name), indent=1, ensure_ascii=False))
     elif a.cmd == 'feedback':
         helped, bad, ignored, missing = ([x.strip() for x in s.split(',') if x.strip()]
                                          for s in (a.helped, a.unhelpful, a.ignored, a.missing))

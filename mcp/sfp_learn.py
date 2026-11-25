@@ -326,6 +326,7 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
                      history=load_history(), model=load_model() if use else False, want_signals=True,
                      include=include, exclude=exclude, explain=explain, explore=explore)
     record = res.pop('_record')
+    view = res.pop('_view', None)
     res['learning'] = {'enabled': use, 'examples': load_model().examples if use else 0, 'words_kept': keep_words()}
     res['decision'] = None
     if enabled():
@@ -347,6 +348,9 @@ def decide(task, project=None, goal=None, after=(), budget=12000, max_skills=4, 
             row['gap'] = True
         _append('decisions.jsonl', row)
         _compact_decisions()
+        import sfp_city
+        if use:
+            sfp_city.remember(did, view)
         res['decision'] = did
         res['feedback'] = ('After the task, call give_feedback with this decision id: helped, unhelpful, '
                            'ignored (chosen but never used) and missing (should have been chosen).')
@@ -412,6 +416,9 @@ def give_feedback(decision=None, helped=(), unhelpful=(), ignored=(), missing=()
             _append('feedback.jsonl', row)
             if verdict == 'helped':
                 update_taste(n, 1.0, now)
+    if decision:
+        import sfp_city
+        sfp_city.learn(decision, groups['helped'] + groups['missing'], groups['unhelpful'])
     after = load_model()
     out = {'recorded': sum(len(v) for v in groups.values()), 'decision': decision, 'examples': after.examples,
            'moved': [{'skill': n, 'before': round(before.preference(n, words), 3), 'after': round(after.preference(n, words), 3)}
@@ -559,7 +566,7 @@ def reset_taste():
 def forget():
     """Delete everything recorded and learned. Returns what was removed."""
     removed = []
-    for name in ('decisions.jsonl', 'feedback.jsonl', 'aliases.json', 'taste.json'):
+    for name in ('decisions.jsonl', 'feedback.jsonl', 'aliases.json', 'taste.json', 'city_log.jsonl', 'city_weights.json'):
         p = _path(name)
         if os.path.exists(p):
             os.remove(p)

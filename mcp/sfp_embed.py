@@ -304,15 +304,42 @@ def similar(text, limit=40, min_coverage=0.9):
     except (OSError, ValueError, KeyError, urllib.error.URLError):
         _ENDPOINT['checked'] = 0.0   # look for the runtime again next time
         return []
-    dot = lambda v: sum(map(operator.mul, q, v))
     scored = []
-    for n, v, ex in zip(names, vecs, exvecs):
-        s = dot(v)
-        if ex:
-            s = (1 - EXAMPLE_WEIGHT) * s + EXAMPLE_WEIGHT * max(dot(e) for e in ex)
-        scored.append((s, n))
+    for n, (d, best, _) in _closeness(ep['model'], q).items():
+        scored.append(((1 - EXAMPLE_WEIGHT) * d + EXAMPLE_WEIGHT * best if best is not None else d, n))
     scored.sort(reverse=True)
     return scored[:limit]
+
+
+_CLOSE = {'index': None, 'rows': {}}
+
+
+def _closeness(model, q):
+    """{skill: (cosine to its description, to its closest example request, mean of its closest three)}; None without examples.
+    Kept for the last vectors, and dropped when the index is read again."""
+    index = _index(model)
+    if _CLOSE['index'] is not index or len(_CLOSE['rows']) > 64:
+        _CLOSE.update(index=index, rows={})
+    key = (model, q)
+    if key not in _CLOSE['rows']:
+        out = {}
+        dot = lambda v: sum(map(operator.mul, q, v))
+        for n, v, ex in zip(*index):
+            top = sorted((dot(e) for e in ex), reverse=True)[:3]
+            out[n] = (dot(v), top[0] if top else None, sum(top) / len(top) if top else None)
+        _CLOSE['rows'][key] = out
+    return _CLOSE['rows'][key]
+
+
+def survey(text):
+    """_closeness for the text, {} when similar() would answer nothing. The vector is already cached after similar()."""
+    if not similar(text, 1):
+        return {}
+    ep = endpoint_cached()
+    try:
+        return _closeness(ep['model'], _query_vector(ep['base_url'], ep['model'], text.strip()[:2000]))
+    except (OSError, ValueError, KeyError, TypeError, urllib.error.URLError):
+        return {}
 
 
 def status():

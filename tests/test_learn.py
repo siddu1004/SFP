@@ -255,7 +255,7 @@ class LearningLoopTest(IsolatedData):
         self.assertIn('django-celery', self.names(other))
 
     def test_a_skill_the_search_missed_is_found_after_it_is_reported_missing(self):
-        task = 'scrape product prices from websites'
+        task = 'watch competitor listings every morning and store them'
         before = self.names(learn.decide(task))
         self.assertNotIn('data-scraper-agent', before)
         res = learn.decide(task)

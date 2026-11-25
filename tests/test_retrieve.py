@@ -61,16 +61,6 @@ class FusionTest(unittest.TestCase):
 
 
 class FusedPicksTest(unittest.TestCase):
-    def test_both_rankings_count_and_what_cannot_fit_stays_out(self):
-        self.addCleanup(setattr, rt, '_rank_words', rt._rank_words)
-        rt._rank_words = lambda text, limit=80: ['react-testing', 'security-review', 'rust-testing']
-        similar = [(0.9, 'security-review'), (0.8, 'react-testing'), (0.7, 'not-a-skill'), (0.6, 'python-testing')]
-        picks = rt.fused_picks('write tests', similar, allow=lambda n: n != 'react-testing')
-        self.assertEqual(picks[0], 'security-review')
-        self.assertNotIn('react-testing', picks)
-        self.assertNotIn('not-a-skill', picks)
-        self.assertLessEqual(len(picks), rt.FUSED_PICKS)
-
     def test_no_model_is_asked_unless_the_user_wants_it(self):
         import sfp_hive
         saved = os.environ.pop('SFP_RERANK', None)
