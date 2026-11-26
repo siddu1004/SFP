@@ -231,7 +231,7 @@ It does not always get it right. [Where it still fails](#where-it-still-fails) l
 
 A parent who notices a child lighting up at music finds them a good teacher. SFP does the same for you.
 
-**Taste.** When a skill helps you, SFP notes what kind of help it was: an animation, a step-by-step text, hands-on code, a video. Over time it leans towards the kind you learn from best: on 40 new tasks for simulated learners, the first pick in the format they like went from 65% to 70%.
+**Taste.** When a skill helps you, SFP notes what kind of help it was: an animation, a step-by-step text, hands-on code, a video. Over time it leans towards the kind you learn from best: on 40 new tasks for simulated learners, with no model, the first pick in the format they like went from 70% to 82%.
 
 ```bash
 sfp taste            # what SFP has learned about you

@@ -403,14 +403,14 @@ def advantages(t, total, rel, catalog):
     e = best_engine(rel)
     used, saved = context_saved(rel, catalog)
     hold = got(rel, e, 'map', 'hold', '40')
-    nothing, kw = got(rel, e, 'groups', 'nothing', 'nothing_empty'), got(rel, 'keyword', 'groups', 'nothing', 'nothing_empty')
+    nothing, kw = got(rel, 'words', 'groups', 'nothing', 'nothing_empty'), got(rel, 'keyword', 'groups', 'nothing', 'nothing_empty')
     ms = got(rel, 'words', 'ms', 'typical')
     body = [header(t, 'Why use SFP', 'Too many skills crowd out your code. Too few, and your AI guesses. Measured with bench/release.py.')]
     cards = [
         (f'{saved}% less to carry', 'teal', f'{used:,} of {all_on_tokens(catalog):,} tokens', 'Your AI loads the few skills this job needs,', 'and a short map of the next 40.'),
         ('A map, not a guess', 'violet', f'{hold}% on the map' if hold else 'the next 40 skills', 'The right skill is on the 40-skill map that often.', 'Your AI reads it and can swap one in.'),
         ('Fits your project', 'sky', 'reads your manifests', 'package.json, Cargo.toml, go.mod and more, so a', 'Rust project gets Rust skills.'),
-        ('Says "nothing fits"', 'rose', f'{nothing}% left empty', 'On tasks that need no skill, SFP stays out of the', f'way. Keyword search: {kw}%.'),
+        ('Says "nothing fits"', 'rose', f'{nothing}% left empty', 'With no model, on tasks that need no skill, SFP stays', f'out of the way. Keyword search: {kw}%.'),
         ('Learns from you', 'amber', 'stays in ~/.sfp', 'Say what helped, and the weights move on your', 'machine. No task text is kept.'),
         ('Runs on your machine', 'lime', f'about {ms:.0f} ms, no model', 'Plain Python. Local models are optional, and', 'nothing is sent to pick a skill.'),
     ]

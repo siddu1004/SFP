@@ -549,7 +549,7 @@ def release_values():
     rows.append('| Right skill on the 40-skill map, plain words | - | %.1f%% | %.1f%% |' % (words['map']['hold']['40'], best['map']['hold']['40']))
     rows.append('| Right skill on a 60-skill map, plain words | - | %.1f%% | %.1f%% |' % (words['map']['hold']['60'], best['map']['hold']['60']))
     asks = ['| What you ask | SFP\'s picks |', '|---|---|'] + ['| *"%s"* | %s |' % (a['task'], ', '.join('`%s`' % s['name'] for s in a['stack']) or 'no skill selected') for a in best['asks']]
-    people = list(best['taste'].values())
+    people = list(words['taste'].values())
     n = sum(p['n'] for p in people)
     share = lambda k: round(sum(p[k] * p['n'] for p in people) / n)
     used = best['tokens']['stack'] + best['tokens']['map']
@@ -563,7 +563,7 @@ def release_values():
         'R_M_PLAIN': g(best, 'plain', 'chosen'), 'R_KW_PROJECT': g(kw, 'project', 'chosen'), 'R_W_PROJECT': g(words, 'project', 'chosen'),
         'R_MS_W': ms(words, 'typical'), 'R_MS_W95': ms(words, 'slowest_5'), 'R_MS_M': ms(best, 'typical'), 'R_MS_M95': ms(best, 'slowest_5'),
         'R_RESULTS_TABLE': '\n'.join(rows), 'R_ASKS_TABLE': '\n'.join(asks),
-        'R_TASTE': 'on %d new tasks for simulated learners, the first pick in the format they like went from %d%% to %d%%' % (n, share('before'), share('after')),
+        'R_TASTE': 'on %d new tasks for simulated learners, with no model, the first pick in the format they like went from %d%% to %d%%' % (n, share('before'), share('after')),
         'R_RUST_SAMPLE': rust_sample(),
     }
 
